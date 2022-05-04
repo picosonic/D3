@@ -9,7 +9,7 @@ var gs={
   ctx:null
 };
 
-function drawframe(ctx, x, y, framenum, scale, style)
+function drawframe(ctx, x, y, framenum, scale, hflip, style)
 {
   if ((framenum<0) || (framenum>0xff)) return;
 
@@ -35,7 +35,12 @@ function drawframe(ctx, x, y, framenum, scale, style)
       while (mask>0)
       {
         if ((data&mask)>0)
-          ctx.fillRect(Math.floor(x+(px*scale)), Math.floor(y+(py*scale)), Math.ceil(scale), Math.ceil(scale));
+        {
+          if (hflip)
+            ctx.fillRect(Math.floor(x+((fwidth-px-1)*scale)), Math.floor(y+(py*scale)), Math.ceil(scale), Math.ceil(scale));
+          else
+            ctx.fillRect(Math.floor(x+(px*scale)), Math.floor(y+(py*scale)), Math.ceil(scale), Math.ceil(scale));
+        }
 
         px++;
 
@@ -54,7 +59,48 @@ function drawframe(ctx, x, y, framenum, scale, style)
 // Draw a full room
 function drawroom(roomnum)
 {
-  drawframe(gs.ctx, 128, 80, 96, 1, "#00FF00");
+  var ptr=0;
+  var framenum=0;
+  var framex=0;
+  var framey=0;
+  var frameattrib=0;
+  var framestyle="#FFFFFF";
+
+  while (ptr<roomtable[roomnum].len)
+  {
+    framenum=roomdata[roomtable[roomnum].offs+(ptr++)];
+    framex=roomdata[roomtable[roomnum].offs+(ptr++)];
+    framey=roomdata[roomtable[roomnum].offs+(ptr++)];
+
+    if (framex>0x7f)
+      framex-=0x80;
+    else
+      frameattrib=roomdata[roomtable[roomnum].offs+(ptr++)];
+
+    switch ((frameattrib&0x0f)+8)
+    {
+      case 0x00: framestyle="#000000"; break;
+      case 0x01: framestyle="#000077"; break;
+      case 0x02: framestyle="#770000"; break;
+      case 0x03: framestyle="#770077"; break;
+      case 0x04: framestyle="#007700"; break;
+      case 0x05: framestyle="#007777"; break;
+      case 0x06: framestyle="#777700"; break;
+      case 0x07: framestyle="#777777"; break;
+
+      case 0x08: framestyle="#000000"; break;
+      case 0x09: framestyle="#0000ff"; break;
+      case 0x0a: framestyle="#ff0000"; break;
+      case 0x0b: framestyle="#ff00ff"; break;
+      case 0x0c: framestyle="#00ff00"; break;
+      case 0x0d: framestyle="#00ffff"; break;
+      case 0x0e: framestyle="#ffff00"; break;
+      case 0x0f: framestyle="#ffffff"; break;
+      default: break;
+    }
+
+    drawframe(gs.ctx, (framex*4)-128, framey, framenum, 1, ((frameattrib&0x80)!=0), framestyle);
+  }
 }
 
 // Handle screen resizing to maintain correctly centered display
