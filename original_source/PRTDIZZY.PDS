@@ -1,0 +1,549 @@
+	if computer=amstrad
+
+prtdizzy			;a=no of dizzy frm
+			;e=x (0=left 63=right)
+	push ix	;l=y (0=bottom 199=top)
+	push af
+	ld a,l
+	ld (dizzyprty),a
+	ld a,e
+	ld (addacross0+1),a
+	
+	ld de,multdimstore
+	ld a,(addacross0+1)
+	ld (de),a
+	inc de
+
+	pop af
+	di
+	ld (stackstore),sp
+	ld h,0
+	ld l,a
+	add hl,hl
+	ld bc,dizzytable
+	add hl,bc
+	ld c,(hl)
+	inc hl
+	ld b,(hl)
+	ld hl,dizzydefs
+	add hl,bc
+	ld sp,hl
+	pop bc
+	ld a,b
+	ld (dizzyheight),a
+	ld (de),a
+	inc de
+	ld a,(dizzyprty)
+	sub b
+	ld l,a
+	ld h,0
+	add hl,hl
+	ld bc,screentable
+	add hl,bc
+	ld a,l
+	ld (de),a
+	inc de
+	ld a,h
+	ld (de),a
+	inc de
+	ld (storeiy),hl
+	ld iy,(storeiy)
+	ld a,(dizzyheight)
+prtdizzyylp	ex af,af'
+	ld l,(iy+0)
+	ld h,(iy+1)
+addacross0	ld bc,0000		;patched
+	add hl,bc
+	ld (storeiy),hl
+	ld ix,(storeiy)
+	ld h,maskpage
+
+
+bytel0	pop bc
+	ld l,c
+	ld a,(ix+0)
+	and (hl)
+	or l
+	ld l,a
+	xor (ix+0)
+	ld (de),a
+	ld (ix+0),l
+	inc de
+bytel1	ld l,b
+	ld a,(ix+1)
+	and (hl)
+	or l
+	ld l,a
+	xor (ix+1)
+	ld (de),a
+	ld (ix+1),l
+	inc de
+bytel2	pop bc
+	ld l,c
+	ld a,(ix+2)
+	and (hl)
+	or l
+	ld l,a
+	xor (ix+2)
+	ld (de),a
+	ld (ix+2),l
+	inc de
+bytel3	ld l,b
+	ld a,(ix+3)
+	and (hl)
+	or l
+	ld l,a
+	xor (ix+3)
+	ld (de),a
+	ld (ix+3),l
+	inc de
+bytel4	pop bc
+	ld l,c
+	ld a,(ix+4)
+	and (hl)
+	or l
+	ld l,a
+	xor (ix+4)
+	ld (de),a
+	ld (ix+4),l
+	inc de
+bytel5	ld l,b
+	ld a,(ix+5)
+	and (hl)
+	or l
+	ld l,a
+	xor (ix+5)
+	ld (de),a
+	ld (ix+5),l
+	inc de
+
+	inc iy
+	inc iy
+	ex af,af'	
+	dec a
+	jr nz,prtdizzyylp
+	ld sp,(stackstore)
+	ei
+	pop ix
+	ret
+
+
+
+ruboutdizzy	di
+	ld (stackstore),sp
+	ld sp,multdimstore
+	pop bc
+	ld a,c
+	ld (addacross2+1),a
+	pop hl
+	ld a,b
+rubylp	ex af,af'
+	ld e,(hl)
+	inc hl
+	ld d,(hl)
+	inc hl
+	ex de,hl
+addacross2	ld bc,0000		;patched
+	add hl,bc
+	pop bc
+rubbyte0	ld a,(hl)
+	xor c
+	ld (hl),a
+	inc hl
+rubbyte1	ld a,(hl)
+	xor b
+	ld (hl),a
+	inc hl
+	pop bc
+rubbyte2	ld a,(hl)
+	xor c
+	ld (hl),a
+	inc hl
+rubbyte3	ld a,(hl)
+	xor b
+	ld (hl),a
+	inc hl
+	pop bc
+rubbyte4	ld a,(hl)
+	xor c
+	ld (hl),a
+	inc hl
+rubbyte5	ld a,(hl)
+	xor b
+	ld (hl),a
+
+	ex de,hl
+	ex af,af'
+	dec a
+	jr nz,rubylp
+	ld sp,(stackstore)
+	ei
+	ret
+
+
+dizzyheight	defb 0
+dizzyprty	defb 0
+stackstore	defw 0
+storeiy	defw 0
+
+backhere
+	if backhere>&adff
+	error"Memory overflowed"
+	endif
+	org &ae00
+
+maskpage	equ &ae
+maskpagedata
+	HEX FFEEDDCCBBAA99887766554433221100
+	HEX EEEECCCCAAAA88886666444422220000
+	HEX DDCCDDCC998899885544554411001100
+	HEX CCCCCCCC888888884444444400000000
+	HEX BBAA9988BBAA99883322110033221100
+	HEX AAAA8888AAAA88882222000022220000
+	HEX 99889988998899881100110011001100
+	HEX 88888888888888880000000000000000
+	HEX 77665544332211007766554433221100
+	HEX 66664444222200006666444422220000
+	HEX 55445544110011005544554411001100
+	HEX 44444444000000004444444400000000
+	HEX 33221100332211003322110033221100
+	HEX 22220000222200002222000022220000
+	HEX 11001100110011001100110011001100
+	HEX 00000000000000000000000000000000
+
+multdimstore	defs 2+2+18*6	;x to add,height,screentablepointer,data
+	org backhere
+
+	endif
+
+	if computer=spectrum
+prtdizzy			;a=no of dizzy frm (0-38)
+			;e=x (0=left 255=right)
+			;l=y (0=bottom 199=top)
+	ld (dizfrm),a
+	push ix
+	push hl
+	ld a,l
+	ld (dizy),a
+	pop hl
+
+firsthalf	ld a,e
+	ld (addacrossdiz),a
+	srl a
+	
+	ld de,multdimstore
+	ld (de),a
+	inc de
+
+	ld a,(dizfrm)
+	di
+	exx 
+	push bc
+	push de
+	push hl
+	exx
+	ld (stackstore),sp
+	ld h,0
+	ld l,a
+	add hl,hl
+	ld bc,dizzytable
+	add hl,bc
+	ld c,(hl)
+	inc hl
+	ld b,(hl)
+	ld hl,dizzydefs
+	add hl,bc
+	ld sp,hl
+	pop bc
+	ld a,c
+	ld (dizheight),a
+	ld (de),a
+	inc de
+	ld a,(dizy)
+	sub c
+	ld l,a
+	ld h,0
+	add hl,hl
+	ld bc,screentable
+	add hl,bc
+	ld a,l
+	ld (de),a
+	inc de
+	ld a,h
+	ld (de),a
+	inc de
+	ld (storeix),hl
+	ld ix,(storeix)
+
+	ld a,(addacrossdiz)
+	ld c,a
+	ld a,(dizheight)
+	srl c
+	jr c,prtdizzyylp1
+	
+
+prtdizzyylp	
+	ld l,(ix+0)
+	inc ix
+	ld h,(ix+0)
+	inc ix
+	ld b,00		
+	add hl,bc
+	ex af,af'
+	exx
+	pop bc
+	pop de
+	pop hl
+
+	exx
+	ld a,(hl)
+	exx
+	and c
+	xor b
+	exx
+	ld b,a
+	xor (hl)	
+	ld (de),a
+	ld (hl),b
+	inc hl
+	inc de
+		
+	ld a,(hl)
+	exx
+	and e
+	xor d
+	exx
+	ld b,a
+	xor (hl)	
+	ld (de),a
+	ld (hl),b
+	inc hl
+	inc de
+	
+	ld a,(hl)
+	exx
+	and l
+	xor h
+	exx
+	ld b,a
+	xor (hl)	
+	ld (de),a
+	ld (hl),b
+	inc de
+	xor a
+	ld (de),a
+	inc de
+	ex af,af'
+	dec a
+	jp nz,prtdizzyylp
+	ld sp,(stackstore)
+	exx
+	pop hl
+	pop de
+	pop bc
+	exx
+	pop ix
+	ei
+	ret
+
+
+prtdizzyylp1	
+	ld l,(ix+0)
+	inc ix
+	ld h,(ix+0)
+	inc ix
+	ld b,00		
+	add hl,bc
+	ex af,af'
+	exx
+	pop bc
+	pop de
+	pop hl
+
+	ld a,255
+	scf
+	rr c		;left mask
+	rr e
+	rr l
+	rra		;right mask
+
+	rr c		;left mask
+	rr e
+	rr l
+	rra		;right mask
+
+	rr c		;left mask
+	rr e
+	rr l
+	rra		;right mask
+
+	rr c		;left mask
+	rr e
+	rr l
+	rra		;right mask
+	ld (farrightmask),a
+
+	xor a
+	srl b		;left image
+	rr d
+	rr h
+	rra		;right image
+
+	rr b		;left image
+	rr d
+	rr h
+	rra		;right image
+
+	rr b		;left image
+	rr d
+	rr h
+	rra		;right image
+
+	rr b		;left image
+	rr d
+	rr h
+	rra		;right image
+	ld (farrightimage),a
+
+	exx
+	ld a,(hl)
+	exx
+	and c
+	xor b
+	exx
+	ld b,a
+	xor (hl)	
+	ld (de),a
+	ld (hl),b
+	inc hl
+	inc de
+		
+	ld a,(hl)
+	exx
+	and e
+	xor d
+	exx
+	ld b,a
+	xor (hl)	
+	ld (de),a
+	ld (hl),b
+	inc hl
+	inc de
+	
+	ld a,(hl)
+	exx
+	and l
+	xor h
+	exx
+	ld b,a
+	xor (hl)	
+	ld (de),a
+	ld (hl),b
+	inc hl
+	inc de
+
+	ld a,(hl)
+	exx
+	ld hl,(farrightmask)
+	and l
+	xor h
+	exx
+	ld b,a
+	xor (hl)
+	ld (de),a
+	ld (hl),b
+	inc de
+	ex af,af'
+	dec a
+	jp nz,prtdizzyylp1
+	ld sp,(stackstore)
+	exx
+	pop hl
+	pop de
+	pop bc
+	exx
+	pop ix
+	ei
+	ret
+
+
+
+
+
+ruboutdizzy
+	di
+	ld (stackstore),sp
+	ld sp,multdimstore
+	pop bc
+	ld a,c
+	ld (addacross2+1),a
+	pop hl
+	ld a,b
+rubylp	ex af,af'
+	ld e,(hl)
+	inc hl
+	ld d,(hl)
+	inc hl
+	ex de,hl
+addacross2	ld bc,0000		;patched
+	add hl,bc
+	pop bc
+rubbyte0	ld a,(hl)
+	xor c
+	ld (hl),a
+	inc hl
+rubbyte1	ld a,(hl)
+	xor b
+	ld (hl),a
+	inc hl
+	pop bc
+rubbyte2	ld a,(hl)
+	xor c
+	ld (hl),a
+	inc hl
+rubbyte3	ld a,(hl)
+	xor b
+	ld (hl),a
+	ex de,hl
+	ex af,af'
+	dec a
+	jr nz,rubylp
+	ld sp,(stackstore)
+	ei
+	ret
+
+dizfrm	defb 0
+dizheight	defb 0
+dizy	defb 0
+stackstore	defw 0
+storeix	defw 0
+addacrossdiz	defb 0
+farrightmask	defb 0
+farrightimage	defb 0
+
+backhere
+	org &6000
+revpage	equ &60
+revpagedata
+	HEX 008040C020A060E0109050D030B070F0
+	HEX 088848C828A868E8189858D838B878F8
+	HEX 048444C424A464E4149454D434B474F4
+	HEX 0C8C4CCC2CAC6CEC1C9C5CDC3CBC7CFC
+	HEX 028242C222A262E2129252D232B272F2
+	HEX 0A8A4ACA2AAA6AEA1A9A5ADA3ABA7AFA
+	HEX 068646C626A666E6169656D636B676F6
+	HEX 0E8E4ECE2EAE6EEE1E9E5EDE3EBE7EFE
+	HEX 018141C121A161E1119151D131B171F1
+	HEX 098949C929A969E9199959D939B979F9
+	HEX 058545C525A565E5159555D535B575F5
+	HEX 0D8D4DCD2DAD6DED1D9D5DDD3DBD7DFD
+	HEX 038343C323A363E3139353D333B373F3
+	HEX 0B8B4BCB2BAB6BEB1B9B5BDB3BBB7BFB
+	HEX 078747C727A767E7179757D737B777F7
+	HEX 0F8F4FCF2FAF6FEF1F9F5FDF3FBF7FFF
+
+	org backhere
+multdimstore	defs 2+2+24*4	;x to add,height,screentablepointer,data
+
+	endif
+

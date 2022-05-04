@@ -1,0 +1,256 @@
+;;brk.z80
+	
+	if computer=amstrad
+printchr	equ &bb5a
+	else	
+	
+printchr
+	push bc
+	push ix
+	push hl
+	push de
+	ld ix,(23633)
+	ld l,(ix+0)
+	ld h,(ix+1)
+	call gotochr
+	pop de
+	pop hl
+	pop ix
+	pop bc
+	ret
+gotochr
+	jp (hl)
+
+	endif
+
+
+	if computer=spectrum	
+keypressed
+	dec a
+	ld (keydelay),a
+	and a
+	ei
+	halt
+	ret
+	
+keydelay defb 0
+getkey
+	ld a,(keydelay)
+	cp 0
+	jr nz,keypressed
+	push bc
+	ld b,6
+	ld c,253
+getkey1 ld a,c
+	in a,(254)
+	and 31
+	cp 31
+	jr nz,ggotkey 
+	rlc c
+	djnz getkey1
+	
+	ld c,254
+	ld a,c
+	in a,(254)
+	or 1
+	and 31
+	cp 31
+	jr nz,ggotkey 
+	
+	ld c,127
+	ld a,c
+	in a,(254)
+	or 2
+	and 31
+	cp 31
+	jr nz,ggotkey
+	
+	ld c,254
+	ld b,32
+	jp pmasc
+	
+ggotkey 
+	ld b,1
+gotkey1
+	rra
+	jp nc,pmasc
+	sla b
+	jr gotkey1
+	
+pmasc
+	push bc
+	push hl
+	ld a,b
+	ld b,255
+pmasc1 inc b
+	rra
+	jr nc,pmasc1
+	ld a,b
+	add a,a
+	add a,a
+	add a,a
+	ld b,a
+	ld a,c
+	dec b
+pmasc2 inc b
+	rra
+	jr c,pmasc2
+	ld c,b
+	ld b,0
+	ld hl,pmasct
+	add hl,bc
+	ld a,(hl)
+	cp 1
+	ccf
+	push af
+	jr nc,therenochr
+	ld a,10
+	ld (keydelay),a
+therenochr
+	pop af
+	pop hl
+	pop bc
+	pop bc
+	ret
+	
+pmasct
+	defb 255,"AQ1",&7f,"P",13," " 
+	defb "ZSW29OL",255
+	defb "XDE38IKM"
+	defb "CFR47UJN"
+	defb "VGT56YHB"
+	defb 0
+
+	endif
+	if computer=amstrad
+waitkey	ld a,47
+	call inkey
+	jr nz,waitkey
+	ret
+	else
+	
+waitkey
+	push de
+	push hl
+	push bc
+	push ix
+	push af 
+waitkey1
+	ld a,7*32
+	call inkey
+	jr nz,waitkey1
+	pop af
+	pop ix
+	pop bc
+	pop hl
+	pop de 
+	ret
+	
+beep
+	push de
+	push hl
+	push bc
+	push ix
+	push af
+	ld de,&105
+	ld hl,&66a
+	call &3b5
+	pop af
+	pop ix
+	pop bc
+	pop hl
+	pop de
+	ret
+
+	endif
+	
+brk
+	push de
+	push hl
+	push bc
+	push ix
+	push af
+	push ix
+	push hl
+	push de
+	push bc
+	push af 
+	ld ix,afdemessage
+	call prtchrmessage
+	pop de
+	call prtvalue
+	pop de
+	call prtvalue
+	pop de
+	call prtvalue
+	pop de
+	call prtvalue
+	pop de
+	call prtvalue
+	ld b,10
+pausek	
+	if computer=spectrum
+	halt
+	else
+	call &bd19
+	endif
+	djnz pausek
+	call waitkey
+	pop af
+	pop ix
+	pop bc
+	pop hl
+	pop de
+	ret
+	
+prtvalue
+	ld a,d
+	srl a
+	srl a
+	srl a
+	srl a
+	call printhex
+	ld a,d
+	and 15
+	call printhex
+	ld a,e
+	srl a
+	srl a
+	srl a
+	srl a
+	call printhex
+	ld a,e
+	and 15
+	call printhex
+	ld a,32
+	jp printchr
+	
+	
+printhex
+	push de
+	add a,48
+	cp 58
+	jr c,wasnumber1
+	add a,7 
+wasnumber1
+	call printchr
+	pop de
+	ret   
+	
+prtchrmessage 
+	ld a,(ix+0)
+	cp 255
+	ret z
+	push ix
+	call printchr
+	pop ix
+	inc ix
+	jr prtchrmessage 
+
+	if computer=spectrum	
+afdemessage defb 22,0,0," AF   BC   DE   HL   IX",22,1,0,255
+	else
+afdemessage defb 31,1,1," AF   BC   DE   HL   IX",31,1,2,255
+	endif
+
+

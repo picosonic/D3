@@ -1,0 +1,7770 @@
+ÖÚ (ÿ]X0      PDS	200000000â
+
+save	equ 0
+u 1
+00
+
+5ea7 - &5fff  sp set to &5ea6
+ote the code"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+F0F1F2F3F4F5F6F7F8F9;  
+;
+;  PDS Pc1.10 :000:  (C)  1985-7 P.D Systems   
+;
+;
+;       File  "     DIZZY 3       "
+;    Version          05.50        
+;         By  " THE OLIVER TWINS  "
+;    
+;     Created on Tue the 14th of Jun 1988  
+;        Last update 13:36 on 19/12/89 
+; 
+;	use amstrad dl1 at &af80  stack unchanged
+;	use spectrum dl1 at &5ea7 - &5fff  sp set to &5ea6
+
+spectrum	equ 1
+amstrad	equ 0
+pds	equ 0
+cheatversion	equ 0
+seeproxbox	equ 0
+seecoins	equ 0
+ifmode128	equ 1
+save	equ 0
+disc	equ 0
+
+	skip 10
+
+computer	equ SPECTRUM
+	if computer=spectrum
+	org &6000
+reloc	ld bc,&7ffd
+	ld a,&13
+	out (c),a
+	ld de,&c000
+	ld hl,music128
+	ld bc,&4000
+	ldir
+	ld bc,&7ffd
+	ld a,&10
+	out (c),a
+	ret
+
+music128
+	org music128,&c000
+
+bankstart
+	include MUSIC128.SPC
+OLDSCR
+;	include treaspic.scr
+	include newtreas.scr
+	INCLUDE NEWSPEEC.SPC
+
+;	include speech.spc
+;	include fwdizzy.tlk
+;	include bytot.tlk
+
+bankend
+
+	bank &10,reloc
+	
+;	org &f989
+;	include MUSIC48.SPC
+
+ifmem128	equ 23627
+	org 23627
+	defb ifmode128
+
+	endif
+
+	if computer=amstrad
+	send computer1	
+	org &40
+	include music.ams
+musicend
+	org &c000
+	include diz3ams1.scr
+	include diz3ams2.scr
+	org musicend
+	endif
+
+	if computer=spectrum
+	send computer2
+	org &4000
+	include diz3spec.scr
+	org &6100
+	endif
+
+	if save=0
+exec	exec exec
+	endif
+entercodehere
+
+	if computer=spectrum
+	di
+	ld sp,&6000-2
+	im 1
+	ei
+	endif
+
+	if computer=amstrad
+	ld hl,attritable+5*32
+	ld de,attritable+5*32+1
+	ld (hl),01000010b
+	ld bc,19*32
+	ldir
+	endif
+
+	call setup
+	jp titlescreen
+
+	if computer=spectrum
+
+check128	ld e,a
+	ld a,(ifmem128)
+	and a
+	ld a,e
+	ret nz
+	pop hl
+	ret
+
+starttune        call check128
+	di
+	push ix
+	call ramon
+	ld a,e
+	call initune
+	call ramoff
+	pop ix
+	ei
+	ret	
+
+finishmusic	call check128
+	call inittune128
+finishmusiclp
+	halt
+	di
+	call ramon
+	ld a,(monoff)
+	call ramoff
+	ei
+	and a
+	jr nz,finishmusiclp
+	ret
+
+inittune128	di
+	call ramon
+	call initune
+	call ramoff
+	ei
+	ret
+
+dosndfx	call check128
+	di
+	call ramon
+	call initfx
+	call ramoff
+	ei
+	ret		
+
+
+musicoff	call check128
+	call ramon
+	call turnoff
+	jp ramoff
+
+
+ramon	push af
+	ld a,&13
+	jr outthis
+ramoff	push af
+	ld a,&10
+outthis	ld bc,&7ffd
+	out (c),a
+	pop af
+	ret
+
+updatemusicingame
+	call check128
+	call ramon
+	call refresh
+	jp ramoff
+
+taptapcount	defb 1
+
+	endif
+
+
+
+	if computer=amstrad
+starttune	equ initune
+musicoff	equ turnoff
+dosndfx	equ initfx
+
+
+finishmusic	push ix
+	call initune
+finishmusiclp	ld a,(monoff)
+	and a
+	jr nz,finishmusiclp
+	call turnoff
+	pop ix
+	ret
+
+;sayfwdizzy	 
+;	include speech.ams
+;	include fwdizzy.tlk
+
+seeifstarttune
+	ld a,(killed)
+	and a
+	ret nz
+	push ix
+	ld a,(monoff)
+	and a
+	ld a,6
+	call z,initune
+	pop ix
+	ret
+
+	endif
+
+
+titlescreenlp	call getkeybyte
+	and %1001
+	ret z
+				;start key hit
+	call musicoff
+	ld a,1
+	and a
+	ret
+
+
+	if computer=spectrum
+
+sayfwdizzy	call check128
+	di
+	call ramon
+	call dospeech
+	call ramoff
+	ei
+	ret	
+
+
+dotreasurepic	
+	call clearplayarea
+	di
+	call ramon
+	call printpicture
+	call ramoff
+	ei
+	jp windowrou2
+
+
+seeifstarttune	ld a,(killed)
+	and a
+	ret nz
+	ld a,(ifmem128)
+	and a
+	ret z
+	push ix
+	di
+	call ramon
+	ld a,(monoff)
+	and a
+	ld a,6
+	call z,initune
+	di
+	call ramoff
+	ei
+	pop ix
+	ret
+
+	endif
+
+“
+
+
+
+
+
+
+
+
+
+¬O¢cI (ÿ™]X1      PDS	600010000ÀO
+usedoorknockermess
+ARING:BOXING:GLOVES",mend,mend
++3
+
+S FOR DOING THINGS
+S"
+
+6+64
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+F0F1F2F3F4F5F6F7F8F9;  
+;
+;  PDS Pc1.10 :000:  (C)  1985-7 P.D Systems   
+;
+;
+;       File  "     DIZZY 3       "
+;    Version          05.54        
+;         By  " THE OLIVER TWINS  "
+;    
+;     Created on Tue the 14th of Jun 1988  
+;        Last update 13:36 on 19/12/89 
+; 
+
+dizzyx	defb 10
+dizzyy	defb 10
+dizzyfrm	defb 10
+dizzyox	defb 10
+dizzyoy	defb 10
+dizzyofrm	defb 10
+
+startmess
+ defb mxy+19,49,mpen+3,  "FANTASY:WORLD"
+ defb mxy+24,80,mpen+2,  "STARRING"
+ defb mxy+20,89,         "THE:YOLKFOLK"
+ defb mxy+20,108,mpen+5,"D",mxy+22,106,"I",mxy+24,104,"Z"
+ defb mxy+26,102,"Z",mxy+28,100,"Y"
+
+ defb mxy+35,100,"D",mxy+37,102,"A",mxy+39,104,"I"
+ defb mxy+41,106,"S",mxy+43,108,"Y"
+
+ defb mxy+9,142, "DENZIL:DYLAN"
+ defb mxy+35,136,"DOZY"
+ defb mxy+46,136,"GRAND"
+ defb mxy+46,144, "DIZZY"
+ defb mpen+6,":" 
+ defb mend
+
+	if computer=spectrum
+screentable			;speccy
+
+	HEX 00400041004200430044004500460047
+	HEX 20402041204220432044204520462047
+	HEX 40404041404240434044404540464047
+	HEX 60406041604260436044604560466047
+	HEX 80408041804280438044804580468047
+	HEX A040A041A042A043A044A045A046A047
+	HEX C040C041C042C043C044C045C046C047
+	HEX E040E041E042E043E044E045E046E047
+	HEX 00480049004A004B004C004D004E004F
+	HEX 20482049204A204B204C204D204E204F
+	HEX 40484049404A404B404C404D404E404F
+	HEX 60486049604A604B604C604D604E604F
+	HEX 80488049804A804B804C804D804E804F
+	HEX A048A049A04AA04BA04CA04DA04EA04F
+	HEX C048C049C04AC04BC04CC04DC04EC04F
+	HEX E048E049E04AE04BE04CE04DE04EE04F
+	HEX 00500051005200530054005500560057
+	HEX 20502051205220532054205520562057
+	HEX 40504051405240534054405540564057
+ 	HEX 60506051605260536054605560566057
+	HEX 80508051805280538054805580568057
+	HEX A050A051A052A053A054A055A056A057
+	HEX C050C051C052C053C054C055C056C057
+	HEX E050E051E052E053E054E055E056E057
+
+
+	endif
+
+
+	if computer=amstrad
+screentable		;stored top line first and 8 bytes in
+
+	HEX 08C008C808D008D808E008E808F008F8
+	HEX 58C058C858D058D858E058E858F058F8
+	HEX A8C0A8C8A8D0A8D8A8E0A8E8A8F0A8F8
+	HEX F8C0F8C8F8D0F8D8F8E0F8E8F8F0F8F8
+	HEX 48C148C948D148D948E148E948F148F9
+	HEX 98C198C998D198D998E198E998F198F9
+	HEX E8C1E8C9E8D1E8D9E8E1E8E9E8F1E8F9
+	HEX 38C238CA38D238DA38E238EA38F238FA
+	HEX 88C288CA88D288DA88E288EA88F288FA
+	HEX D8C2D8CAD8D2D8DAD8E2D8EAD8F2D8FA
+	HEX 28C328CB28D328DB28E328EB28F328FB
+	HEX 78C378CB78D378DB78E378EB78F378FB
+	HEX C8C3C8CBC8D3C8DBC8E3C8EBC8F3C8FB
+	HEX 18C418CC18D418DC18E418EC18F418FC
+	HEX 68C468CC68D468DC68E468EC68F468FC
+	HEX B8C4B8CCB8D4B8DCB8E4B8ECB8F4B8FC
+	HEX 08C508CD08D508DD08E508ED08F508FD
+	HEX 58C558CD58D558DD58E558ED58F558FD
+	HEX A8C5A8CDA8D5A8DDA8E5A8EDA8F5A8FD
+	HEX F8C5F8CDF8D5F8DDF8E5F8EDF8F5F8FD
+	HEX 48C648CE48D648DE48E648EE48F648FE
+	HEX 98C698CE98D698DE98E698EE98F698FE
+	HEX E8C6E8CEE8D6E8DEE8E6E8EEE8F6E8FE
+	HEX 38C738CF38D738DF38E738EF38F738FF
+	HEX 88C788CF88D788DF88E788EF88F788FF
+
+	endif
+
+roomdata
+
+	include roomdata.dat
+
+roomnames	defw room0 ,room1 ,room2 ,room3 ,room4 ,room5 ,room6 ,room7
+	defw room8 ,room9 ,room10,room11,room12,room13,room14,room15
+	defw room16,room17,room18,room19,room20,room21,room22,room23
+	defw room24,room25,room26,room27,room28,room29,room30,room31
+	defw room32,room33,room34,room35,room36,room37,room38,room39
+	defw room40,room41,room42,room43,room44,room45,room46,room47
+	defw room48,room49,room50,room51,room52,room53,room54,room55
+	defw room56,room57,room58,room59,room60,room61,room62,room63
+	defw room64,room65,room66,room67,room68,room69,room70,room71
+	defw room72,room73,room74,room75,room76,room77,room78,room79
+	defw room80,room81,room82,room83,room84,room85,room86,room87
+	defw room88,room89,room90,room91,room92,room93,room94,room95
+	defw room96,room97,room98,room99,room100
+
+	if computer=spectrum
+readytoprintname	defb mpen+6,mxy+12,24,mend
+	endif	
+
+	if computer=amstrad
+readytoprintname	defb mpen+4,mxy+12,24,mend
+	endif	
+
+emptyroom	defb "::::::::SKY:::::::::",mend
+room0	defb "SPC:OR:FIRE:TO:START",mend	
+room1
+room2
+room3
+room4
+room5
+room6
+room7
+room8
+room9
+room10
+room11
+room12
+room13
+room14
+room15
+room16
+room17
+room18
+room19
+room20
+room21
+room22	defb ":THE:MARKET:SQUARE::",mend
+room23	defb "A:STRANGE:NEW:WORLD@",mend
+room24	defb ":INSIDE:THE:CHURCH::",mend
+room25
+room26
+room27
+room28
+room29
+room30
+room31	defb "THE:AMAZING:ILLUSION",mend
+room32
+room33
+room34
+room35	defb ":SMUGGLER;S:HIDEOUT:",mend
+room36	defb "THE:CASTLE;S:DUNGEON",mend
+room37	
+room38
+room39	defb "GOING:DOWN:THE:WELL@",mend
+room40	defb ":THE:DRAGON;S:LAIR::",mend
+room41	defb ":THE:DESERTED:MINES:",mend
+room42
+room43
+room44
+room45	defb ":LOOKING:OUT:TO:SEA:",mend
+room46	defb ":THE:DOCKS:AND:PIER:",mend
+room47	defb ":FOURWAY:WAREHOUSE::",mend
+room48	defb ":THE:BROKEN:BRIDGE::",mend
+room49	defb "::THE:GUARD:HOUSE:::",mend
+room50	defb ":::ARMOROG;S:DEN::::",mend
+room51	defb "MOAT:AND:PORTCULLIS:",mend
+room52	defb ":THE:ENTRANCE:HALL::",mend
+room53	defb "THE:SNAP:HAPPY:GATOR",mend
+room54	defb "THE:WIDE=EYED:DRAGON",mend
+room55	defb "THE:BOTTOMLESS:WELL:",mend
+room56	defb "THE:LIFT:CONTROL:HUT",mend 
+room57	defb ":BASE:OF:TREE:HOUSE:",mend
+room58	defb "THE:SMELLY:ALLOTMENT",mend
+room59	defb ":THE:LARGE:OAK:TREE:",mend
+room60	defb "BASE:OF:THE:VOLCANO:",mend
+room61
+room62
+room63	defb "::THE:CRAFTY:CLOUD::",mend
+room64
+room65
+room66
+room67	defb ":::THE:WEST:WING::::",mend
+room68	defb "::THE:BANQUET:HALL::",mend
+room69	defb ":::THE:EAST:WING::::",mend
+room70	equ emptyroom
+room71	defb "KEEP:OUT@:DOZY;S:HUT",mend
+room72	defb "::::DENZIL;S:PAD::::",mend
+room73	defb ":DAISY;S:EMPTY:HUT::",mend
+room74	defb "THE:GIANT:BEANSTALK:",mend	
+room75	defb "COMPLEX:CLOUD:ROUTE:",mend
+room76	defb "NEAR:THE:VOLCANO:TOP",mend
+room77	defb ":THE:ACTIVE:VOLCANO:",mend
+room78
+room79
+room80
+room81
+room82
+room83	defb ":::THE:WEST:TOWER:::",mend 
+room84	defb "THE:CASTLE:STAIRCASE",mend	
+room85	defb ":::THE:EAST:TOWER:::",mend
+room86	defb ":THE:LONGJUMP:CLOUD:",mend
+room87	defb "::THE:MEETING:HALL::",mend
+room88	defb ":LIFT:TO:THE:ELDERS:",mend
+room89	defb "DIZZY;S:PARENTS:HUT:",mend
+room90
+room91	defb "::YET:MORE:CLOUDS:::",mend
+room92	defb "MORE:;ORRIBLE:CLOUDS",mend
+room93	defb "::THE:CLOUD:CASTLE::",mend
+room94	defb ":::DAISY;S:PRISON:::",mend
+room95
+room96
+room97
+room98
+room99
+room100	defb ":::::THE:ATTIC::::::",mend
+
+cointable	;;;  x   y   room
+	defb 58 ,152,63
+	defb 38 ,120,31
+	defb 52 ,102,59
+	defb 58 ,136,55
+	defb 76 ,128,55
+	defb 56 ,72 ,73	;;
+	defb 82 ,152,86
+	defb 44 ,160,24
+	defb 36 ,104,22
+	defb 44 ,64 ,41
+	defb 54 ,112,77
+	defb 82 ,160,36
+	defb 86 ,128,46
+	defb 68 ,88 ,92
+	defb 62 ,112,67
+	defb 84 ,112,68
+	defb 40 ,160,69
+	defb 84 ,128,56
+	defb 58 ,96,89
+	defb 60,152,94
+	defb 62,160,49
+	defb 88,152,51
+	defb 60,96,84
+	defb 84,160,87
+	defb 72,160,57
+	defb 56,88,75
+	defb 50,72,40
+	defb 76,80,72
+	defb 86,88,52		;;
+	defb 70,64,76
+
+
+endcointable
+totalcoins	equ (endcointable-cointable)/3
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;PEOPLE TALKING MESSAGES
+trollgotapplemess
+	defb mpen+7,mxy+2,48,drawbox,13,5,mpen+3
+	defb mxy+11,72,"YOU:GIVE"
+	defb mxy+10,80,"THE:APPLE"
+	defb mxy+7,88,"TO:THE:TROLL",mend
+	defb mpen+5,mxy+16,80,drawbox,11,5,mpen+6
+	defb mxy+23,104,"&FOR:ME?"
+	defb mxy+22,112,"YOU;RE:SO"
+	defb mxy+22,120,"GENEROUS'",mend
+	defb mpen+5,mxy+8,48,drawbox,20,6,mpen+6
+	defb mxy+16,72,"&I;D:LIKE:TO:LET"
+	defb mxy+16,80,"YOU:PASS<:BUT:IF"
+	defb mxy+14,88,"THE:KING:FOUND:OUT"
+	defb mxy+15,96,"HE;D:TORTURE:ME@'",mend
+	defb mpen+5,mxy+6,112,drawbox,22,5,mpen+6
+	defb mxy+13,136,"&HOWEVER<:YOU:COULD"
+	defb mxy+14,144,"ESCAPE:THROUGH:THE"
+	defb mxy+11,152,"FIRE:USING:THE:WATER'",mend,mend
+
+
+
+shopkeeperappearsmess
+	defb mpen+7,mxy+2,96,drawbox,20,5,mpen+3
+	defb mxy+10,120,"PING@:>>>:AND:AS"
+	defb mxy+10,128,"IF:BY:MAGIC<:THE"
+	defb mxy+8,136,"SHOPKEEPER:APPEARS",mend
+
+givingjunkmess	defb mpen+5,mxy+2,96,drawbox,25,4,mpen+6
+	defb mxy+10,120,"&THAT;S:NO:GOOD:TO:ME"
+	defb mxy+8,128,"GIV;:US:SOMETHIN;:ELSE'",mend
+
+stopgivingjunkmess
+	defb mpen+5,mxy+2,96,drawbox,19,4,mpen+6
+	defb mxy+10,120,"&STOP:GIVIN;:US"
+	defb mxy+11,128,"ALL:THAT:TRASH'",mend
+
+shoptalk	defw beanhere+room
+thanksforthecowmess
+	defb mpen+5,mxy+2,80,drawbox,26,4,mpen+6
+	defb mxy+8,104,"&G;DAY:DIZ<:AHH@:A:PIGMY"
+	defb mxy+9,112, "COW:THAT;S:INTERESTIN;'",mend
+tencoinsmess	defb mpen+4,mxy+10,120,drawbox,22,4,mpen+3
+	defb mxy+18,144,"&WELL<:HOW;S:ABOUT"
+	defb mxy+15,152,"10:GOLD:COINS:FOR:IT'",mend
+nottengoldcoins	defb mpen+5,mxy+18,48,drawbox,18,5,mpen+6
+	defb mxy+24,72,"&STREWTH:MATE<:I"
+	defb mxy+24,80,"SAID:INTERESTIN;"
+	defb mxy+27,88,"NOT:VALUABLE'",mend
+fivecoinsmess	defb mpen+4,mxy+2,104,drawbox,15,4,mpen+3
+	defb mxy+11,128,"&WELL<:OK<"
+	defb mxy+8,136,"5:GOLD:COINS'",mend
+notfivegoldcoins	defb mpen+5,mxy+6,72,drawbox,24,5,mpen+6
+	defb mxy+13,96, "&BE:SERIOUS<:IT:AIN;T"
+	defb mxy+14,104,"WORTH:SPIT<:HERE;S:A"
+	defb mxy+12,112,"BEAN<:THAT;S:GENEROUS'",mend
+erumbut	defb mpen+4,mxy+16,112,drawbox,10,4,mpen+3
+	defb mxy+22,136,"&ER<:UM<"
+	defb mxy+22,144,"BUT:>>>'",mend
+throwsbean	defb mpen+5,mxy+2,48,drawbox,11,5,mpen+6
+	defb mxy+8,72,"&NOW:STOP"
+	defb mxy+8,80,":WASTIN;"
+	defb mxy+7,88,":MY:TIME'"
+	defb mpen+7,mxy+12,112,drawbox,15,5,mpen+3
+	defb mxy+18,136,"AND:HE:THROWS"
+	defb mxy+21,144,":THE:BEAN"
+	defb mxy+19,152,"ON:THE:CRATE",mend
+letsfaceitmess	defb mpen+7,mxy+8,80,drawbox,20,5,mpen+3
+	defb mxy+15,104,"YOU:LEAVE:=:LET;S"
+	defb mxy+18,112,"FACE:IT:DIZZY<"
+	defb mxy+15,120,"YOU:CAN;T:BARTER@",mend,mend
+
+
+dozytalking	defw sleepingpotionhere+room
+	defb mpen+4,mxy+30,48,drawbox,12,4,mpen+3
+	defb mxy+36,72, "&HEY@:DOZY"
+	defb mxy+38,80, "GET:UP@'",mend
+
+	defb mpen+7,mxy+2,80,drawbox,16,5,mpen+3
+	defb mxy+10,104,"YOU:KICK:THE"
+	defb mxy+8,112, "DECK:CHAIR:AND"
+	defb mxy+11,120,"HE:WAKES:UP",mend
+
+	defb mpen+5,mxy+12,112,drawbox,17,4,mpen+6
+	defb mxy+18,136,"&OH@:WHAT;S:THE"
+	defb mxy+20,144,"PROBLEM:DIZZY'",mend
+
+	defb mpen+4,mxy+2,48,drawbox,26,7,mpen+3
+	defb mxy+9,72,  "&DAISY;S:BEEN:EGGNAPPED"
+	defb mxy+8,80,  "AND:IS:BEING:HELD:IN:THE"
+	defb mxy+10,88, "WIZARD;S:CLOUD:CASTLE<"
+	defb mxy+12,96, "AND:NOBODY:WILL:HELP"
+	defb mxy+17,104,"ME:RESCUE:HER@'",mend
+
+	defb mpen+5,mxy+2,88,drawbox,14,6,mpen+6
+	defb mxy+8 ,112,"&AHH<:THAT;S"
+	defb mxy+11,120,"BAD:LUCK>"
+	defb mxy+11,128,"I;LL:HELP"
+	defb mxy+10,136, "YOU:DIZZY'",mend
+
+	defb mpen+5,mxy+18,112,drawbox,18,5,mpen+6
+	defb mxy+28,136,"&HERE;S:SOME"
+	defb mxy+24,144,"SLEEPING:POTION<"
+	defb mxy+23,152,"THAT:SHOULD:HELP'",mend
+
+	defb mpen+4,mxy+2,120,drawbox,17,4,mpen+3
+	defb mxy+10,144,"&BUT:I;D:LIKE"
+	defb mxy+8,152,"YOU:TO:HELP:ME'",mend
+
+	defb mpen+5,mxy+2,48,drawbox,16,7,mpen+6
+	defb mxy+9,72,"&SORRY:DIZZY<"
+	defb mxy+10,80,"LOVE:TO<:BUT"
+	defb mxy+10,88,"IT;S:FAR:TOO"
+	defb mxy+9,96, "NICE:A:DAY:TO"
+	defb mxy+7,104,"RESCUE:MAIDENS'",mend
+
+	defb mpen+7,mxy+8,80,drawbox,20,5,mpen+3
+	defb mxy+14,104,"I:DON;T:THINK:HE;S"
+	defb mxy+14,112,"GOING:TO:HELP<:AND"
+	defb mxy+14,120,"HE;S:FALLEN:ASLEEP",mend,mend
+
+kickdozyagainmess
+	defb mpen+7,mxy+10,80,drawbox,17,4,mpen+3
+	defb mxy+18,104,"YOU:KICK:DOZY"
+	defb mxy+16,112,"BUT:HE;S:ASLEEP",mend
+
+pushdozymess	defb mpen+7,mxy+6,72,drawbox,22,6,mpen+3
+	defb mxy+14,96,"WHOOPS@:YOU:KICKED"
+	defb mxy+13,104,"TOO:HARD:AND:DOZY;S"
+	defb mxy+11,112,"FALLEN:INTO:THE:WATER"
+	defb mxy+11,120,"AND:HE;S:STILL:ASLEEP",mend
+
+
+duffmem	defb 0
+dylantalking	defw duffmem ;;poked value,so must point somewhere
+	defb mpen+5,mxy+2,48,drawbox,18,4,mpen+6
+	defb mxy+10,72, "&HEY:MAN<:LIKE"
+	defb mxy+7,80, "WHAT;S:HAPPENIN;'",mend
+
+	defb mpen+4,mxy+4,96,drawbox,24,6,mpen+3
+	defb mxy+10,120,"&PLEASE:HELP:ME:DYLAN<"
+	defb mxy+12,128,"I;M:TRYING:TO:RESCUE"
+	defb mxy+10,136,"DAISY:BUT:I:CAN;T:FIND"
+	defb mxy+14,144,"THE:CLOUD:CASTLE>'",mend
+
+	defb mpen+5,mxy+12,72,drawbox,19,5,mpen+6
+	defb mxy+18,96, "&IT;S:QUITE:EASY<"
+	defb mxy+18,104,"REMEMBER:HOW:JACK"
+	defb mxy+18,112,"FOUND:THE:CASTLE'"
+	defb mend,mend
+
+trancemess	defb mpen+7,mxy+4,80,drawbox,24,4,mpen+3
+	defb mxy+14,104,"HOW:STRANGE<:DYLAN"
+	defb mxy+9,112,"SEEMS:TO:BE:IN:A:TRANCE",mend
+ 
+denziltalking	defw ropehere+room
+	defb mpen+4,mxy+2,96,drawbox,26,5,mpen+3
+	defb mxy+8,120,"&WHAT:ARE:YOU:DOING:HERE"
+	defb mxy+10,128, "DENZIL<:DON;T:YOU:KNOW"
+	defb mxy+12,136, "IT;S:DANGEROUS:HERE'",mend
+
+	defb mpen+5,mxy+2,48,drawbox,24,6,mpen+6
+	defb mxy+9,72,  "&HEY<:STAY:COOL<:DIZ>"
+	defb mxy+10,80, "I:SAW:THE:KING:LEAVE"
+	defb mxy+9,88,  "AND:THOUGHT:I;D:CHECK"
+	defb mxy+15,96,  "OUT:THE:CASTLE'",mend
+
+	defb mpen+4,mxy+4,96,drawbox,24,7,mpen+3
+	defb mxy+10,120, "&BUT<:DAISY:AND:I:WERE"
+	defb mxy+12,128, "CAUGHT>:I:WAS:THROWN"
+	defb mxy+13,136, "IN:THE:DUNGEONS:AND"
+	defb mxy+11,144, "DAISY;S:BEEN:TAKEN:TO"
+	defb mxy+12,152, "THE:WIZARD;S:CASTLE'",mend
+
+	defb mpen+5,mxy+2,48,drawbox,26,7,mpen+6
+	defb mxy+10,72,"&OH@:WE;D:ALL:WONDERED"
+	defb mxy+9,80, "WHERE:YOU:TWO:HAD:GONE>"
+	defb mxy+11,88,"I;M:TOO:BUSY:TO:HELP<"
+	defb mxy+12,96,"BUT:HERE;S:YOUR:ROPE"
+	defb mxy+9,104,"YOU:LENT:ME:LAST:WEEK>'"
+
+	defb mend,mend
+
+stereoess	defb mpen+7,mxy+8,80,drawbox,19,5,mpen+3
+	defb mxy+13,104,"DENZIL;S:TURNED:UP"
+	defb mxy+18,112,"HIS:STEREO:UP"
+	defb mxy+16,120,"IS:IGNORING:YOU",mend
+ 
+
+daisytalking	;;;;;;;;;;;;;defw beanhere+room
+;;;	defb mend,mend
+
+gottodaisymess	defb mpen+5,mxy+2,48,drawbox,17,5,mpen+6
+	defb mxy+8,72,"&OH@:MY:HERO<:I"
+	defb mxy+8,80,"KNEW:YOU;D:COME"
+	defb mxy+9,88,"TO:MY:RESCUE@'",mend
+daisyrunsmess
+	defb mpen+7,mxy+4,64,drawbox,24,9,mpen+3
+	defb mxy+13,88, "WELL<:DAISY:DOESN;T"
+	defb mxy+10,96, "HANG:AROUND<:SHE;S:RUN"
+	defb mxy+11,104,"HOME:AND:WANTS:YOU:TO"
+	defb mxy+9,112, "BRING:HER:30:GOLD:COINS"
+	defb mxy+11,120,"SO:THAT:YOU:CAN:BUY:A"
+	defb mxy+10,128,"HOME:TOGETHER:AND:LIVE"
+	defb mxy+14,136,"HAPPILY:EVER:AFTER",mend
+
+notgotallcoins	defb mpen+5,mxy+2,48,drawbox,21,6,mpen+6
+	defb mxy+10,72, "&OH@:DIZZY:YOU;RE"
+	defb mxy+8,80,  "SO:BRAVE:AND:CLEVER"
+	defb mxy+9,88,  "AND:NOW:WE:CAN:BUY"
+	defb mxy+9,96,  "THAT:TREE:COTTAGE'",mend
+
+	defb mpen+4,mxy+6,112,drawbox,24,5,mpen+3
+	defb mxy+12,136, "&ER<:UM<:WELL:ACTUALLY"
+	defb mxy+13,144, "I:WAS:WONDERING:IF:WE"
+	defb mxy+14,152, "NEEDED:ALL:30:COINS'",mend
+
+	defb mpen+5,mxy+6,64,drawbox,21,4,mpen+6
+	defb mxy+12,88,"&YOU:DISAPPOINT:ME<"
+	defb mxy+14,96, "OF:COURSE:WE:DO@'",mend
+
+	defb mpen+7,mxy+8,80,drawbox,21,5,mpen+3
+	defb mxy+15,104,"BACK:YOU:GO:DIZZY>"
+	defb mxy+15,112,"SHE;S:A:REAL:SLAVE"
+	defb mxy+13,120,"DRIVER;:BUT:WORTH:IT"
+	defb mend,mend
+
+gotallcoins
+	defb mpen+5,mxy+2,48,drawbox,24,3,mpen+6
+	defb mxy+8,72, "&WOW@:YOU;VE:GOT:THEM'",mend
+
+	defb mpen+4,mxy+4,128,drawbox,24,3,mpen+3
+	defb mxy+10,152, "&WELL<:IT:WAS:NOTHING'",mend
+
+	defb mpen+7,mxy+20,88,drawbox,7,3,mpen+3
+	defb mxy+26,112,"LIAR@",mend
+
+	defb mpen+7,mxy+4,80,drawbox,23,5,mpen+3
+	defb mxy+10,104,"AND:SO:WE:SAY:GOODBYE"
+	defb mxy+12,112,"TO:THE:HAPPY:COUPLE"
+	defb mxy+16,120,"UNTIL:>>>>>",mend
+
+	defb mpen+7,mxy+8,72,drawbox,20,10,mpen+3
+	defb mxy+13,96,"WELL:WHO:KNOWS:WHAT"
+	defb mxy+15,104,"MIGHT:HAPPEN:NEXT",mpen+4
+	defb mxy+16,120,"WE:HOPE:YOU:HAVE"
+	defb mxy+15,128,"ENJOYED:THIS:GAME",mpen+2
+	defb mxy+16,140,"THAT;S:ALL:FOLKS",mpen+5
+	defb mxy+16,152,"THE:OLIVER:TWINS"
+
+	defb mend,mend
+
+
+
+
+
+dougtalking	defw crowbarhere+room
+
+	defb mpen+5,mxy+2,48,drawbox,25,6,mpen+6
+	defb mxy+9,72, "&AFTERNOON:YOUNG:DIZZY"
+	defb mxy+14,80,"YOU:LOOK:FRANTIC<"
+	defb mxy+8,88, "ANYTHING:YOUR:OLD:GRAND"
+	defb mxy+9,96, "DIZZY:CAN:DO:TO:HELP?'",mend
+
+	defb mpen+4,mxy+6,104,drawbox,24,6,mpen+3
+	defb mxy+15,128,"&HAVEN;T:YOU:HEARD<"
+	defb mxy+13,136,"DAISY;S:BEING:HELD:IN"
+	defb mxy+14,144,"THE:CLOUD:CASTLE:AND"
+	defb mxy+11,152,"I;M:TRYING:TO:SAVE:HER'",mend
+
+	defb mpen+5,mxy+12,48,drawbox,21,4,mpen+6
+	defb mxy+18,72,"&JUST:WAIT:HERE:AND"
+	defb mxy+21,80,"I;LL:GET:MY:HAT'",mend
+
+	defb mpen+4,mxy+2,96,drawbox,25,5,mpen+3
+	defb mxy+9,120,"&WHAT@:WELL:THANKS:FOR"
+	defb mxy+8,128,"OFFERING:TO:HELP<:BUT:I"
+	defb mxy+9,136,"THINK:YOU:SHOULD:STAY'",mend
+
+	defb mpen+5,mxy+4,64,drawbox,24,6,mpen+6
+	defb mxy+13,88, "&WELL<:IF:YOU:THINK"
+	defb mxy+10,96, "IT;S:BEST<:BUT:PLEASE<"
+	defb mxy+14,104,"TAKE:THIS:CROWBAR>"
+	defb mxy+11,112,"I:REMEMBER:WHEN>>>>>'",mend
+
+	defb mpen+7,mxy+6,80,drawbox,22,5,mpen+3
+	defb mxy+13,104,"YOU:DECIDE:TO:LEAVE"
+	defb mxy+12,112,"AS:HE:STARTS:TO:TELL"
+	defb mxy+12,120,"YOU:HIS:LIFE:HISTORY",mend
+		
+	defb mend,mend
+
+goonmysonmess	defb mpen+5,mxy+2,48,drawbox,21,5,mpen+6
+	defb mxy+10,72,"OH:NO@:HE;S:STILL"
+	defb mxy+10,80,"WAFFLING:ON:ABOUT"
+	defb mxy+8,88, "HIS:PAST:ADVENTURES",mend
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;MESSAGES FOR DOING THINGS
+
+
+throwwateronfiremess
+	defb mpen+7,mxy+2,48,drawbox,21,6,mpen+3
+	defb mxy+10,72, "YOU:THROW:THE:JUG"
+	defb mxy+10,80,"OF:WATER:ONTO:THE"
+	defb mxy+8,88, "FIRE:AND:THE:FLAMES"
+	defb mxy+7,96, "ARE:QUICKLY:QUENCHED",mend
+
+lookatpicturemess
+	defb mpen+7,mxy+2,96,drawbox,23,6,mpen+3
+	defb mxy+11,120, "YOU:LOOK:UP:AT:THE"
+	defb mxy+9,128,  "PICTURE>:IT;S:YOU:IN"
+	defb mxy+10,136, "YOUR:LAST:ADVENTURE",mpen+5
+	defb mxy+8,144,  "TREASURE:ISLAND:DIZZY",mend
+
+throwwateronbeanmess
+	defb mpen+7,mxy+2,48,drawbox,26,8,mpen+3
+	defb mxy+8,72,  "YOU:THROW:YOUR:BUCKET:OF"
+	defb mxy+13,80, "WATER:ONTO:THE:BEAN",mpen+5
+	defb mxy+11,88, "YOU:JUMP:CLEAR:AS:THE"
+	defb mxy+10,96, "GROUND:RUMBLES:AND:THE"
+	defb mxy+12,104,"BEANSTALK:SPIRALS:UP"
+	defb mxy+14,112,"THROUGH:THE:CLOUDS",mend
+
+plantbeanmess	defb mpen+7,mxy+6,48,drawbox,22,5,mpen+3
+	defb mxy+12,72,"THIS:TIME:YOU:DECIDE"
+	defb mxy+15,80,"TO:PLANT:THE:BEAN"
+	defb mxy+15,88,"IN:THE:DRY:MANURE"
+	defb mpen+2,mxy+2,112,drawbox,16,4,mpen+6
+	defb mxy+8,136,":>>>:BUT:IT:IS"
+	defb mxy+8,144,"UNABLE:TO:GROW",mend
+
+pickupmanuremess	defb mpen+7,mxy+2,48,drawbox,26,5,mpen+3
+	defb mxy+6,72,"OH@:HOW:DISGUSTING@YOU:TRY"
+	defb mxy+7,80,"TO:PICK:UP:THE:MANURE:BUT"
+	defb mxy+8,88,"IT:SLIPS:FROM:YOUR:HANDS",mend
+
+
+throwswitchmess	defb mpen+7,mxy+2,48,drawbox,15,5,mpen+3
+	defb mxy+8,72,"YOU:THROW:THE"
+	defb mxy+8,80,"LEVER:TO:;ON;"
+	defb mxy+8,88,"BUT:IT:BREAKS",mend
+
+fedarmorog	defb mpen+7,mxy+2,48,drawbox,18,4,mpen+3
+	defb mxy+8,72,"THAT:BONE:SHOULD"
+	defb mxy+10,80,"KEEP:HIM:BUSY@",mend
+
+dragonasleepmess	defb mpen+7,mxy+2,48,drawbox,21,6,mpen+3
+	defb mxy+8,72,"YOU:SMASH:THE:FLASK"
+	defb mxy+10,80,"OF:POTION:AND:THE"
+	defb mxy+9,88,"DRAGON:INHALES:THE"
+	defb mxy+8,96,"INTOXICATING:VAPOUR",mend
+
+
+croctiedmess	defb mpen+7,mxy+2,48,drawbox,19,5,mpen+3
+	defb mxy+11,72,"YOU:NIMBLY:TIE"
+	defb mxy+10,80,"THE:ROPE:AROUND"
+	defb mxy+8,88, "THE:GATOR;S:SNOUT",mend
+
+rockinwatermess	defb mpen+7,mxy+2,112,drawbox,26,5,mpen+3
+	defb mxy+6,136,"YOU:PUSH:THE:ROCK:INTO:THE"
+	defb mxy+6,144,"RIVER:AND:IT:DISPLACES:THE"
+	defb mxy+8,152,"WATER<:RAISING:THE:LEVEL",mend
+keyinmachine
+	defb mpen+7,mxy+2,48,drawbox,24,5,mpen+3
+	defb mxy+8,72,"YOU:TRY:THE:KEY:IN:THE"
+	defb mxy+13,80,"LOCK:AND:IT:FITS@"
+	defb mxy+8,88,"SO:YOU:TURN:IT:TO:;ON;",mend
+
+fillbucketmess	defb mpen+7,mxy+2,48,drawbox,21,4,mpen+3
+	defb mxy+8,72,"YOU:FILL:YOUR:EMPTY"
+	defb mxy+10,80,"BUCKET:WITH:WATER",mend
+
+thanksforloafmess
+	defb mpen+7,mxy+2,48,drawbox,18,5,mpen+3
+	defb mxy+8,72, "THE:RAVENOUS:RAT"
+	defb mxy+11,80,"EATS:THE:LOAF"
+	defb mxy+11,88,"AND:RUNS:AWAY",mend
+puteggbackmess
+	defb mpen+7,mxy+2,48,drawbox,20,6,mpen+3
+	defb mxy+11,72,"YOU:PUT:THE:EGG"
+	defb mxy+8,80, "BACK:INTO:THE:NEST"
+	defb mxy+12,88,"AND:THE:DRAGON"
+	defb mxy+8,96, "ALLOWS:YOU:TO:PASS",mend
+
+goawaymess	defb mpen+5,mxy+2,48,drawbox,26,5,mpen+6
+	defb mxy+10,72,"&OH:NO@:NOT:YOU:AGAIN>"
+	defb mxy+12,80, "GO:AWAY>:I;M:HIDING<"
+	defb mxy+8,88, "AND:IT;S:ALL:YOUR:FAULT'",mend
+
+
+knockandentermess
+	defb mpen+2,mxy+2,96,drawbox,17,3,mpen+6
+	defb mxy+8,120, "KNOCK:AND:ENTER",mend
+
+	defb mpen+7,mxy+6,48,drawbox,22,5,mpen+3
+	defb mxy+14,72, "THAT;S:EASIER:SAID"	
+	defb mxy+11,80, "THAN:DONE:WHEN:YOU;RE"
+	defb mxy+11,88, "WEARING:BOXING:GLOVES",mend,mend
+
+usedoorknockermess
+	defb mpen+7,mxy+2,48,drawbox,20,5,mpen+3
+	defb mxy+12,72,"USING:THE:DOOR"
+	defb mxy+8,80,"KNOCKER<:YOU:KNOCK"
+	defb mxy+8,88,"AND:THE:DOOR:OPENS",mend
+
+usecrowbarmess	defb mpen+7,mxy+2,48,drawbox,19,5,mpen+3
+	defb mxy+8,72,"USING:THE:CROWBAR"
+	defb mxy+8,80,"YOU:FORCE:THE:LID"
+	defb mxy+13,88,"OFF:THE:WELL",mend
+usepickaxemess
+	defb mpen+7,mxy+2,48,drawbox,22,4,mpen+3
+	defb mxy+9,72,"YOU:USE:THE:PICKAXE"
+	defb mxy+8,80,"TO:BREAK:UP:THE:ROCK",mend
+
+obstructingliftmess
+	defb mpen+2,mxy+14,80,drawbox,14,4,mpen+6
+	defb mxy+21,104,"STAND:CLEAR"
+	defb mxy+21,112,"OF:THE:LIFT",mend
+
+userugmess	defb mpen+7,mxy+10,80,drawbox,17,6,mpen+3
+	defb mxy+18,104,"YOU:THROW:THE"
+	defb mxy+17,112,"RUG:ACROSS:THE"
+	defb mxy+16,120,"DAGGERS<:MAKING"
+	defb mxy+22,128,"THEM:SAFE",mend
+
+
+dropwhiskeymess	defb mpen+2,mxy+2,48,drawbox,14,7,mpen+6
+	defb mxy+8,72,  "YOU:FIND:THE"
+	defb mxy+9,80,  "WHISKEY:TOO"
+	defb mxy+9,88,  "TEMPTING:TO"
+	defb mxy+9,96,  "DROP:AND:SO"
+	defb mxy+11,104,"DRINK:IT@",mend
+
+getbackintheremess
+	defb mpen+5,mxy+2,48,drawbox,21,4,mpen+6
+ 	defb mxy+10,72,  "&OY@:WHERE:DO:YOU"
+	defb mxy+7,80,  "THINK:YOU;RE:GOING@'",mend
+
+
+holdingholemess	defb mpen+2,mxy+2,48,drawbox,16,7,mpen+6
+	defb mxy+8,72,"WHOOPS@:",mpen+4,"YOU;VE"
+	defb mxy+9,80,"GOT:A:HOLE:IN"
+	defb mxy+10,88,"YOUR:BAG:AND"
+	defb mxy+8,96,"EVERYTHING:HAS"
+	defb mxy+10,104,"DROPPED:OUT@",mend
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;ALL DEAD MESSAGES
+
+deadwindow	defb mpen+6,mxy+10,64,drawbox,18,6
+	defb mxy+16,112,mpen+2,"YOU:LOSE:A:LIFE@",mpen+5,mend
+armorogkilledmess
+	defb mxy+18,88,"ARMOROG:CAUGHT"
+	defb mxy+17,100,"YOU:TRESPASSING"
+	defb mend
+
+killedbyportcullis
+	defb mxy+16,88,"YOU:WERE:STABBED"
+	defb mxy+16,96,"BY:THE:SPIKES:OF"
+	defb mxy+18,104,"THE:PORTCULLIS"
+	defb mend
+
+killedbyliftmess	defb mxy+17,88,"YOU:GOT:TRAPPED"
+	defb mxy+18,96,"IN:THE:COGS:ON"
+	defb mxy+17,104,"TOP:OF:THE:LIFT"
+	defb mend
+
+dragonkilledmess	defb mxy+16,88, "THE:DRAGON:BITES"
+	defb mxy+16,96, "YOU:AND:YOU:KEEL"
+	defb mxy+20,104,"OVER:AND:DIE"
+	defb mend
+
+dragonflameskilledmess
+	defb mxy+17,88, "YOU:ARE:ROASTED"
+	defb mxy+17,96, "BY:THE:DRAGON;S"
+	defb mxy+20,104,"FIERY:BREATH"
+	defb mend
+
+killedbyflame	defb mxy+18,88,"YOU:WERE:BURNT"
+	defb mxy+19,100,"BY:THE:FLAMES"
+	defb mend
+
+killedbywater	defb mxy+17,88, "YOU:FELL:IN:THE"
+	defb mxy+15,100,"WATER:AND:DROWNED"
+	defb mend
+
+croceatenmess	defb mxy+19,88,"THE:GATOR:HAS"
+	defb mxy+19,100,"YOU:FOR:LUNCH"
+	defb mend
+
+killedbyhawk	defb mxy+18,88,"THE:DIZZY:HAWK"
+	defb mxy+21,96,"SWOOPS:DOWN"
+	defb mxy+19,104,"AND:KILLS:YOU"
+	defb mend
+
+ratgotyoumess	defb mxy+20,88,"THE:RAT:GOES"
+	defb mxy+20,96,"STRAIGHT:FOR"
+	defb mxy+23,104,"YOUR:NECK"
+	defb mend
+
+killedbyvolcano	defb mxy+18,88, "YOU:WERE:BURNT"
+	defb mxy+17,96, "BY:THE:HOT:LAVA"
+	defb mxy+18,104,"IN:THE:VOLCANO"
+	defb mend
+
+killedbydaggersmess
+	defb mxy+14,88, "YOU;RE:SKEWERED:BY"
+	defb mxy+15,100,"THE:SHARP:DAGGERS"
+	defb mend
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;ODD MESSAGES
+
+youfoundcoinmess
+	defb mpen+5,mxy+16,64,drawbox,12,5,mpen+3
+	defb mxy+22,88,"WELL:DONE@",mpen+6
+	defb mxy+23,96,"YOU:FOUND"
+	defb mxy+26,104,"A:COIN",mend
+	
+inventory	defb mpen+4,mxy+6,56,drawbox,22,6,mxy+16,76
+carrymess	defb mpen+5,"YOU:ARE:CARRYING",mpen+2,mend
+inventorywithbag	defb mpen+4,mxy+6,48,drawbox,22,8,mxy+16,68,mgosub
+	defw carrymess
+	defb mend
+
+selectitemmess	defb mpen+7,mxy+14,136,drawbox,14,2,mpen+5
+	defb mxy+18,152,"CHOOSE:ITEM:TO"
+	defb mxy+21,160,"USE:OR:DROP",mend
+
+carryingtoomuchmess
+	defb mpen+7,mxy+12,136,drawbox,16,2,mpen+5
+	defb mxy+16,152,"YOU:ARE:CARRYING"
+	defb mxy+16,160,"TOO:MUCH:TO:HOLD",mend
+
+nothingatallmess defb mxy+22,96,mpen+7
+	defb "N",mxy+25,96,"O",mxy+28,96,"T",mxy+31,96
+	defb "H",mxy+34,96,"I",mxy+37,96,"N",mxy+40,96,"G",mend
+
+
+nothingheremess	defb mend
+bagmess	defb "EXIT:AND:DON;T:DROP",mend
+greenbeanmess	defb "A:SINGLE:GREEN:BEAN",mend
+bonemess	defb "A:FRESH:MEATY:BONE",mend
+goldeneggmess	defb "A:HEAVY:DRAGON:EGG",mend
+blackholemess	defb "A:LARGE:ROUND:HOLE",mend
+sleeppotionmess	defb "SOME:SLEEPING:POTION",mend
+applemess	defb "A:FRESH:GREEN:APPLE",mend
+jugmess	defb "A:JUG:OF:COLD:WATER",mend
+loafmess	defb "STALE:LOAF:OF:BREAD",mend
+fullwhiskeymess	defb "A:BOTTLE:OF:WHISKEY",mend
+ropemess	defb "A:PIECE:OF:ROPE",mend
+
+
+	if computer=spectrum
+beforerelocate
+	org &ff01
+	endif
+rockmess	defb "A:HEAVY:BOULDER",mend
+fullwinemess	defb "A:BOTTLE:OF:WINE",mend
+emptybottlemess	defb "AN:EMPTY:BOTTLE",mend
+keymess	defb "A:SHINY:GOLD:KEY",mend
+mtbucketmess	defb "AN:EMPTY:BUCKET",mend
+fullbucketmess	defb "A:BUCKET:OF:WATER",mend
+leavesmess	defb "A:CLUMP:OF:LEAVES",mend
+pigmycowmess	defb "A:CUTE:PIGMY:COW",mend
+railingmess	defb "A:PIECE:OF:RAILING",mend
+doorknockermess	defb "BRASS:DOOR:KNOCKER",mend
+crowbarmess	defb "A:STRONG:CROWBAR",mend
+pickaxemess	defb "A:RUSTY:OLD:PICKAXE",mend
+rugmess	defb "AN:OLD:THICK:RUG",mend
+windowmess	defb "A:WINDOW:FRAME",mend
+
+	if computer=spectrum
+	org beforerelocate
+	endif
+
+
+“
+
+
+
+
+
+
+
+
+
+ J<¬ (ÿ¡]X2      PDS	000000006			;;jp settojumpout
+e down tumble
+estart
+p
+32 ,0 ,0 ,5+64 ,56,50 ,116,127
+ 
+
+
+F0F1F2F3F4F5F6F7F8F9;  
+;
+;  PDS Pc1.24 :000: (c) P.D.Systems Ltd 1985-88
+;
+;
+;       File  "     DIZZY 3       "
+;    Version          03.18        
+;         By  " THE OLIVER TWINS  "
+;    
+;     Created on Mon the 12th of Sep 1988  
+;        Last update 13:36 on 19/12/89 
+; 
+titlescreen
+	ld a,1
+	ld (dontupdatedizzy),a
+
+	xor a
+	ld (roomno),a
+	call roomsetup
+	ld hl,startmess
+	call prtmessage
+
+	ld a,27		;;prt dizzy logo
+	ld e,58
+	ld l,57
+	call store_sprite_vars1
+	call plotattris
+	call frame
+
+	if computer=spectrum
+	call sayfwdizzy
+
+	ld b,50
+ddelay	halt
+	djnz ddelay
+
+	endif
+
+	xor a
+	call starttune	;;;init tune
+keeptesting	call titlescreenlp	
+	jr z,keeptesting
+
+	call resetmoving
+	call resetcoins
+	call resetcarrying
+resetlives
+	ld a,3
+	ld (lives),a
+
+	ld a,46
+	ld (startx),a
+	ld a,168
+	ld (starty),a
+	ld a,36
+	ld (startroom),a
+	xor a
+	ld (completedgame),a
+
+	call checkforposcheat
+	
+nextlife
+	call subfromlives
+
+	call starteggres
+
+	ld a,1
+	call starttune
+
+	xor a
+ 	ld (oldclock),a
+	ld (clock),a
+	ld (dontupdatedizzy),a
+maingamelp
+
+notpickup	xor a
+	ld (pickup),a
+	ld a,(usepickup)
+	and a
+	jr z,oktopickup
+	dec a
+	ld (usepickup),a
+	jr notfacing
+oktopickup	ld a,(sequence)
+	and a
+	jr nz,notfacing
+	ld a,(keybyte)
+	bit 3,a
+	jr z,notfacing
+	ld a,255
+	ld (pickup),a
+notfacing
+	call domoving
+	ld a,(killed)
+	cp 1
+	jr z,wantaquickkill
+afterdomoving
+	call pickupcoins
+	call tryputtingdown
+
+	call updatewater	
+	call updateflames
+
+	call checkholdinghole
+	call checkifdrunk
+	call shopkeeperrou
+
+wantaquickkill	
+	if computer=spectrum
+	ld a,0*32+3		;;;;c for cheat
+	endif
+	if computer=amstrad
+	ld a,62
+	endif
+	call inkey
+	call z,cheated
+
+	ld a,(newroomno)
+	ld b,a
+	ld a,(roomno)
+	cp b
+	jp z,notanewroom
+			;;;only a problem if newroomno(b) =23 or 55
+			;;;when roomno=39
+			;;;or if newroomno=39 (set path to tumble)
+	cp 39
+	jr z,leaving39
+	ld a,b
+	cp 7
+	jr z,fallenoutof23
+	cp 39
+	jp nz,gotoenterroom
+
+fallenoutof23	ld a,39
+	ld (newroomno),a
+				;;set to ordinary tumble
+	ld a,(roomno)
+	ld (lastroom),a
+	di
+	xor a
+	ld (animation),a
+	ld (left),a
+	ld (right),a
+	ld a,4
+	ld (dy),a
+	ld a,3
+	ld (sequence),a
+	ei
+	jp gotoenterroom
+
+
+leaving39	ld a,b
+	cp 23
+	jr z,flipandsettumble
+
+notroom23			;were going up on seq. 8
+	ld a,(lastroom)
+	cp 55
+	ld a,23
+	jr z,settojumpout
+	ld a,55
+			;;jp settojumpout
+
+
+settojumpout	ld (newroomno),a
+			;;set path to jump (+ve x)
+	di
+	xor a
+	ld (animation),a
+	ld (left),a
+	ld a,1
+	ld (right),a
+	ld a,-8
+	ld (dy),a
+	ld a,5
+	ld (sequence),a
+	ei
+	jp gotoenterroom
+
+
+flipandsettumble
+			;;set path to upside down tumble
+	di
+	ld a,180	
+	ld (y),a
+	
+	xor a
+	ld (animation),a
+	ld (left),a
+	ld (right),a
+			;;(dy) will automatically be set to -6
+	ld a,8
+	ld (sequence),a
+
+	ld a,(upsidedown)
+	xor 1
+	ld (upsidedown),a
+
+	ld a,39
+	ld (newroomno),a
+	ei
+
+gotoenterroom	call enterroom
+	xor a
+	ld (dontupdatedizzy),a
+
+notanewroom	
+
+	if pds=1
+			;;;;pds quit
+	ld a,pdskey
+	call inkey
+	jr nz,contmaingamelp
+	di
+	ld b,0
+	ret		;;;;;;;;;;;;;
+	endif
+
+contmaingamelp	if computer=spectrum
+	ld a,2*32
+	endif
+	if computer=amstrad
+	ld a,67
+	endif
+	call inkey
+	jr z,quitted
+
+
+clocklp	ld a,(oldclock)
+	ld b,a
+	ld a,(clock)
+	sub b
+	cp 3			;;;main loop cycle time 1/50 secs unit
+	jr c,clocklp
+	
+	ld a,(clock)
+	ld (oldclock),a
+
+	call seeifstarttune
+
+
+	ld a,(completedgame)
+	and a
+	jr nz,quitted
+
+notdonegame	ld a,(killed)
+	and a
+	jp z,maingamelp
+	dec a
+	ld (killed),a
+	jp nz,maingamelp
+
+	ld a,1
+	ld (dontupdatedizzy),a
+	ld hl,deadwindow
+	call prtmessage
+	ld hl,(killedmess)
+	call prtmessage
+	
+	ld a,2
+	call finishmusic
+
+	ld a,1
+	ld (killed),a		;;so music does not restart
+
+	call waitforkey
+
+	call ruboutdizzy
+
+	ld a,(lives)
+	and a
+	jp nz,nextlife
+
+
+quitted	call flipscreenrou
+	xor a
+	ld (upsidedown),a
+
+	if computer=amstrad
+	call turnoff
+	endif
+	if computer=spectrum
+	ld a,(ifmem128)
+	and a
+	jr z,onlylittle
+	call ramon
+	call turnoff
+	call ramoff
+onlylittle
+	endif
+
+	jp titlescreen	
+
+
+
+cheated	ld a,(poscheat)
+	and a
+	ret z
+	ld a,1
+	ld (dontupdatedizzy),a
+cheated1	call getkeybyte
+	ld c,a
+	ld a,(roomno)
+	ld b,a
+	bit 2,c   ;;left key
+	jr z,cheatnl
+	dec b
+cheatnl	bit 1,c   ;;right key
+	jr z,cheatnr
+	inc b
+cheatnr	bit 4,c
+	jr z,cheatnu
+	ld a,b
+	sub a,16
+	ld b,a
+cheatnu	bit 5,c
+	jr z,cheatnd
+	ld a,b
+	add a,16
+	ld b,a
+cheatnd	bit 0,c	;;;jump key
+	jr nz,outcheat
+	ld a,(roomno)
+	cp b
+	jr z,cheated1
+	ld a,b
+	cp 101
+	jr c,cheatroomok
+	xor a
+cheatroomok
+	ld (newroomno),a
+	ld (roomno),a
+	call roomsetup
+
+handsofcheat	call getkeybyte
+	and %1111
+	jr nz,handsofcheat 
+
+	jp cheated1
+outcheat	xor a
+	ld (dontupdatedizzy),a
+	jp plotnew
+
+
+checkforposcheat	ld a,cheatversion
+	ld (poscheat),a
+	ld hl,cheatkeys
+	ld b,5
+cheatkeyslp	ld a,(hl)
+	call inkey
+	ret nz
+	inc hl
+	djnz cheatkeyslp
+	ld b,5
+cheatkeyslp1	ld a,(hl)
+	call inkey
+	ret z
+	inc hl
+	djnz cheatkeyslp1
+	ld a,1
+	ld (poscheat),a
+	ret
+
+	if computer=amstrad
+;;		D  Y  L  A  N   not  Q  G  K  V  T
+cheatkeys	defb  61,43,36,69,46,      67,52,37,55,51
+	endif
+
+	if computer=spectrum
+;;		P   A    F      W      D
+cheatkeys	defb 5*32,1*32,1*32+3,2*32+1,1*32+2
+;;	not  Q    G      K      V  T
+	defb 2*32,1*32+4,6*32+2,4,2*32+4
+	endif
+
+
+printandwait	call prtmessage
+handoffandwait	call getkeybyte
+	and a
+	jr nz,handoffandwait
+waitforkey
+	call seeifstarttune
+	call getkeybyte
+	and a
+	jr z,waitforkey
+	ret
+
+
+;;; moving stuff
+room	equ 0
+rou	equ 1
+movex	equ 2
+movey	equ 3
+movefrm	equ 4
+oldmovex	equ 5
+oldmovey	equ 6
+oldmovefrm	equ 7
+delay	equ 8
+delaycounter	equ 9
+var1	equ 10
+colour	equ 11
+origroom	equ 12
+origx	equ 13
+origy	equ 14
+origfrm	equ 15
+
+portcullis	equ 0
+portswitch	equ 1
+pickupable	equ 2
+armorog	equ 3
+dragon	equ 4
+crocodile	equ 5
+log	equ 6
+hawk	equ 7
+machines	equ 8	
+lift	equ 9
+dozyfloat	equ 10
+rat	equ 11
+troll	equ 12
+dagger	equ 13
+door 	equ 14
+crowbar	equ 15
+miner	equ 16
+daisy	equ 17
+switch1	equ 18
+daisy1	equ 19
+
+
+;;colour byte     7   6   5     4   3   2   1   0
+;;               rev:dull:atplot:plot: colour
+movingdata
+;;    room,rou,     x  ,y  ,frm,oldx,oldy,ofrm,dly,v1,v2,col ,orm,orx,ory,ofrm
+
+
+ defb 49,hawk      ,60 ,80 ,97 
+ defw			 nothingheremess
+ defb 						 0   ,2  ,0 ,0 ,5+8+16,49 ,60 ,80 ,97
+ defb 55,pickupable,48 ,144,1
+ defw			 bagmess
+ defb                                     0   ,0  ,0 ,0 ,2+64,55 ,48 ,144,1
+porthere
+ defb 51,portcullis,76 ,136,120,96,136,   0   ,4  ,0 ,0 ,7   ,51 ,76 ,96,120
+ defb 51,portswitch,66 ,78 ,122,0   ,0   ,0   ,0  ,0 ,0 ,5+64,51 ,66 ,78 ,122
+shopkeeperhere
+ defb 22,pickupable,68 ,136,105
+ defw	               pigmycowmess,shoptalk
+ defb 						            0 ,0 ,7+64,255,68,136,105
+shopkeeperhere1
+ defb 22,crowbar,68+4,136,105
+ defw	               pigmycowmess,shoptalk
+ defb 						         0 ,0 ,7+64+128,255,68+4,136,105
+ defb 72,pickupable,62 ,144,11
+ defw	               blackholemess
+ defb 						 0   ,0  ,0 ,0 ,7+64,72 ,62 ,144,11
+
+manurehere
+ defb 58,pickupable,72 ,170,3
+ defw	               0	;;;pickupmanuremess
+ defb 						 0,   0,  0 ,0 ,2+64,58,72 ,170,3
+
+ defb 36,pickupable,58 ,136,17
+ defw	               applemess,proxapple
+ defb 						          0 ,0 ,4+64,255,58 ,136,17
+bonehere
+ defb 100,pickupable,52 ,160,6
+ defw                           bonemess
+ defb                                     0   ,0  ,0 ,0 ,7+64,100 ,52 ,160,6
+beanhere
+ defb 22,pickupable,68 ,160,2
+ defw	               greenbeanmess,proxbean
+ defb 						          0 ,0 ,4+64,255 ,62 ,144,2
+goldenegghere
+ defb 93,pickupable,80 ,152,10
+ defw	               goldeneggmess,proxegg
+ defb 						          0 ,0 ,7+64,93 ,80 ,152,10
+ defb 50,pickupable,86 ,160,138
+ defw	               rockmess,proxrock
+ defb 						          0 ,0 ,2+64,50 ,86 ,160,138
+armoroghere
+ defb 50,armorog   ,54 ,156,102,0   ,0   ,0   ,2  ,0 ,0 ,2+64+8,50 ,54 ,156,102  
+dragonhere
+ defb 54,dragon    ,68 ,152,109,0   ,0   ,0   ,0  ,0 ,0 ,2+64,54 ,68 ,152,109
+sleepingpotionhere
+ defb 45,pickupable,80 ,128,15
+ defw	               sleeppotionmess,proxsleep
+ defb 						          0 ,0 ,6+64,255,80 ,128,15
+ defb 53,crocodile ,70 ,152,123,0   ,0   ,0   ,0  ,0 ,0 ,4+8,53 ,70 ,152,123
+ropehere
+ defb 68,pickupable,76 ,160,14
+ defw	               ropemess,proxcroc
+ defb 						          0 ,0 ,7+64,255,76 ,160,14
+ defb 35,pickupable,58 ,136,139
+ defw	               rockmess,proxrock
+ defb 						          0 ,0 ,2+64,35 ,58,136,139
+ defb 53,pickupable,90 ,144,136
+ defw	               rockmess,proxrock
+ defb 						          0 ,0 ,2+64,53 ,90 ,144,136
+ defb 48,log       ,60 ,136,158,0   ,0   ,0   ,4  ,0 ,0 ,2+8 ,48 ,60 ,136,158
+whiskeyhere
+ defb 53,pickupable,50 ,136,18
+ defw	               fullwhiskeymess,emptybottlemess
+ defb 						          0 ,0 ,6+64,53 ,50 ,136,18
+
+ defb 71,lift      ,52 ,56 ,125,56,112,   0   ,1  ,0 ,0 ,7+16,71 ,52,48 ,125
+ defb 56,machines  ,50 ,116,127 ,0   ,0   ,0   ,32 ,0 ,0 ,5+64 ,56,50 ,116,127
+ defb 85,pickupable,46 ,136,13
+ defw	               keymess,proxkey1
+ defb 						          0 ,0 ,6+64,85 ,46 ,136,13
+
+ defb 40,lift      ,40 ,56 ,125,56,134,   0   ,1  ,0 ,0 ,7+16,40 ,40,56 ,125
+ defb 56,machines  ,72 ,116,127 ,0   ,0   ,0   ,32 ,0 ,0 ,5+64,56,72 ,116,127
+ defb 24,pickupable,80 ,136,13
+ defw	               keymess,proxkey2
+ defb 						          0 ,0 ,6+64,24 ,80 ,136,13
+
+ defb 88,lift      ,58 ,56 ,125,56,136,   0   ,1  ,0 ,0 ,7+16,88 ,58,48 ,125
+ defb 56,machines  ,52 ,156,127 ,0   ,0   ,0   ,32 ,0 ,0 ,5+64,56,52 ,156 ,127
+ defb 60,pickupable,60 ,120,13
+ defw	               keymess,proxkey3
+ defb 						          0 ,0 ,6+64,60 ,60 ,120,13
+
+ defb 56,lift      ,60 ,104 ,125,104,140,   0   ,1  ,0 ,0 ,7+16 ,56 ,60,104 ,125
+ defb 56,machines  ,70 ,156,127 ,0   ,0   ,0   ,32 ,0 ,0 ,5+64,56,70 ,156,127
+ defb 48,pickupable,40 ,96,13
+ defw	               keymess,proxkey4
+ defb 						          0 ,0 ,6+64,48 ,40 ,96,13
+buckethere
+ defb 83,pickupable,80 ,144,5
+ defw	               mtbucketmess,proxmtbucket
+ defb 						          0 ,0 ,5+64,83,80 ,144,5
+ defb 60,pickupable,46 ,144,5
+ defw	               fullbucketmess,proxfullbucket
+ defb 						          0 ,0 ,5+64,255,46 ,144,5
+ defb 59,pickupable,52 ,102,206
+ defw	               leavesmess
+ defb 						 0,   0,  0 ,0 ,4+64,59,52 ,102,206
+ defb 58,pickupable,60 ,160,7
+ defw	               pigmycowmess
+ defb 						 0,   0,  0 ,0 ,7+64,58,60 ,160,7
+ defb 55,pickupable,58 ,136,206
+ defw	               leavesmess
+ defb 						 0,   0,  0 ,0 ,4+64,55,58 ,136,206
+ defb 55,pickupable,76 ,128,192
+ defw	               railingmess
+ defb 						 0,   0,  0 ,0 ,2+64,55,76 ,128,192
+dozyhere
+ defb 45,pickupable,74 ,116,32
+ defw	               dozyrou,dozytalking
+ defb 						            0 ,0 ,7+64,45,74 ,116,32
+dozyfloathere
+ defb 45,dozyfloat,68 ,139,32,0  ,0  ,0   ,0,      0 ,0 ,7+64+16+8,45,68,139,32
+
+
+ defb 36,pickupable,68 ,144,19
+ defw	               jugmess,proxjug
+ defb 						          0 ,0 ,5+64,36,68 ,144,19
+loafhere
+ defb 36,pickupable,72 ,144,20
+ defw	               loafmess,proxloaf
+ defb 						        0 ,0 ,6+64,36,72 ,144,20
+rathere
+ defb 36,rat       ,42 ,73 ,104,44,80 ,   0   ,2  ,0 ,0 ,5+16+8,36,96,73 ,104
+trollhere
+ defb 36,troll     ,78 ,136,96 ,44,80 ,   0   ,0  ,0 ,0 ,4+64 ,36,78,136 ,96
+ defb 69,dagger    ,78 ,136,169 ,0 ,0 ,   0   ,0  ,0 ,0 ,7+64 ,69,40,112 ,169
+ defb 89,pickupable,58 ,136,21
+ defw	           doorknockermess,proxdoor
+ defb 						          0 ,0 ,6+64,89,58 ,136,21
+doorhere
+ defb 84,door    ,34 ,144,177 ,0 ,0 ,   0   ,0  ,0 ,0 ,  2 ,84,34,144 ,177
+doughere
+ defb 88,pickupable,42 ,76,36
+ defw	               dougrou,dougtalking
+ defb 						            0 ,0 ,7+64,88,42,76,36
+dragonhere1
+ defb 40,dragon    ,68 ,152,109,0   ,0   ,0   ,0  ,0 ,0 ,4+64,40 ,68 ,152,109
+goldenegghere1
+ defb 40,pickupable,60 ,152,10
+ defw	               goldeneggmess
+ defb 						 0   ,0  ,0 ,0 ,7+64,40 ,60,152,10
+crowbarhere
+ defb 88,pickupable,48 ,80,4
+ defw	             crowbarmess,proxcrowbar
+ defb 						            0 ,0 ,5+64,255,48,80,4
+welllidhere
+ defb 55,crowbar  ,46 ,160,158 ,0 ,0 ,   0   ,0  ,0 ,0 ,  2 ,55,46,160,158
+ defb 87,pickupable,64 ,80,9
+ defw	             pickaxemess,proxpickaxe
+ defb 						            0 ,0 ,2+64,87,64,80,9
+rockhere
+ defb 41,crowbar  ,36 ,101,146 ,0 ,0 ,   0   ,0  ,0 ,0 ,  2+8,41,36,101,146
+ defb 41,miner     ,96 ,120,96 ,44,80 ,   0   ,0  ,0 ,0 ,4+64 ,41,96,120 ,96
+ defb 94,dagger    ,42 ,152,169 ,0 ,0 ,   0   ,0  ,0 ,0 ,7+64 ,94,42,152,169
+ defb 94,dagger    ,50 ,152,169 ,0 ,0 ,   0   ,0  ,0 ,0 ,7+64 ,94,50,152,169
+ defb 40,pickupable,52 ,112,12
+ defw	             rugmess,proxrug
+ defb 						            0 ,0 ,2+64,40,52,112,12
+carpethere
+ defb 94,crowbar  ,40 ,152,210 ,0 ,0 ,   0   ,0  ,0 ,0 ,  2,255,40,152,210
+carpethere1
+ defb 94,crowbar  ,46 ,152,210 ,0 ,0 ,   0   ,0  ,0 ,0 ,  2,255,46,152,210
+daisylifthere
+ defb 94,lift     ,74 ,56,125,56,120,   0   ,2  ,0 ,0  ,7  ,94 ,74,48,125
+daisyhere
+ defb 94,daisy   ,75 ,80,35,0  ,0  ,0   ,2   ,  0 ,0 ,7+64+16+8,94,75,80,35
+ defb 94,switch1 ,62 ,70,122,0   ,0   ,0   ,2  ,0 ,0 ,5+64+8,94 ,62 ,70 ,122
+dylanhere
+ defb 59,pickupable,72 ,147,34
+ defw	               dylanrou,dylantalking
+ defb 						            0 ,0 ,7+64,59,72,147,34
+denzilhere
+ defb 68,pickupable,80 ,155,33
+ defw	               denzilrou,denziltalking
+ defb 						            0 ,0 ,7+64,68,80,155,33
+daisy1here
+ defb 73,daisy1,48 ,77,35,  0,0,0,2,   0 ,0 ,7+64,255,48,77,35
+ defb 56,pickupable,84 ,128,192
+ defw	               railingmess
+ defb 						 0,   0,  0 ,0 ,2+64,56,84 ,128,192
+ defb 72,pickupable,76 ,80,192
+ defw	               railingmess
+ defb 						 0,   0,  0 ,0 ,2+64,72,76 ,80,192
+ defb 73,pickupable,56 ,72,204
+ defw	               windowmess
+ defb 						 0,   0,  0 ,0 ,4+64,73,56 ,72,204
+ defb 52,pickupable,86 ,88,192
+ defw	               railingmess
+ defb 						 0,   0,  0 ,0 ,7+64,52,86 ,88,192
+
+
+
+;;    room,rou,     x  ,y  ,frm,oldx,oldy,ofrm,dly,v1,v2,col ,orm,orx,ory,ofrm
+
+
+endofmovingdata
+
+noofmoving	equ (endofmovingdata-movingdata)/16
+	if endofmovingdata-movingdata<>noofmoving*16
+	error "moving data typed in wrong
+	endif
+
+resetrous	defw resetportcullis
+	defw resetportswitch
+	defw resetpickupable
+	defw resetarmorog
+	defw resetdragon
+	defw resetcrocodile
+	defw resetlog
+	defw resethawk
+	defw resetmachines
+	defw resetlift
+	defw resetdozyfloat
+	defw resetrat
+	defw resettroll
+	defw resetdagger
+	defw resetdoor
+	defw printmoving		;;;resetcrowbar
+	defw resetminer
+	defw resetdaisy
+	defw resetswitch1
+	defw resetdaisy1
+
+movingrous	defw portcullisrou
+	defw portswitchrou
+	defw pickupablerou
+	defw armorogrou
+	defw dragonrou
+	defw crocodilerou
+	defw logrou
+	defw hawkrou
+	defw machinesrou
+	defw liftrou
+	defw dozyfloatrou
+	defw ratrou
+	defw trollrou
+	defw daggerrou
+	defw doorrou
+	defw rethere		;;crowbarrou
+	defw minerrou
+	defw daisyrou
+	defw switchrou1
+	defw daisyrou1
+
+
+
+“
+
+
+
+
+
+
+
+
+
+†s¦yƒ (ÿ]X3      PDS	400000000ˆs
+d (ix+0),a
+t
+p
+c
+ (sub) 
+;;heart demo
+;;;;;;HEART DEMO
+FOLK
+
+0
+2
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
++64,51 ,50 ,120,6
+F0F1F2F3F4F5F6F7F8F9;  
+;
+;  PDS Pc1.10 :000:  (C)  1985-7 P.D Systems   
+;
+;
+;       File  "     DIZZY 3       "
+;    Version          05.52        
+;         By  " THE OLIVER TWINS  "
+;    
+;     Created on Tue the 14th of Jun 1988  
+;        Last update 13:36 on 19/12/89 
+; 
+
+
+resetmoving	ld b,noofmoving
+	ld ix,movingdata
+	ld de,16
+resetmovinglp	call reseteach
+	add ix,de
+	djnz resetmovinglp
+	xor a
+	ld (waterheight),a
+	ld (fireout),a
+	ld (ratcount),a
+	ld (dragonhere+oldmovex),a
+	ld (dragonhere1+oldmovex),a
+	ld (doorhere+oldmovex),a
+	ld a,255
+	ld (shopkeepercount),a
+	ld (rathere+var1),a
+	ld a,60
+	ld (rathere+oldmovefrm),a
+	ld hl,fullwhiskeymess
+	ld (whiskeyhere+oldmovex),hl
+	ld a,1
+	ld (ratcoll+1),a
+	ld a,5+16+8	
+	ld (rathere+colour),a
+
+	ld hl,talkbefore
+	ld b,5
+scrubtalkbefore	ld (hl),0
+	inc hl
+	djnz scrubtalkbefore
+rethere	ret
+
+reseteach	ld a,(ix+origroom)
+	ld (ix+room),a
+	ld a,(ix+origx)
+	ld (ix+movex),a
+	ld a,(ix+origy)
+	ld (ix+movey),a
+	ld a,(ix+origfrm)
+	ld (ix+movefrm),a
+	xor a
+	ld (ix+var1),a
+	ld (ix+delaycounter),a
+	ret
+
+	
+resetroommoving	ld a,%00101000
+	call resetroommoving1
+	ld a,%00100000
+resetroommoving1	ld (patchpick),a
+	ld b,noofmoving
+	ld ix,movingdata
+resetroommovinglp
+	push bc
+	ld a,(ix+1)
+	cp pickupable
+patchpick	jr z,notprintyet
+	ld a,(roomno)
+	cp (ix+0)
+	push ix
+	ld hl,resetrous
+	call z,jumptoroutine
+	pop ix
+notprintyet	pop bc
+	ld de,16
+	add ix,de
+	djnz resetroommovinglp
+	ret
+
+
+domoving	ld b,noofmoving
+	ld ix,movingdata+(noofmoving-1)*16
+domovinglp	ld a,b
+	dec a
+	ld (slotno),a
+	push bc
+	ld a,(roomno)
+	cp (ix+0)
+	jr nz,notinthisroom
+	ld a,(ix+1)
+	cp pickupable
+	call nz,delayrou
+	push ix
+	ld hl,movingrous
+	call z,jumptoroutine
+	pop ix
+notinthisroom	pop bc
+	ld de,-16
+	add ix,de
+	djnz domovinglp
+	ret
+
+jumptoroutine	ld a,(ix+1)
+	cp 20
+	ret nc
+	add a,a
+	ld c,a
+	ld b,0
+	add hl,bc
+	ld e,(hl)
+	inc hl
+	ld d,(hl)
+	ex de,hl
+	jp (hl)
+
+
+	;;;checks if dizzy is in the box
+	;;;send l=x  h =y  e=width d=height
+
+	if seeproxbox=1
+proximitycollide	push hl
+	push de
+	push ix
+	ld a,l
+	sub 32
+	if computer=spectrum
+	srl a
+	endif	
+	ld (proxboxxpat+1),a
+	ld c,h
+	ld b,0
+	ld ix,screentable
+	sla c
+	rl b
+	add ix,bc
+	ld c,d
+proxboxy	push de
+	ld l,(ix+0)	
+	ld h,(ix+1)
+	ld b,e
+	if computer=spectrum
+	srl b	
+	endif
+proxboxxpat	ld de,0	
+	add hl,de
+workacross	ld (hl),255
+	inc hl
+	djnz workacross
+	pop de
+	inc ix 
+	inc ix
+	dec c
+	jr nz,proxboxy
+
+	pop ix
+	pop de
+	pop hl
+	jr joinprox	
+	endif
+
+
+collidewithdizzy3		;;destroys  ALL 
+	ld l,(ix+0)
+	ld h,(ix+1)
+	jr joincollide
+collidewithdizzy16		;;destroys  ALL 
+	ld l,(ix+movex)
+	ld h,(ix+movey)
+	ld a,(ix+movefrm)
+
+joincollide	ld (frmno),a
+	push hl
+	call findfrmsize 
+	pop hl
+	ld a,(frmheight)
+	ld d,a
+	ld a,(frmwidth)
+	ld e,a
+
+	if seeproxbox=0
+proximitycollide
+	endif
+joinprox	ld a,(dontupdatedizzy)
+	and a
+	ret nz
+	ld a,(killed)
+	and a
+	ret nz
+	ld a,(x)
+	add a,32
+	ld c,a
+	ld a,(y)
+	sub eggheight
+	ld b,a		;;c=x and b=y diz2
+				;;e=w1  d=h1
+				;;l=x1  h=y1
+collision	ld a,l
+	sub c
+	jr c,collidex1
+	cp eggwidth
+	ret nc
+	jr collidey
+collidex1	dec a
+	add a,e
+	ret nc
+
+collidey	ld a,h
+	sub b
+	jr c,collidey1
+	cp eggheight
+	ret
+collidey1	dec a
+	add a,d
+	ret
+	
+eggheight	equ 18
+eggwidth	equ 6
+
+delayrou	ld a,(ix+delay)
+	and a
+	ret z
+	ld b,a
+	ld a,(ix+delaycounter)
+	inc a
+	ld (ix+delaycounter),a
+	cp b
+	ret c
+	ld (ix+delaycounter),0
+	ret
+
+rubprintmoving	set 5,(ix+colour)		;;this instruction is patched !!!
+	call printmoving
+	res 5,(ix+colour)
+	ret
+
+printmoving	push ix
+	ld a,(ix+movefrm)
+	ld e,(ix+movex)
+	ld l,(ix+movey)
+	ld (frmno),a	
+	ld a,e
+	ld (frmx),a
+	ld a,l
+	ld (frmy),a
+	ld a,(ix+colour)
+	and %01000111
+	ld (frmattri),a
+	ld a,(ix+colour)
+	rlca
+	and 1
+	ld (frmreverse),a
+	ld a,(ix+colour)
+	and %00001000
+	rrca
+	rrca
+	rrca
+	ld (frmplotpatch+1),a
+	call findfrmsize
+	bit 5,(ix+colour)
+	call z,plotattris1
+frmplotpatch	ld a,1
+	ld (frmplot),a
+	call frame
+	pop ix
+	push ix
+	bit 5,(ix+colour)
+	call nz,plotattris2
+	pop ix
+	ret
+
+plotattris1	bit 4,(ix+colour)
+	ret nz
+	xor a
+	ld (frmplot),a
+	jp plotattris
+plotattris2	bit 4,(ix+colour)
+	ret nz
+	xor a
+	ld (frmplot),a
+	ld a,7+64
+	ld (frmattri),a
+	jp plotattris
+
+
+noofflames	defb 4
+noofwater	defb 0
+waterheight	defb 0
+watercolour	defb 0
+
+addtoflame	ld hl,flamelist
+	ld de,noofflames
+	ld c,0
+	jr joinaddtothing
+
+addtowater	ld a,(frmattri)
+	ld (watercolour),a
+	ld c,3
+	ld a,(roomno)
+	cp 48
+	jr nz,normalwater
+	ld a,(waterheight)
+	neg
+	add a,168
+	ld (frmy),a
+	ld b,3
+stretchwater	push bc
+	call frame
+	ld c,3
+	call normalwater
+	ld a,(frmx)
+	add a,8
+	ld (frmx),a
+	pop bc
+	djnz stretchwater	
+	ret
+normalwater	ld hl,waterlist
+	ld de,noofwater
+joinaddtothing
+	ld a,(de)
+	inc a
+	ld (de),a
+	dec a
+	ld e,a
+	rlca
+	add a,e
+	ld e,a
+	ld d,0
+	add hl,de
+	ld a,(frmx)
+	ld (hl),a
+	inc hl
+	ld a,(frmy)
+	ld (hl),a
+	inc hl
+	ld (hl),c
+	ret
+
+killdizzy	ld a,10
+killdizzy1	ld b,a
+	ld a,(killed)
+	and a
+	ret nz
+
+	ld a,b
+	ld (killed),a
+	ld (killedmess),hl
+	ld a,25
+	ld (sndfx),a
+	ret
+
+
+pickupcoins	ld a,(pickup)
+	and a
+	ret z
+	ld b,totalcoins
+	ld ix,cointable
+testpickupcoin	ld a,(roomno)
+	cp (ix+2)
+	jr nz,nocoinhere
+	push bc
+	xor a
+	call collidewithdizzy3
+	jr nc,notovercoin
+	set 7,(ix+2)
+	call addtocoins
+	xor a
+	ld (pickup),a
+	push ix
+	ld a,5
+	call starttune
+	ld hl,youfoundcoinmess
+	call windowrou
+	pop ix
+notovercoin	pop bc
+nocoinhere	ld de,3
+	add ix,de
+	djnz testpickupcoin
+	ret
+
+
+updatewater	ld a,(watercolour)
+	ld (frmattri),a
+	ld a,(noofwater)
+	ld ix,waterlist
+	and a
+	ret z
+	ld b,a
+updatewaterlp	push bc
+	push ix
+	ld a,(watercolour)
+	ld c,a
+	ld a,(ix+2)
+	inc a
+	and %11
+	ld (ix+2),a
+	add a,92
+	ld b,1
+	ld e,(ix+0)
+	ld l,(ix+1)
+	call store_sprite_vars
+	call frame
+	pop ix
+	ld l,(ix+0)
+	ld a,(ix+1)
+	add a,6
+	ld h,a
+	ld a,91
+	call joincollide
+	jr nc,notdrowned
+
+	ld a,30
+	ld (killed),a
+	ld a,6
+	ld (sequence),a	;;bob upside down
+	call checkkeys	;;resets left & right
+
+	ld a,(ix+1)
+	add a,14
+	ld (y),a
+	xor a
+	ld (dy),a
+	ld hl,killedbyvolcano
+	ld a,(roomno)
+	cp 77
+	jr z,yesfellinlava
+	ld hl,killedbywater
+yesfellinlava	ld (killedmess),hl
+notdrowned	
+	ld de,3
+	add ix,de
+	pop bc
+	djnz updatewaterlp
+	ret
+
+
+updateflames	ld a,(noofflames)
+	ld ix,flamelist
+	and a
+	ret z
+	ld b,a
+updateflamelp	push bc
+	call printflame	
+	ld a,(ix+2)
+	inc a
+	and %1111
+	ld (ix+2),a
+	call printflame
+	ld a,115
+	call collidewithdizzy3
+	jr nc,notburnt
+	xor a
+	ld (left),a
+	ld (right),a
+	ld a,50 ;;flame
+	ld hl,killedbyflame
+	call killdizzy1
+notburnt	ld de,3
+	add ix,de
+	pop bc
+	djnz updateflamelp
+	ret
+
+
+printflame	ld a,(ix+2)
+	and 2
+	rrca
+	rrca
+	ld b,a
+	add a,1
+	ld b,a
+	ld a,(ix+2)
+	and 1
+	rlca
+	rlca
+	xor 6+64
+	ld c,a
+	ld e,(ix+0)
+	ld l,(ix+1)
+	ld a,115
+simprintflame	push ix
+	call store_sprite_vars
+	call frame
+	pop ix
+	xor a
+	ld (frmplot),a
+	jp plotattris
+
+flamelist		;;x y frm
+	defs 4*3,0	
+waterlist	defs 8*3,0
+
+talkbefore	defs 5,0
+objectscarried	defs 4
+bag	defb 0
+
+
+endflamelist
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;PICKUPABLE
+
+pickupablerou	ld a,(pickup)
+	and a
+	ret z
+	call collidewithdizzy16
+	ret nc
+	xor a
+	ld (pickup),a
+	ld a,(ix+movefrm)
+	cp 105	
+	jp z,inventoryrou	;;;shopkeeper
+	cp 1
+	jr z,pickingupbag
+	cp 3
+	jr z,pickupmanure 
+	cp 32
+	jr c,notpickingupbag
+	cp 40
+	jp c,talkingtopeople
+
+notpickingupbag	ld hl,objectscarried
+	ld b,0
+lookforslot	ld a,(hl)
+	cp 1			;;;end of carry list
+	jr z,noslotsleft
+	and a
+	jr z,gotslot
+	inc hl
+	inc b
+	jr lookforslot
+gotslot	ld a,b
+	and a
+	jr z,nomovingback
+	dec hl
+	ld a,(hl)
+	inc hl
+	ld (hl),a
+	dec hl
+	djnz gotslot
+
+nomovingback	ld a,(slotno)
+	ld (objectscarried),a
+backtoinvent	ld (ix+room),255
+	jp inventoryrou
+noslotsleft	dec hl
+	ld a,(hl)
+	ld (objecttodrop),a
+	ld c,a
+	push ix
+	push bc
+	call dropobject
+	pop bc	
+	pop ix
+	dec b
+	ld a,1
+	ld (toomuchtohold),a
+	jr gotslot		;;;;inventoryrou
+
+resetpickupable	equ printmoving 
+
+pickingupbag	ld (bag),a
+	xor a
+	ld (objectscarried+2),a
+	jr backtoinvent
+pickupmanure	ld a,(manurehere+var1)
+	and a
+	jp nz,tryputtingdown1
+	ld hl,pickupmanuremess
+	ld a,1
+	ld (manurehere+var1),a
+	jp windowrou
+	
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TALKING TO YOLKFOLK
+talkingtopeople	ld a,(ix+movefrm)
+	cp 40
+	jr nc,notyolkfolk
+	sub 32
+	ld hl,talkbefore
+	ld c,a
+	ld b,0
+	add hl,bc
+	ld a,(hl)
+	and a
+	jr z,notyolkfolk1
+	res 3,(hl)
+	inc (hl)
+	ex de,hl
+	ld l,(ix+oldmovex)
+	ld h,(ix+oldmovey)
+	jp (hl)
+
+notyolkfolk1	ld (hl),1
+notyolkfolk	ld l,(ix+oldmovefrm)
+	ld h,(ix+delay)
+talkingtopeople1	
+	ld a,(roomno)
+	ld e,(hl)
+	inc hl
+	ld d,(hl)
+	inc hl
+	ld (de),a
+chatter	ld a,1
+	ld (dontupdatedizzy),a
+	call printandwait
+	ld a,(hl)
+	and a			;;;	cp mend
+	jr nz,chatter
+	jp windowrou1
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;DOZYROU
+dozyrou	ld a,(de)
+	cp 5
+	ld hl,kickdozyagainmess
+	jp c,windowrou
+	cp 6
+	ret nc
+	ld hl,pushdozymess
+	ld a,255
+	ld (dozyhere+room),a
+	ld (dozyfloathere+var1),a
+	jp windowrou
+	
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;DOUG ROU	
+dougrou	ld hl,goonmysonmess
+	jp windowrou
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;DYLAN ROU
+dylanrou	ld hl,trancemess
+	jp windowrou
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;DENZIL ROU
+denzilrou	ld hl,stereoess
+	jp windowrou
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;ARMOROG
+
+resetarmorog	ld a,(ix+var1)
+	cp 4
+	jp z,printmoving
+	call reseteach
+	res 7,(ix+colour)
+	jp printmoving
+armorogrou	call collidewithdizzy16
+	jr nc,armnotkilldizzy
+	ld hl,armorogkilledmess
+	xor a
+	ld (left),a
+	ld (right),a
+	ld a,20
+ 	call killdizzy1
+armnotkilldizzy	ld a,(ix+var1)
+	and a
+	jr z,armasleep
+	cp 1
+	jr z,armcountdown
+	cp 2
+	jr z,armrunning
+	cp 3
+	jp z,armguarding
+armhappy	ret	
+armasleep	ld hl,125*256+64
+	ld de,40*256+12
+	call proximitycollide
+	ret nc
+	ld (ix+var1),1
+	call rubprintmoving
+	ld (ix+movey),155
+	ld (ix+movefrm),103
+	call printmoving
+	ld a,20
+	ld (armoroghere+oldmovex),a
+armcountdown	ld a,(armoroghere+oldmovex)
+	dec a
+	ld (armoroghere+oldmovex),a
+	ret nz
+	ld (ix+var1),2
+armrunning
+	call flyback
+	call rubprintmoving
+	inc (ix+movex)
+	ld a,(ix+movefrm)
+	xor 1
+	ld (ix+movefrm),a
+	ld a,(y)
+	cp 150
+	jr nc,intoden
+	ld a,(bonehere+room)
+	cp 50
+	jr nz,guardarm
+	ld a,(bonehere+movex)
+	cp 80
+	jr c,guardarm
+	ld a,(bonehere+movey)
+	cp 140
+	jr c,guardarm
+
+intoden	ld a,(ix+movex)
+	cp 78
+	jp nz,printmoving
+	set 7,(ix+colour)
+	ld (ix+movey),156
+	ld (ix+var1),4
+	call printmoving
+	ld a,(killed)
+	and a
+	jp nz,reseteach
+	ld a,255
+	ld (bonehere+room),a
+	ld hl,fedarmorog
+	jp windowrou
+guardarm	call printmoving
+	ld a,(ix+movex)
+	cp 62
+	ret c
+	ld (ix+var1),3
+armguarding	ret
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;BLACK HOLE
+
+checkholdinghole	ld a,(objectscarried)
+	cp 6	;;;hole
+	ret nz
+	ld hl,objectscarried
+droplp	ld a,(hl)
+	cp 2
+	jr c,enddrop
+	ld c,a
+	ld (hl),0
+	push hl
+	call dropobject
+	pop hl
+	inc hl
+	jr droplp
+enddrop	ld hl,holdingholemess
+	jp windowrou
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;DRAGON
+
+
+trytostartbreathing
+	ld a,(roomno)
+	cp 54
+	jr z,justrandomfire
+	ld a,(goldenegghere1+room)
+	cp 255
+	ret nz
+	jr startbreath	
+
+justrandomfire	call random
+	cp 5
+	ret nc
+startbreath	ld a,1
+	ld (breathingfire),a
+
+	ld a,10
+	ld (sndfx),a		;snd fx for starting to breath fire
+
+	pop hl
+	jp alreadybreathing
+
+
+resetdragon	xor a
+ 	ld (breathingfire),a
+	jr printneck
+
+dragonrou	bit 7,(ix+var1)
+	jr z,moveneckupanddown
+	ld a,(ix+oldmovex)
+	cp -8
+	ret z
+	dec a
+	ld (ix+oldmovex),a
+	jr restdragon
+
+moveneckupanddown
+	ld a,(breathingfire)
+	and a
+	jr nz,alreadybreathing
+
+	call trytostartbreathing
+
+notbreathing	ld a,(ix+delaycounter)
+	inc a
+	and 31
+	ld (ix+delaycounter),a
+	cp 16
+	jr c,okheadswing
+	neg
+	add a,32
+okheadswing	ld (ix+oldmovex),a
+
+alreadybreathing
+	;;;	set 7,(ix+var1) when sending dragon to sleep
+restdragon	call collidewithdizzy16
+	jr nc,notdragvdizz
+	ld hl,dragonkilledmess
+	call killdizzy
+notdragvdizz	ld a,(breathingfire)
+	and a
+	jr nz,dragonfire
+printneck	ld (ix+movefrm),111
+
+	call flyback
+	ld b,1
+dragonneck	call findnecky
+	neg
+	add a,(ix+origy)
+	ld (ix+movey),a
+	ld a,b
+	neg
+	add a,77
+	ld (ix+movex),a
+	push bc
+	call printmoving
+	pop bc
+	inc b
+
+	ld a,b
+	cp 7
+	jr nz,dragonneck
+
+printdragonhead	ld a,(ix+oldmovex)
+	neg
+	add a,(ix+origy)
+	ld (ix+movey),a
+	ld (ix+movex),68
+	ld a,(breathingfire)
+	dec a
+	cp 16
+	ld a,109
+	adc a,0
+	ld (ix+movefrm),a
+	jp printmoving
+	
+findnecky	ld a,b
+	and a
+	ret z
+	push bc
+	ld a,(ix+oldmovex)
+	ld c,a
+	xor a
+findnecklp	add a,c	
+	djnz findnecklp
+	ld b,3
+	call divide
+	pop bc
+	ret
+
+dragonvar	defb 0
+breathingfire	defb 0
+dragonflame	defb 0
+
+divide	bit 7,a
+	jr nz,negdivide
+dividelp	srl a
+	djnz dividelp
+	ret
+negdivide	neg
+divideneglp	srl a
+	djnz divideneglp	
+	neg
+	ret
+
+dragonfire	;;uses (breathingfire)
+	ld a,6
+dragonfirelp	ld (dragonflame),a
+
+	ld a,(breathingfire)
+	ld c,7+64
+	call printdragonflame
+
+	ld a,(breathingfire)	;;flips between yellow and red
+	and 1
+	add a,a
+	add a,a
+	add a,2+64
+	ld c,a
+	
+	ld a,(breathingfire)
+	inc a
+	call printdragonflame
+
+	ld a,(dragonflame)
+	and 1
+	call z,flyback
+
+	ld a,(dragonflame)
+	dec a
+	jr nz,dragonfirelp
+
+	ld a,(breathingfire)
+	inc a
+	cp 48
+	jr c,juststoreit
+	xor a
+juststoreit	ld (breathingfire),a
+	jp printdragonhead
+
+printdragonflame	ld b,a
+	ld a,(roomno)
+	ld h,50
+	cp 40
+	jr nz,gotfirelim
+	ld h,40
+gotfirelim
+	ld a,(dragonflame)
+	add a,a
+	sub b
+	add a,68	;;;position of 1st flame
+
+	cp h	;;;flame run out position
+
+	ret c
+	cp 68
+	ret nc
+	ld b,1
+	ld e,a
+	ld a,(ix+movey)
+	add a,8
+	ld l,a
+	ld a,112
+	ld d,l
+	push de
+	call simprintflame
+	pop hl
+	ld de,8*256+4
+	call proximitycollide
+	ret nc
+	ld a,30
+	ld hl,dragonflameskilledmess
+	jp killdizzy1
+
+proxsleep	defb 54	;;room
+	defb 60,150	;;;x,y
+	defb 10,30	;;;w,h
+
+resetfirstdragon	equ -16+var1
+proxsleeprou	ld a,255
+	ld (ix+room),a
+	ld (ix+resetfirstdragon),a
+	ld hl,dragonasleepmess
+	jp windowrou
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;CROCODILE
+
+resetcrocodile	equ printmoving
+crocodilerou	ld a,(killed)
+	and a
+	ret nz
+	ld a,(ix+delaycounter)
+	inc a
+	and 7	
+	ld (ix+delaycounter),a
+	jr nz,justcroccoll
+	ld hl,74+80*256
+	ld de,20+100*256
+	call proximitycollide
+	ld a,8+16
+	rra
+	bit 7,(ix+var1)
+	jr z,nottied
+	cp (ix+colour)
+	ret z
+nottied	push af
+	call flyback
+	call rubprintmoving
+	pop af
+	ld (ix+colour),a
+	ld a,(ix+var1)
+	cp 255
+	jr z,hestied
+	inc a
+	and 7
+	ld (ix+var1),a
+hestied	ld (ix+movefrm),123
+	cp 240
+	jp nc,printmoving
+	cp 3
+	jp c,printmoving
+	bit 0,a
+	jp z,printmoving
+	inc (ix+movefrm)
+	call printmoving
+
+justcroccoll	bit 0,(ix+movefrm)
+	ret nz
+	ld hl,70+140*256
+	ld de,6+10*256
+	call proximitycollide
+	ret nc
+	di 
+	ld a,7
+	ld (sequence),a	
+	xor a
+	ld (left),a
+	ld (right),a
+	ld a,69-32
+	ld (x),a
+	ld a,160
+	ld (y),a
+	ei
+	ld hl,croceatenmess
+	jp killdizzy
+
+proxcroc	defb 53	;;room
+	defb 68,140	;;;x,y
+	defb 10,20	;;;w,h
+
+tiecroc	equ -16+var1
+proxcrocrou	ld (ix+room),255
+	ld (ix+tiecroc),255
+	ld hl,croctiedmess
+	jp windowrou
+
+
+proxrock	defb 48	;;room
+	defb 72,80	;;;x,y
+	defb 10,30	;;;w,h
+
+proxrockrou	ld (ix+room),48
+	ld a,(waterheight)
+	add a,6
+	ld (waterheight),a
+	neg
+	add a,76
+	ld (ix+movex),a
+	ld (ix+movey),176
+	ld hl,rockinwatermess
+	jp windowrou
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;FLOATING LOG
+logrou	call flyback
+	call rubprintmoving
+resetlog	ld a,(ix+var1)
+	inc a
+	and 3
+	ld (ix+var1),a
+	jr nz,logup
+	ld a,2
+logup	ld b,a
+	ld a,(waterheight)
+	neg
+	add a,b
+	add a,162
+	ld (ix+movey),a
+	jp printmoving
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;HAWK
+
+resethawk	ld (ix+movey),52
+	ld (ix+var1),0
+	jr joinresthawk
+
+hawkrou	call printmoving
+	bit 0,(ix+var1)
+	jr nz,hawkdiving
+
+joinresthawk	ld a,(ix+oldmovefrm)
+	and 3
+	jr nz,hawkupdown
+	ld a,2
+hawkupdown	add a,96
+	ld (ix+movefrm),a
+	ld a,(ix+oldmovefrm)
+	inc a
+	and 127
+	ld (ix+oldmovefrm),a
+	srl a
+	cp 32
+	jr c,okhawkx
+	sub 32
+	neg
+	add a,32
+okhawkx	add a,40
+	ld (ix+movex),a
+	cp 50
+	jp c,printmoving
+	cp 64 
+	jp nc,printmoving
+	add a,2
+	ld l,a
+	ld h,52
+	ld de,4+120*256
+	call proximitycollide
+	jp nc,printmoving
+	ld (ix+var1),1
+	ld (ix+movefrm),97
+	jp printmoving
+
+hawkdiving	ld a,(x)
+	add a,32
+	ld (ix+movex),a
+	ld a,(ix+movey)
+	add a,8
+	ld (ix+movey),a
+	call printmoving
+	call collidewithdizzy16
+	ret nc
+	ld a,3
+	ld hl,killedbyhawk
+	jp killdizzy1
+		
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;KEYS
+
+turnmachineon	equ -16+var1
+turnlifton	equ -32+var1
+
+proxkey1	defb 56	;;room
+	defb 51,120	;;;x,y
+	defb 4,16	;;;w,h
+proxkey1rou	ld (ix+room),255
+	set 0,(ix+turnmachineon)
+	set 0,(ix+turnlifton)
+	ld hl,keyinmachine
+	jp windowrou
+
+proxkey2	defb 56	;;room
+	defb 73,120	;;;x,y
+	defb 4,16	;;;w,h
+proxkey2rou	jr proxkey1rou
+
+proxkey3	defb 56	;;room
+	defb 53,160	;;;x,y
+	defb 4,16	;;;w,h
+proxkey3rou	jr proxkey1rou
+
+proxkey4	defb 56	;;room
+	defb 71,160	;;;x,y
+	defb 4,16	;;;w,h
+proxkey4rou	jr proxkey1rou
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;MACHINES
+
+resetmachines	ld a,(ix+var1)
+	rlca
+	ld b,a
+	ld a,(ix+colour)
+	and %01111101
+	ld c,a
+	ld a,(ix+var1)
+	rrca
+	or c
+	or b
+	ld (ix+colour),a
+	jp printmoving
+machinesrou	equ rethere
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;DRUNK
+
+checkifdrunk	ld a,(drunk)
+	and a
+	ret z
+	dec a
+	ld (drunk),a
+	and %00111111
+	ret nz
+	ld a,(sequence)
+	cp 2
+	jr c,fallover
+	ld a,(drunk)
+	inc a
+	ld (drunk),a
+	ret
+fallover
+	call random
+	and 1
+	ld b,a
+	di
+	xor a
+	ld (dy),a
+	ld a,1
+	ld (animation),a
+	ld a,b
+	ld (right),a
+	xor 1
+	ld (left),a
+	ld a,4
+	add a,b
+	ld (sequence),a
+	ei
+	ret
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;FILL BUCKET
+turnonfullbucket	equ 16+room
+proxmtbucket	defb 60	;;room
+	defb 46,144	;;;x,y
+	defb 4,16	;;;w,h
+proxmtbucketrou	ld (ix+room),255
+	ld (ix+turnonfullbucket),60
+	ld hl,fillbucketmess
+	jp windowrou
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;WATER BEAN STALK
+proxfullbucket	defb 58	;;room
+	defb 71,160	;;;x,y
+	defb 8,16	;;;w,h
+proxfullbucketrou
+	ld (ix+room),255
+	ld a,(x)
+	sub 10
+	ld (x),a
+	ld a,2
+	ld (manurehere+var1),a
+	ld hl,throwwateronbeanmess
+	jp windowrou
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;PLANTING BEAN
+proxbean	defb 58	;;room
+	defb 71,160	;;;x,y
+	defb 8,16	;;;w,h
+proxbeanrou
+	ld (ix+room),255
+	ld hl,plantbeanmess
+	jp windowrou
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;SHOP KEEPER
+
+shopkeeperrou	ld a,(roomno)
+	cp 22
+	ret nz
+	ld a,(shopkeepercount)
+	and a
+	ret z
+	dec a
+	ld (shopkeepercount),a
+	ret nz
+	ld a,22
+	ld (shopkeeperhere+room),a
+	ld (shopkeeperhere1+room),a
+	ld hl,shopkeeperappearsmess	
+	jp windowrou
+
+
+proxshopkeeper	defb 22	;;room
+	defb 66,160	;;;x,y
+	defb 8,16	;;;w,h
+proxshopkeeperrou
+	ld a,(shopkeepercount)
+	and a
+	ret nz
+	ld a,(ix+movefrm)
+	cp 7
+	jr nz,notcow
+	ld (ix+room),255
+	ld hl,shoptalk
+	jp talkingtopeople1
+
+notcow	ld a,(shopkeeperhere+delaycounter)
+	inc a
+	and 3
+	ld (shopkeeperhere+delaycounter),a
+	ld hl,givingjunkmess
+	jp nz,windowrou
+	ld hl,stopgivingjunkmess
+	jp windowrou
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;LIFT
+
+resetlift	ld a,(ix+movey)
+	cp (ix+oldmovex)
+	jr nc,notfirstlift
+	ld a,(ix+oldmovex)
+	ld (ix+movey),a
+notfirstlift	ld b,(ix+origy)
+	ld a,(ix+movey)
+	dec b
+	ld (ix+movey),b
+drawdownlp	push af
+	inc (ix+movey)
+	call printmoving
+	pop af
+	cp (ix+movey)
+	jr nz,drawdownlp
+	call rublift
+	ld a,(ix+oldmovex)
+	ld (frmy),a
+	ld b,a
+	ld a,(ix+oldmovey)
+	sub b
+	add a,42
+	ld (frmheight),a
+	xor a
+	ld (frmplot),a
+	ld a,7
+	ld (frmattri),a
+	jp plotattris
+
+liftrou	ld a,(ix+var1)
+	and a
+	ret z
+	ld l,(ix+movex)
+	ld h,(ix+movey)
+	dec h
+	dec h
+	ld de,8+48*256
+	push de
+	push hl
+	call proximitycollide
+	pop hl
+	pop de
+	jr nc,movelift
+	ld d,2
+	call proximitycollide
+	jp c,killedbycogs
+	ld a,(x)
+	sub (ix+movex)
+	add a,32
+	cp 3
+	jr nc,stopthelift
+	ld a,(sequence)
+	and a
+	jr z,movelift
+stopthelift	ld (ix+oldmovefrm),2
+
+	ld a,(obstructinglift)
+	inc a
+	and 63
+	ld (obstructinglift),a
+	ld hl,obstructingliftmess
+	call z,windowrou
+	jr roundmovelift
+
+
+movelift	xor a
+	ld (obstructinglift),a
+
+roundmovelift	ld a,(ix+oldmovefrm)
+	and a
+	jr z,justmovelift
+	dec a
+	ld (ix+oldmovefrm),a
+	ret nz
+justmovelift	ld a,(ix+var1)
+	and a
+	ret z
+	call rublift
+	ld a,(ix+var1)
+	add a,(ix+movey) 
+	ld (ix+movey),a
+	cp (ix+oldmovex)
+	jr z,turnlift
+	cp (ix+oldmovey)
+	jr nz,notturnlift
+turnlift	call negvar1
+	ld (ix+oldmovefrm),50
+notturnlift
+printlift	call printmoving
+rublift	ld a,(ix+movey)
+	push af
+	add a,40
+	ld (ix+movey),a
+	inc (ix+movefrm)
+	set 3,(ix+colour)
+	call printmoving
+	res 3,(ix+colour)
+	pop af
+	ld (ix+movey),a
+	dec (ix+movefrm)
+	ret
+
+killedbycogs	ld hl,killedbyliftmess
+	jp killdizzy
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;PORTCULLIS HERE
+
+resetportcullis	ld a,(ix+var1)
+	and a
+	jr nz,resetrope1
+resetrope	ld (ix+var1),0
+	ld a,(ix+oldmovey)
+	ld (ix+movey),a
+resetrope1	ld b,(ix+origy)
+	ld a,(ix+movey)
+	dec b
+	dec b
+	ld (ix+movey),b
+drawropedownlp	push af
+	inc (ix+movey)
+	inc (ix+movey)
+	call printmoving
+	pop af
+	cp (ix+movey)
+	jr nz,drawropedownlp
+	ret
+
+negvar1	ld a,(ix+var1)
+	neg
+	ld (ix+var1),a
+	ret
+
+portcullisrou	ld a,(ix+var1)
+	and a
+	ret z
+	add a,(ix+movey) 
+	ld (ix+movey),a
+	cp (ix+oldmovex)
+	jr z,turnportcullisplusdelay
+	cp (ix+oldmovey)
+	jr nz,notturnportcullis
+	ld (ix+delay),4
+turnportcullis	call negvar1
+notturnportcullis
+	call printmoving
+	call collidewithdizzy16
+	ret nc
+	ld a,1
+	ld hl,killedbyportcullis
+	jp killdizzy1
+turnportcullisplusdelay	
+	ld (ix+delay),0
+	jr turnportcullis
+
+portswitchrou	ld a,(pickup)
+	and a
+	ret z
+	call collidewithdizzy16
+	ret nc
+	ld a,(ix+var1)
+	and a
+	ret nz
+	xor a
+	ld (pickup),a
+	ld a,-2
+	ld (porthere+var1),a
+	ld a,2
+	ld (porthere+delay),a
+	ld a,1
+	ld (ix+var1),a
+	ld hl,throwswitchmess
+	jp windowrou
+resetportswitch	equ resetmachines
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;DOZY FLOATING
+
+resetdozyfloat	ld a,(ix+var1)
+	and a
+	ret z
+	jp printmoving
+dozyfloatrou	ld a,(ix+var1)
+	and a
+	ret z
+	call printmoving
+	ld a,(ix+var1)
+	dec a
+	and 3
+	jr nz,stillfloatdozy
+	ld a,(ix+movex)
+	dec a
+	ld (ix+movex),a
+	ld a,4
+stillfloatdozy	ld (ix+var1),a
+	dec a
+	cp 3
+	jr nz,okbob
+	ld a,1
+okbob	add a,(ix+origy)
+	ld (ix+movey),a
+	call printmoving
+	ld a,(ix+movex)
+	cp 28
+	ret nc
+	ld (ix+var1),0
+	ret	
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;THROWING WATER OF FIRE
+proxjug	defb 36	;;room
+	defb 44,150	;;;x,y
+	defb 6,26	;;;w,h
+proxjugrou	ld a,255
+	ld (ix+room),a
+	ld (fireout),a
+	ld hl,throwwateronfiremess
+	jp windowrou
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;LOOKING AT PICTURE
+
+proxpicture	defb 52	;;room
+	defb 62,104	;;;x,y
+	defb 5,16	;;;w,h
+proxpicturerou	pop hl
+	ld hl,lookatpicturemess
+	if computer=spectrum
+	ld a,1
+	ld (dontupdatedizzy),a
+	call prtmessage
+	call handoffandwait
+	ld a,(ifmem128)
+	and a
+	jp z,windowrou1	
+	jp dotreasurepic
+	endif
+	if computer=amstrad
+	jp windowrou	
+	endif
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;RAT 
+
+resetrat	equ printmoving
+ratrou	bit 7,(ix+movex)
+	ret nz
+	call printmoving
+	ld a,(ix+oldmovefrm)
+	dec a
+	ld (ix+oldmovefrm),a
+	call z,ratnewdir
+	ld a,(ratcount)
+	ld b,a
+	ld a,(ix+movex)
+	add a,(ix+var1)
+	ld (ix+movex),a
+	bit 0,b
+	jr z,notlefthandcheckrat
+	cp (ix+oldmovey)	
+	jr nz,notlefthandcheckrat
+	call ratnewdir
+notlefthandcheckrat	
+	cp (ix+oldmovex)
+	jr nz,notrighthandcheckrat
+	call ratnewdir
+	ld a,1
+	ld (ratcount),a
+notrighthandcheckrat
+	call printmoving
+	call collidewithdizzy16
+	jr nc,ratnotgotyou
+	ld hl,ratgotyoumess
+	call killdizzy
+ratnotgotyou	ld a,(ix+movex)
+ratcoll	cp 1
+	ret nz
+	ld a,255
+	ld (loafhere+room),a
+	ld a,2
+	ld (ratcount),a
+	bit 7,(ix+colour)
+	call z,ratnewdir
+	ld (ix+oldmovefrm),255
+	ld hl,thanksforloafmess
+	jp windowrou	
+
+ratnewdir	call random
+	and 15
+	add a,16
+	ld (ix+oldmovefrm),a
+	ld a,(ix+colour)	
+	xor 128
+	ld (ix+colour),a
+	jp negvar1
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;LOAF AND RAT
+proxloaf	defb 36	;;room
+	defb 46,64	;;;x,y
+	defb 40,16	;;;w,h
+proxloafrou	ld a,(ix+movex)
+	add a,2
+	ld (ratcoll+1),a
+	ret
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TROLL
+resettroll	equ printmoving
+trollrou	ld hl,proxtroll
+	jp checkproximity1
+
+proxtroll	defb 36	;;room
+	defb 82,136	;;;x,y
+	defb 8,32	;;;w,h
+proxtrollrou	di
+	ld a,(x)
+	sub 2
+	ld (x),a
+	ld a,-9
+	ld (dy),a
+	ld a,4
+	ld (sequence),a
+	ld a,1
+	ld (animation),a
+	ld (left),a
+	xor a
+	ld (right),a
+	ld a,(ff)
+	cp 25
+	ei
+	ret z
+	ld hl,getbackintheremess
+	ld a,(roomno)
+	cp 36
+	jp z,windowrou
+	ld a,(ix+var1)
+	and a
+	ret nz
+	ld hl,goawaymess
+	jp windowrou
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;APPLE
+proxapple	defb 36	;;room
+	defb 78,152	;;;x,y
+	defb 4,16	;;;w,h
+proxapplerou	ld (ix+movex),255
+	ld hl,trollgotapplemess
+	jp chatter
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;DAGGERS
+resetdagger	equ printmoving
+daggerrou	call collidewithdizzy16
+	ret nc
+	ld a,(roomno)
+	cp 94
+	jr z,roomdagok
+	ld a,84
+	ld (startroom),a
+	ld a,56
+	ld (startx),a
+	ld a,176
+	ld (starty),a
+roomdagok	ld a,20
+	ld hl,killedbydaggersmess
+	jp killdizzy1
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;DOOR KNOCKER
+proxdoor	defb 84	;;room
+	defb 34,160	;;;x,y
+	defb 4,16	;;;w,h
+proxdoormess	ld a,255
+	ld (doorhere+room),a
+	ld hl,usedoorknockermess
+	jp windowrou
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;DOOR
+resetdoor	ld a,(ix+var1)
+	and a
+	ret nz
+	jp printmoving
+doorrou	ld a,(sequence)
+	and a
+	ret nz
+	ld hl,proxknox
+	jp checkproximity1
+proxknox	defb 84	;;room
+	defb 34,160	;;;x,y
+	defb 4,16	;;;w,h
+	
+	ld a,(doorhere+oldmovex)
+	and a
+	ret nz
+	ld a,1
+	ld (doorhere+oldmovex),a
+	ld hl,knockandentermess
+	jp chatter
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;CROW BAR
+proxcrowbar	defb 55	;;room
+	defb 46,144	;;;x,y
+	defb 8,16	;;;w,h
+proxcrowbarrou	ld a,255
+	ld (ix+room),a
+	ld (welllidhere+room),a
+	ld hl,usecrowbarmess
+	jp windowrou
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;PICK AXE
+proxpickaxe	defb 41	;;room
+	defb 36,101	;;;x,y
+	defb 12,20	;;;w,h
+proxpickaxerou	ld (rockhere+room),a
+	ld hl,usepickaxemess
+	jp windowrou
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;EGG IN NEST
+proxegg	defb 40	;;room
+	defb 54,150	;;;x,y
+	defb 4,20	;;;w,h
+proxeggrou	ld a,255
+	ld (dragonhere1+var1),a
+	ld hl,puteggbackmess
+	jp windowrou
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;MINER
+
+resetminer	equ printmoving
+minerrou	ld hl,proxminer
+	jp checkproximity1
+
+proxminer	defb 41	;;room
+	defb 90,120	;;;x,y
+	defb 2,32	;;;w,h
+proxminerou	ld (ix+movex),90
+	ld a,255
+	ld (trollhere+room),a
+	push ix
+	call proxtrollrou
+	pop ix
+	ld (ix+var1),1
+	ret
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;RUG TRICK
+proxrug	defb 94	;;room
+	defb 34,152	;;;x,y
+	defb 4,16	;;;w,h
+proxrugrou	ld (ix+room),255
+	ld a,94
+	ld (carpethere+room),a
+	ld (carpethere1+room),a
+	ld hl,userugmess
+	jp windowrou
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;DAISY ROUTINE
+resetdaisy	equ printmoving
+daisyrou	call collidewithdizzy16
+	jr nc,justinlift
+	ld a,(sequence)
+	and a
+	ret nz
+test	ld a,3
+	call starttune
+	ld hl,gottodaisymess
+	ld a,1
+	ld (dontupdatedizzy),a
+	call prtmessage
+	call handoffandwait
+
+	call theheartdemo
+
+	ld a,94
+	ld (roomno),a
+	ld a,255
+	ld (daisyhere+room),a
+	ld a,73
+	ld (daisy1here+room),a
+	ld hl,daisyrunsmess
+	call windowrou
+	jp musicoff
+
+
+theheartdemo	ld a,1
+	ld (dontupdatedizzy),a
+	ld a,3
+	ld (roomno),a		;;;got to daisy  ;;heart demo
+	call roomsetup
+heartdemo
+	call resethearts
+
+	ld b,255
+allhearts	push bc
+	call updatehearts
+	pop bc
+	djnz allhearts
+	ret
+
+
+
+justinlift	call printmoving
+	ld a,(daisylifthere+movey)
+	add a,21
+	ld (ix+movey),a
+anidaisy	ld a,(ix+colour)
+	xor 128
+	ld (ix+colour),a
+	jp printmoving
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;DAISY WITH COINS
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;DAISY ROUTINE
+resetdaisy1	equ printmoving
+daisyrou1	call collidewithdizzy16
+	jr c,doendmessages
+	call printmoving
+	jr anidaisy
+doendmessages	ld a,(sequence)
+	and a
+	ret nz
+	ld a,10
+	ld (x),a
+	ld hl,notgotallcoins
+	ld a,(coins)
+	cp 30
+	jp nz,chatter
+	ld a,3
+	call starttune
+	ld hl,gotallcoins
+	ld a,1
+	ld (completedgame),a
+	call chatter
+	jr theheartdemo
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;BRING DAISY LIFT DOWN
+
+resetswitch1	equ printmoving
+
+switchrou1	xor a
+	ld (daisylifthere+var1),a
+	ld a,(daisylifthere+movey)
+	cp 100
+	ret nc
+	call printmoving
+	call collidewithdizzy16
+	ld a,0	;;dontchhange
+	adc a,0
+	ld (ix+var1),a
+	call resetmachines
+	bit 0,(ix+var1)
+	ret z
+	ld a,1
+	ld (daisylifthere+var1),a
+	ret
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;HEART DEMO
+
+
+resethearts	ld a,(addpatch+1)
+	xor &86~&96		;(add) xor (sub) 
+	ld (addpatch+1),a
+
+	xor a
+	ld (frmreverse),a
+	inc a
+	ld (frmplot),a
+	ld a,2
+	ld (frmattri),a
+
+	ld ix,hearttable
+	ld b,32
+	xor a
+resetheartslp	push af
+	push bc
+
+	ld (ix+0),a
+	call random
+œ	ld (ix+1),a
+	call printheart
+	inc ix
+	inc ix
+	pop bc
+	pop af
+	add a,8
+	djnz resetheartslp
+	ret	
+
+updatehearts	
+	ld b,32
+	ld ix,hearttable
+updateheartslp	push bc
+	call printheart
+	ld a,(ix+0)
+	add a,4
+	ld (ix+0),a
+	call printheart
+	pop bc
+	inc ix
+	inc ix
+	djnz updateheartslp
+	ret
+
+printheart	
+	;ix points to pos in table
+	;print single heart (if large)
+
+	ld a,(ix+0)
+	rra
+	rra
+	rra
+	rra
+	rra
+	and 3
+	ret z
+	add a,28
+	ld (frmno),a
+
+	ld a,(ix+1)	;;path 0-255
+addpatch	sub a,(ix+0)	;;count 0-255
+	and 127
+	push af
+	call getvalue
+	add a,62
+	ld (frmx),a
+	pop af
+	add a,32
+	and 127
+	call getvalue
+	ld c,a
+	add a,a
+	add a,c
+	
+	add a,110
+	ld (frmy),a
+	push ix
+	call findfrmsize
+	call frame
+	pop ix
+	ret
+	
+getvalue	call getsincos
+	ld b,0
+	bit 7,a
+	jr z,waspos
+	neg
+	ld b,1
+waspos
+	ld c,a
+	ld a,(ix+0)
+	push bc
+	call multiply		;max value 127*64
+	pop bc
+	ld a,h	;;a=-63 to +63
+	bit 0,b
+	ret z
+	neg
+	ret
+
+getsincos		;entry a=0-127
+		;exit a=-64 to 64
+	srl a		;max=63
+	ld c,a
+	ld b,0
+	ld hl,sincostable
+	add hl,bc
+	ld a,(hl)
+	ret
+
+sincostable	defb  0, 6,12,18,24,30,35,40,45,49,53,56,59,61,62,63  ;;quad 0
+	defb 64,63,62,61,59,56,53,49,45,40,35,30,24,18,12, 6  ;;quad 1
+	defb -0,-6,-12,-18,-24,-30,-35,-40,-45,-49,-53,-56,-59,-61,-62,-63  ;;quad 2
+	defb -64,-63,-62,-61,-59,-56,-53,-49,-45,-40,-35,-30,-24,-18,-12,-6  ;;quad 3
+
+
+multiply	;;a=no to mult. c=multiplier    hl=ans
+	ld e,a
+	ld b,8
+	ld hl,0
+	ld d,h
+multlp	srl c
+	jr nc,noadd
+	add hl,de
+noadd	sla e
+	rl d
+	djnz multlp
+	ret	
+
+
+“
+
+
+
+
+
+
+
+
+
+Š^;0 (ÿ÷]X4      PDS	600000000¨hearttable	equ attritable+64
+(0-191)
+2
+e=x   d=y 0=topline
+mask1
+7,67 ;;;DINAMITE
+ghtening
+
+
+
+
+
+
+
+
+
+
+F0F1F2F3F4F5F6F7F8F9;  
+;
+;  PDS Pc1.10 :000:  (C)  1985-7 P.D Systems   
+;
+;
+;       File  "     DIZZY 3       "
+;    Version          05.54        
+;         By  " THE OLIVER TWINS  "
+;    
+;     Created on Tue the 14th of Jun 1988  
+;        Last update 13:36 on 19/12/89 
+; 
+sndfx	defb 255
+
+frmno	defb 0
+frmx	defb 0
+frmy	defb 0
+frmattri	defb 0
+frmwidth	defb 0
+frmheight	defb 0
+frmplot	defb 0
+frmreverse	defb 0
+frmlocation	defw 0
+
+windowleft	defb 2+32
+windowright	defb 60+32+2
+windowtop	defb 6*8		;0	alter these directly
+windowbottom	defb 192-8		;192 to change window
+
+closewindow	push hl
+	push de
+	ld de,2+32+256*(60+32+2)
+	ld hl,6*8+256*(192-8)
+windower	ld (windowleft),de
+	ld (windowtop),hl
+	pop de
+	pop hl
+	ret
+
+openwindow	push hl
+	push de
+	ld de,32+256*(64+32)
+	ld hl,0+256*(192-8)
+	jr windower	
+
+store_sprite_vars
+	ld h,a
+	ld a,c
+	ld (frmattri),a
+	ld a,b
+	and 3
+	ld (frmplot),a
+	ld a,b
+	rlca
+	and 1
+	ld (frmreverse),a 
+	ld a,h
+store_sprite_vars1
+	ld (frmno),a
+	ld a,e
+	ld (frmx),a
+	ld a,l
+	ld (frmy),a
+findfrmsize
+	xor a
+	ld (spritenothere),a
+	ld a,(frmno)
+	ld l,a
+	ld h,0
+	add hl,hl
+	ld bc,frmtable
+	add hl,bc
+	ld e,(hl)
+	inc hl
+	ld d,(hl)
+	ld a,d
+	cp 255
+	jr nz,spriteok
+	ld (spritenothere),a
+	ret
+spriteok	ld hl,frmdefs
+	add hl,de
+	ld a,(hl)
+	ld (frmwidth),a		;4 pixels=1 unit
+	inc hl
+	ld a,(hl)
+	ld (frmheight),a
+	inc hl
+	ld (frmlocation),hl
+	ret	
+
+
+
+clearattris		;a=attri to clear to
+	ld bc,30*256+17
+	ld de,6*256+1 
+	ld hl,attriplotpatch
+	ld (hl),0
+	jp attridir
+
+attribox		;a=attri   b=width   c=height   e=x   d=y 0=topline
+	ld l,a
+	xor a
+	ld (attriplotpatch),a
+	ld a,(frmplot)
+	cp 1
+	ld a,l
+	jr nz,attridir
+attrixor	xor %01000111
+	ld l,a
+	ld a,&ae	;xor (hl)
+	ld (attriplotpatch),a
+	ld a,l
+attridir	ld (attricolourpatch+1),a
+	ld a,b
+	ld (attriwidthpatch+1),a
+	ld h,0
+	ld a,d
+atpatch1	nop		;;cpl
+atpatch2	nop
+	nop		;;add a,29
+	add a,a
+	add a,a
+	add a,a
+	ld l,a
+	ld d,0
+	add hl,hl
+	add hl,hl	;*32
+	add hl,de
+	
+	if computer=spectrum
+patchattritable	ld de,screenattritable
+	endif
+	if computer=amstrad
+patchattritable	ld de,attritable
+	endif
+
+
+	add hl,de
+atpatch3	ld de,32	;;patched to -32
+attriylp	push hl
+attriwidthpatch	ld b,1	;patched
+attrixlp
+attricolourpatch	ld a,1	;patched
+attriplotpatch	xor (hl)	;patched
+	ld (hl),a
+	inc hl
+	djnz attrixlp
+	pop hl
+	add hl,de
+	dec c
+	jr nz,attriylp
+	ret
+
+plotattris
+	ld a,(spritenothere)
+	and a
+	ret nz
+	ld hl,(windowleft)
+	ld a,(frmwidth)
+	ld b,a
+	ld a,(frmx)
+	ld e,a
+	cp h
+	ret nc
+	add a,b
+	cp l
+	ret c
+	ret z
+	ld a,e
+	sub l
+	jr nc,attriinleft
+	ld e,l
+	add a,b
+	ld b,a
+attriinleft	ld a,e
+	add a,b
+	sub h		;windowright
+	jr c,attriinright
+	jr z,attriinright
+	neg
+	add a,b
+	ld b,a
+attriinright	ld a,e
+	and 1
+	inc a
+	add a,b
+	ld b,a
+	srl b
+	ld a,e
+	sub 32
+	srl a
+	ld e,a
+
+	ld hl,(windowtop)
+	ld a,(frmheight)
+	ld c,a
+	ld a,(frmy)
+	ld d,a
+	cp h
+	ret nc
+	add a,c
+	cp l
+	ret c
+	ret z
+	ld a,d
+	sub l
+	jr nc,attriintop
+	ld d,l
+	add a,c
+	ld c,a
+attriintop	ld a,d
+	add a,c
+	sub h		;windowbottom
+	jr c,attriinbottom
+	jr z,attriinbottom
+	neg
+	add a,c
+	ld c,a
+attriinbottom	ld a,d
+	and 7
+	add a,c
+	add a,7
+	ld c,a
+	srl c
+	srl c
+	srl c
+	srl d
+	srl d
+	srl d
+	ld a,(frmattri)
+	jp attribox
+
+
+heightcount	defb 0
+widthcount	defb 0	;4 pixels=1 unit
+sideofbyte	defb 0
+frmycoord	defb 0
+frmxcoord	defb 0
+
+
+
+	if computer=spectrum
+attritable	EQU &5CC6-5*32		
+;;	equ $-5*32		;;;;	DEFS 24*32,01000111B
+;;	defs 19*32,01000010b
+
+hearttable	equ attritable+64
+
+screenattritable	equ &5800
+
+scrolledbyte	defb 0
+
+frame
+	ld a,(spritenothere)
+	and a
+	ret nz
+
+	ld de,(windowleft)
+
+	ld a,(frmheight)
+	ld (heightcount),a
+	ld a,(frmwidth)
+	ld (widthcount),a
+	ld b,a
+	ld a,(frmx)
+	cp d		;windowright
+	ret nc
+	add a,b
+	ret c
+	dec a
+	cp e		;windowleft
+	ret c
+
+	ld hl,(windowtop)
+	ld a,(frmheight)
+	ld b,a
+	ld a,(frmy)
+	cp h		;windowbottom
+	ret nc
+	add a,b
+	dec a
+	cp l		;windowtop
+	ret c
+			;definately not fully out of window
+
+	ld a,(frmy)
+	ld (frmycoord),a
+	sub l
+	jr nc,notouttop
+	ld b,a
+	ld a,(heightcount)
+	add a,b
+	ld (heightcount),a
+	ld a,l
+	ld (frmycoord),a
+	push hl
+	ld hl,(frmlocation)
+	ld a,(frmwidth)
+	srl a
+	ld c,a
+	ld a,b
+	ld b,0
+movestartdown	add hl,bc
+	inc a
+	jr nz,movestartdown
+	ld (frmlocation),hl
+	pop hl
+
+notouttop
+	ld a,(heightcount)
+	ld b,a
+	ld a,(frmycoord)
+	add a,b
+	dec a
+	sub h		;windowbottom
+	jr c,notoutbottom
+	inc a
+	ld b,a
+	ld a,(heightcount)
+	sub b
+	ld (heightcount),a
+notoutbottom	
+	ld a,(frmx)
+	ld (frmxcoord),a
+	xor a
+	ld (addtodef+1),a
+	ld (acrosshalf+1),a
+
+	ld a,(frmx)
+	sub e		;windowleft
+	jr nc,notoutleft
+	neg
+	ld b,a
+	and 1
+	ld (acrosshalf+1),a
+	ld a,(widthcount)
+	sub b
+	ld (widthcount),a
+	ld a,(frmxcoord)
+	add a,b
+	ld (frmxcoord),a
+	ld a,b
+	srl a
+	ld (addtodef+1),a
+	ld c,a
+	ld b,0
+	push hl
+	ld hl,(frmlocation)
+	add hl,bc
+	ld a,(frmreverse)
+	and a
+	jr z,storenewfrmloc
+	sbc hl,bc
+	and a
+	sbc hl,bc
+storenewfrmloc	ld (frmlocation),hl
+	pop hl
+	ld b,a
+notoutleft
+	ld a,(frmxcoord)
+	ld b,a
+	ld a,(widthcount)
+	add a,b
+	dec a
+	sub d
+	jr c,notoutright
+	inc a
+	ld b,a
+	ld a,(widthcount)
+	sub b
+	ld (widthcount),a
+	ld a,b
+	inc a
+	srl a
+	ld b,a
+	ld a,(addtodef+1)
+	add a,b
+	ld (addtodef+1),a
+notoutright
+	ld hl,&23*256+&13		;inc hl  inc de
+	ld a,(frmreverse)
+	and a
+	jr z,storeplotbyte
+
+	ld hl,(frmlocation)
+	ld a,(frmwidth)
+	srl a
+	dec a
+	ld c,a
+	ld b,0
+	add hl,bc
+	ld (frmlocation),hl
+	ld a,(frmwidth)
+	res 0,a
+	ld b,a
+	ld a,(addtodef+1)
+	neg
+	add a,b
+	ld (addtodef+1),a
+	ld hl,revbyte
+	ld a,&c3		;;jp
+storeplotbyte	ld (plotbytepatch),a
+	ld (plotbytepatch+1),hl
+	ld a,(frmycoord)
+	ld l,a
+	ld h,0
+	add hl,hl
+	ld bc,screentable
+	add hl,bc
+	push hl
+	pop ix 
+	ld de,(frmlocation)
+	ld a,(frmxcoord)
+	sub 32
+	srl a
+	jp c,onhalfspacing
+	ld (addacross+1),a
+	ld a,(acrosshalf+1)
+	and a
+	ld a,(addacross+1)
+	jp nz,onhalfspacing1
+
+	ld a,(frmplot)
+	and a
+	jr z,storeplot	;;direct
+	ld a,&ae		;;xor (hl)
+storeplot	ld (spritepatch),a
+
+			;all patches should have been done
+			;ix must be set to screen table position  
+			;de must point to frm definition
+
+	ld a,(widthcount)
+	srl a
+	ld (widthcount),a
+frmylp	ld l,(ix+0)
+	inc ix
+	ld h,(ix+0)
+	inc ix
+addacross	ld bc,0000	;patched
+	add hl,bc
+	dec hl
+
+	ld a,(widthcount)
+	ld b,a
+frmxlp
+	ld a,(de)
+plotbytepatch	nop			;can be patched
+	inc de		;to give
+	inc hl		;jp revbyte
+spritepatch	and (hl)
+	ld (hl),a
+	djnz frmxlp
+
+	ex de,hl
+addtodef	ld bc,0000	;patched
+	add hl,bc
+	ex de,hl
+
+	ld a,(heightcount)
+	dec a
+	ld (heightcount),a
+	jr nz,frmylp
+
+	ret
+
+revbyte	push bc
+	ld b,revpage
+	ld c,a
+	ld a,(bc)
+	pop bc
+	inc hl
+	dec de
+	jp spritepatch
+
+
+onhalfspacing
+onhalfspacing1	ld (addacross1+1),a
+	ld a,(addtodef+1)
+	ld (addtodef1+1),a
+
+	ld hl,plotlinedir
+	ld a,(frmplot)
+	and a
+	ld a,(frmreverse)
+	jp z,onhalfdir
+
+	ld hl,plotlinexor
+	and a
+	jp z,storecallpatch
+	ld hl,plotlinexorrev
+	jp storecallpatch
+
+onhalfdir	and a
+	jp z,storecallpatch
+	ld hl,plotlinedirrev
+
+storecallpatch	ld (plotlinepatch+1),hl 
+
+			;all patches should have been done
+			;ix must be set to screen table position  
+			;de must point to frm definition
+
+frmylp1	ld l,(ix+0)
+	inc ix
+	ld h,(ix+0)
+	inc ix
+addacross1	ld bc,0000	;patched
+	add hl,bc
+
+acrosshalf	ld a,0	;patched
+	ld (sideofbyte),a
+
+	ld a,(widthcount)
+	ld b,a
+frmxlp1
+plotlinepatch	call plotlinexor
+
+
+	ex de,hl
+addtodef1	ld bc,0000	;patched
+	add hl,bc
+	ex de,hl
+
+	ld a,(heightcount)
+	dec a
+	ld (heightcount),a
+	jr nz,frmylp1
+
+	ret
+
+
+plotlinexor	ld a,(sideofbyte)
+	and a
+	jr z,leftsidexor
+
+	ld a,(de)
+	rlca
+	rlca
+	rlca
+	rlca
+	jp rightsidexor1
+
+leftsidexor	ld a,(de)
+	rlca
+	rlca
+	rlca
+	rlca
+	ld c,a
+	and 00001111b
+	xor (hl)
+	ld (hl),a
+	inc hl
+	
+	dec b
+	ret z
+
+rightsidexor	ld a,c
+rightsidexor1	and 11110000b
+	xor (hl)
+	ld (hl),a
+	inc de
+	djnz leftsidexor
+	ret
+
+plotlinedir	ld a,(sideofbyte)
+	and a
+	jr z,leftsidedir
+
+	ld a,(de)
+	rlca
+	rlca
+	rlca
+	rlca
+	ld (scrolledbyte),a
+	jp rightsidedir
+
+leftsidedir	ld a,(hl)
+	and 11110000b
+	ld c,a
+	ld a,(de)
+	rlca
+	rlca
+	rlca
+	rlca
+	ld (scrolledbyte),a
+	and 00001111b
+	add a,c
+	ld (hl),a
+	inc hl
+	
+	dec b
+	ret z
+
+rightsidedir	ld a,(hl)
+	and 00001111b
+	ld c,a
+
+	ld a,(scrolledbyte)
+	and 11110000b
+	add a,c
+	ld (hl),a
+	inc de
+	djnz leftsidedir
+	ret
+
+
+plotlinexorrev	ld a,(sideofbyte)
+	and a
+	jr z,leftsidexorrev
+
+	ld a,(de)
+	push bc
+	ld b,revpage
+	ld c,a
+	ld a,(bc)
+	pop bc
+	rlca
+	rlca
+	rlca
+	rlca
+	jp rightsidexorrev1
+
+leftsidexorrev	ld a,(de)
+	push bc
+	ld b,revpage
+	ld c,a
+	ld a,(bc)
+	pop bc
+	rlca
+	rlca
+	rlca
+	rlca
+	ld c,a
+	and 00001111b
+	xor (hl)
+	ld (hl),a
+	inc hl
+	
+	dec b
+	ret z
+
+rightsidexorrev	ld a,c
+rightsidexorrev1	and 11110000b
+	xor (hl)
+	ld (hl),a
+	dec de
+	djnz leftsidexorrev
+	ret
+
+plotlinedirrev	ld a,(sideofbyte)
+	and a
+	jr z,leftsidedirrev
+
+	ld a,(de)
+	push bc
+	ld b,revpage
+	ld c,a
+	ld a,(bc)
+	pop bc
+	rlca
+	rlca
+	rlca
+	rlca
+	ld (scrolledbyte),a
+	jp rightsidedirrev
+
+leftsidedirrev	ld a,(hl)
+	and 11110000b
+	ld c,a
+	ld a,(de)
+	push bc
+	ld b,revpage
+	ld c,a
+	ld a,(bc)
+	pop bc
+	rlca
+	rlca
+	rlca
+	rlca
+	ld (scrolledbyte),a
+	and 00001111b
+	add a,c
+	ld (hl),a
+	inc hl
+	
+	dec b
+	ret z
+
+rightsidedirrev	ld a,(hl)
+	and 00001111b
+	ld c,a
+
+	ld a,(scrolledbyte)
+	and 11110000b
+	add a,c
+	ld (hl),a
+	dec de
+	djnz leftsidedirrev
+	ret
+
+
+
+	endif		;end spectrum
+
+
+	if computer=amstrad
+
+attritable	EQU &AF00			;;DEFS 32*24,64+2
+
+hearttable	equ attritable
+
+frame
+	ld a,(spritenothere)
+	and a
+	ret nz
+
+	call doplottype
+	call docolour
+
+	ld de,(windowleft)
+
+	ld a,(frmheight)
+	ld (heightcount),a
+	ld a,(frmwidth)
+	ld (widthcount),a
+	ld b,a
+	ld a,(frmx)
+	cp d		;windowright
+	ret nc
+	add a,b
+	ret c
+	dec a
+	cp e		;windowleft
+	ret c
+
+	ld hl,(windowtop)
+	ld a,(frmheight)
+	ld b,a
+	ld a,(frmy)
+	cp h		;windowbottom
+	ret nc
+	add a,b
+	dec a
+	cp l		;windowtop
+	ret c
+			;definately not fully out of window
+
+	ld a,(frmy)
+	ld (frmycoord),a
+	sub l
+	jr nc,notouttop
+	ld b,a
+	ld a,(heightcount)
+	add a,b
+	ld (heightcount),a
+	ld a,l
+	ld (frmycoord),a
+	push hl
+	ld hl,(frmlocation)
+	ld a,(frmwidth)
+	srl a
+	ld c,a
+	ld a,b
+	ld b,0
+movestartdown	add hl,bc
+	inc a
+	jr nz,movestartdown
+	ld (frmlocation),hl
+	pop hl
+
+notouttop
+	ld a,(heightcount)
+	ld b,a
+	ld a,(frmycoord)
+	add a,b
+	dec a
+	sub h		;windowbottom
+	jr c,notoutbottom
+	inc a
+	ld b,a
+	ld a,(heightcount)
+	sub b
+	ld (heightcount),a
+notoutbottom	
+	ld a,(frmx)
+	ld (frmxcoord),a
+	xor a
+	ld (addtodef+1),a
+	ld (acrosshalf+1),a
+
+	ld a,(frmx)
+	sub e		;windowleft
+	jr nc,notoutleft
+	neg
+	ld b,a
+	and 1
+	ld (acrosshalf+1),a
+	ld a,(widthcount)
+	sub b
+	ld (widthcount),a
+	ld a,(frmxcoord)
+	add a,b
+	ld (frmxcoord),a
+	ld a,b
+	srl a
+	ld (addtodef+1),a
+	ld c,a
+	ld b,0
+	push hl
+	ld hl,(frmlocation)
+	add hl,bc
+	ld a,(frmreverse)
+	and a
+	jr z,storenewfrmloc
+	sbc hl,bc
+	and a
+	sbc hl,bc
+storenewfrmloc	ld (frmlocation),hl
+	pop hl
+	ld b,a
+notoutleft
+	ld a,(frmxcoord)
+	ld b,a
+	ld a,(widthcount)
+	add a,b
+	dec a
+	sub d
+	jr c,notoutright
+	inc a
+	ld b,a
+	ld a,(widthcount)
+	sub b
+	ld (widthcount),a
+	ld a,b
+	inc a
+	srl a
+	ld b,a
+	ld a,(addtodef+1)
+	add a,b
+	ld (addtodef+1),a
+notoutright
+	ld hl,plotbyte
+	ld a,(frmreverse)
+	and a
+	jr z,storeplotbyte
+	ld iy,multrevtable
+	ld hl,(frmlocation)
+	ld a,(frmwidth)
+	srl a
+	dec a
+	ld c,a
+	ld b,0
+	add hl,bc
+	ld (frmlocation),hl
+	ld a,(frmwidth)
+	res 0,a
+	ld b,a
+	ld a,(addtodef+1)
+	neg
+	add a,b
+	ld (addtodef+1),a
+	ld hl,plotbyterev
+storeplotbyte	ld (plotbytepatch+1),hl
+	ld a,(frmycoord)
+	ld l,a
+	ld h,0
+	add hl,hl
+	ld bc,screentable
+	add hl,bc
+	push hl
+	pop ix 
+	ld de,(frmlocation)
+	ld a,(frmxcoord)
+	sub 32
+	ld (addacross+1),a
+			;all patches should have been done
+			;ix must be set to screen table position  
+			;de must point to frm definition
+
+frmylp	ld l,(ix+0)
+	inc ix
+	ld h,(ix+0)
+	inc ix
+addacross	ld bc,0000	;patched
+	add hl,bc
+
+acrosshalf	ld a,0	;patched
+	ld (sideofbyte),a
+
+	ld a,(widthcount)
+	ld b,a
+frmxlp
+plotbytepatch	call plotbyte
+	inc hl
+	djnz frmxlp
+
+	ex de,hl
+addtodef	ld bc,0000	;patched
+	add hl,bc
+	ex de,hl
+
+	ld a,(heightcount)
+	dec a
+	ld (heightcount),a
+	jr nz,frmylp
+
+	ret
+
+plotbyte	ld a,(sideofbyte)
+	xor 1
+	ld (sideofbyte),a
+	jr z,rightside
+
+leftside	ld a,(de)
+	and 240 
+	ld c,a
+	rlca
+	rlca
+	rlca
+	rlca
+	xor c
+colourpatch0	and colourmask3	;single colour byte found
+spritepatch0	and (hl)		;and background
+	ld (hl),a		;store to background
+	ret	
+
+rightside	ld a,(de)
+	and 15
+	ld c,a
+	rlca
+	rlca
+	rlca
+	rlca
+	xor c
+colourpatch1	and colourmask3
+spritepatch1	and (hl)
+	ld (hl),a
+	inc de
+	ret
+
+plotbyterev	ld a,(sideofbyte)
+	xor 1
+	ld (sideofbyte),a
+	jr z,rightsiderev
+
+leftsiderev	ld a,(de)
+	and 15
+	ld (leftsiderevpat+2),a
+leftsiderevpat	ld a,(iy+0)		;patched
+colourpatch2	and colourmask3	;single colour byte found
+spritepatch2	and (hl)		;and background
+	ld (hl),a		;store to background
+	ret	
+
+rightsiderev	ld a,(de)
+	and 240
+	rlca
+	rlca
+	rlca
+	rlca
+	ld (rightsiderevpat+2),a
+rightsiderevpat	ld a,(iy+0)		;;;patched
+colourpatch3	and colourmask3
+spritepatch3	and (hl)
+	ld (hl),a
+	dec de
+	ret
+
+
+doplottype	ld a,(frmplot)
+	and a
+	jr z,storeplot
+	cp 1
+	ld a,&ae	;xor (hl)
+	jr z,storeplot
+	ld a,&b6	;or (hl)
+storeplot	ld (spritepatch0),a
+	ld (spritepatch1),a
+	ld (spritepatch2),a
+	ld (spritepatch3),a
+	ret
+
+
+
+docolour	ld a,(frmattri)
+	and 7
+	ld c,a
+	ld b,0
+	ld hl,colourmasktable
+	add hl,bc
+	ld a,(hl)
+	ld (colourpatch0+1),a
+	ld (colourpatch1+1),a
+	ld (colourpatch2+1),a
+	ld (colourpatch3+1),a
+	ret
+
+
+multrevtable	defb &00,&88,&44,&cc,&22,&aa,&66,&ee
+	defb &11,&99,&55,&dd,&33,&bb,&77,&ff
+
+
+colourmask0	equ 0
+colourmask1	equ 15
+colourmask2	equ 255
+colourmask3	equ 240
+
+colourmasktable	defb colourmask0,colourmask0,colourmask1,colourmask1
+	defb colourmask2,colourmask2,colourmask3,colourmask3
+
+	endif		;end amstrad
+
+	include frames.dat
+
+	include prtdizzy.pds
+
+	include dizzyfrm.dat
+
+	
+clearplayarea	ld ix,screentable+6*16
+	ld a,17*8
+	if computer=amstrad
+	ld de,2
+	endif
+	if computer=spectrum
+	ld de,1
+	endif
+clrscrlp	ld l,(ix+0)
+	ld h,(ix+1)
+	inc ix
+	inc ix
+	add hl,de
+	if computer=amstrad
+	ld b,60
+	endif
+	if computer=spectrum
+	ld b,30
+	endif
+clrscrlp1	ld (hl),0
+	inc hl
+	djnz clrscrlp1
+	dec a
+	jr nz,clrscrlp
+
+	ld a,(roomno)
+	cp 3
+	ld a,%01000111
+	jp nz,clearattris
+	ld a,%01000010
+	jp clearattris
+
+
+findattriloc		;e=x (0-63) l=y (0-191)
+ 			;returns loc of attri in hl
+	ld a,l
+atpatch4	nop	;;;cpl
+atpatch5	nop
+	nop   ;;;add a,191+41
+	and %11111000
+	ld h,0
+	ld d,h
+	ld l,a
+	add hl,hl
+	add hl,hl
+	srl e
+	add hl,de
+
+newattrihere1	ld de,attritable
+	add hl,de
+	ret
+
+“
+
+
+
+
+
+
+
+“
+b¾Cì(ÿU]X5      PDS	900000000h	cpl
+x+0),a
+
+hold)
+ht jump 
+and (keybyte) set
+the start of the
+
+
+
+"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+F0F1F2F3F4F5F6F7F8F9;  
+;
+;  PDS Pc1.10 :000:  (C)  1985-7 P.D Systems   
+;
+;
+;       File  "     DIZZY 3       "
+;    Version          03.57        
+;         By  " THE OLIVER TWINS  "
+;    
+;     Created on Wed the 02nd of Mar 1988  
+;        Last update 13:36 on 19/12/89 
+; 
+
+mend	equ 0
+mxy	equ 128
+;;;mpen	equ 2
+mplot	equ 3
+mgosub	equ 4
+mrep	equ 5
+mendrep	equ 6
+;;mx	equ 7
+;;my	equ 8
+drawbox	equ 9
+nr	equ 10
+mpen	equ 16
+
+
+prtmessage		;; CONTROL CODES ARE :-
+		;; 0  END
+		;; 128+X,Y
+;;;;;;;		;; 2  PEN COLOUR
+		;; 3  PLOT CHR/ATTR  BIT 0  CHR   BIT 1 ATTR
+		;; 4  GOSUB
+		;; 5  REPEAT
+		;; 6  END REPEAT
+;;;;;;;;		;; 7  MOVE X
+;;;;;;;;;		;; 8  MOVE Y
+		;; 9  DRAW BOX  width,height
+		;; 10 NOP  but moves across like chr
+
+		;;16+(0-7)=pen colour
+
+
+	call openwindow	
+	call flipifnecessary
+	call prtmessage1
+	call flipifnecessary
+	jp closewindow
+
+prtmessage1	ld a,(hl)
+	inc hl
+	bit 7,a
+	jp nz,changexy
+	cp 32
+	jr nc,mustbechr
+	cp 16
+	jr nc,changepen
+	and a	   ;;;mend
+	ret z
+	cp 3
+	jP z,changeplot
+	cp 4
+	jp z,gosub
+	cp 5
+	jp z,repeat
+	cp 6
+	jp z,endrepeat
+	cp 9
+	jp z,drawboxrou
+	cp 10
+	jp z,noprou
+
+mustbechr
+	ld b,a
+	ld a,(messx)
+	ld e,a
+	ld a,(messy)
+	push hl
+	ld l,a
+
+	if computer=spectrum
+
+	ld a,(plottype)
+	bit 1,a
+	jr z,notattr
+	push hl
+	push de
+	call findattriloc
+	ld a,(pen)
+	ld (hl),a
+	pop de
+	pop hl	
+
+	endif
+
+notattr	ld a,(plottype)
+	bit 0,a
+	jr z,notchr
+	ld a,(messy)
+	ld l,a
+	ld a,(messx)
+	add a,32
+	ld e,a
+	ld a,(pen)
+	ld c,a
+	ld a,b
+	ld b,0
+	call store_sprite_vars
+	call plotattris
+	call frame
+notchr	pop hl
+	ld a,(messx)
+	add a,2
+	ld (messx),a
+	jp prtmessage1
+
+changexy	sub 128
+	ld (messx),a
+	ld a,(hl)
+	ld (messy),a 
+	inc hl
+	jp prtmessage1
+
+changepen	sub 16
+	add a,64
+	ld (pen),a
+	jp prtmessage1
+
+changeplot	ld a,(hl)
+	ld (plottype),a
+	inc hl
+	jp prtmessage1
+
+gosub	ld e,(hl)
+	inc hl
+	ld d,(hl)
+	inc hl
+	push hl
+	ex de,hl
+	call prtmessage1
+	pop hl
+	jp prtmessage1
+	
+repeat	ld a,(hl)
+	inc hl
+	and a
+	jr z,noloop
+keeprepeat	push af
+	push hl
+	jp prtmessage1
+
+noloop	inc hl
+	inc hl
+	ld a,(hl)
+	jp prtmessage1
+
+endrepeat	ex de,hl
+	pop hl
+	pop af
+	dec a
+	jr nz,keeprepeat
+	ex de,hl
+	jp prtmessage1
+
+
+drawboxrou
+	ld a,6
+	ld (sndfx),a
+
+	ld a,10
+	ld (usepickup),a
+	xor a
+	ld (pickup),a
+	ld (frmplot),a
+	ld (frmreverse),a
+	ld a,(pen)
+	ld (frmattri),a
+	
+
+	ld a,(hl)	
+	ld (boxwidthpatch+1),a
+	if computer=amstrad
+	sla a
+	endif
+	ld (boxwidthpatch1+1),a
+	inc hl
+	ld a,(hl)
+	inc hl
+	push hl
+	ld (boxheightpatch+1),a
+	add a,a
+	add a,a
+	add a,a
+	ld (boxheightpatch1+1),a
+	call horizontalbars
+	call verticalbars
+	call clearmiddle
+	pop hl
+	jp prtmessage1
+
+horizontalbars	ld a,(messx)
+	add a,32
+	ld e,a
+	ld a,(messy)
+	add a,8
+	ld l,a
+	call horizontalbar
+	ld a,(boxheightpatch1+1)
+	add a,l
+	add a,8
+	ld l,a
+	ld a,(messx)
+	add a,32
+	ld e,a
+horizontalbar	ld a,42
+	call printince
+	ld a,46
+	call printince
+boxwidthpatch	ld d,0
+horizontalbarlp	ld a,40
+	call printince
+	dec d
+	jr nz,horizontalbarlp
+	ld a,46
+	call printince
+	ld a,43
+printandprotect	push hl
+	push de
+	if computer=spectrum
+	push hl
+	push de
+	push af
+	ld a,e
+	sub 32
+	ld e,a
+	call findattriloc
+	ld a,(frmattri)
+	ld (hl),a
+	pop af
+	pop de
+	pop hl
+	endif
+	call store_sprite_vars1
+	call frame
+	pop de
+	pop hl
+	ret
+
+printince	call printandprotect
+	inc e
+	inc e
+	ret
+
+verticalbars	ld a,(messx)
+	add a,32
+	ld e,a
+	inc e
+	inc e
+	push de
+	ld a,(messy)
+	ld l,a
+	call verticalbar
+	ld a,(messy)
+	ld l,a
+	pop de
+	ld a,(boxwidthpatch+1)
+	inc a
+	add a,a
+	add a,e
+	ld e,a
+verticalbar	ld a,44
+	call printandprotect
+	ld a,l
+	add a,16
+	ld l,a
+boxheightpatch	ld d,0
+verticalbarlp	ld a,41
+	call printandprotect
+	ld a,l
+	add a,8
+	ld l,a
+	dec d
+	jr nz,verticalbarlp
+	ld a,l
+	add a,8
+	ld l,a
+	ld a,45
+	jp printandprotect
+
+clearmiddle	ld a,(messx)
+	add a,4
+	if computer=spectrum
+	srl a
+	endif
+	ld (boxxpatch+1),a
+	ld a,(messy)
+	add a,16
+	ld e,a
+	ld d,0
+	sla e
+	rl d
+	ld ix,screentable
+	add ix,de
+boxheightpatch1	ld c,0
+boxheightlp	ld l,(ix+0)
+	ld h,(ix+1)
+boxxpatch	ld de,0
+	add hl,de
+boxwidthpatch1	ld b,0
+boxwidthlp	ld (hl),d
+	inc hl
+	djnz boxwidthlp
+	inc ix
+	inc ix
+	dec c
+	jr nz,boxheightlp
+	ret
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+noprou	ld a,(messx)
+	add a,2
+	ld (messx),a
+	jp prtmessage1
+
+
+plottype	defb 3
+pen	defb 7
+messx	defb 10
+messy	defb 10
+size 	defb 0
+
+
+random	push ix
+	ld a,(seed)
+	ld ix,seed
+	dec a
+	xor (ix+1)
+	rla
+	rr (ix+2)
+	ld (ix+0),a
+	cpl
+	rla
+	xor 48
+	xor (ix+1)
+	ld (ix+1),a
+	xor (ix+2)
+	pop ix
+	ret
+
+seed	hex 59a313
+
+
+	if computer=spectrum
+
+pdskey	equ 3*32
+
+	;;spectrum special routine
+	
+inkey	;;a=key  using new bit pattern method 
+	;; z if that key was pressed
+	;; corrupts   a
+	
+	push hl
+	ld l,a
+	bit 4,a
+	jr nz,kempston
+	push bc
+	ld bc,&fffe
+	and 11100000b
+	rrca
+	rrca
+	add a,10000000b
+	ld (inkeypatch+1),a
+	ld a,l
+	rlca
+	rlca
+	rlca
+	and 00111000b
+	add a,01000111b
+	ld (inkeypat1+1),a
+inkeypatch	res 0,b
+	in a,(c)
+inkeypat1	bit 0,a
+	pop bc
+	pop hl
+	ret	
+	
+kempston	rlca
+	rlca
+	rlca
+	and 00111000b
+	add a,01000111b
+	ld (inkeypat2+1),a
+	in a,(31)
+	xor 255
+inkeypat2	bit 0,a
+	pop hl
+	ret
+
+	endif
+
+
+	if computer=amstrad
+
+
+spacekey	equ 47
+enterkey	equ 18
+pdskey	equ 66
+
+inkey	di
+	push bc
+	ld b,a
+	and 7
+	rlca
+	rlca
+	rlca
+	add a,71
+	ld (kpatch+1),a
+	ld a,b
+	and 120
+	rrca
+	rrca
+	rrca
+	ld bc,&f40e
+	out (c),c
+	ld b,&f6
+	ld c,a
+	in a,(c)
+	add c
+	ld c,a
+	or &c0
+	out (c),a
+	out (c),c
+	inc b
+	ld a,&92
+	out (c),a
+	dec b
+	set 6,c
+	out (c),c
+	ld b,&f4
+	in a,(c)
+	ld bc,&f782
+	out (c),c
+	dec b
+	ld c,0
+	out (c),c
+kpatch	bit 0,a
+	pop bc
+	ei
+	ret
+
+	endif
+
+
+
+getkeybyte	;;;returns with A set and (keybyte) set
+	;;		bit    3    2    1    0
+	;;		     fire left right jump 
+
+	push hl
+	ld c,0
+	ld hl,keyboardkeys
+	ld de,joystickkeys
+	if computer=spectrum
+	ld ix,kempkeys
+	endif
+	ld b,6
+getkeyslp	ld a,(hl)
+	call inkey
+	jr z,setkey
+	ld a,(de)
+	call inkey
+	jr z,setkey
+	if computer=spectrum
+	ld a,(kempstonpresent)
+	and a
+	jr z,reskey
+	ld a,(ix+0)
+	call inkey
+	jr z,setkey
+	endif
+reskey	and a
+	jr restofkey
+setkey	scf
+restofkey	rl c
+	inc hl
+	inc de
+	if computer=spectrum
+	inc ix
+	endif
+	djnz getkeyslp
+	ld a,c
+	ld (keybyte),a
+	pop hl
+	ret
+
+
+
+	if computer=spectrum
+beforesetup
+	org flamelist
+setup	ld hl,attritable+5*32
+	ld de,attritable+5*32+1
+	ld (hl),01000010b
+	ld bc,19*32
+	ldir
+	
+	xor a
+	out (&fe),a
+checkifkempston
+	ld bc,80*256+0
+checkkemlp	in a,(31)
+	or c
+	ld c,a
+	ei
+	halt
+	di
+	djnz checkkemlp
+	ld a,c
+	and 11100000b
+	ld a,255
+	jr z,fitted
+	xor a
+fitted	ld (kempstonpresent),a
+	jp turninteron
+
+setupend
+	if setupend>endflamelist
+	error "setup too big
+	endif
+	org beforesetup
+
+kempstonpresent
+	defb 0
+
+turnscreenoff	xor a
+	ld (frmplot),a
+	ld bc,30*256+17
+	ld de,6*256+1
+	call attribox
+	ld hl,attritable
+	ld (patchattritable+1),hl
+	ld (newattrihere1+1),hl	
+	ret
+
+turnscreenon	ld hl,screenattritable
+	ld (patchattritable+1),hl
+	ld (newattrihere1+1),hl
+copyscreenforward
+	ld de,screenattritable+6*32+1
+	ld hl,attritable+6*32+1
+	ld c,17
+turnscreenonlp	ld b,30
+turnscreenonlp1	ld a,(hl)
+	set 6,a
+	ld (de),a
+	inc hl
+	inc de
+	djnz turnscreenonlp1
+	inc hl
+	inc de
+	inc hl
+	inc de
+	dec c
+	jr nz,turnscreenonlp
+	ret
+	endif
+
+flyback			;;protects and exit when next flyback occurs
+			;;interupts must be enabled
+	push af
+	push bc
+	ld a,(clock)
+	ld b,a
+flybacklp	ld a,(clock)
+	cp b
+	jr z,flybacklp
+	pop bc
+	pop af
+	ret
+
+	if computer=amstrad
+beforesetup
+	org flamelist
+setup
+	di
+;	ld bc,0
+;	call &bc38
+	ld a,16
+	ld bc,&7f00
+	out (c),a
+	ld a,84
+	out (c),a
+
+setinks	ld hl,inks
+	xor a
+setinkslp	push af
+	ld bc,&7f00
+	out (c),a
+	ld a,(hl)
+	out (c),a
+	pop af
+	inc hl
+	inc a
+	cp 4
+	jr nz,setinkslp
+	ld a,16
+	out (c),a
+	ld a,84
+	out (c),a
+	jp turninteron
+
+
+setupend
+	if setupend>endflamelist
+	error "setup too big
+	endif
+	org beforesetup
+
+inks	defb 84,75,76,82	;h.w. nos.;inks	defb 0,26,6,18
+
+turnscreenoff	call flyback
+	di
+	ld bc,&bc06
+	out (c),c
+	ld bc,&bd05
+	out (c),c
+	ei
+	ret
+
+turnscreenon	call flyback
+	di
+	ld bc,&bc06
+	out (c),c
+	ld bc,&bd19
+	out (c),c
+	ei
+	ret
+	endif
+
+roomsetup	;;room data was compacted a lot,because of the amount
+	;;of memory it took,the edit has data
+	;;0=room
+	;;1=FRAME
+	;;2=X
+	;;3=Y
+	;;4=COLOUR +reverse stuff
+	;;this was compacted to a table of word pointers to the start of the
+	;;of each room therefore using only 4 bytes.
+	;;Then if the colour of the next frame is the same
+	;;as the previous then bit 7 of the X coord is set
+
+	call turnscreenoff
+	call clearplayarea
+
+	call flipscreenrou
+
+	xor a
+	ld (noofwater),a
+	ld (noofflames),a
+	ld (breathingfire),a
+
+	call drawfullroom
+
+	call checkbeanstalk
+	call checkfireout
+afterroomsetup
+	if seecoins=0
+	call putcoinsinroom
+	call resetroommoving
+	endif
+
+	if seecoins=1
+	call resetroommoving
+	call putcoinsinroom
+	endif
+
+	call turnscreenon
+	call printroomname
+	ret
+
+
+checkbeanstalk	ld a,(roomno)
+	cp 58
+	ret nz
+	ld a,(manurehere+var1)
+	cp 2
+	ret nz
+	ld a,1
+	ld (roomno),a
+	call drawfullroom
+	ld a,58
+	ld (roomno),a
+	ret
+
+checkfireout	ld a,(roomno)
+	cp 36
+	ret nz
+	ld a,(fireout)
+	and a
+	ret nz
+	ld a,2
+	ld (roomno),a
+	call drawfullroom
+	ld a,36
+	ld (roomno),a
+	ret
+
+
+
+
+drawfullroom
+roomsetuplp	ld hl,roomdata
+	ld a,(roomno)
+	cp 127
+	ret z
+	ld c,a
+	ld b,0
+	sla c
+	rl b
+	add hl,bc
+	ld e,(hl)
+	inc hl
+	ld d,(hl)
+	push de
+	pop ix
+	ld bc,roomdata+204	;;;256
+	add ix,bc
+	inc hl
+	ld c,(hl)
+	inc hl
+	ld b,(hl)
+	ld a,c
+	cp e
+	jr nz,roomok
+	ld a,b
+	cp d
+	ret z
+	
+roomok
+thinglp	ld a,(ix+0)
+	ld (frmno),a
+	inc ix
+	inc de
+	ld a,(ix+0)
+	and 127
+	ld (frmx),a
+	inc ix
+	inc de
+	ld a,(ix+0)
+	ld (frmy),a
+	inc ix
+	inc de
+
+	bit 7,(ix-2)
+	jr nz,samecolour	
+
+	ld a,(ix+0)
+	and %01000111
+	ld (frmattri),a
+	ld a,(ix+0)
+	rlca
+	and 1
+	ld (frmreverse),a
+	ld a,(ix+0)
+	and %00011000
+	rrca
+	rrca
+	rrca
+	ld (frmplot),a
+	inc de
+	inc ix
+
+samecolour	push bc
+	push de
+	push ix
+	
+	call findfrmsize
+	ld a,(frmplot)
+	push af
+	xor a
+	ld (frmplot),a
+	call plotattris
+	pop af
+	ld (frmplot),a
+	call frame
+
+	ld a,(frmno)
+	cp 91
+	call z,addtowater
+	ld a,(frmno)
+	cp 115
+	call z,addtoflame
+	
+	pop ix
+	pop de
+	pop bc
+	ld a,d
+	cp b
+	jr nz,thinglp
+	ld a,e
+	cp c
+	jr nz,thinglp
+	ret
+
+
+
+
+putcoinsinroom	ld b,totalcoins
+	ld ix,cointable
+putcoinsinroomlp	ld a,(roomno)
+	cp (ix+2)
+	jr nz,coinnotinroom
+	push bc	
+	push ix
+	xor a
+	ld bc,6+64
+	ld e,(ix+0)
+	ld l,(ix+1)
+	call store_sprite_vars
+	call frame
+	call plotattris
+	pop ix
+	pop bc
+coinnotinroom	ld de,3
+	add ix,de
+	djnz putcoinsinroomlp
+	ret
+
+
+resetcoins	ld a,255
+	ld (coins),a
+	ld b,totalcoins
+	ld ix,cointable
+	ld de,3
+resetcoinslp	res 7,(ix+2)
+	add ix,de
+	djnz resetcoinslp
+addtocoins	ld a,(coins)
+	inc a
+	ld (coins),a
+	ld b,-1+48
+div10lp	inc b
+	sub 10
+	jr nc,div10lp
+	add a,10+48
+	ld (noofcoinsmess+1),a
+	ld a,b
+	ld (noofcoinsmess),a
+	ld hl,coinsmess
+	jp prtmessage
+
+	if computer=spectrum	
+coinsmess	defb mpen+6,mxy+46,8
+noofcoinsmess	defb 0,0,mend
+	endif
+
+	if computer=amstrad	
+coinsmess	defb mpen+4,mxy+46,8
+noofcoinsmess	defb 0,0,mend
+	endif
+
+
+subfromlives
+	ld a,(lives)
+	dec a
+	ld (lives),a
+	ld (nooflivesmess+1),a
+	ld hl,livesmess
+	jp prtmessage
+	
+	if computer=spectrum
+livesmess	defb mpen+6,mxy+14,8,":::",mxy+14,8
+nooflivesmess	defb mrep,1,"/",mendrep,mend
+	endif
+	if computer=amstrad
+livesmess	defb mpen+4,mxy+14,8,":::",mxy+14,8
+nooflivesmess	defb mrep,1,"/",mendrep,mend
+	endif
+
+
+printroomname	ld a,(roomno)
+	rlca
+	ld c,a
+	ld b,0
+	ld hl,roomnames
+	add hl,bc
+	ld e,(hl)
+	inc hl
+	ld d,(hl)
+	push de
+	ld hl,readytoprintname
+	call prtmessage
+	pop hl
+	jp prtmessage
+
+windowrou	ld a,1
+	ld (dontupdatedizzy),a
+	call prtmessage
+windowrou2	call handoffandwait
+windowrou1	call resetuproom
+	xor a
+	ld (dontupdatedizzy),a
+	ret	
+
+tryputtingdown	ld a,(pickup)
+	and a
+	ret z
+	ld hl,proxpicture
+	call checkproximity1
+tryputtingdown1	ld a,1
+	ld (tryputdownvar),a
+inventoryrou	push ix
+	ld a,1
+	ld (dontupdatedizzy),a
+
+	ld a,(bag)
+	and a
+	ld hl,inventory
+	jr z,nobaginvent
+	ld hl,inventorywithbag
+nobaginvent	call prtmessage
+
+	ld a,(bag)
+	and 1
+	rlca
+	add a,2
+	ld (distdownmenu+1),a
+	ld (distdownmenu1+1),a
+
+	ld b,0
+printwhatcarrying
+	push bc
+	call printcarryingline
+	pop bc
+	ld a,b
+	inc b
+distdownmenu1	cp 1  ;;2+bag*2 
+	jr nz,printwhatcarrying
+
+	ld a,(objectscarried)
+	ld hl,nothingatallmess
+	and a
+	call z,prtmessage
+
+	ld a,(toomuchtohold)
+	ld hl,carryingtoomuchmess
+	and a
+	jr nz,gottoomuchpointer
+	ld hl,selectitemmess
+gottoomuchpointer
+	call prtmessage
+
+	ld a,(tryputdownvar)
+	ld bc,255*256+2
+	cp 1
+	ld a,b
+	jr z,notchingdown
+	ld a,(distdownmenu+1)
+	ld b,a
+chooseobjecttodrop
+	ld a,(clock)
+	ld c,a
+flywait	ld a,(clock)
+	cp c
+	jr z,flywait
+	ld a,(cyclecolour)
+	inc a
+	and 7
+	ld (cyclecolour),a
+	ld hl,colourtable
+	ld e,a
+	ld d,0
+	add hl,de
+	ld a,(hl)
+	ld (pen),a
+	push bc
+	call printcarryingline
+	call specialgetkeybyte
+	pop bc
+	ld c,a
+	bit 3,c		
+	jr nz,tryingtodrop
+	ld a,(objectscarried)
+	and a
+	ld a,b
+	jr z,notdownmenu
+	ld a,b
+notchingdown	and a
+	jr z,notupmenu
+	bit 5,c
+	jr nz,yesupmenu
+	bit 2,c
+	jr z,notupmenu
+yesupmenu	dec a
+notupmenu
+distdownmenu	cp 1  ;;;;2+bag*2
+	jr z,notdownmenu
+	bit 4,c
+	jr nz,yesdownmenu
+	bit 1,c
+	jr z,notdownmenu
+yesdownmenu	inc a
+notdownmenu	cp b
+	jr z,chooseobjecttodrop
+
+	call whatinslot
+	ld a,d
+	jr z,notchingdown
+	push af
+	ld a,2+64
+	ld (pen),a
+	ld a,b
+	cp 255
+	call nz,printcarryingline
+	pop bc	;;was pushed as af
+	jr chooseobjecttodrop
+tryingtodrop	ld a,b
+	call whatinslot
+	push af
+	call gettomovingdata
+	ld a,(ix+movefrm)
+	cp 18
+	call z,droppingwhiskey
+	ld ix,0
+	pop af
+	cp 1
+	jr z,justexitinvent
+	ld c,a
+	ld hl,objectscarried-1
+sufflelp	inc hl
+	ld a,(hl)
+	cp c
+	jr nz,sufflelp
+sufflelp1	inc hl
+	ld a,(hl)
+	dec hl
+	cp 1
+	jr z,justexitinvent1
+	ld (hl),a
+	inc hl
+	jr sufflelp1	
+justexitinvent1	ld (hl),0
+	call dropobject
+
+justexitinvent	push ix
+	call resetuproom
+	pop ix
+	xor a
+	ld (tryputdownvar),a
+	ld (dontupdatedizzy),a
+	ld (toomuchtohold),a
+	call checkproximity  ;;CHECK DROPPING OBJECT BY TRIGGER
+	push ix
+	pop hl
+	ld a,l
+	or h
+	ld hl,proxshopkeeper
+	call nz,checkproximity1
+	pop ix	
+	ret	
+
+droppingwhiskey	ld a,(ix+var1)
+	and a	
+	ret nz
+	ld (ix+var1),1
+	ld hl,emptybottlemess
+	ld (whiskeyhere+oldmovex),hl
+	ld a,255
+	ld (drunk),a
+	ld hl,dropwhiskeymess
+	call prtmessage
+	jp handoffandwait
+
+gettomovingdata	ld b,a
+	ld ix,movingdata
+	ld de,16
+gettopickupable	add ix,de
+	djnz gettopickupable
+	ret
+
+dropobject	ld a,c
+	call gettomovingdata
+	ld a,(roomno)
+	ld (ix+room),a
+	ld a,(x)
+	and %11111110
+	add 34
+	ld (ix+movex),a
+	ld a,(y)
+	and %11111000
+	sub 8
+	ld (ix+movey),a
+	ld a,11
+	ld (sndfx),a
+	ret
+
+specialgetkeybyte
+	call getkeybyte
+	and a
+	jr z,nothingpressed
+	ld c,a
+	ld a,(lastkeybyte)
+	and a
+	ld a,c
+nothingpressed	ld (lastkeybyte),a
+	ret z
+	xor a
+	ret
+
+whatinslot	ld e,a
+	ld d,0
+	ld hl,objectscarried
+	add hl,de
+	ld d,a
+	ld a,(hl)
+	and a
+	ret
+
+printcarryingline	;;;b=number down menu list
+	ld a,(bag)
+	neg
+	add a,b
+	inc a
+	rlca
+	rlca
+	rlca
+	add a,80
+	ld (messy),a
+	ld a,12
+	ld (messx),a
+	ld a,b
+	call whatinslot
+	ld hl,nothingheremess
+	jp z,prtmessage
+	ld hl,movingdata+oldmovex
+	ld de,16
+	ld b,a
+gettopickupablemess
+	add hl,de
+	djnz gettopickupablemess
+	ld e,(hl)
+	inc hl
+	ld h,(hl)
+	ld l,e	
+	cp 1
+	jp nz,prtmessage
+
+	ld a,(bag)		;;;EXIT AND DONT DROP MESS
+	rlca
+	rlca
+	rlca
+	add a,108
+	ld (messy),a	
+	jp prtmessage
+
+resetcarrying	ld hl,0
+	ld (objectscarried),hl
+	ld (objectscarried+2),hl
+	ld (objectscarried+3),hl
+	ld a,1
+	ld (objectscarried+2),a
+	ld a,8			;;apple in bag
+	ld (objectscarried),a
+	ret
+
+
+checkproximity	push ix
+	pop hl
+	ld a,l
+	or h
+	ret z
+	ld l,(ix+oldmovefrm)
+	ld h,(ix+delay)
+	ld a,l
+	or h
+	ret z
+checkproximity1	ld a,(roomno)
+	cp (hl)
+	ret nz
+	inc hl
+	ld e,(hl)
+	inc hl
+	ld d,(hl)
+	inc hl
+	ld a,(hl)
+	inc hl
+	ld b,(hl)
+	inc hl
+	push hl
+	ld l,a
+	ld h,b
+	ex de,hl
+	call proximitycollide
+	pop hl
+	ret nc
+	jp (hl)
+
+ 
+flipifnecessary	ld a,(upsidedown)
+	and a
+	ret z
+	jp flipscreenroumust 
+
+flipscreenrou
+	ld a,(flipscreen)
+	ld b,a
+	ld a,(upsidedown)
+	xor b
+	ret z
+flipscreenroumust
+	push hl
+	ld hl,screentable+6*8*2
+	ld de,screentable+183*2
+	ld b,136/2
+flipscreenlp	ld c,(hl)
+	ld a,(de)
+	ld (hl),a
+	ld a,c
+	ld (de),a
+	inc hl
+	inc de
+	ld c,(hl)
+	ld a,(de)
+	ld (hl),a
+	ld a,c
+	ld (de),a
+	inc hl
+	dec de
+	dec de
+	dec de
+	djnz flipscreenlp
+	ld a,(flipscreen)
+	xor 1
+	ld (flipscreen),a
+	ld a,(atpatch1)
+	and a
+	jr nz,patchforupright
+	ld a,&2f
+	ld hl,&1Dc6
+	ld de,-32
+	ld bc,&e8c6
+	jr storeatpatches
+patchforupright	ld hl,0
+	ld bc,0
+	ld de,32
+	xor a
+storeatpatches
+	ld (atpatch2),hl
+	ld (atpatch1),a
+	ld (atpatch4),a
+	ex de,hl
+	ld (atpatch3+1),hl
+	push bc
+	pop hl
+	ld (atpatch5),hl
+	pop hl
+	ret	
+
+
+“
+
+
+
+
+
+
+
+
+
+6 ' (ÿ©]X6      PDS	600000000Naroundgravity	ld (dy),a
+p
+p
+3,47
+1,2,7*32
+2+3,4*32+1  ;;;SINCLAIR 1
+&c6,&c7 
+c7 
+
+F0F1F2F3F4F5F6F7F8F9;  
+;
+;  PDS Pc1.10 :000:  (C)  1985-7 P.D Systems   
+;
+;
+;       File  "     DIZZY 3       "
+;    Version          05.54        
+;         By  " THE OLIVER TWINS  "
+;    
+;     Created on Tue the 14th of Jun 1988  
+;        Last update 13:36 on 19/12/89 
+; 
+
+	;;dizzy control
+
+	if computer=amstrad
+
+turninteron	di
+	ld a,&c3
+	ld (&38),a
+	ld hl,interentry
+	ld (&39),hl
+	ei
+	ret
+
+
+interentry	di
+	push af
+	push bc
+	ld b,&f5
+	in a,(c)
+	rra
+	jr nc,exitinter
+	push de
+	push hl
+	push ix
+	push iy
+
+	ld a,(clock)
+	inc a
+	ld (clock),a
+	
+	ld a,(dontupdatedizzy)
+	and a
+	call z,updatedizzy
+
+	call refresh 
+
+	ld a,(sndfx)
+	cp 255
+	jr z,nofx
+	call dosndfx
+	ld a,255
+	ld (sndfx),a
+nofx
+	pop iy
+	pop ix
+	pop hl
+	pop de
+exitinter	pop bc
+	pop af
+	ei
+	ret	
+
+	endif
+
+	if computer=spectrum
+
+turninteron	di
+	im 2
+	ld a,&fe
+	ld i,a
+	ei
+	ret
+
+
+interentry	di
+	push af
+	push bc
+	push de
+	push hl
+	push ix
+	push iy
+	ld a,(clock)
+	inc a
+	ld (clock),a
+	ld a,(dontupdatedizzy)
+	and a
+	call z,updatedizzy
+	call updatemusicingame
+
+	ld a,(sndfx)
+	cp 255
+	jr z,nofx
+	call dosndfx
+	ld a,255
+	ld (sndfx),a
+nofx
+	pop iy
+	pop ix
+	pop hl
+	pop de
+	pop bc
+	pop af
+	ei
+	ret	
+
+	endif
+
+
+eggcount	defb 2
+x	defb 25
+ox	defb 25
+y	defb 120
+oy	defb 120
+dy	defb 0
+ff	defb 0 
+of	defb 0
+floor	defb 0
+holding	defb 0
+holdingix	defw 0
+holdingnumberix	defb 0
+animation	defb 0
+sequence	defb 0
+deadmess	defb 0
+cheatcount	defb 0
+implode	defb 0
+lookx	defb 0
+looky	defb 0
+
+startx	defb 0
+starty	defb 0
+startroom	defb 0
+oldx	defb 0
+oldy	defb 0
+oldox	defb 0 
+oldoy	defb 0
+lastroom	defb 0
+roomno	defb 0
+newroomno	defb 0
+oldroomno	defb 0
+spritenothere	defb 0
+dontupdatedizzy	defb 1
+killed	defb 0
+killedmess	defw 0
+coins	defb 0
+lives	defb 0
+poscheat	defb 0
+oldclock	defb 0
+clock	defb 0
+keybyte	defb 0
+usepickup	defb 0
+pickup	defb 0
+toomuchtohold	defb 0
+objecttodrop	defb 0
+cyclecolour	defb 0
+colourtable	defb 2,3,4,5,6,5,4,3
+lastkeybyte	defb 0
+tryputdownvar	defb 0
+flipscreen	defb 0
+upsidedown	defb 0
+obstructinglift	defb 0
+drunk	defb 0
+shopkeepercount	defb 0
+spat	defb 0 
+fireout	defb 0
+ratcount	defb 0
+slotno	defb 0
+completedgame	defb 0
+
+
+	if computer=amstrad
+keyboardkeys	defb 37,38,18,71,63,47
+joystickkeys	defb 72,73,76,74,75,72
+	endif  
+
+	if computer=spectrum
+keyboardkeys	defb 6*32+2,7*32+2,6*32,1,2,7*32
+joystickkeys	defb 4*32+1,4*32+2,4*32,4*32+4,4*32+3,4*32+1  ;;;SINCLAIR 1
+kempkeys	defb 3+16,2+16,16+4,16+1,16+0,16+3
+	endif  
+
+fire	defb 0
+left	defb 0
+right	defb 0
+jump	defb 0
+	
+checkkeys	xor a
+	ld (left),a
+	ld (right),a
+	ld (jump),a
+	ld (fire),a
+	ld (keybyte),a
+
+	ld a,(killed)
+	and a
+	ret nz
+	
+	call getkeybyte
+	ld c,a
+
+	ld a,(sequence)
+	and a
+	jr nz,firenotpressed
+	ld a,(usepickup)
+	and a
+	jr nz,firenotpressed
+	bit 3,c
+	jr z,firenotpressed
+	ld a,1
+firepressed	ld (fire),a 
+	ret
+firenotpressed	
+	bit 2,c
+	jr z,leftnotpressed
+	ld a,1
+leftpressed	ld (left),a
+leftnotpressed
+	bit 1,c
+	jr z,rightnotpressed
+	ld a,1
+rightpressed	ld (right),a
+rightnotpressed
+	bit 0,c
+	ret z
+	ld a,1
+jumppressed	ld (jump),a 
+	ret
+	
+plotnew
+	ld a,(x)
+	ld (ox),a
+	ld e,a
+	ld a,(y)
+	ld (oy),a
+	inc a
+	ld l,a
+	ld d,0
+	ld h,d
+	ld a,(ff)
+	ld (of),a
+	jp prtdizzy
+	
+goneleft
+	ld a,56
+	ld (x),a
+	ld a,(roomno)
+	dec a
+	jp newroom
+
+goneright
+	ld a,2
+	ld (x),a
+	ld a,(roomno)
+	inc a
+	jp newroom
+	
+goneup
+	ld a,(y)
+	add a,118
+	ld (y),a
+	ld a,(roomno)
+	add a,16
+	jp newroom
+	
+gonedown
+	ld a,(y)
+	sub 114	
+	ld (y),a
+	ld a,(roomno)
+	sub 16
+					;;;jp newroom
+	
+newroom	and 127
+	ld (newroomno),a
+	ld a,1
+	ld (dontupdatedizzy),a
+	ret
+jumping
+	ld a,(animation)
+	and a
+	jp z,checkfloor
+	jp cantstop
+
+updatedizzy	ld a,(eggcount)
+	dec a
+	ld (eggcount),a
+	and a
+	ret nz
+	ld a,4
+	ld (eggcount),a
+
+	if computer=spectrum
+	ld hl,attritable
+	ld (newattrihere1+1),hl
+	call updatedizzy1
+	ld hl,screenattritable
+	ld (newattrihere1+1),hl
+	ret
+	endif
+
+updatedizzy1	
+notunder	call ruboutdizzy
+
+	ld a,(killed)
+	and a
+	jr z,notdeadyet
+
+	ld a,(sequence)
+	cp 6
+	jp z,cantstop
+	cp 7
+	jp nz,notkeelingover
+	ld a,(animation)
+	cp 7
+	jp nz,cantstop
+	ld a,6
+	ld (animation),a
+	jp cantstop	
+	
+notkeelingover	and a
+	jr nz,notdeadyet
+	ld (animation),a
+	ld a,7
+	ld (sequence),a
+	jp cantstop
+
+notdeadyet	ld a,(sequence)
+	cp 3
+	jp nc,jumping
+checkfloor
+	ld a,(floor)
+	and a
+	jp z,cantstop
+
+
+	ld a,(sequence)
+	and a
+	jr z,bettercheckkeys
+	ld a,(animation)
+	and 3
+	srl a
+	jr nc,bettercheckkeys
+	ld (sndfx),a
+
+bettercheckkeys
+	call checkkeys
+	ld a,(left)
+	cp 1
+	jr nz,tryright
+	ld a,1
+	jr tryjump
+tryright
+	ld a,(right)
+	cp 1
+	jr nz,trynone
+	ld a,2
+	jr tryjump
+trynone
+	xor a
+tryjump
+	ld b,a
+	ld a,(jump)
+	and a
+	jr z,setsequence		;;;no jump
+
+	ld a,21
+	ld (sndfx),a
+
+	xor a
+	ld (animation),a
+	ld a,-8
+	ld (dy),a
+	ld a,3
+setsequence
+	add a,b
+	ld (sequence),a
+cantstop
+				;dont check keys
+	ld a,(animation)
+	ld e,a
+	ld a,(sequence)
+	sla a
+	rla
+	rla
+	add a,e
+	ld c,a
+	ld b,0
+	ld hl,seq0
+	add hl,bc
+	ld a,(hl)
+	ld (ff),a
+	ld a,e
+	inc a
+	and 7
+	ld (animation),a
+	ld a,(roomno)
+	ld (oldroomno),a
+	ld a,(x)
+	ld b,a
+	ld ix,left
+	sub (ix+0)
+	add a,(ix+1)
+	cp 1
+	jp z,goneleft
+	cp 57
+	jp z,goneright
+sidereturn
+	ld (x),a
+	ld b,a
+	ld a,(ox)
+	cp b
+	jr z,sideback
+	jp c,checkrightside
+	jp checkleftside
+sideback
+	ld a,(sequence)
+	cp 6
+	jr z,vertreturn	;;;upside down in water
+	cp 8			;;tumbling upsidedown
+	ld a,-6
+	jr z,aroundgravity
+
+	ld a,(dy)
+	inc a
+aroundgravity	ld (dy),a
+	bit 7,a
+	jp nz,checktopside
+	jr checkbottomside
+updownback
+	xor a
+	ld (floor),a
+updownback1
+
+vertreturn
+	ld a,(roomno)
+	ld b,a
+	ld a,(oldroomno)
+	cp b
+	ret nz
+	jp plotnew
+	
+checktopside
+	neg
+	ld b,a
+	call setscreenix
+	ld de,-40
+	add ix,de
+	ld a,(looky)
+	sub 20
+	ld (looky),a
+checktopsidelp
+	push bc
+	call checkline
+	pop bc
+	jr nz,updownback
+	dec ix
+	dec ix
+	ld a,(looky)
+	dec a
+	ld (looky),a
+	ld a,(y)
+	dec a
+	cp 66
+	jp c,goneup
+	ld (y),a
+	djnz checktopsidelp
+	jr updownback
+	
+checkbottomside
+	cp 8
+	jr c,slowfall
+	ld a,7
+	ld (dy),a
+slowfall
+	add a,4
+	ld b,a
+	call setscreenix
+	ld de,-6
+	add ix,de
+	ld a,(looky)
+	sub 3
+	ld (looky),a
+	ld a,(y)
+	sub 4
+	ld (y),a
+checkbottomsidelp
+	push bc
+	call checkline
+	pop bc
+	jr nz,floorfound
+	inc ix
+	inc ix
+	ld a,(looky)
+	inc a
+	ld (looky),a
+	ld a,(y)
+	inc a
+	cp 182
+	jp nc,gonedown
+	ld (y),a
+	djnz checkbottomsidelp
+	jp updownback
+	
+floorfound
+	ld a,(y)
+	cp 66
+	jp c,goneup
+	jp z,updownback
+
+storedizy	ld (y),a
+	ld a,1
+	ld (floor),a
+	xor a
+	ld (dy),a
+	jp updownback1
+	
+checkleftside
+	call setscreenix
+	ld de,-20
+	add ix,de
+	ld a,(looky)
+	sub 10
+	ld (looky),a
+	ld b,3
+checkleftsidelp
+	push bc
+	ld l,(ix+0)
+	ld h,(ix+1)
+	ld a,(x)
+	ld (lookx),a
+
+	if computer=amstrad
+	ld c,a
+	ld b,0
+	add hl,bc
+	ld a,(hl)	
+	endif
+
+	if computer=spectrum
+	call getbyte
+	endif
+
+	and a
+	pop bc
+	call nz,nosidemove
+	ld a,(looky)
+	sub 4
+	ld (looky),a
+	ld de,-8	
+	add ix,de
+	djnz checkleftsidelp
+	jp sideback
+	
+checkrightside
+	call setscreenix
+	ld de,-20
+	add ix,de
+	ld a,(looky)
+	sub 10
+	ld (looky),a
+	ld b,3
+checkrightsidelp
+	push bc
+	ld l,(ix+0)
+	ld h,(ix+1)
+	ld a,(x)
+	add a,eggwidth-1
+	ld (lookx),a
+
+	if computer=amstrad
+	ld c,a
+	ld b,0
+	add hl,bc
+	ld a,(hl)	
+	endif
+
+	if computer=spectrum
+	call getbyte
+	endif
+
+	and a
+	pop bc
+	call nz,nosidemove
+	ld a,(looky)
+	sub 4
+	ld (looky),a
+	ld de,-8
+	add ix,de
+	djnz checkrightsidelp
+	jp sideback
+	
+nosidemove
+	ld a,(lookx)
+	ld e,a
+	ld a,(looky)
+	ld l,a
+	call findattriloc
+	bit 6,(hl)
+	ret nz
+	ld a,(ox)
+	ld (x),a
+	pop af
+	jp sideback
+	
+setscreenix	ld a,(y)
+	ld (looky),a
+setscreenix1	ld l,a
+	ld h,0
+	add hl,hl
+	ld de,screentable
+	add hl,de
+	push hl
+	pop ix
+	ret
+	
+	
+checkline
+	ld a,(x)
+	inc a
+	ld (lookx),a
+	ld b,eggwidth-1
+	dec b
+checklinelp
+	push bc
+	ld l,(ix+0)
+	ld h,(ix+1)
+	ld a,(lookx)
+
+	if computer=amstrad
+	ld c,a
+	ld b,0
+	add hl,bc
+	ld a,(hl)	
+	endif
+
+	if computer=spectrum
+	call getbyte
+	endif
+
+	and a
+	pop bc
+	call nz,checkattri
+	ld a,(lookx)
+	inc a
+	ld (lookx),a
+	dec b
+	jr nz,checklinelp
+	ret
+	
+checkattri
+	ld a,(lookx)
+	ld e,a
+	ld a,(looky)
+	ld l,a
+	call findattriloc
+	ld a,(hl)
+	bit 6,a
+	ret nz
+	pop hl
+	xor 64
+	bit 6,a
+	ret
+	
+	if computer=spectrum
+
+getbyte
+	ld c,a
+	ld b,0
+	srl c
+	jr c,getrbyte
+
+getlbyte	add hl,bc
+	ld a,(hl)
+	and 11110000b
+	ret
+
+getrbyte	add hl,bc
+	ld a,(hl)
+	and 00001111b
+	ret
+
+	endif
+
+
+seq0	defb 0,1,0,1,0,1,0,1
+seq1	defb 9,10,11,12,13,14,15,16
+seq2	defb 17,18,19,20,21,22,23,24
+seq3	defb 2,3,4,5,6,7,8,1
+seq4	defb 25,26,27,28,29,30,31,9
+seq5	defb 32,33,34,35,36,37,38,17
+seq6	defb 4,5,5,6,6,5,5,4	;bob upside down
+seq7	defb 0,1,8,8,7,6,7,7	;fall over backwards
+seq8	defb 8,7,6,5,4,3,2,1	;upside down tumble
+
+
+starteggres
+	ld a,(startx)
+	ld (x),a
+	ld a,(starty)
+	ld (y),a
+	ld a,(startroom)
+	ld (newroomno),a
+
+	xor a
+	ld (left),a
+	ld (right),a
+	ld (jump),a
+	ld (fire),a
+
+	ld (dy),a
+	ld (floor),a
+	ld (sequence),a
+	ld (animation),a
+	ld (killed),a
+	ld (obstructinglift),a
+	ld (drunk),a
+	ld a,10
+	ld (usepickup),a
+	ld a,(newroomno)
+	cp 36	;;start room
+	ld a,1
+	jr nz,standforwardframe
+	ld a,(y)
+	cp 100
+	ld a,1
+	jr c,standforwardframe
+	ld a,25
+standforwardframe
+	ld (ff),a
+	
+enterroom
+	ld a,(newroomno)
+	ld (roomno),a
+	ld (startroom),a
+	ld a,(x)
+	ld (startx),a
+	ld a,(y)
+	ld (starty),a
+
+resetuproom	call roomsetup
+	jp plotnew
+
+	if computer=spectrum
+veryend 
+	if veryend>&fdfc
+	error "out of memory
+	endif
+	org &fdfd
+	jp interentry
+	defs 257,&fd
+
+	org &5cc6
+	include saver.spc
+vv	
+
+ 	endif
+
+	if computer=amstrad
+	include saver.ams
+veryend
+	if veryend>&adFF
+	error "out of memory
+	endif
+	
+veryveryend
+
+	endif
+
+	END
+ 
+
+“
+
+
+
+
+
+
+
+	Ed ÐS’]¥(ÿb]X7      PDS	00000000öS%%	HEX 2100107556D9FFAAEB7D448924B79BE9
+
+
+ on his C64............"
+F0F1F2F3F4F5F6F7F8F9;  
+;
+;  PDS Pc1.24 :000: (c) P.D.Systems Ltd 1985-88
+;
+;
+;       File  "-------------------"
+;    Version          00.04        
+;         By  "-------------------"
+;    
+;     Created on Mon the 06th of Nov 1989  
+;        Last update 13:36 on 19/12/89 
+; 
+
+
+TSPEED	EQU	5
+dospeech
+	di
+	LD BC,65533
+	LD HL,DATA
+	LD DE,ss-data
+	LD A,I
+	LD (STORE+1),A
+LOOP2	LD B,255
+	LD A,8
+	OUT (C),A
+	LD B,191
+	LD A,(HL)
+	REPEAT 4
+	NOP
+	AND 15
+	OUT (C),A
+	LD I,A	
+	LD B,255
+	LD A,9
+	OUT (C),A
+	LD B,191
+	LD A,I
+	OUT (C),A
+	LD A,10
+	LD B,255
+	OUT (C),A
+	LD B,191
+	LD A,I
+	OUT (C),A
+	LD A,TSPEED
+LOOP3	DEC A
+	JP NZ,LOOP3
+	LD B,255
+	LD A,8
+	OUT (C),A
+	LD B,191
+	LD A,(HL)
+	REPEAT 4
+	RRA	
+	AND 15
+	OUT (C),A
+	LD I,A
+	LD B,255
+	LD A,9
+	OUT (C),A
+	LD B,191
+	LD A,I
+	OUT (C),A
+	LD A,10
+	LD B,255
+	OUT (C),A
+	LD B,191
+	LD A,I
+	OUT (C),A
+
+	LD A,TSPEED
+LOOP4	DEC A
+	JP NZ,LOOP4
+	INC HL
+	DEC DE
+	LD A,D
+	OR E
+	JP NZ,LOOP2
+STORE	LD A,0
+	LD I,A
+	EI
+	RET
+
+	DEFM "This amazing speech was done by L.Sharp who wrote the code"
+	DEFM " & G.Raeburn who did the digitizing on his C64............"
+
+
+DATA
+	HEX 77777777777777777777777777777777
+	HEX 77777777777777777777777777777777
+	HEX 77777777777777777777777777777777
+	HEX 77777777777777777777777777777777
+	HEX 77777777787777777777777777777777
+	HEX 77777777777777777777777777777777
+	HEX 77777777777777777777777777777777
+	HEX 77777777777777777777777777777777
+	HEX 77777777777777777777777777777777
+	HEX 77777777777777887778777787777777
+	HEX 77777777777777777777777777777777
+	HEX 77777777777777777777777777777777
+	HEX 77777777777777877777777777777777
+	HEX 77877777777777777777777777777777
+	HEX 77777777777777777777777777777777
+	HEX 77777777777777777777777777777777
+	HEX 77777777777777777777777777777777
+	HEX 77777777777777777777777787777777
+	HEX 77777878877777777777777777777777
+	HEX 77777777777777777777777777777777
+	HEX 77777777777777777777777777777777
+	HEX 77777777777777777777777777777777
+	HEX 77777777777777777777777777777777
+	HEX 77777777777777777777777777777778
+	HEX 87878888888778877788788778787777
+	HEX 77777877778888887777777777777777
+	HEX 77777777777777777777777777777777
+	HEX 77777777777787776987877787676777
+	HEX 78778887777787777777777777777777
+	HEX 77777777777777777777777777777777
+	HEX 77777777777777777777777777777777
+	HEX 77777777777777777777787777888777
+	HEX 88887877777777777777777777777777
+	HEX 77777777778788888888888888888888
+	HEX 88888878887878777777777777777777
+	HEX 77777777777777777777777777777777
+	HEX 77777777777777777777777777777777
+	HEX 77777777777777777777777777777777
+	HEX 77777777777777777777777777777777
+	HEX 77777777777777777777777777777777
+	HEX 87777777887777777777777777777777
+	HEX 77777777777777777777777777777777
+	HEX 77777777777777777777777777777777
+	HEX 77777777777787878888888888887888
+	HEX 78877777777777777777878877777777
+	HEX 78888878877887888877778888888888
+	HEX 78877778787787677777766787777787
+	HEX 77677767767777777777677676666777
+	HEX 76666766677777878888889998999999
+	HEX 99989888999969000010529898999A67
+	HEX 786786A9BAEDDFBB9AAACABDCBEDDF8C
+	HEX 00000020FAFFFFFF7B57030020A5FFFF
+	HEX FFDF7954A8BADBFFFFFF01000000F7FF
+	HEX FFFF3801000041E8FFFFFF9F4642A8CB
+	HEX FDFFFF0F000000F7FFFFCF0200000020
+	HEX D5FFFFFF8F010052B7FFFF06000010FD
+	HEX FFFF9F0000000031F9FFFFFF5B144144
+	HEX C7FFCF000000F3FFFFA8000000000050
+	HEX FEFFFFAF1231A897FFFF08000090FFFF
+	HEX BF080000000020F9FFFFBE0331A689FF
+	HEX FF000000F4FFFFCF030000001064FEFF
+	HEX FF380030C9BBFF4F000000F7FFFFFF00
+	HEX 00000040D6FFFFFF040010C7FE6F0000
+	HEX 00D2FFFFFF0F0000002074FFFFFF6F00
+	HEX 0092FD4F000000F5DFFFFF4F00000010
+	HEX A4FFFFFF2F000072FB0F000064FC8CFC
+	HEX FF1C0000004393FFFFFF2F0021868900
+	HEX 0050FBFFAADC6C0000006146B5FFFFFF
+	HEX 0420C6FF0A070071FEDFFEFF08000010
+	HEX 6574FDFFFF4A41B7FF6F000050FCCFC8
+	HEX FF8E0100002251FEFFFF2F30B9FE0C00
+	HEX 00D5FF7F74AB040000201471FEFFFF4A
+	HEX A5FCDF000030FBFFBDFE3D0000001071
+	HEX FFFFFF2862B88C000050FBFFDCFF6F00
+	HEX 00000020FAFFFF0F003104000030DB9C
+	HEX 86EB4C0000000000E4FFFF6F54770380
+	HEX 0070FEAED9FF0C0000100200D3FFFFAF
+	HEX CBEF08000070DCACFEFF0F0000000010
+	HEX FAFFFF66E9EFF00000C55A93FFFF0600
+	HEX 00020060FFFF9FE9FF0FEF0050AB15F7
+	HEX FF4F0000220030FFFF8F63FDCFF00050
+	HEX AB04D1FFFF0000310020FAFFEF65FEAF
+	HEX F00050EF0450FFFF0100720400F3FFFF
+	HEX 7DFBEFF00000C728D2FFFF0000200010
+	HEX F9FFFFDFFFAF800000A748F8FFEF0400
+	HEX 000030FBFFFFFFFF0EF000007556FEFF
+	HEX AD0200000061FFFFFFFFFF0A0F000020
+	HEX 92FFFF9F0000000091FFFFFFFFCFF00F
+	HEX 000021F9FFDFAD55010000F7FFFFFFFF
+	HEX 0FF000000070FFFF5A3377000020FBFF
+	HEX FFFFFF0200000000D3FFFFCF8A050000
+	HEX B5FFFFFFFF0F00000000D2FFDF99BA48
+	HEX 000081EDDCFFFF5F0000000010F9FF9D
+	HEX 979B050010D7EEFFFFCF020000000094
+	HEX DDCDAA9C150030A7CCFFFFAF03102300
+	HEX 0072AA8988AA37003097AADAFFAF0410
+	HEX 22000063896787BB48003097BBBAEBDE
+	HEX 48435514003165252275783532757866
+	HEX 76A99A88BA7A34111111105376666656
+	HEX 5575B9CD9C67B88B3522322311426546
+	HEX 5376675597CBCC9BB9BC472243552443
+	HEX 86784576886776B9BBAB98DC8C242133
+	HEX 122164885675777866A7CCBC89A89A56
+	HEX 546545124365566498AA99A9BBAA8997
+	HEX AB574465562443553532759998B9EDCD
+	HEX 8A7798684454774643655623538699A9
+	HEX ECDEAC78A87934538657446577243175
+	HEX A9AADBFFDF7A86893633656735336546
+	HEX 12538799BAFEFFAD7788462353775633
+	HEX 6567243275A9CAFDFFEF8A8857444455
+	HEX 6655666645546576B9ECEEEEBDBB6924
+	HEX 3254454475774553776787DAFFEEACB9
+	HEX 9B354365563464774632768888A9EDEE
+	HEX AD98AA582343665644655633546587BA
+	HEX ECFEEF9B886844335455657666344355
+	HEX 65A7DBEFFFCE9A682332434554767746
+	HEX 33656576B9EDFDFFBDAA473333334365
+	HEX 776734645665A7DBCDEDDEAB69344354
+	HEX 345476784653675686CAEEEDEFAC9A47
+	HEX 4444343364775744656676A8DBDDEDDE
+	HEX AB6A444444335376774554665587CADD
+	HEX EDDE9B9A464454453454665644766776
+	HEX A8DBDEFEBEBB7A444455444365764653
+	HEX 666577B9DDEDEFAB9A57344345345466
+	HEX 664565667698DBDDFFDFBB8A56454444
+	HEX 4354555554666677A8CBDCFFBEAB7955
+	HEX 4444334454554554667687BACCEDFFBD
+	HEX AA79555545444444554454667698BACC
+	HEX DCEEBC9A686645443444445444646676
+	HEX 98CBCCDCEEBD9A886755454444444434
+	HEX 54556598BABBCBCCBCAA9A7866454454
+	HEX 44444444556587A9AAAABBBCABAA8977
+	HEX 66666645545544556677989999A9AABB
+	HEX AB998977777766666555555566778888
+	HEX 98999999998888788777777776777766
+	HEX 76777787888878776777778788888888
+	HEX 78777777677677666666666566667777
+	HEX 88989998998988889989888888777777
+	HEX 87788788998998898888888877665655
+	HEX 44444444444444445465667788989999
+	HEX 99998988888888887777777777777788
+	HEX 88999999998988888888888878776766
+	HEX 66666666666666777777778788999999
+	HEX 99889988888888888888888888888888
+	HEX 88888877777777777777777777777777
+	HEX 88888888888877777767666666566566
+	HEX 66667777778888998988888878887877
+	HEX 67666666667677777788888888888888
+	HEX 88887877777777777777778888888888
+	HEX 88887777777777777777777777777777
+	HEX 77777787888888887877777777777777
+	HEX 77878888878878877788887777777777
+	HEX 77777777777777767777778787777888
+	HEX 87777777777777777779777777777778
+	HEX 77777777677777777787777767676666
+	HEX 66766677777777777788989898898989
+	HEX 88898888889888788888887888878777
+	HEX 88776796787687868576676666777776
+	HEX 87777878786878787767788786767777
+	HEX 6869596A6B799887A6966778A5B6B578
+	HEX 35775896A48677C78577779576978779
+	HEX 5A8A776877677878596B96876A7B9767
+	HEX 698896786B6A96756867866676966677
+	HEX 76787676689795768766384799977859
+	HEX 796A9A9C8A8B88898A98878986868666
+	HEX 4869A483764869979576689776696887
+	HEX 7677776869765768C7956978C5935968
+	HEX 677887A6D49476683A4B777577667788
+	HEX 97888AC8E5D77B9B99488D9764555545
+	HEX 4554656565767687788999B7A8B9A96C
+	HEX 8B977757666656666656668777879879
+	HEX 89C9B8788C8D88896A75556656547677
+	HEX 5675986777889987A99AA9BA89878867
+	HEX 566576355575663685886787988976A9
+	HEX 99A9A97998A866555465345476663475
+	HEX 886688989977AAB9B8AA8AA888675665
+	HEX 66456587674697897688897B86A88899
+	HEX 99898697464454654554777756868868
+	HEX 999899788B8CC9A99B78886855556556
+	HEX 6476786875988887889A88A6899AA9C9
+	HEX 8A788867676465466676775676777776
+	HEX 87787778899898BAA879898765566555
+	HEX 556666566777677787685A8B8A9B8CAD
+	HEX BA5B7B99686776755656655664746566
+	HEX 8576678997898ABAE6C9AAA987596875
+	HEX 463854453555558573754988968AD9A7
+	HEX 6D9CAAB99B9AA87978A5664756555554
+	HEX 46576677696A7A7B8CC7A88D9DC7C688
+	HEX 69697775564755444454534465754656
+	HEX 6AABAAAA9BAFCDB9A99C9A8977675875
+	HEX 54364463524455646566777889A9998A
+	HEX BBA98A8A998887A68766657563443636
+	HEX 65726466778789A7A699BBA7E7C898A8
+	HEX B5765968383976A3463748666676A7B5
+	HEX 8587B7878999A7A67A797A7877777676
+	HEX 6677A5644858596876868688A6787A99
+	HEX 9797787998A5595A7989A57679A67567
+	HEX 68779686968466689785A6A675799897
+	HEX 6A5A5B8876587777676B596786775A69
+	HEX 69A77639696848495B7A8797688986A6
+	HEX 856667767679B58375A5967879987879
+	HEX 9896685C59598BA68987778787687886
+	HEX 96678777778785686997B578B7B6A778
+	HEX 588A8667689A69668684935849387974
+	HEX 45667485768561B6B57A9B9968A8988C
+	HEX B9798AC7757A6A7987763A4787826566
+	HEX BBC5688A6988963687B4889488A79548
+	HEX 3A495964474BA7995865385876B6665C
+	HEX 65A38C7C5A597C8A192D57885A99A597
+	HEX 87B5674B6A66585EAE6BB8966563A060
+	HEX 578966775A785777B5665A7977586986
+	HEX 667786586988878787977889796B88A6
+	HEX 586885566775758675788888989999B9
+	HEX 898BC9A7998857775635464554345666
+	HEX 6578878889A9A7B8A989AAAA9C6A8766
+	HEX 344434454364666577777799A989A9AA
+	HEX 99AAACCABB8987572332323345758767
+	HEX 879988B9BAAAB9DA9ABBCBDB9C567915
+	HEX 30342343637847967967AAA99B9ADB8A
+	HEX BBCDCB8DA3790480322145837846C978
+	HEX 77ABA88A9ABA89BBBCB9388938004703
+	HEX 30347767958D66C88B99A8A99BB8CC9B
+	HEX 5AA7680173342065967676CB87B6AC98
+	HEX A99AAA98BAAB68A45800502401617658
+	HEX 97CC78AACC989ABBB99BCCBA6A956901
+	HEX 701511638658A8DC69CBCD98ACAAB89B
+	HEX BCB96B756A0140040041544696CB68B9
+	HEX BC88BBBAA9ABCBCB6B956B0150160041
+	HEX 554595AA69C9BC8ACCA999BDBABBAD74
+	HEX 9B0240260041554694BB69C8BC89CA9A
+	HEX 8ACBBABBCE46C90800550020435554B8
+	HEX 8B84CB8AA79B99B9AAAAEB7CA5AD0061
+	HEX 050042544585AA48B8AC78BB9999ABAA
+	HEX CBDE6AD74D00740320535465A79A67CA
+	HEX 8B86BB88989AA9CBBD68C84C00640410
+	HEX 535565979A68B89C67B98A87AA9ABADF
+	HEX 58C75E00730510644554979967A7AB56
+	HEX A78A66B99AB9FF6BB5AF026148006267
+	HEX 44969A7887A96976987976B99ADBCE56
+	HEX EA3A00850510864764BA798799787777
+	HEX 987898BBCBEE8CB89D04416702408845
+	HEX 95AA788788777787888898CBDDCD78B8
+	HEX 6A025246005277778878888967768877
+	HEX 7788A9CBEDAD77985812323422547676
+	HEX 98788789678778879889A9ECDE9B8878
+	HEX 56332233435555878888887877877787
+	HEX 8898BADCEDAD68666734332332657777
+	HEX 87888878667677888898A9CBEECE7966
+	HEX 56454434225477988967777777776676
+	HEX 8899AABBDCDD9B784523434423434475
+	HEX 98897867566677878888A9BADCFEBE89
+	HEX 56233243435455548789888867557677
+	HEX 98A99AAACBEDEEBD7935122132445555
+	HEX 66667677776666667799A9BABBCBDCCD
+	HEX AB783511213354667777777777776777
+	HEX 7798A9CBCDBCCCDDCDBC8A3522223265
+	HEX 767767666656556566779899AAAAAABA
+	HEX CCCCBC89351221326576777766565555
+	HEX 5566778899AAABAABACCCCCC8A360210
+	HEX 21536677776766656666767798BABBCC
+	HEX CCCBEDFEDEAC58020011426577776766
+	HEX 66565555657698BACBCCBBDCFEEF9C47
+	HEX 010000317588888877777756555576A8
+	HEX BADCEEDDEDFFEFAC360000004197AAAA
+	HEX 9A89886845333364A8DCFEEFEEFFFFDF
+	HEX 6A0200001063B9BCBBBBAA9958130031
+	HEX 75DBFFFFFFFEFFFFAF0500000030A7CC
+	HEX BBCBCCBC8A05000041D9FFFFFFFFFFFF
+	HEX FF4C0000003097DBCDBBFDFFBF270000
+	HEX 10B6FFFFFFFFFFFFFFAF00000000A6BB
+	HEX BBCCFDFFFF4A00000050FBFFFFFFFFFF
+	HEX FFFF1A00000040A8A9DBFFFFFF8F0000
+	HEX 0000A5FDFFFFFFFFCFCB9C0400000062
+	HEX BACBEDFFFFFF2A00000010B6FFFFFFFF
+	HEX CE5865892500000073CBABBADCFFFF08
+	HEX 00000020D7FFFFFFDF7A244298380000
+	HEX 1095BB5865DAFFCF0500000030C7FFFF
+	HEX FFAF360130D94A000030A79B2472FEFF
+	HEX 6C0000000020B6FFFFFF6D121172FE08
+	HEX 000042865701C4FFAE260000000010E7
+	HEX FFFFFF473243B6AE04003054764653FB
+	HEX FF69130000000050FBFFFFBF46444596
+	HEX 7A02003244555575FDCF681300000000
+	HEX 93FFFFFFCF675554B77A030043656766
+	HEX A7FFCF590200000020B6FFFFFF9D5644
+	HEX 64B947002064765666E9FFAF38010000
+	HEX 0052E9FFFFFF9C6765979A3601508678
+	HEX 64A7FBFF9C250100000073FCFFFFDF8B
+	HEX 57669869140053894664A8FEDF692300
+	HEX 000030B6FFFFFFCF795666A969031076
+	HEX 794676DAFFAF581300000051E9FFFFFF
+	HEX AD674475AA57023096684475EAFF9D47
+	HEX 0300000063DAFFFFFF9D565496BB5702
+	HEX 5096573295FBEF8C360300000074DBFF
+	HEX FFFF8C4664A7BC581271874641A6FCFF
+	HEX 8C461400001075DBFFFFFF8C466497BC
+	HEX 581360652430A6FDEF7A461400000074
+	HEX CAFFFFFF8C456497CC69243046241086
+	HEX FCEF8C583600000063C9FEFFFFBF5764
+	HEX 96FD8C260145240053DAEFAE79560000
+	HEX 0050B7EBFFFFFF694476FBBF48024233
+	HEX 0151D7FFEFAC770400002096CBFFFFFF
+	HEX 8C3565D9DF691230430230B5FEFFAC68
+	HEX 0400000075CAFEFFFF9F3654B7FF7B14
+	HEX 0023010074FDFFBD692500000062B9FC
+	HEX FFFFCF4854A7FDAE470130220051E9FF
+	HEX FF8B550100003096EBFFFFFF7C4475D9
+	HEX FF6B030002010084FEFFBE5914000000
+	HEX 62DAFEFFFFCF6954A6FDBF4800103201
+	HEX 40C7FEEF8B350200001095FDFFFFFFBF
+	HEX 5854B7FF8E150020220040D9FFDE7A44
+	HEX 00000030B7FEFFFFFF9E4665D9FF7C13
+	HEX 0033240053CAFFCF691300000062E9FF
+	HEX FFFFFF7A4554D8FF7A250123130031A8
+	HEX EEEF6A0300000052C8FFFFFFFF8B4554
+	HEX C7FFAE47021112001096FDFF6C120000
+	HEX 0052C7FFFFFFEF7A3443D8FFBF590200
+	HEX 00001095FCFF9E2400000052A6FDFFFF
+	HEX FF8B4665C9FFFF9C140000000062DAFF
+	HEX FF6A0400002054B9FDFFFFBF8876A7FC
+	HEX FFBF38000000002096FCFFCF57010000
+	HEX 3185CAFFFFFFBD8A89DBFFFF9C140000
+	HEX 000042A7FFFFAF360000003195DBFFFF
+	HEX FFBC8998DBFFFF8B040000000052D9FF
+	HEX FF8D2500000052B7DCFEFFEFBC9AA9EC
+	HEX FFFF7B030000000074DBFFFF8C250000
+	HEX 1063A8BBECFFFFCEACAADCFFFF8B0400
+	HEX 00001064B9FDFFAD58020010538699BA
+	HEX FDFFFFCEABBAECEE7C03000000003175
+	HEX C9FECE8A26000021548798FCFFFFFFAC
+	HEX A9BABB9B4702000000104387CAEEBD69
+	HEX 020000316487C9FFFFFFCF797788BA9A
+	HEX 5602000000204377CADDCD6903001053
+	HEX 96A9DBFFFFFFAD787788CBBD79140000
+	HEX 00002065DAFEDE9C351132538798B9FD
+	HEX FFFFBE8988AAEDDE7A25000000001065
+	HEX DAFFFFCF58121132756787CBFFFFFFCC
+	HEX BCBBECDE9B46000000003075C8FEFFFF
+	HEX 9D362322536665A7FCFFFFEFCDABB9CC
+	HEX 9B6814000000004275EAFFFFFF8C4623
+	HEX 21434565B9FEFFFFCE9B88A9AA9A7925
+	HEX 000000003175D9FEFFFF9D5734224344
+	HEX 6597DAFEFFCDAB99BABCAB7835010000
+	HEX 00105397CCFEFFFFAC68243233325376
+	HEX DAFEEFEDBCACAB997856130000000021
+	HEX 65C7FDFFFFDF7A25112223224386EBFF
+	HEX EFDEBBCBAB79564423000000003165C8
+	HEX FEFFFFCF8A57343414014296DBEEDEED
+	HEX EEDE9C5844546615000000204354A9EC
+	HEX FFFFAC78454433012064B8EDEEFEEFDE
+	HEX BD897777776703000000212152B9DBDD
+	HEX BE9989675545325376A8CBDCFEDECDBC
+	HEX 9A88889989160000000000207798AABC
+	HEX AA9B89888866757698A9AACBCCEEDEBC
+	HEX 9A99897766032011000000304465B7BD
+	HEX DCAA9ABA8A7898A9BB9999ABCBBB9ABA
+	HEX CBCBAA68660200000000003023649679
+	HEX BBDBEEFFDCCDDDCB9B98A99AAAAA9A89
+	HEX 77664534232133333343332333435566
+	HEX 87A9BABBBBCBCCCCBB9A9A9888888888
+	HEX 88888777777766454423222222334455
+	HEX 66778799AAAAAA9A999999888898A9AA
+	HEX BBBBAAAA997867554423221111112243
+	HEX 65667788889999888887888899A9BACB
+	HEX CCCCCCBCAB8977564423222233334454
+	HEX 65767788888877777787888898A9AAAA
+	HEX AAAAAAAA998978665555454433445455
+	HEX 66666676777777777777777777888899
+	HEX A99A9999999988787766666666666666
+	HEX 66778788887777888878776676777777
+	HEX 88989999998988888877676677777777
+	HEX 77878888888777777777777787888888
+	HEX 88888888888877777777777777777777
+	HEX 77777777777777777777777777878888
+	HEX 88888888887778777777777777888888
+	HEX 88887777776767767777777777888888
+	HEX 88888888777766667777777787888888
+	HEX 88888888887877777777777777777777
+	HEX 77777777777777777777777777777777
+	HEX 77777787888888888888888888888888
+	HEX 88888878877777777777777777777777
+	HEX 77888888787777777777777777777777
+	HEX 77777777777777777777777777777777
+	HEX 77777777777777888888887777888888
+	HEX 88887777777777777787888878777777
+	HEX 77676666666666767777777777777777
+	HEX 77777777888888888888888878887777
+	HEX 77777777778888888888888878777877
+	HEX 87888888888888888888777777777777
+	HEX 77777777777777777777777777887777
+	HEX 77777877777788877887888888777787
+	HEX 77787877777777787878788888877777
+	HEX 77777777777777777777777777777777
+	HEX 77777777777777778888888888887877
+	HEX 78778777888986988988887888878887
+	HEX 78789687678877778877787775776788
+	HEX 87787887877678878667879776776777
+	HEX 9774587779587999A587C57469A7A5A4
+	HEX 856758789686663C8AC5C37457699786
+	HEX 7877873C4DA7A7A696B6A4495E997767
+	HEX 868456494867847466677796786BA9A7
+	HEX 8ABB98AAE95C3E896752543654636567
+	HEX 65876755888887A8AB9BF7FCDCCE8CA7
+	HEX 7A1434142112325754857764978998AA
+	HEX CCABDBFFCF9B89CD0510540210639746
+	HEX 75BA4576988778CACDCCFF6A855D0010
+	HEX 12322295CD67B88A8767979A86FCEFEF
+	HEX 4BA56F0030251053C7DF88EB8C768798
+	HEX 89B8FFFF9D45A80400430231A7FE9DC8
+	HEX FF4864A98A86FCFFBE48B70800301300
+	HEX 84FEAF97FD6E22A6AC77FBFFDF6AC83C
+	HEX 0030250083FEDF89FE6E01849A66FAFF
+	HEX FF69D72C0020240083FFDF89FD5F0073
+	HEX 7865FBFFEF58F90A00301410B6FFCFB8
+	HEX FF2A00846974FFFF6F63CF0100400230
+	HEX F9FF7FE6EF02208746C7FFFF26F60C00
+	HEX 203420C5FFEF75FF0E00846A85FDFF0C
+	HEX 704C0000311453FFFF5AC7AF0060AA99
+	HEX FBFF4F30480000205576FDFF6F978C01
+	HEX 50CABBFBFF0F20050000006487FDFF6E
+	HEX 985B0151DBEEFCFF09300000000073C9
+	HEX FFFF9B7A072097FFFFFFAF1206000000
+	HEX 1075FAFFAF87690272FBFFFFFF4E8500
+	HEX 00000051D9FFFF9C772231A6FFFFFF6F
+	HEX C5070000002095FFEF8AA92620B5FFFF
+	HEX FFAFA5080000004086FDFF9C76441083
+	HEX FDFFFFAFB62A0000002085FEFF9AA825
+	HEX 0083FBFFFFAFB33C0000003075FDFF8B
+	HEX 96460092FCFEFF7C940A0000001075FD
+	HEX FF8B885530A5FFFFFF4AD50400000030
+	HEX 73FFEF898B4450B9FFFFFF39A6010000
+	HEX 004094FFBEA88A3696FDFFFFDF364B00
+	HEX 00000044F7DF69C76832E7FFFFFF7D83
+	HEX 040000004154EAAD66784673EBFFFFFF
+	HEX 4B75030000105263FC8C75784674FAEF
+	HEX FEFF2886040000104361DC5C74775787
+	HEX FBDFEDFF2465040000224450BA4A7387
+	HEX 6998FDDFCCFF18734700124243009748
+	HEX 51779AA9FBCF98DB4F239B3941543803
+	HEX 30340332B69AABFE6D599A6B54C7AC63
+	HEX 5436040051141195AA79CB7F3996EBC7
+	HEX E0FD3E3363450230762532877986D974
+	HEX 487FAFAAD3ED2A61D7670462B9131066
+	HEX 6924978C93D99B7866D9C97086581611
+	HEX 660521738736587C77A99D98B8A8DD6E
+	HEX 8877552453673455879856E788556668
+	HEX 5C7A46896C7676583776997777A79A77
+	HEX C98875697877A5649787544768667587
+	HEX 6A58A7B654663855619586878898ABA8
+	HEX A8AACBC9B77958557446255739297686
+	HEX 84B6AAFBFDCBB9A98744343615435546
+	HEX 4465535698B7DBFACBDCAA8778667565
+	HEX 5665544455454676A797A77C6D4D8FAA
+	HEX 8A7AAA88675775946574868785753725
+	HEX 685B6A9CABA9C9A98858798975766845
+	HEX 55565465666799C6C996C798A99A8898
+	HEX 85947253444454565666778695A7C7F8
+	HEX FBEBAAA6A69676565745484865856757
+	HEX 796A6BB993E495D7A87A5E4967466563
+	HEX 6458394878695777483B4EC965C3586D
+	HEX 8AA5A39274578585186AA8A5396B6B58
+	HEX 9B798AC8A79867758265675675675783
+	HEX 867878996595BC762958756D6C7A3B6D
+	HEX 6A46667755767B5896B8954A59ABEAC6
+	HEX B5BA3857676544548653335989A6B5F5
+	HEX 64E3B86C3A7CCD395377753641974563
+	HEX A78A689DAF99CAAF4A4C95DE0A449470
+	HEX 1343991451C99875FDBA36CFCE8B067D
+	HEX 4D3074461521A74930F88F78F9BF4BF3
+	HEX EF8E005A4F00703B0420B70F20F76F78
+	HEX FAEF1CEDEF0C45DD010054A70073CF33
+	HEX 77DFBCD9FFAFD8EF0F70A30200407502
+	HEX 83CD558AEFEDF9FFDFFCDF0E93540000
+	HEX 106611EACFC4BD9EBDF9EFCEFD8F1047
+	HEX 0000006015B3FF7BEBDCD9BBFEFFEDFF
+	HEX 0672060000002630FDAFB7CDAC9AE9FF
+	HEX EEFF6F51670000006003F5FF8ABDBB99
+	HEX 76FEFFFEFF0877070000000350FF9FE9
+	HEX E88B48E6FFDDFFFF50780200003000B2
+	HEX FFAD9BFA9A41FBEFFEFFCFC356000000
+	HEX 0020FAFFBC9BAF2993FECCFFFF1F693B
+	HEX 0000000030FDEFDABA7F15A3AE9CFEFF
+	HEX 0F592D0000000030FEDFE9BA6B34A29C
+	HEX 9BFFFF0E774D0000000030FEEFD8AD6B
+	HEX 34728D99FEFF0F868E0000000030FDDF
+	HEX D9CF67525289C8FDFF3FB3CF00000100
+	HEX 30FDDFD9FF48445697A7FDFFAF71FB05
+	HEX 00100000F5EF9AFF4E50866588EBFFFF
+	HEX 4AD90E0000000083EFBDFCCF22974875
+	HEX D9FEFF8F94CD0000000030E9DEDAFF2C
+	HEX 81793497FBFFFF6CB75F0000000062DB
+	HEX DDFDFF08B55B52C9DCFEFF69C90B0000
+	HEX 000073ECDEFDEF25E71740A7B8FBFF58
+	HEX C80B0000000074DBCCFDEF25C62830A7
+	HEX A9EBFF79BB0E0000000063CBCDFDFF15
+	HEX B70A009689EAFF5ECA4F0000000052DB
+	HEX ADFCFF067409008499CAFF7FDB8F0000
+	HEX 000052CACCFDFF187428007399CAFF9F
+	HEX E8EF0000000040B7CCFCFF4B63560061
+	HEX B8BAFFFFB7FD0300000030A5CCBBFF8D
+	HEX 5266014197BAFCFF5CFC0F0000000074
+	HEX CCBBFEDF3497272084BABAFFBFB5FF00
+	HEX 00000030A5CBDCFF6E6267013176AAFC
+	HEX FF5FEB6F0000010063ECDEFDFF287437
+	HEX 0072A9C9FF5FB54F00000010D6CFEAFF
+	HEX 0A6106007497DAFFAFB4CF00300110D8
+	HEX BEDAFF0C7028007498DAFFFF74FF0020
+	HEX 0400A6ACA8FF4F4048006277A8FEFF3A
+	HEX FD0F00450091AA88FBBF02B704608997
+	HEX FDFFBFF5FF00700210996897FE28902B
+	HEX 109835E9FFFF4DFD0F001700716576C9
+	HEX CF13D904816B84FDFFFF66FF06500400
+	HEX 636476FB4E828F10C757E7FFFFDFE7EF
+	HEX 00400000345586EA49B42B50BB44EADE
+	HEX FFAFD4DF00300000316764FA5AB56E41
+	HEX A954C8DCFECFC7EF02300200404462EA
+	HEX 6C879F239747A5CCECFF6AFF0E000300
+	HEX 204244B89F88FD37A36973CCCBFF8FF7
+	HEX CF00210000123596ED88E86C63AB45D9
+	HEX BCFDFF78FF08000100206354E9AFA9FF
+	HEX 58B75884BBBAFFAFF7EE001000003256
+	HEX A6FDACDAAF45992695ABD9FF7FE95E00
+	HEX 2100107556D9FFAAEB7D448924B79BE9
+	HEX FF7DD86D003100006556B8DE89C98C24
+	HEX 76257489C8FF9DE8AD004103007667C7
+	HEX EE8ADA8D248515729AA7FFAFB7EF0440
+	HEX 0400715674DC5C879C24723651A988FD
+	HEX FFAAFD2C105600404754B99A96C96943
+	HEX 6824A779E9FFBED9DF03500400632373
+	HEX AB69B99C468557629997FDFFCFF9CD00
+	HEX 4101004432A6AA78CA7C5598458489B8
+	HEX FFFFBFFA8D005400205665A7CB79DB6C
+	HEX 6489359589B8FFFFAEF87C0064002034
+	HEX 43869A67CA5A748954A778B9DDFDDF9A
+	HEX CF085104003143549769A78C75995775
+	HEX 7876C9CCFFBDFA8D102500002343959A
+	HEX 87BB488659549878B8EEFDFF9BCF0841
+	HEX 03003144549768948A449958869A88CA
+	HEX CDFDDF99DF075103002032329658949B
+	HEX 669A48878987CACCFEDF9ACF06400400
+	HEX 3123439757A49B55AA5987AB99EBCDFC
+	HEX FF8BFD3C202500002313746863B968A8
+	HEX 9B87A98998CCDCFFBFFADF1263010010
+	HEX 12326745A879A6AA86978998CBCDFEDF
+	HEX ABDF08310300102221855684AA68B99B
+	HEX 88AA9AB9DDEDFFDFCBCF084114003012
+	HEX 20754582AA56BA7B87AB89B9DDDCFFBE
+	HEX BABF04410200100110653583A978BA9B
+	HEX A8BB9AB9DCDDFFEF9CDF2B1014000012
+	HEX 00625561B98AB9CE9ACB9BBACCCCFEFF
+	HEX DCFAAC012100001000204524A7AC98FC
+	HEX BCC9CC99BABCCBFFDF9DDB4A00120000
+	HEX 0000525664DAACC9FFABDBACA8CCBCEC
+	HEX FFCF9CCB27101200000000415554B9BC
+	HEX DBFFBDCBAB88B9AABAEDDFADD97B0020
+	HEX 00000000206566C9DFDCFFCFABAB8997
+	HEX 99A8DCDDEE9DA8470000000000115387
+	HEX 88ECDFDCEEBDAAAA88A8AABADDCDDD6D
+	HEX 8717000000001021539777DACEDBEECD
+	HEX BBBA9AA8ABA9CCBDDD8D966900100000
+	HEX 0011327678C9EECCFEDFBBBA9A879978
+	HEX A9BCCBBC6688020000000000206488B8
+	HEX FEDFFEFFACBB8A67887898BACAED5B86
+	HEX 290010000010116398A9ECFFEFFFDF8A
+	HEX 986854657687BADCCC69761600000000
+	HEX 413385CACCFDFFEFEDCE8A7767556587
+	HEX 98B9BCAB48332400000100315586A9BA
+	HEX DBEECDCCBC9A78778877878888787766
+	HEX 55555565664544555576778799999989
+	HEX 78776766666676778788989999897867
+	HEX 66555555556666666655555555556576
+	HEX 8798A9BABBAAABAAAA99998888787766
+	HEX 56454423222222324354668798A9AABB
+	HEX BBBBBBBBABAAAAAA9A99887766453422
+	HEX 22122122324354657798A9BABBCCCCCC
+	HEX CCBBBBAB9AAA89887766564544333323
+	HEX 32334354556677889999AAAAAABBBBBB
+	HEX BBAAAA9A898878777767666666666655
+	HEX 66566566667788889899899889888898
+	HEX 98999999998988787767666666666666
+	HEX 6666666666656566667777878899A9AA
+	HEX AABBBBAAAA9988777766666666666666
+	HEX 666656555655656676879899A9AAAAAA
+	HEX 9A999989888877777777776666666666
+	HEX 66766777777788787787888888778788
+	HEX 88888888888888777777777777888888
+	HEX 88888867666666665555667688788788
+	HEX 9899898888989999
+ss	
+
+“
+
+
+
+
+
+
+
+
+
+

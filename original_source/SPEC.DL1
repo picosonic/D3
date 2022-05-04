@@ -1,0 +1,270 @@
+
+;   The long PDS download software for the ZX-SPECTRUM
+;
+;This is the long download software for the Spectrum, it allows all the
+;monitor commands except Analyze to work correctly and will allow you
+;to assemble and download programs.
+;It may be situated anywhere in memory. Note that it uses up two bytes
+;of stack space, it uses the Sinclair stack, setup at the top of memory
+;or where ever you do a CLEAR. It disables the interupts, so you may
+;download over the system variables at 5C00h upwards.
+;
+; The code is exactly 344 bytes long
+;
+;When you first run the download software you should jump to label START,
+;if you intend to enter it again then you should jump to MONITOR as it will
+;already be setup correctly.
+;
+;
+;
+; Setup this ORG to point where you want the download software to be in
+; memory. Note that this program as is, requires eight bytes before this
+; address for a small 'return to basic program'
+;
+	ORG &5EA6	;This could go anywhere (best in fast memory >8000h)
+;
+START	PUSH AF
+	LD A,255
+	OUT (127),A
+	OUT (63),A
+	LD A,63
+	OUT (127),A
+	INC A
+	LD (FLAGIO),A	;Protocol flags, input from main computer
+	LD A,255
+	OUT (95),A
+	OUT (95),A
+	POP AF
+;
+MONITOR	DI		;Interupts would corrupt the stack
+	LD (ZHL),HL	;Save HL
+	LD (ZSP),SP	;Save SP
+	POP HL	;Get 'return' address
+	LD (ZPC),HL	;Where I was called from
+	LD SP,ZHL	;Top of register block
+	PUSH DE
+	PUSH BC
+	EXX
+	PUSH HL
+	PUSH DE
+	PUSH BC	;All registers are saved for PDS
+	PUSH IX
+	PUSH IY
+	PUSH AF
+	LD A,I
+	LD H,A
+	LD A,R
+	LD L,A
+	PUSH HL
+	EX AF,AF'
+	PUSH AF
+	LD D,0	;D is the download flag
+FLAGIO	EQU $-1
+;
+; Main 'sort out command' loop.
+;
+LOOP0	CALL GETPDSBYTE	;Get 'command byte'
+	LD A,E
+	CP 180	;Download code into aabb, len=ccdd
+	JZ DLOAD
+	CP 186	;Run code aa,bb,cc,dd
+	JP Z,EXECUTE
+	CP 184	;Send register block to Apricot
+	JZ SENDREG
+	CP 185	;Get register block from Apricot
+	JZ GETREG
+	CP 183	;Select bank aa
+	JZ SBANK
+	CP 182	;Upload code from aabb len=ccdd
+	JZ UPLOAD
+	CP 181	;Execute code from aaaa?
+	JNZ LOOP0	;Not recognised - keep looping.
+;
+; Function 181, Execute code from aabb
+;
+	CALL GETPDSBYTE
+	LD H,E
+	CALL GETPDSBYTE	;Notice that the address is downloaded H then L
+	LD L,E
+	LD (EXEC+2),HL	;Put NOP,CALL <xxxx> into instruction buffer
+	LD HL,0CD00H
+	LD (EXEC),HL
+	JP RUNIT	;Jump to execute instruction buffer
+;
+; Function 180, Download code into aabb, length=ccdd
+;
+DLOAD	CALL GETPDSBYTE
+	LD H,E
+	CALL GETPDSBYTE	;Get start address of code
+	LD L,E
+	CALL GETPDSBYTE
+	LD B,E
+	CALL GETPDSBYTE	;Get length of code
+	LD C,E
+DLOAD1	CALL GETPDSBYTE	;Get and store bytes
+	LD (HL),E
+	INC HL
+	DEC BC
+	LD A,B	;Keep looping till got all bytes
+	OR C
+	JNZ DLOAD1
+	JR LOOP0	;Go back into main download loop
+;
+; Function 183, select bank xx (This is different for each computer)
+;
+SBANK	CALL GETPDSBYTE
+	LD BC,7FFDH	;HL, BC and A may be corrupted here
+	OUT (C),E	;This will change banks on the speccy '128
+	JR LOOP0	;E is the bank data byte, D is not to be used!
+;
+; Function 184, upload register block to Apricot.
+;
+SENDREG	LD HL,REGISTERS
+	LD BC,26
+	JR UPLOAD1	;Upload the register block
+;
+; Function 185, download register block from the Apricot.
+;
+GETREG	LD HL,REGISTERS
+	LD BC,26
+	JR DLOAD1	;Download the register block
+;
+; Function 182, Upload code, from aabb, length ccdd
+;
+UPLOAD	CALL GETPDSBYTE
+	LD H,E
+	CALL GETPDSBYTE	;Get start address of code
+	LD L,E
+	CALL GETPDSBYTE
+	LD B,E
+	CALL GETPDSBYTE	;Get length of code
+	LD C,E
+UPLOAD1	IN A,(63)
+	XOR D
+	RRCA
+	JC UPLOAD1
+	LD A,255
+	OUT (95),A	;This swaps the PDS interface direction around
+	INC A
+	OUT (95),A	;The Spectrum now transmitts to the main computer
+	LD A,D
+	XOR 65
+	LD D,A
+UPLOAD2	LD A,(HL)
+	CALL SENDAL	;Keep sending bytes
+	INC HL
+	DEC BC
+	LD A,B	;Loop till all bytes sent
+	OR C
+	JNZ UPLOAD2
+	DEC A
+	OUT (95),A
+	OUT (95),A
+	LD A,D
+	XOR 64	;Swap the ports round again
+	OUT (63),A
+	XOR 128
+	LD D,A
+	JP LOOP0
+;
+; Function 186, execute the next 4 bytes, and reenter monitor
+;
+EXECUTE	CALL GETPDSBYTE
+	LD L,E
+	CALL GETPDSBYTE
+	LD H,E
+	LD (EXEC),HL
+	CALL GETPDSBYTE	;Get the 4 bytes to be run
+	LD L,E
+	CALL GETPDSBYTE
+	LD H,E
+	LD (EXEC+2),HL
+RUNIT	LD A,D
+	LD (FLAGIO),A
+	POP AF
+	EX AF,AF'
+	POP HL
+	LD A,H
+	LD I,A
+	LD A,L
+	LD R,A
+	POP AF
+	POP IY
+	POP IX	;Get all registers off stack
+	POP BC
+	POP DE
+	POP HL
+	EXX
+	POP BC
+	POP DE
+	POP HL
+	LD SP,(ZSP)
+EXEC	DS 4		;All code to be run is placed here
+	JP MONITOR
+;
+; Get a byte from the main computer in E
+;
+GETPDSBYTE	IN A,(63)
+	XOR D
+	RRCA
+	JC GETPDSBYTE	;Wait for 'I've sent the byte'
+	IN A,(31)
+	LD E,A	;Get the byte into E
+	LD A,D
+	OUT (63),A	;Say 'I've got it!'
+	XOR 129
+	LD D,A	;Flip flags for next byte
+	RET
+;
+; Send A to the APRICOT
+;
+SENDAL	OUT (31),A	;Send byte
+	LD A,D
+	OUT (63),A	;Send 'sent byte'
+	XOR 129
+	LD D,A	;Flip flags for next byte
+$1	IN A,(63)
+	XOR D
+	RRCA		;Wait for 'receieved byte'
+	JNC $1
+	RET
+;
+; Stack, and resister store.
+;
+	DW 0		;Stack space for downloader (only uses 1 level)
+REGISTERS	DS 20		;Other registers stored here
+ZHL	DW 0		;HL stored here
+ZPC	DW 0		;PC stored here
+ZSP	DW 0		;SP stored here
+;
+;
+;
+;
+;
+; End of the download software, now a small program to set the top of memory
+; one byte below the download software, then reset the spectrum and return
+; to basic so you may save out the download software using the following
+; basic loader :
+;
+; 1 LOAD "" CODE:RANDOMISE USR start address
+;
+; Save this using either :
+;
+; SAVE "DLOADER" LINE 1 : SAVE "CODE" CODE startaddress,344
+;
+; or for microdrives :
+;
+; SAVE *"m";1;"DLOADER" LINE 1 :  SAVE *"m";1;"CODE" CODE startaddress,344
+;
+;
+;	ORG START-8	;Put before download (so gets overwritten)
+;	EXEC $	;Execute code from here
+;	DI
+;	LD DE,START-1	;Where 'top of memory' will be
+;	XOR A
+;	JP 11CBH	;Reset Spectrum, leaving download software
+;
+;
+;
+;	SEND COMPUTER2
+;

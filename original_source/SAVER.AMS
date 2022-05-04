@@ -1,0 +1,131 @@
+	if save=1
+exec	exec exec
+	endif
+
+saver	
+	ld a,255
+	call &bc6b	;;;CAS NOISY
+
+	ld a,50
+	ld hl,167
+	call &bc68	;;;SET CASSETTE SPEED
+
+;	ld c,7	;;;;;;;
+;	ld de,&40
+;	ld hl,&b0ff
+;	call &bcce	
+
+;	ld hl,discmess
+;	call &bcd4
+;	xor a
+;	call &001b	;;;;PUT INTO DISC MODE
+
+
+;	ld b,7
+;	ld hl,code0
+;	ld de,&c000
+;	call &bc8c
+;	ld hl,loaderhere
+;	ld de,endloader-loader
+;	ld bc,loader
+;	ld a,2
+;	call &bc98
+;	call &bc8f
+
+;	ld b,10
+;	ld hl,screen
+;	ld de,&ac00
+;	call &bc8c
+;	ld hl,&c000
+;	ld de,&4000
+;	ld a,2
+;	call &bc98
+;	call &bc8f
+
+	ld b,9
+	ld hl,code1
+	ld de,&c000
+	call &bc8c
+	ld hl,&40
+	ld de,&4000-&40
+	ld bc,&ffff
+	ld a,2
+	call &bc98
+ 	call &bc8f
+
+	ld b,9
+	ld hl,code2
+	ld de,&c000
+	call &bc8c
+	ld hl,&4000
+	ld de,&af00-&4000
+	ld bc,entercodehere
+	ld a,2
+	call &bc98
+	call &bc8f
+
+	ret
+
+code0	defb "DIZZY-3"
+code1	defb "code1.bin"
+code2	defb "code2.bin"
+screen	defb "screen.bin"
+discmess	defb "DIS","C"+128
+
+leftcodehere
+loaderhere
+	org $,&a000
+loader
+	ld a,255
+	call &bc6b
+	ld a,1
+	call &bc0e
+	xor a
+	ld hl,loadcolours
+setcollp	push af
+	push hl
+	ld b,(hl)
+	ld c,(hl)
+	call &bc32
+	pop hl
+	pop af
+	inc hl
+	inc a
+	cp 4
+	jr nz,setcollp
+	ld bc,0
+	call &bc38
+
+	ld b,6
+	ld hl,lscreen
+	ld de,&5000
+	call &bc77
+	ld hl,&c000
+	call &bc83
+	call &bc7a
+	ld b,5
+	ld hl,lcode1
+	ld de,&5000
+	call &bc77
+	ld hl,&40
+	call &bc83
+	call &bc7a
+	ld b,5
+	ld hl,lcode2
+	ld de,&5000
+	call &bc77
+	ld hl,&4000
+	call &bc83
+	call &bc7a
+	call &bc71
+	jp entercodehere
+
+
+lcode1	defb "code1.bin"
+lcode2	defb "code2.bin"
+lscreen	defb "screen.bin"
+
+loadcolours	defb 0,26,6,18
+endloader
+	org endloader-loader+loaderhere
+

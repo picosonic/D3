@@ -1,0 +1,551 @@
+trollgotapplemess
+	defb mpen+7,mxy+2,48,drawbox,13,5,mpen+3
+	defb mxy+11,72,"YOU:GIVE"
+	defb mxy+10,80,"THE:APPLE"
+	defb mxy+7,88,"TO:THE:TROLL",mend
+	defb mpen+5,mxy+16,80,drawbox,11,5,mpen+6
+	defb mxy+23,104,"&FOR:ME?"
+	defb mxy+22,112,"YOU;RE:SO"
+	defb mxy+22,120,"GENEROUS'",mend
+	defb mpen+5,mxy+8,48,drawbox,20,6,mpen+6
+	defb mxy+16,72,"&I;D:LIKE:TO:LET"
+	defb mxy+16,80,"YOU:PASS<:BUT:IF"
+	defb mxy+14,88,"THE:KING:FOUND:OUT"
+	defb mxy+15,96,"HE;D:TORTURE:ME@'",mend
+	defb mpen+5,mxy+6,112,drawbox,22,5,mpen+6
+	defb mxy+13,136,"&HOWEVER<:YOU:COULD"
+	defb mxy+14,144,"ESCAPE:THROUGH:THE"
+	defb mxy+11,152,"FIRE:USING:THE:WATER'",mend,mend
+
+
+
+shopkeeperappearsmess
+	defb mpen+7,mxy+2,96,drawbox,20,5,mpen+3
+	defb mxy+10,120,"PING@:>>>:AND:AS"
+	defb mxy+10,128,"IF:BY:MAGIC<:THE"
+	defb mxy+8,136,"SHOPKEEPER:APPEARS",mend
+
+givingjunkmess	defb mpen+5,mxy+2,96,drawbox,25,4,mpen+6
+	defb mxy+10,120,"&THAT;S:NO:GOOD:TO:ME"
+	defb mxy+8,128,"GIV;:US:SOMETHIN;:ELSE'",mend
+
+stopgivingjunkmess
+	defb mpen+5,mxy+2,96,drawbox,19,4,mpen+6
+	defb mxy+10,120,"&STOP:GIVIN;:US"
+	defb mxy+11,128,"ALL:THAT:TRASH'",mend
+
+shoptalk	defw beanhere+room
+thanksforthecowmess
+	defb mpen+5,mxy+2,80,drawbox,26,4,mpen+6
+	defb mxy+8,104,"&G;DAY:DIZ<:AHH@:A:PIGMY"
+	defb mxy+9,112, "COW:THAT;S:INTERESTIN;'",mend
+tencoinsmess	defb mpen+4,mxy+10,120,drawbox,22,4,mpen+3
+	defb mxy+18,144,"&WELL<:HOW;S:ABOUT"
+	defb mxy+15,152,"10:GOLD:COINS:FOR:IT'",mend
+nottengoldcoins	defb mpen+5,mxy+18,48,drawbox,18,5,mpen+6
+	defb mxy+24,72,"&STREWTH:MATE<:I"
+	defb mxy+24,80,"SAID:INTERESTIN;"
+	defb mxy+27,88,"NOT:VALUABLE'",mend
+fivecoinsmess	defb mpen+4,mxy+2,104,drawbox,15,4,mpen+3
+	defb mxy+11,128,"&WELL<:OK<"
+	defb mxy+8,136,"5:GOLD:COINS'",mend
+notfivegoldcoins	defb mpen+5,mxy+6,72,drawbox,24,5,mpen+6
+	defb mxy+13,96, "&BE:SERIOUS<:IT:AIN;T"
+	defb mxy+14,104,"WORTH:SPIT<:HERE;S:A"
+	defb mxy+12,112,"BEAN<:THAT;S:GENEROUS'",mend
+erumbut	defb mpen+4,mxy+16,112,drawbox,10,4,mpen+3
+	defb mxy+22,136,"&ER<:UM<"
+	defb mxy+22,144,"BUT:>>>'",mend
+throwsbean	defb mpen+5,mxy+2,48,drawbox,11,5,mpen+6
+	defb mxy+8,72,"&NOW:STOP"
+	defb mxy+8,80,":WASTIN;"
+	defb mxy+7,88,":MY:TIME'"
+	defb mpen+7,mxy+12,112,drawbox,15,5,mpen+3
+	defb mxy+18,136,"AND:HE:THROWS"
+	defb mxy+21,144,":THE:BEAN"
+	defb mxy+19,152,"ON:THE:CRATE",mend
+letsfaceitmess	defb mpen+7,mxy+8,80,drawbox,20,5,mpen+3
+	defb mxy+15,104,"YOU:LEAVE:=:LET;S"
+	defb mxy+18,112,"FACE:IT:DIZZY<"
+	defb mxy+15,120,"YOU:CAN;T:BARTER@",mend,mend
+
+
+dozytalking	defw sleepingpotionhere+room
+	defb mpen+4,mxy+30,48,drawbox,12,4,mpen+3
+	defb mxy+36,72, "&HEY@:DOZY"
+	defb mxy+38,80, "GET:UP@'",mend
+
+	defb mpen+7,mxy+2,80,drawbox,16,5,mpen+3
+	defb mxy+10,104,"YOU:KICK:THE"
+	defb mxy+8,112, "DECK:CHAIR:AND"
+	defb mxy+11,120,"HE:WAKES:UP",mend
+
+	defb mpen+5,mxy+12,112,drawbox,17,4,mpen+6
+	defb mxy+18,136,"&OH@:WHAT;S:THE"
+	defb mxy+20,144,"PROBLEM:DIZZY'",mend
+
+	defb mpen+4,mxy+2,48,drawbox,26,7,mpen+3
+	defb mxy+9,72,  "&DAISY;S:BEEN:EGGNAPPED"
+	defb mxy+8,80,  "AND:IS:BEING:HELD:IN:THE"
+	defb mxy+10,88, "WIZARD;S:CLOUD:CASTLE<"
+	defb mxy+12,96, "AND:NOBODY:WILL:HELP"
+	defb mxy+17,104,"ME:RESCUE:HER@'",mend
+
+	defb mpen+5,mxy+2,88,drawbox,14,6,mpen+6
+	defb mxy+8 ,112,"&AHH<:THAT;S"
+	defb mxy+11,120,"BAD:LUCK>"
+	defb mxy+11,128,"I;LL:HELP"
+	defb mxy+10,136, "YOU:DIZZY'",mend
+
+	defb mpen+5,mxy+18,112,drawbox,18,5,mpen+6
+	defb mxy+28,136,"&HERE;S:SOME"
+	defb mxy+24,144,"SLEEPING:POTION<"
+	defb mxy+23,152,"THAT:SHOULD:HELP'",mend
+
+	defb mpen+4,mxy+2,120,drawbox,17,4,mpen+3
+	defb mxy+10,144,"&BUT:I;D:LIKE"
+	defb mxy+8,152,"YOU:TO:HELP:ME'",mend
+
+	defb mpen+5,mxy+2,48,drawbox,16,7,mpen+6
+	defb mxy+9,72,"&SORRY:DIZZY<"
+	defb mxy+10,80,"LOVE:TO<:BUT"
+	defb mxy+10,88,"IT;S:FAR:TOO"
+	defb mxy+9,96, "NICE:A:DAY:TO"
+	defb mxy+7,104,"RESCUE:MAIDENS'",mend
+
+	defb mpen+7,mxy+8,80,drawbox,20,5,mpen+3
+	defb mxy+14,104,"I:DON;T:THINK:HE;S"
+	defb mxy+14,112,"GOING:TO:HELP<:AND"
+	defb mxy+14,120,"HE;S:FALLEN:ASLEEP",mend,mend
+
+kickdozyagainmess
+	defb mpen+7,mxy+10,80,drawbox,17,4,mpen+3
+	defb mxy+18,104,"YOU:KICK:DOZY"
+	defb mxy+16,112,"BUT:HE;S:ASLEEP",mend
+
+pushdozymess	defb mpen+7,mxy+6,72,drawbox,22,6,mpen+3
+	defb mxy+14,96,"WHOOPS@:YOU:KICKED"
+	defb mxy+13,104,"TOO:HARD:AND:DOZY;S"
+	defb mxy+11,112,"FALLEN:INTO:THE:WATER"
+	defb mxy+11,120,"AND:HE;S:STILL:ASLEEP",mend
+
+
+duffmem	defb 0
+dylantalking	defw duffmem ;;poked value,so must point somewhere
+	defb mpen+5,mxy+2,48,drawbox,18,4,mpen+6
+	defb mxy+10,72, "&HEY:MAN<:LIKE"
+	defb mxy+7,80, "WHAT;S:HAPPENIN;'",mend
+
+	defb mpen+4,mxy+4,96,drawbox,24,6,mpen+3
+	defb mxy+10,120,"&PLEASE:HELP:ME:DYLAN<"
+	defb mxy+12,128,"I;M:TRYING:TO:RESCUE"
+	defb mxy+10,136,"DAISY:BUT:I:CAN;T:FIND"
+	defb mxy+14,144,"THE:CLOUD:CASTLE>'",mend
+
+	defb mpen+5,mxy+12,72,drawbox,19,5,mpen+6
+	defb mxy+18,96, "&IT;S:QUITE:EASY<"
+	defb mxy+18,104,"REMEMBER:HOW:JACK"
+	defb mxy+18,112,"FOUND:THE:CASTLE'"
+	defb mend,mend
+
+trancemess	defb mpen+7,mxy+4,80,drawbox,24,4,mpen+3
+	defb mxy+14,104,"HOW:STRANGE<:DYLAN"
+	defb mxy+9,112,"SEEMS:TO:BE:IN:A:TRANCE",mend
+ 
+denziltalking	defw ropehere+room
+	defb mpen+4,mxy+2,96,drawbox,26,5,mpen+3
+	defb mxy+8,120,"&WHAT:ARE:YOU:DOING:HERE"
+	defb mxy+10,128, "DENZIL<:DON;T:YOU:KNOW"
+	defb mxy+12,136, "IT;S:DANGEROUS:HERE'",mend
+
+	defb mpen+5,mxy+2,48,drawbox,24,6,mpen+6
+	defb mxy+9,72,  "&HEY<:STAY:COOL<:DIZ>"
+	defb mxy+10,80, "I:SAW:THE:KING:LEAVE"
+	defb mxy+9,88,  "AND:THOUGHT:I;D:CHECK"
+	defb mxy+15,96,  "OUT:THE:CASTLE'",mend
+
+	defb mpen+4,mxy+4,96,drawbox,24,7,mpen+3
+	defb mxy+10,120, "&BUT<:DAISY:AND:I:WERE"
+	defb mxy+12,128, "CAUGHT>:I:WAS:THROWN"
+	defb mxy+13,136, "IN:THE:DUNGEONS:AND"
+	defb mxy+11,144, "DAISY;S:BEEN:TAKEN:TO"
+	defb mxy+12,152, "THE:WIZARD;S:CASTLE'",mend
+
+	defb mpen+5,mxy+2,48,drawbox,26,7,mpen+6
+	defb mxy+10,72,"&OH@:WE;D:ALL:WONDERED"
+	defb mxy+9,80, "WHERE:YOU:TWO:HAD:GONE>"
+	defb mxy+11,88,"I;M:TOO:BUSY:TO:HELP<"
+	defb mxy+12,96,"BUT:HERE;S:YOUR:ROPE"
+	defb mxy+9,104,"YOU:LENT:ME:LAST:WEEK>'"
+
+	defb mend,mend
+
+stereoess	defb mpen+7,mxy+8,80,drawbox,19,5,mpen+3
+	defb mxy+13,104,"DENZIL;S:TURNED:UP"
+	defb mxy+18,112,"HIS:STEREO:UP"
+	defb mxy+16,120,"IS:IGNORING:YOU",mend
+ 
+
+daisytalking	;;;;;;;;;;;;;defw beanhere+room
+;;;	defb mend,mend
+
+gottodaisymess	defb mpen+5,mxy+2,48,drawbox,17,5,mpen+6
+	defb mxy+8,72,"&OH@:MY:HERO<:I"
+	defb mxy+8,80,"KNEW:YOU;D:COME"
+	defb mxy+9,88,"TO:MY:RESCUE@'",mend
+daisyrunsmess
+	defb mpen+7,mxy+4,64,drawbox,24,9,mpen+3
+	defb mxy+13,88, "WELL<:DAISY:DOESN;T"
+	defb mxy+10,96, "HANG:AROUND<:SHE;S:RUN"
+	defb mxy+11,104,"HOME:AND:WANTS:YOU:TO"
+	defb mxy+9,112, "BRING:HER:30:GOLD:COINS"
+	defb mxy+11,120,"SO:THAT:YOU:CAN:BUY:A"
+	defb mxy+10,128,"HOME:TOGETHER:AND:LIVE"
+	defb mxy+14,136,"HAPPILY:EVER:AFTER",mend
+
+notgotallcoins	defb mpen+5,mxy+2,48,drawbox,21,6,mpen+6
+	defb mxy+10,72, "&OH@:DIZZY:YOU;RE"
+	defb mxy+8,80,  "SO:BRAVE:AND:CLEVER"
+	defb mxy+9,88,  "AND:NOW:WE:CAN:BUY"
+	defb mxy+9,96,  "THAT:TREE:COTTAGE'",mend
+
+	defb mpen+4,mxy+6,112,drawbox,24,5,mpen+3
+	defb mxy+12,136, "&ER<:UM<:WELL:ACTUALLY"
+	defb mxy+13,144, "I:WAS:WONDERING:IF:WE"
+	defb mxy+14,152, "NEEDED:ALL:30:COINS'",mend
+
+	defb mpen+5,mxy+6,64,drawbox,21,4,mpen+6
+	defb mxy+12,88,"&YOU:DISAPPOINT:ME<"
+	defb mxy+14,96, "OF:COURSE:WE:DO@'",mend
+
+	defb mpen+7,mxy+8,80,drawbox,21,5,mpen+3
+	defb mxy+15,104,"BACK:YOU:GO:DIZZY>"
+	defb mxy+15,112,"SHE;S:A:REAL:SLAVE"
+	defb mxy+13,120,"DRIVER;:BUT:WORTH:IT"
+	defb mend,mend
+
+gotallcoins
+	defb mpen+5,mxy+2,48,drawbox,24,3,mpen+6
+	defb mxy+8,72, "&WOW@:YOU;VE:GOT:THEM'",mend
+
+	defb mpen+4,mxy+4,128,drawbox,24,3,mpen+3
+	defb mxy+10,152, "&WELL<:IT:WAS:NOTHING'",mend
+
+	defb mpen+7,mxy+20,88,drawbox,7,3,mpen+3
+	defb mxy+26,112,"LIAR@",mend
+
+	defb mpen+7,mxy+4,80,drawbox,23,5,mpen+3
+	defb mxy+10,104,"AND:SO:WE:SAY:GOODBYE"
+	defb mxy+12,112,"TO:THE:HAPPY:COUPLE"
+	defb mxy+16,120,"UNTIL:>>>>>",mend
+
+	defb mpen+7,mxy+8,72,drawbox,20,10,mpen+3
+	defb mxy+13,96,"WELL:WHO:KNOWS:WHAT"
+	defb mxy+15,104,"MIGHT:HAPPEN:NEXT",mpen+4
+	defb mxy+16,120,"WE:HOPE:YOU:HAVE"
+	defb mxy+15,128,"ENJOYED:THIS:GAME",mpen+2
+	defb mxy+16,140,"THAT;S:ALL:FOLKS",mpen+5
+	defb mxy+16,152,"THE:OLIVER:TWINS"
+
+	defb mend,mend
+
+
+
+
+
+dougtalking	defw crowbarhere+room
+
+	defb mpen+5,mxy+2,48,drawbox,25,6,mpen+6
+	defb mxy+9,72, "&AFTERNOON:YOUNG:DIZZY"
+	defb mxy+14,80,"YOU:LOOK:FRANTIC<"
+	defb mxy+8,88, "ANYTHING:YOUR:OLD:GRAND"
+	defb mxy+9,96, "DIZZY:CAN:DO:TO:HELP?'",mend
+
+	defb mpen+4,mxy+6,104,drawbox,24,6,mpen+3
+	defb mxy+15,128,"&HAVEN;T:YOU:HEARD<"
+	defb mxy+13,136,"DAISY;S:BEING:HELD:IN"
+	defb mxy+14,144,"THE:CLOUD:CASTLE:AND"
+	defb mxy+11,152,"I;M:TRYING:TO:SAVE:HER'",mend
+
+	defb mpen+5,mxy+12,48,drawbox,21,4,mpen+6
+	defb mxy+18,72,"&JUST:WAIT:HERE:AND"
+	defb mxy+21,80,"I;LL:GET:MY:HAT'",mend
+
+	defb mpen+4,mxy+2,96,drawbox,25,5,mpen+3
+	defb mxy+9,120,"&WHAT@:WELL:THANKS:FOR"
+	defb mxy+8,128,"OFFERING:TO:HELP<:BUT:I"
+	defb mxy+9,136,"THINK:YOU:SHOULD:STAY'",mend
+
+	defb mpen+5,mxy+4,64,drawbox,24,6,mpen+6
+	defb mxy+13,88, "&WELL<:IF:YOU:THINK"
+	defb mxy+10,96, "IT;S:BEST<:BUT:PLEASE<"
+	defb mxy+14,104,"TAKE:THIS:CROWBAR>"
+	defb mxy+11,112,"I:REMEMBER:WHEN>>>>>'",mend
+
+	defb mpen+7,mxy+6,80,drawbox,22,5,mpen+3
+	defb mxy+13,104,"YOU:DECIDE:TO:LEAVE"
+	defb mxy+12,112,"AS:HE:STARTS:TO:TELL"
+	defb mxy+12,120,"YOU:HIS:LIFE:HISTORY",mend
+		
+	defb mend,mend
+
+goonmysonmess	defb mpen+5,mxy+2,48,drawbox,21,5,mpen+6
+	defb mxy+10,72,"OH:NO@:HE;S:STILL"
+	defb mxy+10,80,"WAFFLING:ON:ABOUT"
+	defb mxy+8,88, "HIS:PAST:ADVENTURES",mend
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;MESSAGES FOR DOING THINGS
+
+
+throwwateronfiremess
+	defb mpen+7,mxy+2,48,drawbox,21,6,mpen+3
+	defb mxy+10,72, "YOU:THROW:THE:JUG"
+	defb mxy+10,80,"OF:WATER:ONTO:THE"
+	defb mxy+8,88, "FIRE:AND:THE:FLAMES"
+	defb mxy+7,96, "ARE:QUICKLY:QUENCHED",mend
+
+lookatpicturemess
+	defb mpen+7,mxy+2,96,drawbox,23,6,mpen+3
+	defb mxy+11,120, "YOU:LOOK:UP:AT:THE"
+	defb mxy+9,128,  "PICTURE>:IT;S:YOU:IN"
+	defb mxy+10,136, "YOUR:LAST:ADVENTURE",mpen+5
+	defb mxy+8,144,  "TREASURE:ISLAND:DIZZY",mend
+
+throwwateronbeanmess
+	defb mpen+7,mxy+2,48,drawbox,26,8,mpen+3
+	defb mxy+8,72,  "YOU:THROW:YOUR:BUCKET:OF"
+	defb mxy+13,80, "WATER:ONTO:THE:BEAN",mpen+5
+	defb mxy+11,88, "YOU:JUMP:CLEAR:AS:THE"
+	defb mxy+10,96, "GROUND:RUMBLES:AND:THE"
+	defb mxy+12,104,"BEANSTALK:SPIRALS:UP"
+	defb mxy+14,112,"THROUGH:THE:CLOUDS",mend
+
+plantbeanmess	defb mpen+7,mxy+6,48,drawbox,22,5,mpen+3
+	defb mxy+12,72,"THIS:TIME:YOU:DECIDE"
+	defb mxy+15,80,"TO:PLANT:THE:BEAN"
+	defb mxy+15,88,"IN:THE:DRY:MANURE"
+	defb mpen+2,mxy+2,112,drawbox,16,4,mpen+6
+	defb mxy+8,136,":>>>:BUT:IT:IS"
+	defb mxy+8,144,"UNABLE:TO:GROW",mend
+
+pickupmanuremess	defb mpen+7,mxy+2,48,drawbox,26,5,mpen+3
+	defb mxy+6,72,"OH@:HOW:DISGUSTING@YOU:TRY"
+	defb mxy+7,80,"TO:PICK:UP:THE:MANURE:BUT"
+	defb mxy+8,88,"IT:SLIPS:FROM:YOUR:HANDS",mend
+
+
+throwswitchmess	defb mpen+7,mxy+2,48,drawbox,15,5,mpen+3
+	defb mxy+8,72,"YOU:THROW:THE"
+	defb mxy+8,80,"LEVER:TO:;ON;"
+	defb mxy+8,88,"BUT:IT:BREAKS",mend
+
+fedarmorog	defb mpen+7,mxy+2,48,drawbox,18,4,mpen+3
+	defb mxy+8,72,"THAT:BONE:SHOULD"
+	defb mxy+10,80,"KEEP:HIM:BUSY@",mend
+
+dragonasleepmess	defb mpen+7,mxy+2,48,drawbox,21,6,mpen+3
+	defb mxy+8,72,"YOU:SMASH:THE:FLASK"
+	defb mxy+10,80,"OF:POTION:AND:THE"
+	defb mxy+9,88,"DRAGON:INHALES:THE"
+	defb mxy+8,96,"INTOXICATING:VAPOUR",mend
+
+
+croctiedmess	defb mpen+7,mxy+2,48,drawbox,19,5,mpen+3
+	defb mxy+11,72,"YOU:NIMBLY:TIE"
+	defb mxy+10,80,"THE:ROPE:AROUND"
+	defb mxy+8,88, "THE:GATOR;S:SNOUT",mend
+
+rockinwatermess	defb mpen+7,mxy+2,112,drawbox,26,5,mpen+3
+	defb mxy+6,136,"YOU:PUSH:THE:ROCK:INTO:THE"
+	defb mxy+6,144,"RIVER:AND:IT:DISPLACES:THE"
+	defb mxy+8,152,"WATER<:RAISING:THE:LEVEL",mend
+keyinmachine
+	defb mpen+7,mxy+2,48,drawbox,24,5,mpen+3
+	defb mxy+8,72,"YOU:TRY:THE:KEY:IN:THE"
+	defb mxy+13,80,"LOCK:AND:IT:FITS@"
+	defb mxy+8,88,"SO:YOU:TURN:IT:TO:;ON;",mend
+
+fillbucketmess	defb mpen+7,mxy+2,48,drawbox,21,4,mpen+3
+	defb mxy+8,72,"YOU:FILL:YOUR:EMPTY"
+	defb mxy+10,80,"BUCKET:WITH:WATER",mend
+
+thanksforloafmess
+	defb mpen+7,mxy+2,48,drawbox,18,5,mpen+3
+	defb mxy+8,72, "THE:RAVENOUS:RAT"
+	defb mxy+11,80,"EATS:THE:LOAF"
+	defb mxy+11,88,"AND:RUNS:AWAY",mend
+puteggbackmess
+	defb mpen+7,mxy+2,48,drawbox,20,6,mpen+3
+	defb mxy+11,72,"YOU:PUT:THE:EGG"
+	defb mxy+8,80, "BACK:INTO:THE:NEST"
+	defb mxy+12,88,"AND:THE:DRAGON"
+	defb mxy+8,96, "ALLOWS:YOU:TO:PASS",mend
+
+goawaymess	defb mpen+5,mxy+2,48,drawbox,26,5,mpen+6
+	defb mxy+10,72,"&OH:NO@:NOT:YOU:AGAIN>"
+	defb mxy+12,80, "GO:AWAY>:I;M:HIDING<"
+	defb mxy+8,88, "AND:IT;S:ALL:YOUR:FAULT'",mend
+
+
+knockandentermess
+	defb mpen+2,mxy+2,96,drawbox,17,3,mpen+6
+	defb mxy+8,120, "KNOCK:AND:ENTER",mend
+
+	defb mpen+7,mxy+6,48,drawbox,22,5,mpen+3
+	defb mxy+14,72, "THAT;S:EASIER:SAID"	
+	defb mxy+11,80, "THAN:DONE:WHEN:YOU;RE"
+	defb mxy+11,88, "WEARING:BOXING:GLOVES",mend,mend
+
+usedoorknockermess
+	defb mpen+7,mxy+2,48,drawbox,20,5,mpen+3
+	defb mxy+12,72,"USING:THE:DOOR"
+	defb mxy+8,80,"KNOCKER<:YOU:KNOCK"
+	defb mxy+8,88,"AND:THE:DOOR:OPENS",mend
+
+usecrowbarmess	defb mpen+7,mxy+2,48,drawbox,19,5,mpen+3
+	defb mxy+8,72,"USING:THE:CROWBAR"
+	defb mxy+8,80,"YOU:FORCE:THE:LID"
+	defb mxy+13,88,"OFF:THE:WELL",mend
+usepickaxemess
+	defb mpen+7,mxy+2,48,drawbox,22,4,mpen+3
+	defb mxy+9,72,"YOU:USE:THE:PICKAXE"
+	defb mxy+8,80,"TO:BREAK:UP:THE:ROCK",mend
+
+obstructingliftmess
+	defb mpen+2,mxy+14,80,drawbox,14,4,mpen+6
+	defb mxy+21,104,"STAND:CLEAR"
+	defb mxy+21,112,"OF:THE:LIFT",mend
+
+userugmess	defb mpen+7,mxy+10,80,drawbox,17,6,mpen+3
+	defb mxy+18,104,"YOU:THROW:THE"
+	defb mxy+17,112,"RUG:ACROSS:THE"
+	defb mxy+16,120,"DAGGERS<:MAKING"
+	defb mxy+22,128,"THEM:SAFE",mend
+
+
+dropwhiskeymess	defb mpen+2,mxy+2,48,drawbox,14,7,mpen+6
+	defb mxy+8,72,  "YOU:FIND:THE"
+	defb mxy+9,80,  "WHISKEY:TOO"
+	defb mxy+9,88,  "TEMPTING:TO"
+	defb mxy+9,96,  "DROP:AND:SO"
+	defb mxy+11,104,"DRINK:IT@",mend
+
+getbackintheremess
+	defb mpen+5,mxy+2,48,drawbox,21,4,mpen+6
+ 	defb mxy+10,72,  "&OY@:WHERE:DO:YOU"
+	defb mxy+7,80,  "THINK:YOU;RE:GOING@'",mend
+
+
+holdingholemess	defb mpen+2,mxy+2,48,drawbox,16,7,mpen+6
+	defb mxy+8,72,"WHOOPS@:",mpen+4,"YOU;VE"
+	defb mxy+9,80,"GOT:A:HOLE:IN"
+	defb mxy+10,88,"YOUR:BAG:AND"
+	defb mxy+8,96,"EVERYTHING:HAS"
+	defb mxy+10,104,"DROPPED:OUT@",mend
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;ALL DEAD MESSAGES
+
+deadwindow	defb mpen+6,mxy+10,64,drawbox,18,6
+	defb mxy+16,112,mpen+2,"YOU:LOSE:A:LIFE@",mpen+5,mend
+armorogkilledmess
+	defb mxy+18,88,"ARMOROG:CAUGHT"
+	defb mxy+17,100,"YOU:TRESPASSING"
+	defb mend
+
+killedbyportcullis
+	defb mxy+16,88,"YOU:WERE:STABBED"
+	defb mxy+16,96,"BY:THE:SPIKES:OF"
+	defb mxy+18,104,"THE:PORTCULLIS"
+	defb mend
+
+killedbyliftmess	defb mxy+17,88,"YOU:GOT:TRAPPED"
+	defb mxy+18,96,"IN:THE:COGS:ON"
+	defb mxy+17,104,"TOP:OF:THE:LIFT"
+	defb mend
+
+dragonkilledmess	defb mxy+16,88, "THE:DRAGON:BITES"
+	defb mxy+16,96, "YOU:AND:YOU:KEEL"
+	defb mxy+20,104,"OVER:AND:DIE"
+	defb mend
+
+dragonflameskilledmess
+	defb mxy+17,88, "YOU:ARE:ROASTED"
+	defb mxy+17,96, "BY:THE:DRAGON;S"
+	defb mxy+20,104,"FIERY:BREATH"
+	defb mend
+
+killedbyflame	defb mxy+18,88,"YOU:WERE:BURNT"
+	defb mxy+19,100,"BY:THE:FLAMES"
+	defb mend
+
+killedbywater	defb mxy+17,88, "YOU:FELL:IN:THE"
+	defb mxy+15,100,"WATER:AND:DROWNED"
+	defb mend
+
+croceatenmess	defb mxy+19,88,"THE:GATOR:HAS"
+	defb mxy+19,100,"YOU:FOR:LUNCH"
+	defb mend
+
+killedbyhawk	defb mxy+18,88,"THE:DIZZY:HAWK"
+	defb mxy+21,96,"SWOOPS:DOWN"
+	defb mxy+19,104,"AND:KILLS:YOU"
+	defb mend
+
+ratgotyoumess	defb mxy+20,88,"THE:RAT:GOES"
+	defb mxy+20,96,"STRAIGHT:FOR"
+	defb mxy+23,104,"YOUR:NECK"
+	defb mend
+
+killedbyvolcano	defb mxy+18,88, "YOU:WERE:BURNT"
+	defb mxy+17,96, "BY:THE:HOT:LAVA"
+	defb mxy+18,104,"IN:THE:VOLCANO"
+	defb mend
+
+killedbydaggersmess
+	defb mxy+14,88, "YOU;RE:SKEWERED:BY"
+	defb mxy+15,100,"THE:SHARP:DAGGERS"
+	defb mend
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;ODD MESSAGES
+
+youfoundcoinmess
+	defb mpen+5,mxy+16,64,drawbox,12,5,mpen+3
+	defb mxy+22,88,"WELL:DONE@",mpen+6
+	defb mxy+23,96,"YOU:FOUND"
+	defb mxy+26,104,"A:COIN",mend
+	
+inventory	defb mpen+4,mxy+6,56,drawbox,22,6,mxy+16,76
+carrymess	defb mpen+5,"YOU:ARE:CARRYING",mpen+2,mend
+inventorywithbag	defb mpen+4,mxy+6,48,drawbox,22,8,mxy+16,68,mgosub
+	defw carrymess
+	defb mend
+
+selectitemmess	defb mpen+7,mxy+14,136,drawbox,14,2,mpen+5
+	defb mxy+18,152,"CHOOSE:ITEM:TO"
+	defb mxy+21,160,"USE:OR:DROP",mend
+
+carryingtoomuchmess
+	defb mpen+7,mxy+12,136,drawbox,16,2,mpen+5
+	defb mxy+16,152,"YOU:ARE:CARRYING"
+	defb mxy+16,160,"TOO:MUCH:TO:HOLD",mend
+
+nothingatallmess defb mxy+22,96,mpen+7
+	defb "N",mxy+25,96,"O",mxy+28,96,"T",mxy+31,96
+	defb "H",mxy+34,96,"I",mxy+37,96,"N",mxy+40,96,"G",mend
+
+
+nothingheremess	defb mend
+bagmess	defb "EXIT:AND:DON;T:DROP",mend
+greenbeanmess	defb "A:SINGLE:GREEN:BEAN",mend
+bonemess	defb "A:FRESH:MEATY:BONE",mend
+goldeneggmess	defb "A:HEAVY:DRAGON:EGG",mend
+blackholemess	defb "A:LARGE:ROUND:HOLE",mend
+sleeppotionmess	defb "SOME:SLEEPING:POTION",mend
+applemess	defb "A:FRESH:GREEN:APPLE",mend
+jugmess	defb "A:JUG:OF:COLD:WATER",mend
+loafmess	defb "STALE:LOAF:OF:BREAD",mend
+fullwhiskeymess	defb "A:BOTTLE:OF:WHISKEY",mend
+ropemess	defb "A:PIECE:OF:ROPE",mend
+

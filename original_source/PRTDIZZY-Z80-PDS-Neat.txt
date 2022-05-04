@@ -1,0 +1,273 @@
+	
+	if computer=spectrum     ;We'd have code for amstrad and Spectrum in the same source code
+
+			;clock cycles in  [ ]
+
+	;Dizzy sprite data is always 24 pixels wide (3 characters) i.e. 3 bytes.
+	;However, it's interleaved with Mask data.  Making each horizontal line 6 bytes wide.
+
+
+
+prtdizzy		;a=no of dizzy frm (0-38)
+			;e=x (0=left 255=right)
+			;l=y (0=bottom 199=top)
+	ld (dizfrm),a		;set varaible dizfrm   with the number of the animated frame of dizzy to print
+	push ix			;Preserve the IX pointer
+	push hl			;Put HL to the stack
+	ld a,l			;Load register A with  l  (y coordinate to print dizzy)
+	ld (dizy),a		;Load variable dizy  with register A  (ie.  store y coord)
+	pop hl			;Retrive contents of HL
+
+firsthalf	
+	ld a,e			;  Load register A with register E.  (X coord to print Dizzy)
+	ld (dizx),a		;  Load varaible dizx  with Register E    -  all moving to memory goes via A!	
+	srl a			;  Shift all bits right in Register A.   i.e. /2
+
+	ld de,storescreen	; make DE a pointer to memory to store screen that needs to be copied/preserved 	
+	ld (de),a		; Save A into memory that DE points to.  i.e. DizzyX/2
+	inc de			; increment memory pointer
+
+	ld a,(dizfrm)		;recall which frame to print
+	di			; Disable Interupts
+	exx 			; [4]  Swaps  BC,DE,HL for shadow registers 'BC,'DE, 'HL
+	push bc			; [11] Puts contents of BC  on Stack	
+	push de			;  Preserve DE
+	push hl			; Preserve HL
+	exx			[4]  Swaps  'BC,'DE,'HL back for registers BC,DE, HL
+	ld (stackstore),sp	;[?]  Load variable storestore, with the stackpointer
+	ld h,0
+	ld l,a			; load L  with A  (dizzy Frame)
+	add hl,hl		; double it	
+	ld bc,dizzytable	;Load BC with start of Dizzy Sprite data
+	add hl,bc		; add the doubled frame number to the start of dizzydata table 
+	ld c,(hl)		; load c  with contents at pointer (hl)
+	inc hl			; increment memory pointer
+	ld b,(hl)		; load B   with contents at pointer (hl)  now BC points says how far through dizzy sprite data, this frame of animation is 
+	ld hl,dizzydefs		; Load HL with start of Dizzy frame animation
+	add hl,bc		; Make HL point at data to print for dizzy.  Start of table+Frame offset
+	ld sp,hl		; Load this to the Stack Pointer
+	pop bc			; retrieve BC from Stack.  But as stack points at Dizzy Data,  it's set BC to the first data within the dizzy sprite data
+	ld a,c			; load C across to A
+	ld (dizheight),a	; Save C as the height of the sprite
+	ld (de),a		; Save A,  the height of the sprite to (de) which is the temporary 'screen storage area'
+	inc de			; increment pointer of temporary screen storage
+	ld a,(dizy)		; Load A with Dizzy A coord
+	sub c			; sub C (sprite height).  Giving the top corner of Dizzy, rather than the bottom corner 
+	ld l,a			; Load L with new screen Y position			
+	ld h,0			; Load H with 0
+	add hl,hl		; Double HL [it will be an memory index into screen coordinate data table, which is 16 bit.] 
+	ld bc,screentable	; load BC with the screen table
+	add hl,bc		; add the index to the start of the screen table
+	ld a,l			; load A with L  (A=low part of screen pointer)  ? 
+	ld (de),a		: load (de) [temporary screen store] with low part of screen pointer 
+	inc de			; inc pointer
+	ld a,h			; load A with H  
+	ld (de),a		; load (de) [temporary screen store] with High part of screen pointer
+	inc de			; inc temporary screen pointer
+	ld (storeix),hl		; load IX pointer with HL pointer
+	ld ix,(storeix)		; Store this pointer
+
+	ld a,(dizx)		; load A with dizx  [x coord * 2]
+	ld c,a			; load to C register
+	ld a,(dizheight)	; load A with dizzy sprite height
+	srl c			; shift C right - [X coord  /2 - again]
+	jr c,prtdizzyylp1	; Jump  relative [i.e. close(within 256 bytes)] to new code position,  if there is a carry flag set.  i.e. if X coord was Odd 
+	
+
+prtdizzyylp		;   X coord to print DIZZY at, is Even.
+	ld l,(ix+0)	
+	inc ix		
+	ld h,(ix+0)	; load HL with contents of pointer IX 
+	inc ix		
+	ld b,00		; load B with 0. Knowing that C points at X coord *2
+	add hl,bc	; add Screen table
+	ex af,af'	; swap register A & Flags with it's shadows
+	exx		; swap All register pairs with their shadows
+	pop bc		; [10] fill BC with data from the stack pointer
+	pop de		; fill DE with data from the stack pointer
+	pop hl		; fill HL with data from the stack pointer
+			;[achieves 6 bytes loaded and pointers moved on, with only 30 clock cycles]
+			; other regular method :-  LD A, (IX)   [19] , INC IX [10], LD C,A  [4] = 33 Clock cycles.  Times 3, for 3 bytes wide. =99 Clock Cycles.  
+	
+	exx		; [4] swap All register pairs with their shadows
+
+	;---------Copies screen contents to temporary screen buffer, rubs out mask area, and prints in the dizzy sprite data
+	ld a,(hl)	;load A with contents at HL (Screen location)
+	exx		; [4] swap All register pairs with their shadows
+	and c		; And C.   only matching  1's in A & C  are left as 1's.  - makes the mask
+	xor b		; XOR B    Now, only if either A or B equals 1, then 1 stays  - Adds the Dizzy sprite to masked hole
+	exx		;[4] swap All register pairs with their shadows	
+	ld b,a		; B now contains the byte to write to the screen [mask+sprite]
+	xor (hl)	; XOR with data at HL (screen location)
+	ld (de),a	; load data at DE (temp screen buffer), with XOR'd results.  So, an XOR replaces screen later. meaning multiple sprites can go over each other
+	ld (hl),b	; Write the mask+sprite data to the screen
+	inc hl		; inc HL pointer- Screen location
+	inc de		; inc DE pointer - with is the temprary screen store
+	
+	;----------Next Byte along  - same as previous 	
+	ld a,(hl)	
+	exx
+	and e
+	xor d
+	exx
+	ld b,a
+	xor (hl)	
+	ld (de),a
+	ld (hl),b
+	inc hl
+	inc de
+	
+	;---------Last byte copy - Dizzy is always 3 bytes wide
+	ld a,(hl)
+	exx
+	and l
+	xor h
+	exx
+	ld b,a
+	xor (hl)	
+	ld (de),a
+	ld (hl),b
+	inc de
+	xor a
+	ld (de),a
+	inc de
+			;no need to inc HL  as before, as this will be recalculated	
+	ex af,af'	; retrieve A,  as it's the height of the sprite
+	dec a		
+	jr nz,prtdizzyylp   ; looping back the number of the times, the height of the sprite
+	
+	ld sp,(stackstore)   ;load back the real stack pointer position
+	exx		;swap all paired shadow registers 
+	pop hl		;retrieve all paired shadow registers - routines shouldnt use these really!		
+	pop de
+	pop bc
+	exx		;back to using normal Paired registers
+	pop ix		;retrieve the IX pointer from the stack
+	ei		;re-enable interupts
+	ret		; end of routine.   Dizzy sprite on screen, fully masked. Screen buffer filled with Position, height, width and screen contents.
+
+
+prtdizzyylp1		; same as above. But when Dizzy is printed on odd screen coordinates.  Prints much slower, as all data needs to be shifted 4 bits across bytes.
+	.		;  very awkward.  Ideally we could have saved Dizzy pre-shifted,  but that was an extra 2.5k we couldnt afford to waste. So, comprised
+	.		;  that it would be slower to print on odd spacing.
+	.
+	ret
+
+ruboutdizzy		- Prints the Temporary screen buffer, back onto the screen, rubbing out screen, with original screen memory
+	di			;Disable interupts - we want to use the 2nd set of registers!
+	ld (stackstore),sp	; Remember the real stack pointer
+	ld sp,storescreen	; load the stack pointer with that temporary screen buffer 
+	pop bc			; pull the first 2 bytes of store. [X coord  & Sprite height]
+	ld a,c
+	ld (addacross2+1),a	;store as a patch in the following code! - naughty trick!
+	pop hl			; The Screen table address to copy data back over			
+	ld a,b
+rubylp	ex af,af'		;Swap to alternate A register, so A (sprite height)  cant be used as a loop counter
+	ld e,(hl)		;load DE as the pointer to the screen coord tables		
+	inc hl
+	ld d,(hl)
+	inc hl
+	ex de,hl		; tranfer DE to HL.  As HL is better at being a pointer (it's faster)
+addacross2	
+	ld bc,0000		;patched   with the X distance across screen
+	add hl,bc
+	pop bc			; Pull data from temporary screen buffer
+rubbyte0	
+	ld a,(hl)
+	xor c			; XOR's with the real screen data	
+	ld (hl),a		; copies back the screen
+	inc hl
+rubbyte1	
+	ld a,(hl)		; does this for all 3 bytes wide
+	xor b
+	ld (hl),a
+	inc hl
+	pop bc
+rubbyte2	
+	ld a,(hl)
+	xor c
+	ld (hl),a
+	inc hl
+rubbyte3	
+	ld a,(hl)
+	xor b
+	ld (hl),a
+	ex de,hl
+	ex af,af'		;retrieves the height loop counter
+	dec a
+	jr nz,rubylp		; loops the number of times of the height opf the sprite.
+	ld sp,(stackstore)	; loads back the real screen pointer
+	ei			; re-enables interupts
+	ret
+
+dizfrm	defb 0
+dizheight	defb 0
+dizy	defb 0
+dizx	defb 0
+stackstore	defw 0
+storeix	defw 0
+
+storescreen	defs 2+2+24*4	;x to add,height,screentablepointer,data
+
+	endif
+
+
+
+-----------------------------------------------Get memory location of Screen X,Y
+Conventional method  ;117 Clock Cycles
+		; Get screen address
+		; B = Y pixel position
+		; C = X pixel position
+		; Returns address in HL
+Get_Pixel_Address:  
+	LD A,B          ; [4] Calculate Y2,Y1,Y0
+        AND %00000111   ; [7] Mask out unwanted bits
+        OR %01000000    ; [7] Set base address of screen
+        LD H,A          ; [4] Store in H
+        LD A,B          ; [4] Calculate Y7,Y6
+        RRA             ; [4] Shift to position
+        RRA		; [4]
+        RRA		; [4]
+        AND %00011000   ; [7] Mask out unwanted bits
+	OR H            ; [4] OR with Y2,Y1,Y0
+        LD H,A          ; [4] Store in H
+        LD A,B          ; [4] Calculate Y5,Y4,Y3
+        RLA             ; [4] Shift to position
+        RLA		; [4]
+        AND %11100000   ; [7] Mask out unwanted bits
+        LD L,A          ; [4] Store in L
+	LD A,C          ; [4] Calculate X4,X3,X2,X1,X0
+        RRA             ; [4] Shift into position
+        RRA		; [4]
+        RRA		; [4]
+        AND %00011111   ; [7] Mask out unwanted bits
+        OR L            ; [4] OR with Y5,Y4,Y3
+        LD L,A          ; [4] Store in L
+        RET		; [10]
+
+	;Our Method using a 192*2 Byte Lookup Table
+	;  99 clock cycles
+Get_Pixel_Address:  		;Get Screen Address
+				;e=x (0=left 255=right)
+				;l=y (0=bottom 199=top)
+				;Returns address in HL   A=Pixels across byte 
+	ld a,e			;[4]
+	srl e			;[8] divide 8  [8 pixels per byte]
+	srl e			;[8]
+	srl e			;[8]
+	ld h,0			;[7]
+	ld d,h			;[4] 
+	add hl,hl		;[11] double the Y coord, as it's a pointer to a 16 bit table location.
+	ld bc,screentable	;[10] load BC with the screen table
+	add hl,bc		;[11] add the index to the start of the screen table
+	add hl,de		;[11] add the X component
+	and %00000111		;[7] A=number of pixels across byte
+	ret			;[10] End of routine
+
+
+
+
+
+
+
+

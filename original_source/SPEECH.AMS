@@ -1,0 +1,115 @@
+	;;amstrad version
+
+dospeech
+	ld hl,fwdizzytlk
+	ld de,fwdizzytlkend-fwdizzytlk
+	call sayit
+
+;	call pausegap
+;
+;	ld hl,bytottlk
+;	ld de,bytottlkend-bytottlk
+;	call sayit
+
+	ld a,100
+pausegap1	ld b,0
+pausegap	djnz pausegap
+	dec a
+	jr nz,pausegap1
+	ret 
+
+
+
+sayit	push ix
+	push hl
+	push de
+	di
+	call la45a
+	pop de
+	pop hl
+playbklp
+	ld b,8
+la47d
+	rlc (hl)
+	push bc
+	call c,la49b
+	call nc,la4a5
+	push hl
+	ld h,1
+	call repdelay
+	pop hl
+	pop bc
+	djnz la47d
+	inc hl
+	dec de
+	ld a,d
+	or e
+	jr nz,playbklp
+	call &bca7
+	ld a,14			;15
+	call delayrou1
+	pop ix
+	ret
+
+delayrou1	call &bd19
+	dec a
+	ret z
+	jr delayrou1
+	
+la49b
+	push af
+	ld a,9
+la49e
+	ld c,15	;vol
+	call la43e
+	pop af
+	ret
+	
+la4a5
+	push af
+	ld a,9
+	ld c,0
+	call la43e
+	pop af
+	ret
+	
+repdelay
+	ld h,1
+repdlp
+	dec h
+	jr nz,repdlp
+	ret
+	
+la43e
+	push af
+	ld a,&c0
+	ld b,&f6
+	out (c),a
+	ld b,&f4
+	pop af
+	out (c),a
+	ld b,&f6
+	ld a,&80
+	out (c),a
+	ld b,&f4
+	out (c),c
+	ld b,&f6
+	xor a
+	out (c),a
+	ret
+	
+la45a
+	call &bca7
+	di
+	ld a,3
+	ld c,0
+	call la43e
+	ld a,7
+	ld c,&3d
+	call la43e
+	ld a,2
+	ld c,0
+	call la43e
+	ret
+
+

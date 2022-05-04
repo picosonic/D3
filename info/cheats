@@ -1,0 +1,5 @@
+These codes can be seen in plain text @ offset 0xfe0c / 0xfe13
+
+1. Infinite lives (confirmed on Amiga and PC) - Get a game over, and on the high score screen (you need at least 10,000 points first) enter IMMORTAL as your name. When you start again, you will have infinite lives.
+
+2. Move Dizzy anywhere (confirmed on Amiga) - Same as above, but enter your name as FLOATING and when you start again, hold enter and you can use the movement keys to float anywhere you choose. You can still be killed while floating, so be careful.

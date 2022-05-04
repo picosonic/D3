@@ -1,0 +1,230 @@
+Spectrum palette (GBR)
+
+       NORMAL          BRIGHT
+000  0 Black         1 Black
+001  2 Dark blue     3 Blue
+010  4 Dark red      5 Red
+011  6 Purple        7 Magenta
+100  8 Dark green    9 Green
+101 10 Dark cyan    11 Cyan
+110 12 Dark yellow  13 Yellow
+111 14 Grey         15 White
+
+-------------------------------
+
+0000 - 3FFF (ROM)
+4000 - 57FF (Pixel data 256x192)
+5800 - 5AFF (Attributes)
+5B00 - 5BFF (Printer buffer)
+5C00 - 5CBF (System vars)
+5CC0 - 5CCA (Reserved)
+5CCB - FF57 (Available)
+FF58 - FFFF (Reserved)
+
+-------------------------------
+
+3D00 - 3FFF (ROM font)
+ 96 * 8x8 characters
+ Space, !"#$%&'()*+,-./, 0-9, :;<=>?@, A-Z, [\]^_£, a-z, {|}", (c)
+
+-------------------------------
+
+6000 - 60FF (Reverse Page Data)
+
+63C4 - 879A (Room data)
+
+879B - 8864 (Room name pointers)
+ 0-100 word pointers to room names
+
+8865 - 8868 (readytoprintname)
+
+8869 - 8C82 (Room names)
+
+8C83 - 8CDC (Coin table)
+ X, Y, ROOM
+
+8CDD (Coin count)
+
+8CDE - 9B16 (People talking messages)
+
+9B17 - A20A (Messages for doing things)
+
+A20B - A426 (Death messages)
+
+A427 - A5B0 (Odd messages)
+
+A804 - AC83 (Movable object data)
+ 72 x movable items, 16 bytes each
+   room (room object now)
+   rou
+   movex (x pos object now)
+   movey (y pos object now)
+   movefrm (current frame ??)
+   oldmovex
+   oldmovey
+   oldmovefrm
+   delay
+   delaycounter
+   var1
+   colour
+   origroom (room object starts)
+   origx (x pos object starts)
+   origy (y pos object starts)
+   origfrm (starting frame ??)
+
+BEF9 - ???? @ FRAMES.DAT
+
+@ PRTDIZZY.PDS
+
+C0FB - C2BF (In game font)
+ 44 * 8x8 characters, with 2 byte header
+  Egg, 0-9, v',-.?!, A-Z
+
+C2F1 - ???? (Tiles)
+ C2F1 - Barrel (24)
+ C45D - Boulder (24)
+ C4A7 - Boulder2 (24)
+ C4F1 - Boulder3 (24)
+ C538 - Boulder4 (32)
+ C57A - Brick (24)
+ C5C4 - Brick2 (24)
+ C5F2 - Brick3 (16)
+ C628 - Brick4 (16)
+ C64A - Brick5 (24)
+ C664 - Painting of castle (32)
+ C6A6 - Painting of person (16)
+ C6D8 - Picture frame (16)
+ C718 - Sword hilt (16)
+ C73A - Cutlass hilt (16)
+ C75C - Sword blade (16)
+ C77D - Floor spike (8)
+ C790 - Half shield (16)
+ ????
+ C81D - Brickwork (16)
+ C843 - Ogre (32x40)
+ C8E1 - Rat (32x8)
+ C8FF - Dragon tail (32)
+ C941 - Dragon body (32)
+ C9AC - Rounded blocks (8)
+ ????
+ CA73 - Tree trunk (24)
+ CCAF - Tree branch (24)
+ CCEA - Tree branch (24)
+ ????
+ CDF5 - Tree trunk2 (16)
+ CE39 - Fence (16)
+ CE5B - Vertical (8)
+ CE6B - Rope fence flat (16)
+ CE89 - Rope fence angle (16)
+ CEAE - Wooden post (16)
+ CEFF - Thatch roof pieces (16)
+ CF4D - Tree foliage (24)
+ CF8E - Tree foliage2 (16)
+ ????
+ CFF4 - Grass (16)
+ D016 - Bush (24)
+ D066 - Bush2 (16)
+ D092 - Mountain top (40)
+ ????
+ D1CA - Leaf (16)
+ D1DC - Leaf2 (16)
+ D1FD - Leaf3 (8)
+ D20D - Cloud (16)
+ D22D - Brick6 (16)
+ D23D - Switch (16)
+ D251 - Sack (16)
+ D275 - Coin (16)
+ D297 - Bucket (16)
+ D2B9 - Sack2 (16)
+ D2DB - Hole (16)
+ D2FD - Bean (16)
+ D31F - Bone (16)
+ D341 - Pygmy cow (16)
+ D363 - Rug (16)
+ ????
+ D38F - Small stone (8)
+ D3A0 - Dragon egg (16)
+ D3C2 - Cloud pieces (16)
+ D3CC - Crate pieces? (24)
+ D464 - Flame (16)
+ D480 - Rhino (48)
+ D4FA - Rhino2 (48)
+ D574 - Crocodile mouth closed (16)
+ D5B6 - Crocodile mouth open (16)
+ D5F8 - Key (16)
+ D61A - Rope (16)
+ D63C - Potion (16)
+ D65E - Lift mechanism (24)
+ D69C - Dragon head (16)
+ D6BE - Dragon head2 (16)
+ D6ED - Whiskey (16)
+ ????
+ D745 - Treehouse door/window frame (16)
+ D799 - Treehouse walkway (16)
+ D7B5 - Walking stick? (16)
+ D7D7 - Apple (16)
+ D7F9 - Jug (16)
+ D81B - Bird1 (32)
+ D851 - Bird2 (32)
+ D883 - Bird3 (32)
+ D8BC - Roof tile pieces (16)
+ D923 - Skeleton (16x40)
+ D979 - Painting of Dizzy (32)
+ D9DB - Loaf of bread (16x16)
+ D9FD - Brass door knocker (16)
+ DA1F - Top of lift (32)
+ DA53 - Pick axe (16)
+ DA75 - Heart (16)
+ DA83 - Heart2 (16)
+ DA99 - Heart3 (16)
+ DAB7 - Half dungeon door (16)
+ ????
+ DB13 - Half Aussie shopkeeper (16)
+ DB63 - Denzil (24)
+ DBA4 - Dylan (24)
+ DBE5 - Grand Dizzy (24)
+ DC23 - Dizzy (24)
+ DC5E - Dozy (24)
+ DCC8 - Daisy (24)
+
+DD03 - DD3F (DIZZY logo)
+  48x20 pixels
+
+DF3D - F1A8 @ DIZZYFRM.DAT
+
+DFB0 - F19E (Dizzy sprite + masks)
+  24x20 pixels (48)
+
+FF01 - FFF2 (Item messages)
+
+---------------------
+
+91 - water processing
+115 - flame processing
+
+---------------------
+
+header 32*5 (8x8 blocks, so 256x40 pixels)
+border 32*19 (8x8 blocks, so 256x152 pixels)
+
+roomdata
+ 0 frameno
+ 1 framex & 7f | samecolour << 7
+ 2 framey
+   (diffcolour)
+ 3    frameattrib & 47
+ 4    (framereverse << 1) & 1
+ 5    (frameplot & 18) >> 3
+
+first screen (room 36) map data (30x17 blocks)
+
+abcdeabcabcdeabcdeabcde.....fg
+............................hi
+............................jk
+..............................
+lmn lmn abc lo lmn lmn abc de fg p ln lmn
+jqk rst lmn uk jqk rst lo lmn hi u jk rst
+
+36 : 0x05ac to 0x0673 (len 199)
+  [86 34x176 0x02][87 40x176][87 44x176][86 48x176][87 54x176][86 58x176][86 64x176][87 70x176][87 74x176][86 78x176][87 84x176][86 88x176][82 88x80][84 90x48][85 84x80][86 82x96][84 78x80][98 82x80][87 74x80][86 68x80][83 72x88][85 68x88][82 62x80][83 56x80][87 58x96][86 52x96][83 46x88][85 52x80][86 46x80][82 40x80][84 36x96][83 34x80][98 34x96][98 34x112][84 36x120][86 34x48][87 40x48][86 44x48][86 50x48][87 56x48][86 60x48][87 66x48][86 70x48][87 76x48][9d 34x168 0x05][9d 36x168][ae 86x131 0x02][ad 83x120 0x42][ad 43x120][af 67x104 0x47][73 42x106 0x46][73 82x106][c0 68x160 0x42][c0 72x160 0xc2][b0 48x144 0x42][b0 48x128][b0 62x135][b0 62x144][9e 48x128][9e 56x128][9e 56x152][9e 48x152][ae 90x131 0x82]
+

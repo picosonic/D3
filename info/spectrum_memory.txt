@@ -1,0 +1,14 @@
+&F800 to &FFFF         4 k  Music
+&F000 to &F7FF       0.5 k  Speech Data -> Buffer memory
+&D000 to &E7FF         6 k  Game text
+&A800 to &CFFF        12 k  Map data
+&9300 to &A7FF       5.5 k  Background sprites & font
+&8000 to &92FF       4.5 k  Dizzy sprites
+&6000 to &7FFF         8 k  Code [Around 4000 lines]
+&5F00 to &5FFF       0.5 k  Data/lookup Tables
+         RAM for Game 41 k
+&5B00 to &5CFF       0.5 k  System reserved RAM
+&5800 to &5AFF       0.8 k  Screen attributes
+&4000 to &57FF         6 k  Screen memory
+         Total RAM    48 k
+&0000 to &3FFF        16 k  System ROM (inc BASIC)
