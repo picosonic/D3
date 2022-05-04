@@ -1,6 +1,6 @@
 // Global constants
-const xmax=1280;
-const ymax=720;
+const xmax=256;
+const ymax=192;
 
 // Game state is global to prevent it going out of scope
 var gs={
@@ -8,6 +8,48 @@ var gs={
   canvas:null,
   ctx:null
 };
+
+function drawframe(ctx, x, y, framenum, scale, style)
+{
+  if ((framenum<0) || (framenum>0xff)) return;
+
+  ctx.save();
+
+  ctx.fillStyle=style;
+
+  var offs=frametable[framenum];
+  var px=0;
+  var py=0;
+  var fwidth=framedefs[offs++]*4;
+  var fheight=framedefs[offs++];
+
+  for (py=0; py<fheight; py++)
+  {
+    var done=0;
+
+    while ((done*8)<fwidth)
+    {
+      var mask=0x80;
+      var data=framedefs[offs++];
+
+      while (mask>0)
+      {
+        if ((data&mask)>0)
+          ctx.fillRect(Math.floor(x+(px*scale)), Math.floor(y+(py*scale)), Math.ceil(scale), Math.ceil(scale));
+
+        px++;
+
+        mask>>=1;
+      }
+
+      done++;
+    }
+
+    px=0;
+  }
+
+  ctx.restore();
+}
 
 // Handle screen resizing to maintain correctly centered display
 function resize()
@@ -44,6 +86,8 @@ function startup()
 
   resize();
   window.addEventListener("resize", resize);
+
+  drawframe(gs.ctx, 128, 80, 96, 1, "#00FF00");
 }
 
 // Run the startup() once page has loaded
