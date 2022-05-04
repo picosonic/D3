@@ -51,6 +51,12 @@ function drawframe(ctx, x, y, framenum, scale, style)
   ctx.restore();
 }
 
+// Draw a full room
+function drawroom(roomnum)
+{
+  drawframe(gs.ctx, 128, 80, 96, 1, "#00FF00");
+}
+
 // Handle screen resizing to maintain correctly centered display
 function resize()
 {
@@ -87,7 +93,7 @@ function startup()
   resize();
   window.addEventListener("resize", resize);
 
-  drawframe(gs.ctx, 128, 80, 96, 1, "#00FF00");
+  drawroom(36);
 }
 
 // Run the startup() once page has loaded
