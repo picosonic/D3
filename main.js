@@ -5,7 +5,8 @@ const ymax=720;
 // Game state is global to prevent it going out of scope
 var gs={
   // Canvas object
-  canvas:null
+  canvas:null,
+  ctx:null
 };
 
 // Handle screen resizing to maintain correctly centered display
