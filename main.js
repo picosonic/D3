@@ -2,20 +2,31 @@
 const xmax=256;
 const ymax=192;
 
+const header=40;
+const border=8;
+
+const maxroom=100;
+
 // Game state is global to prevent it going out of scope
 var gs={
   // Canvas object
   canvas:null,
-  ctx:null
+  ctx:null,
+  room:0
 };
+
+function drawclippedpixel(ctx, x, y, width, height)
+{
+  if ((x>=border) && ((x+width)<=(xmax-border))
+     && (y>=(header+border)) && ((y+height)<=(ymax-border)))
+    ctx.fillRect(x, y, width, height);
+}
 
 function drawframe(ctx, x, y, framenum, scale, hflip, style)
 {
   if ((framenum<0) || (framenum>0xff)) return;
 
   ctx.save();
-
-  ctx.fillStyle=style;
 
   var offs=frametable[framenum];
   var px=0;
@@ -35,12 +46,14 @@ function drawframe(ctx, x, y, framenum, scale, hflip, style)
       while (mask>0)
       {
         if ((data&mask)>0)
-        {
-          if (hflip)
-            ctx.fillRect(Math.floor(x+((fwidth-px-1)*scale)), Math.floor(y+(py*scale)), Math.ceil(scale), Math.ceil(scale));
-          else
-            ctx.fillRect(Math.floor(x+(px*scale)), Math.floor(y+(py*scale)), Math.ceil(scale), Math.ceil(scale));
-        }
+          ctx.fillStyle=style;
+        else
+          ctx.fillStyle="#000000";
+
+        if (hflip)
+          drawclippedpixel(ctx, Math.floor(x+((fwidth-px-1)*scale)), Math.floor(y+(py*scale)), Math.ceil(scale), Math.ceil(scale));
+        else
+          drawclippedpixel(ctx, Math.floor(x+(px*scale)), Math.floor(y+(py*scale)), Math.ceil(scale), Math.ceil(scale));
 
         px++;
 
@@ -66,6 +79,9 @@ function drawroom(roomnum)
   var frameattrib=0;
   var framestyle="#FFFFFF";
 
+  gs.ctx.fillStyle="#000000";
+  gs.ctx.fillRect(border, header+border, xmax-(border*2), ymax-header-(border*2));
+
   while (ptr<roomtable[roomnum].len)
   {
     framenum=roomdata[roomtable[roomnum].offs+(ptr++)];
@@ -77,16 +93,16 @@ function drawroom(roomnum)
     else
       frameattrib=roomdata[roomtable[roomnum].offs+(ptr++)];
 
-    switch ((frameattrib&0x0f)+8)
+    switch ((frameattrib&0x0f))
     {
       case 0x00: framestyle="#000000"; break;
-      case 0x01: framestyle="#000077"; break;
-      case 0x02: framestyle="#770000"; break;
-      case 0x03: framestyle="#770077"; break;
-      case 0x04: framestyle="#007700"; break;
-      case 0x05: framestyle="#007777"; break;
-      case 0x06: framestyle="#777700"; break;
-      case 0x07: framestyle="#777777"; break;
+      case 0x01: framestyle="#0000d7"; break;
+      case 0x02: framestyle="#d70000"; break;
+      case 0x03: framestyle="#d700d7"; break;
+      case 0x04: framestyle="#00d700"; break;
+      case 0x05: framestyle="#00d7d7"; break;
+      case 0x06: framestyle="#d7d700"; break;
+      case 0x07: framestyle="#d7d7d7"; break;
 
       case 0x08: framestyle="#000000"; break;
       case 0x09: framestyle="#0000ff"; break;
@@ -139,7 +155,19 @@ function startup()
   resize();
   window.addEventListener("resize", resize);
 
-  drawroom(36);
+  drawroom(gs.room);
+
+  setInterval(function() {
+    drawroom(gs.room);
+
+    gs.room++;
+    if (gs.room>maxroom) gs.room=0;
+    while (roomtable[gs.room].len==0)
+    {
+      gs.room++;
+      if (gs.room>maxroom) gs.room=0;
+    }
+  }, 1000);
 }
 
 // Run the startup() once page has loaded
