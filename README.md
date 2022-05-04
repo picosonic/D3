@@ -1,3 +1,3 @@
 # D3
 
-Original source copyright to respecitve owner(s).
+Original source/assets copyright to respective owner(s).
