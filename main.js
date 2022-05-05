@@ -165,6 +165,44 @@ function drawroom(roomnum)
 
   // Write name of room
   writestring(gs.ctx, 7*8, 4*8, (roomtable[roomnum].name.length==0)?"::::::::::::::::::::":roomtable[roomnum].name, 1, getpalette(6), false);
+
+  // Extra per-room processing
+  switch (roomnum)
+  {
+    case 0:
+      var pen=0;
+
+      pen=3;
+      writestring(gs.ctx, (19*4), 49, "FANTASY:WORLD", 1, getpalette(pen), false);
+
+      pen=2;
+      writestring(gs.ctx, (24*4), 80, "STARRING", 1, getpalette(pen), false);
+      writestring(gs.ctx, (20*4), 89, "THE:YOLKFOLK", 1, getpalette(pen), false);
+
+      pen=5;
+      writestring(gs.ctx, (20*4), 108, "D", 1, getpalette(pen), false);
+      writestring(gs.ctx, (22*4), 106, "I", 1, getpalette(pen), false);
+      writestring(gs.ctx, (24*4), 104, "Z", 1, getpalette(pen), false);
+      writestring(gs.ctx, (26*4), 102, "Z", 1, getpalette(pen), false);
+      writestring(gs.ctx, (28*4), 100, "Y", 1, getpalette(pen), false);
+
+      writestring(gs.ctx, (35*4), 100, "D", 1, getpalette(pen), false);
+      writestring(gs.ctx, (37*4), 102, "A", 1, getpalette(pen), false);
+      writestring(gs.ctx, (39*4), 104, "I", 1, getpalette(pen), false);
+      writestring(gs.ctx, (41*4), 106, "S", 1, getpalette(pen), false);
+      writestring(gs.ctx, (43*4), 108, "Y", 1, getpalette(pen), false);
+
+      writestring(gs.ctx, (9*4), 142, "DENZIL:DYLAN", 1, getpalette(pen), false);
+      writestring(gs.ctx, (35*4), 136, "DOZY", 1, getpalette(pen), false);
+      writestring(gs.ctx, (46*4), 136, "GRAND", 1, getpalette(pen), false);
+      writestring(gs.ctx, (46*4), 144, "DIZZY", 1, getpalette(pen), false);
+
+      drawframe(gs.ctx, (58*4)-128, 57, 27, 1, false, getpalette(6), 0, true);
+      break;
+
+    default:
+      break;
+  }
 }
 
 // Handle screen resizing to maintain correctly centered display
