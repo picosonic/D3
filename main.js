@@ -86,6 +86,8 @@ function drawroom(roomnum)
   var framex=0;
   var framey=0;
   var frameattrib=0;
+  var framereverse=false;
+  var frameplot=true;
   var framestyle="#FFFFFF";
 
   gs.ctx.fillStyle="#000000";
@@ -97,12 +99,19 @@ function drawroom(roomnum)
     framex=roomdata[roomtable[roomnum].offs+(ptr++)];
     framey=roomdata[roomtable[roomnum].offs+(ptr++)];
 
-    if (framex>0x7f)
-      framex-=0x80;
-    else
-      frameattrib=roomdata[roomtable[roomnum].offs+(ptr++)];
+    // Check for change of attributes
+    if (framex<=0x7f)
+    {
+      var attrib=roomdata[roomtable[roomnum].offs+(ptr++)];
 
-    switch ((frameattrib&0x0f))
+      frameattrib=(attrib&0x47);
+      framereverse=((attrib&0x80)!=0);
+      frameplot=((attrib&0x18)>>3);
+    }
+    else
+      framex-=0x80;
+
+    switch (frameattrib&0x0f)
     {
       case 0x00: framestyle="#000000"; break;
       case 0x01: framestyle="#0000d7"; break;
@@ -124,7 +133,7 @@ function drawroom(roomnum)
       default: break;
     }
 
-    drawframe(gs.ctx, (framex*4)-128, framey, framenum, 1, ((frameattrib&0x80)!=0), framestyle, true);
+    drawframe(gs.ctx, (framex*4)-128, framey, framenum, 1, framereverse, framestyle, true);
   }
 
   // Draw any coins which are in this room
