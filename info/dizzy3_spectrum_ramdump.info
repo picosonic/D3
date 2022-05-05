@@ -211,20 +211,10 @@ roomdata
  0 frameno
  1 framex & 7f | samecolour << 7
  2 framey
-   (diffcolour)
- 3    frameattrib & 47
- 4    (framereverse << 1) & 1
- 5    (frameplot & 18) >> 3
-
-first screen (room 36) map data (30x17 blocks)
-
-abcdeabcabcdeabcdeabcde.....fg
-............................hi
-............................jk
-..............................
-lmn lmn abc lo lmn lmn abc de fg p ln lmn
-jqk rst lmn uk jqk rst lo lmn hi u jk rst
-
-36 : 0x05ac to 0x0673 (len 199)
-  [86 34x176 0x02][87 40x176][87 44x176][86 48x176][87 54x176][86 58x176][86 64x176][87 70x176][87 74x176][86 78x176][87 84x176][86 88x176][82 88x80][84 90x48][85 84x80][86 82x96][84 78x80][98 82x80][87 74x80][86 68x80][83 72x88][85 68x88][82 62x80][83 56x80][87 58x96][86 52x96][83 46x88][85 52x80][86 46x80][82 40x80][84 36x96][83 34x80][98 34x96][98 34x112][84 36x120][86 34x48][87 40x48][86 44x48][86 50x48][87 56x48][86 60x48][87 66x48][86 70x48][87 76x48][9d 34x168 0x05][9d 36x168][ae 86x131 0x02][ad 83x120 0x42][ad 43x120][af 67x104 0x47][73 42x106 0x46][73 82x106][c0 68x160 0x42][c0 72x160 0xc2][b0 48x144 0x42][b0 48x128][b0 62x135][b0 62x144][9e 48x128][9e 56x128][9e 56x152][9e 48x152][ae 90x131 0x82]
-
+   <diffcolour>
+ 3    frameattrib
+        (framereverse & 80)      // h flip
+        (framesolid & 40)        // 0=solid
+        ( & 20)                  // ???
+        (frameplot & 18) >> 3    // 0=normal 1=or 2=xor
+        (framecolour & 07)       // colour from palette of 8
