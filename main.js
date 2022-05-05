@@ -12,17 +12,20 @@ var gs={
   // Canvas object
   canvas:null,
   ctx:null,
+
   room:0
 };
 
-function drawclippedpixel(ctx, x, y, width, height)
+function drawclippedpixel(ctx, x, y, width, height, clipping)
 {
-  if ((x>=border) && ((x+width)<=(xmax-border))
-     && (y>=(header+border)) && ((y+height)<=(ymax-border)))
+  if ((clipping) && (!((x>=border) && ((x+width)<=(xmax-border))
+     && (y>=(header+border)) && ((y+height)<=(ymax-border)))))
+    return;
+
     ctx.fillRect(x, y, width, height);
 }
 
-function drawframe(ctx, x, y, framenum, scale, hflip, style)
+function drawframe(ctx, x, y, framenum, scale, hflip, style, clipping)
 {
   if ((framenum<0) || (framenum>0xff)) return;
 
@@ -51,9 +54,9 @@ function drawframe(ctx, x, y, framenum, scale, hflip, style)
           ctx.fillStyle="#000000";
 
         if (hflip)
-          drawclippedpixel(ctx, Math.floor(x+((fwidth-px-1)*scale)), Math.floor(y+(py*scale)), Math.ceil(scale), Math.ceil(scale));
+          drawclippedpixel(ctx, Math.floor(x+((fwidth-px-1)*scale)), Math.floor(y+(py*scale)), Math.ceil(scale), Math.ceil(scale), clipping);
         else
-          drawclippedpixel(ctx, Math.floor(x+(px*scale)), Math.floor(y+(py*scale)), Math.ceil(scale), Math.ceil(scale));
+          drawclippedpixel(ctx, Math.floor(x+(px*scale)), Math.floor(y+(py*scale)), Math.ceil(scale), Math.ceil(scale), clipping);
 
         px++;
 
@@ -67,6 +70,12 @@ function drawframe(ctx, x, y, framenum, scale, hflip, style)
   }
 
   ctx.restore();
+}
+
+function writestring(ctx, x, y, text, scale, style, clipping)
+{
+  for (var i=0; i<text.length; i++)
+    drawframe(ctx, x+(i*8), y, text.charCodeAt(i), 1, false, style, clipping);
 }
 
 // Draw a full room
@@ -115,13 +124,16 @@ function drawroom(roomnum)
       default: break;
     }
 
-    drawframe(gs.ctx, (framex*4)-128, framey, framenum, 1, ((frameattrib&0x80)!=0), framestyle);
+    drawframe(gs.ctx, (framex*4)-128, framey, framenum, 1, ((frameattrib&0x80)!=0), framestyle, true);
   }
 
   // Draw any coins which are in this room
   for (var i=0; i<cointable.length; i++)
     if (cointable[i].room==roomnum)
-      drawframe(gs.ctx, (cointable[i].x*4)-128, cointable[i].y, 0, 1, false, "#ffff00");
+      drawframe(gs.ctx, (cointable[i].x*4)-128, cointable[i].y, 0, 1, false, "#ffff00", true);
+
+  // Write name of room
+  writestring(gs.ctx, 7*8, 4*8, (roomtable[roomnum].name.length==0)?"::::::::::::::::::::":roomtable[roomnum].name, 1, "#ffff00", false);
 }
 
 // Handle screen resizing to maintain correctly centered display
