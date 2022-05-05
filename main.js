@@ -25,7 +25,7 @@ function drawclippedpixel(ctx, x, y, width, height, clipping)
     ctx.fillRect(x, y, width, height);
 }
 
-function drawframe(ctx, x, y, framenum, scale, hflip, style, clipping)
+function drawframe(ctx, x, y, framenum, scale, hflip, style, frameplot, clipping)
 {
   if ((framenum<0) || (framenum>0xff)) return;
 
@@ -49,9 +49,16 @@ function drawframe(ctx, x, y, framenum, scale, hflip, style, clipping)
       while (mask>0)
       {
         if ((data&mask)>0)
+        {
           ctx.fillStyle=style;
+        }
         else
-          ctx.fillStyle="#000000";
+        {
+          if (frameplot!=0) // 0=normal, 1=or, 2=xor
+            ctx.fillStyle="rgba(0,0,0,0)";
+          else
+            ctx.fillStyle="#000000";
+        }
 
         if (hflip)
           drawclippedpixel(ctx, Math.floor(x+((fwidth-px-1)*scale)), Math.floor(y+(py*scale)), Math.ceil(scale), Math.ceil(scale), clipping);
@@ -75,7 +82,7 @@ function drawframe(ctx, x, y, framenum, scale, hflip, style, clipping)
 function writestring(ctx, x, y, text, scale, style, clipping)
 {
   for (var i=0; i<text.length; i++)
-    drawframe(ctx, x+(i*8), y, text.charCodeAt(i), 1, false, style, clipping);
+    drawframe(ctx, x+(i*8), y, text.charCodeAt(i), 1, false, style, 0, clipping);
 }
 
 // Draw a full room
@@ -133,13 +140,13 @@ function drawroom(roomnum)
       default: break;
     }
 
-    drawframe(gs.ctx, (framex*4)-128, framey, framenum, 1, framereverse, framestyle, true);
+    drawframe(gs.ctx, (framex*4)-128, framey, framenum, 1, framereverse, framestyle, frameplot, true);
   }
 
   // Draw any coins which are in this room
   for (var i=0; i<cointable.length; i++)
     if (cointable[i].room==roomnum)
-      drawframe(gs.ctx, (cointable[i].x*4)-128, cointable[i].y, 0, 1, false, "#ffff00", true);
+      drawframe(gs.ctx, (cointable[i].x*4)-128, cointable[i].y, 0, 1, false, "#ffff00", 0, true);
 
   // Write name of room
   writestring(gs.ctx, 7*8, 4*8, (roomtable[roomnum].name.length==0)?"::::::::::::::::::::":roomtable[roomnum].name, 1, "#ffff00", false);
@@ -172,9 +179,71 @@ function resize()
   gs.canvas.style.transform='scale('+(width/xmax)+')';
 }
 
+function updatekeystate(e, dir)
+{
+  switch (e.which)
+  {
+    case 37: // cursor left
+    case 65: // A
+    case 90: // Z
+      if (dir==1)
+      {
+        if (gs.room>0)
+        {
+          gs.room--;
+
+          while ((gs.room>0) && (roomtable[gs.room].len==0))
+            gs.room--;
+
+          drawroom(gs.room);
+        }
+      }
+      e.preventDefault();
+      break;
+
+    case 39: // cursor right
+    case 68: // D
+    case 88: // X
+      if (dir==1)
+        if (gs.room<maxroom)
+        {
+          gs.room++;
+
+          while ((gs.room<maxroom) && (roomtable[gs.room].len==0))
+            gs.room++;
+
+          drawroom(gs.room);
+        }
+      e.preventDefault();
+      break;
+
+    default:
+      break;
+  }
+}
+
 // Startup called once when page is loaded
 function startup()
 {
+  document.onkeydown=function(e)
+  {
+    e = e || window.event;
+    updatekeystate(e, 1);
+  };
+
+  document.onkeyup=function(e)
+  {
+    e = e || window.event;
+    updatekeystate(e, 0);
+  };
+
+  // Stop things from being dragged around
+  window.ondragstart=function(e)
+  {
+    e = e || window.event;
+    e.preventDefault();
+  };
+
   gs.canvas=document.getElementById('canvas');
   gs.ctx=gs.canvas.getContext('2d');
 
@@ -183,6 +252,7 @@ function startup()
 
   drawroom(gs.room);
 
+/*
   setInterval(function() {
     drawroom(gs.room);
 
@@ -194,6 +264,7 @@ function startup()
       if (gs.room>maxroom) gs.room=0;
     }
   }, 1000);
+*/
 }
 
 // Run the startup() once page has loaded
