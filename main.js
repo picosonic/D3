@@ -117,6 +117,11 @@ function drawroom(roomnum)
 
     drawframe(gs.ctx, (framex*4)-128, framey, framenum, 1, ((frameattrib&0x80)!=0), framestyle);
   }
+
+  // Draw any coins which are in this room
+  for (var i=0; i<cointable.length; i++)
+    if (cointable[i].room==roomnum)
+      drawframe(gs.ctx, (cointable[i].x*4)-128, cointable[i].y, 0, 1, false, "#ffff00");
 }
 
 // Handle screen resizing to maintain correctly centered display
