@@ -85,6 +85,26 @@ function writestring(ctx, x, y, text, scale, style, clipping)
     drawframe(ctx, x+(i*8), y, text.charCodeAt(i), 1, false, style, 0, clipping);
 }
 
+function getpalette(framecolour)
+{
+  var framestyle="#000000";
+
+  switch (framecolour)
+  {
+    case 0x00: framestyle="#000000"; break;
+    case 0x01: framestyle="#0000ff"; break;
+    case 0x02: framestyle="#ff0000"; break;
+    case 0x03: framestyle="#ff00ff"; break;
+    case 0x04: framestyle="#00ff00"; break;
+    case 0x05: framestyle="#00ffff"; break;
+    case 0x06: framestyle="#ffff00"; break;
+    case 0x07: framestyle="#ffffff"; break;
+    default: break;
+  }
+
+  return framestyle;
+}
+
 // Draw a full room
 function drawroom(roomnum)
 {
@@ -96,8 +116,7 @@ function drawroom(roomnum)
   var frameattrib=0;
   var framereverse=false;
   var frameplot=0;
-  var framestyle="#FFFFFF";
-  var framecolor=0;
+  var framecolour=0;
   var framesolid=false;
 
   gs.ctx.fillStyle="#000000";
@@ -122,29 +141,30 @@ function drawroom(roomnum)
     else
       framex-=0x80;
 
-    switch (framecolour)
-    {
-      case 0x00: framestyle="#000000"; break;
-      case 0x01: framestyle="#0000ff"; break;
-      case 0x02: framestyle="#ff0000"; break;
-      case 0x03: framestyle="#ff00ff"; break;
-      case 0x04: framestyle="#00ff00"; break;
-      case 0x05: framestyle="#00ffff"; break;
-      case 0x06: framestyle="#ffff00"; break;
-      case 0x07: framestyle="#ffffff"; break;
-      default: break;
-    }
-
-    drawframe(gs.ctx, (framex*4)-128, framey, framenum, 1, framereverse, framestyle, frameplot, true);
+    drawframe(gs.ctx, (framex*4)-128, framey, framenum, 1, framereverse, getpalette(framecolour), frameplot, true);
   }
 
   // Draw any coins which are in this room
   for (var i=0; i<cointable.length; i++)
     if (cointable[i].room==roomnum)
-      drawframe(gs.ctx, (cointable[i].x*4)-128, cointable[i].y, 0, 1, false, "#ffff00", 0, true);
+      drawframe(gs.ctx, (cointable[i].x*4)-128, cointable[i].y, 0, 1, false, getpalette(6), 0, true);
+
+  // Draw any objects which are in this room
+  for (var i=0; i<objects.length; i++)
+  {
+    if (objects[i].room==roomnum)
+    {
+      var objattrib=objects[i].col;
+      var objreverse=((objattrib&0x80)!=0);
+      var objplot=((objattrib&0x18)>>3);
+      var objcolour=(objattrib&0x07);
+
+      drawframe(gs.ctx, (objects[i].x*4)-128, objects[i].y, objects[i].frame, 1, objreverse, getpalette(objcolour), objplot, true);
+    }
+  }
 
   // Write name of room
-  writestring(gs.ctx, 7*8, 4*8, (roomtable[roomnum].name.length==0)?"::::::::::::::::::::":roomtable[roomnum].name, 1, "#ffff00", false);
+  writestring(gs.ctx, 7*8, 4*8, (roomtable[roomnum].name.length==0)?"::::::::::::::::::::":roomtable[roomnum].name, 1, getpalette(6), false);
 }
 
 // Handle screen resizing to maintain correctly centered display
