@@ -89,13 +89,16 @@ function writestring(ctx, x, y, text, scale, style, clipping)
 function drawroom(roomnum)
 {
   var ptr=0;
+
   var framenum=0;
   var framex=0;
   var framey=0;
   var frameattrib=0;
   var framereverse=false;
-  var frameplot=true;
+  var frameplot=0;
   var framestyle="#FFFFFF";
+  var framecolor=0;
+  var framesolid=false;
 
   gs.ctx.fillStyle="#000000";
   gs.ctx.fillRect(border, header+border, xmax-(border*2), ymax-header-(border*2));
@@ -111,32 +114,24 @@ function drawroom(roomnum)
     {
       var attrib=roomdata[roomtable[roomnum].offs+(ptr++)];
 
-      frameattrib=(attrib&0x47);
       framereverse=((attrib&0x80)!=0);
+      framesolid=((attrib&0x40)==0);
       frameplot=((attrib&0x18)>>3);
+      framecolour=(attrib&0x07);
     }
     else
       framex-=0x80;
 
-    switch (frameattrib&0x0f)
+    switch (framecolour)
     {
       case 0x00: framestyle="#000000"; break;
-      case 0x01: framestyle="#0000d7"; break;
-      case 0x02: framestyle="#d70000"; break;
-      case 0x03: framestyle="#d700d7"; break;
-      case 0x04: framestyle="#00d700"; break;
-      case 0x05: framestyle="#00d7d7"; break;
-      case 0x06: framestyle="#d7d700"; break;
-      case 0x07: framestyle="#d7d7d7"; break;
-
-      case 0x08: framestyle="#000000"; break;
-      case 0x09: framestyle="#0000ff"; break;
-      case 0x0a: framestyle="#ff0000"; break;
-      case 0x0b: framestyle="#ff00ff"; break;
-      case 0x0c: framestyle="#00ff00"; break;
-      case 0x0d: framestyle="#00ffff"; break;
-      case 0x0e: framestyle="#ffff00"; break;
-      case 0x0f: framestyle="#ffffff"; break;
+      case 0x01: framestyle="#0000ff"; break;
+      case 0x02: framestyle="#ff0000"; break;
+      case 0x03: framestyle="#ff00ff"; break;
+      case 0x04: framestyle="#00ff00"; break;
+      case 0x05: framestyle="#00ffff"; break;
+      case 0x06: framestyle="#ffff00"; break;
+      case 0x07: framestyle="#ffffff"; break;
       default: break;
     }
 
