@@ -13,7 +13,9 @@ var gs={
   canvas:null,
   ctx:null,
 
-  room:0
+  room:0,
+
+  debug:false
 };
 
 function drawclippedpixel(ctx, x, y, width, height, clipping)
@@ -142,6 +144,25 @@ function drawroom(roomnum)
       framex-=0x80;
 
     drawframe(gs.ctx, (framex*4)-128, framey, framenum, 1, framereverse, getpalette(framecolour), frameplot, true);
+
+    // When in debug, show where the solid frames are
+    if ((gs.debug) && (framesolid))
+    {
+      var offs=frametable[framenum];
+      var fx=(framex*4)-128;
+      var fy=framey;
+      var fwidth=framedefs[offs++]*4;
+      var fheight=framedefs[offs++];
+
+      // Clipping
+      if (fx<border) { fwidth-=(border-fx); fx=border; } // left
+      if (fy<(header+border)) { fheight-=((header+border)-fy); fy=header+border; } // top
+      if ((fx+fwidth)>(xmax-border)) fwidth=((xmax-border)-fx); // right
+      if ((fy+fheight)>(ymax-border)) fheight=((ymax-border)-fy); // bottom
+
+      gs.ctx.fillStyle="rgba(255,0,255,0.5)";
+      gs.ctx.fillRect(fx, fy, fwidth, fheight);
+    }
   }
 
   // Draw any coins which are in this room
@@ -270,6 +291,15 @@ function updatekeystate(e, dir)
       e.preventDefault();
       break;
 
+    case 73: // I (for info/debug)
+      if (dir==1)
+      {
+        gs.debug=(!gs.debug);
+        drawroom(gs.room);
+      }
+      e.preventDefault();
+      break;
+
     default:
       break;
   }
@@ -316,7 +346,7 @@ function startup()
       gs.room++;
       if (gs.room>maxroom) gs.room=0;
     }
-  }, 1000);
+  }, 2000);
 */
 }
 
