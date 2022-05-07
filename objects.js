@@ -45,7 +45,7 @@ var objects=[
 {"room":36,"x":72,"y":144,"frame":20,"col":70},
 {"room":36,"x":42,"y":73,"frame":104,"col":29},
 {"room":36,"x":78,"y":136,"frame":96,"col":68},
-{"room":69,"x":78,"y":136,"frame":169,"col":71},
+{"room":69,"x":40,"y":112,"frame":169,"col":71},
 {"room":89,"x":58,"y":136,"frame":21,"col":70},
 {"room":84,"x":34,"y":144,"frame":177,"col":2},
 {"room":88,"x":42,"y":76,"frame":36,"col":71},
