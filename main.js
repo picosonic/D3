@@ -107,6 +107,20 @@ function getpalette(framecolour)
   return framestyle;
 }
 
+// At the start of every game reset the objects state/position
+function resetobjects()
+{
+  for (var i=0; i<objects.length; i++)
+  {
+    objects[i].room=objects[i].origroom;
+    objects[i].movex=objects[i].origx;
+    objects[i].movey=objects[i].origy;
+    objects[i].movefrm=objects[i].origfrm;
+    objects[i].var1=0;
+    objects[i].delaycounter=0;
+  }
+}
+
 // Draw a full room
 function drawroom(roomnum)
 {
@@ -175,12 +189,12 @@ function drawroom(roomnum)
   {
     if (objects[i].room==roomnum)
     {
-      var objattrib=objects[i].col;
+      var objattrib=objects[i].colour;
       var objreverse=((objattrib&0x80)!=0);
       var objplot=((objattrib&0x18)>>3);
       var objcolour=(objattrib&0x07);
 
-      drawframe(gs.ctx, (objects[i].x*4)-128, objects[i].y, objects[i].frame, 1, objreverse, getpalette(objcolour), objplot, true);
+      drawframe(gs.ctx, (objects[i].movex*4)-128, objects[i].movey, objects[i].movefrm, 1, objreverse, getpalette(objcolour), objplot, true);
     }
   }
 
@@ -332,6 +346,8 @@ function startup()
 
   resize();
   window.addEventListener("resize", resize);
+
+  resetobjects();
 
   drawroom(gs.room);
 
