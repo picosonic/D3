@@ -9,11 +9,18 @@ const maxroom=100;
 
 // Game state is global to prevent it going out of scope
 var gs={
+  // animation frame of reference
+  step:(1/60), // target step time @ 60 fps
+  acc:0, // accumulated time since last frame
+  lasttime:0, // time of last frame
+
   // Canvas object
   canvas:null,
   ctx:null,
 
   room:0,
+  flames:[], flamerate:4,
+  water:[], waterrate:6,
 
   debug:false
 };
@@ -135,6 +142,9 @@ function drawroom(roomnum)
   var framecolour=0;
   var framesolid=false;
 
+  gs.water=[];
+  gs.flames=[];
+
   gs.ctx.fillStyle="#000000";
   gs.ctx.fillRect(border, header+border, xmax-(border*2), ymax-header-(border*2));
 
@@ -147,15 +157,23 @@ function drawroom(roomnum)
     // Check for change of attributes
     if (framex<=0x7f)
     {
-      var attrib=roomdata[roomtable[roomnum].offs+(ptr++)];
+      frameattrib=roomdata[roomtable[roomnum].offs+(ptr++)];
 
-      framereverse=((attrib&0x80)!=0);
-      framesolid=((attrib&0x40)==0);
-      frameplot=((attrib&0x18)>>3);
-      framecolour=(attrib&0x07);
+      framereverse=((frameattrib&0x80)!=0);
+      framesolid=((frameattrib&0x40)==0);
+      frameplot=((frameattrib&0x18)>>3);
+      framecolour=(frameattrib&0x07);
     }
     else
       framex-=0x80;
+
+    // Check for flames
+    if (framenum==115)
+      gs.flames.push({"frm":framenum,"x":framex,"y":framey,"col":frameattrib,"delay":gs.flamerate});
+
+    // Check for water
+    if (framenum==91)
+      gs.water.push({"frm":framenum,"x":framex,"y":framey,"col":frameattrib,"delay":gs.waterrate});
 
     drawframe(gs.ctx, (framex*4)-128, framey, framenum, 1, framereverse, getpalette(framecolour), frameplot, true);
 
@@ -238,6 +256,90 @@ function drawroom(roomnum)
     default:
       break;
   }
+}
+
+// Update state
+function update()
+{
+  // Animate flames
+  for (var i=0; i<gs.flames.length; i++)
+  {
+    if (gs.flames[i].anim>0)
+    {
+      gs.flames[i].anim--;
+      continue;
+    }
+    else
+      gs.flames[i].anim=gs.flamerate;
+
+    var attrib=gs.flames[i].col;
+    var reverse=((attrib&0x80)!=0);
+    var plot=((attrib&0x18)>>3);
+    var colour=(attrib&0x07);
+
+    plot=0;
+
+    // Flash between red and yellow
+    colour=((colour==2)?colour=6:colour=2);
+    gs.flames[i].col&=0x78; gs.flames[i].col|=colour;
+
+    // Flip horizontally
+    if (!reverse)
+      gs.flames[i].col|=0x80;
+
+    drawframe(gs.ctx, (gs.flames[i].x*4)-128, gs.flames[i].y, gs.flames[i].frm, 1, reverse, getpalette(colour), plot, true);
+  }
+
+  // Animate water
+  for (var i=0; i<gs.water.length; i++)
+  {
+    if (gs.water[i].anim>0)
+    {
+      gs.water[i].anim--;
+      continue;
+    }
+    else
+      gs.water[i].anim=gs.waterrate;
+
+    var attrib=gs.water[i].col;
+    var reverse=((attrib&0x80)!=0);
+    var plot=((attrib&0x18)>>3);
+    var colour=(attrib&0x07);
+
+    // Flip horizontally
+    gs.water[i].frm++;
+    if (gs.water[i].frm>95) gs.water[i].frm=92;
+
+    drawframe(gs.ctx, (gs.water[i].x*4)-128, gs.water[i].y, gs.water[i].frm, 1, reverse, getpalette(colour), plot, true);
+  }
+}
+
+// Request animation frame callback
+function rafcallback(timestamp)
+{
+  // First time round, just save epoch
+  if (gs.lasttime>0)
+  {
+    // Determine accumulated time since last call
+    gs.acc+=((timestamp-gs.lasttime) / 1000);
+
+    // If it's more than 15 seconds since last call, reset
+    if ((gs.acc>gs.step) && ((gs.acc/gs.step)>(60*15)))
+      gs.acc=gs.step*2;
+
+    // Process "steps" since last call
+    while (gs.acc>gs.step)
+    {
+      update();
+      gs.acc-=gs.step;
+    }
+  }
+
+  // Remember when we were last called
+  gs.lasttime=timestamp;
+
+  // Request we are called on the next frame
+  window.requestAnimationFrame(rafcallback);
 }
 
 // Handle screen resizing to maintain correctly centered display
@@ -350,6 +452,9 @@ function startup()
   resetobjects();
 
   drawroom(gs.room);
+
+  // Start updates
+  window.requestAnimationFrame(rafcallback);
 
 /*
   setInterval(function() {
