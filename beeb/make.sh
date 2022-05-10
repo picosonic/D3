@@ -33,5 +33,5 @@ then
   ./${img2beeb} -f "${beebpal}" "${srcscr}" "${beebscr}"
 fi
 
-#beebasm -v -i downloader.asm
+beebasm -v -i downloader.asm
 beebasm -v -i dizzy3.asm -do dizzy3.ssd -opt 3 -title 'DIZZY3'
