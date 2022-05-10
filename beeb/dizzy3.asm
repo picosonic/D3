@@ -1,7 +1,8 @@
 ; OS defines
 INCLUDE "os.asm"
 
-MODE8BASE = &5000
+; Variable and constant defines
+INCLUDE "consts.asm"
 
 ORG &00
 CLEAR &00, &FF
