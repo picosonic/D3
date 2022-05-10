@@ -1,0 +1,49 @@
+{
+    "version": "2.0.0",
+    "command": "bash",
+    "echoCommand": true,
+    "args": [
+        "-c"
+    ],
+    "tasks": [
+        {
+            "label": "dizzy3.ssd",
+            "type": "shell",
+            "args": [
+                "-c",
+                "${workspaceFolder}/make.sh \"${workspaceFolder}\""
+            ],
+            "problemMatcher": {
+                "owner": "6502",
+                "fileLocation": [
+                    "relative",
+                    "${workspaceRoot}"
+                ],
+                "pattern": {
+                    "regexp": "^(.*):(\\d+):\\s+(warning|error):\\s+(.*)$",
+                    "file": 1,
+                    "line": 2,
+                    "severity": 3,
+                    "message": 4
+                }
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Run 'dizzy3.ssd' in Emulator",
+            "type": "shell",
+            "args": [
+                "-c",
+                "beebjit -0 ${workspaceFolder}/dizzy3.ssd -autoboot"
+            ],
+            "problemMatcher": [],
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            }
+        }
+    ]
+}
