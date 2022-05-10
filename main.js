@@ -213,6 +213,19 @@ function drawroom(roomnum)
       var objcolour=(objattrib&0x07);
 
       drawframe(gs.ctx, (objects[i].movex*4)-128, objects[i].movey, objects[i].movefrm, 1, objreverse, getpalette(objcolour), objplot, true);
+
+      //if ((gs.debug) && (objects[i].routine=="pickupable"))
+      if (gs.debug)
+      {
+        var offs=frametable[objects[i].movefrm];
+        var fx=(objects[i].movex*4)-128;
+        var fy=objects[i].movey;
+        var fwidth=framedefs[offs++]*4;
+        var fheight=framedefs[offs++];
+
+        gs.ctx.fillStyle="rgba(255,255,0,0.5)";
+        gs.ctx.fillRect(fx, fy, fwidth, fheight);
+      }
     }
   }
 
