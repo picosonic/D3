@@ -5,21 +5,19 @@ INCLUDE "os.asm"
 INCLUDE "consts.asm"
 INCLUDE "vars.asm"
 
-ORG MAIN_RELOC_ADDR
-GUARD ROMSBASE
+ORG MAIN_LOAD_ADDR
+GUARD MODE8BASE
 
 .start
 .datastart
+EQUB &00 ; Placeholder
 .dataend
 
 .codestart
-  RTS
+INCLUDE "init.asm"
 
-.usedmemory
-
-ORG MAIN_LOAD_ADDR+MAX_OBJ_SIZE-(MAIN_LOAD_ADDR-MAIN_RELOC_ADDR)
-.downloader
-INCBIN "DOWNLOADER"
+.infiniteloop
+  JMP infiniteloop
 .codeend
 
 ORG &0900
@@ -43,7 +41,7 @@ SAVE "!BOOT", plingboot, plingend
 PUTBASIC "loader.bas", "$.LOADER"
 PUTFILE "loadscr", "$.LOADSCR", MODE8BASE
 SAVE "EXTRA", extradata, extraend
-SAVE "DIZZY3", start, codeend, DOWNLOADER_ADDR, MAIN_LOAD_ADDR
+SAVE "DIZZY3", start, codeend, codestart
 
 PRINT "-------------------------------------------"
 PRINT "Zero page from &00 to ", ~zpend-1, "  (", ZP_ECONET_WORKSPACE-zpend, " bytes left )"
@@ -52,6 +50,6 @@ PRINT "EXTRA from ", ~extradata, " to ", ~extraend-1, "  (", NMI_WORKSPACE-extra
 PRINT "DATA from ", ~datastart, " to ", ~dataend-1
 PRINT "CODE from ", ~codestart, " to ", ~codeend-1, "  (", codeend-codestart, " bytes )"
 PRINT ""
-remaining = MODE8BASE-usedmemory
+remaining = MODE8BASE-codeend
 PRINT "Bytes left : ", ~remaining, "  (", remaining, " bytes )"
 PRINT "-------------------------------------------"

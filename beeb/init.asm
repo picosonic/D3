@@ -1,14 +1,3 @@
-; This does some initial setup and relocates main code to maximise RAM use
-;
-; Uses some ideas seen in Crazee Rider BBC Micro source (by Kevin Edwards)
-;   https://github.com/KevEdwards/CrazeeRiderBBC
-
-; OS defines
-INCLUDE "os.asm"
-INCLUDE "consts.asm"
-
-ORG DOWNLOADER_ADDR
-
   ; Make sure we are not in decimal mode
   CLD
 
@@ -44,18 +33,3 @@ ORG DOWNLOADER_ADDR
   STA LANGUAGE_WORKSPACE+&200,X
   STA LANGUAGE_WORKSPACE+&300,X
   INX:BNE clearvars
-
-  LDX #&00
-  LDY #HI(MODE8BASE-MAIN_RELOC_ADDR) ; MAX program length in pages
-.relocate
-  LDA MAIN_LOAD_ADDR,X:STA MAIN_RELOC_ADDR,X
-  INX:BNE relocate
-  INC relocate+2
-  INC relocate+5
-  DEY:BNE relocate
-
-  ; Start game running
-  JMP MAIN_RELOC_ADDR+&2200 ; Main entry point following relocation
-
-PRINT "Saving downloader from ", ~DOWNLOADER_ADDR, " to ", ~P%
-SAVE "DOWNLOADER", DOWNLOADER_ADDR, P%

@@ -3,7 +3,7 @@
 ORG &0000
 GUARD &0090
 
-.placeholder EQUB &00
+EQUB &00 ; Placeholder
 
 .zpend
 
@@ -20,3 +20,9 @@ GUARD &0800
 
 ORG &880
 GUARD &08C0
+
+; ---------------------------------------------------------
+; Variables, &E00 to &1900
+
+ORG &E00
+GUARD &18FF
