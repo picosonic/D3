@@ -161,7 +161,7 @@ void loadpalette(const char *filename)
 
           // Save palette from image
           impal=ilGetPalette();
-          for (i=0; i<imcolours; i++)
+          for (i=0; ((i<imcolours) && (i<MAX_CMAP_SIZE)); i++)
           {
             quantpal[(i*3)+RGB_RED]=impal[RGB_RED];
             quantpal[(i*3)+RGB_GREEN]=impal[RGB_GREEN];
