@@ -1,19 +1,29 @@
 ; Clear graphics screen
 .cls
 {
-  LDA #(MODE8BASE) MOD 256:STA zptr1
-  LDA #(MODE8BASE) DIV 256:STA zptr1+1
+  LDA #(MODE8BASE+(12*256)) DIV 256:STA zptr1+1
 
-  LDY #&00
-.loop
-  LDA #&00
-  STA (zptr1), Y
+  .outerloop
+  LDY #&10 ; Avoid left border
+
+  .leftloop
+  LDA #&00:STA (zptr1), Y
   INY
-  BNE loop
+  BNE leftloop
+
+  INC zptr1+1
+
+  .rightloop
+  LDA #&00:STA (zptr1), Y
+  INY
+  CPY #&F0 ; Avoid right border
+  BNE rightloop
+
+  ; Next line
   INC zptr1+1
   LDA zptr1+1
-  CMP #&80
-  BNE loop
+  CMP #&7E ; Avoid bottom border
+  BNE outerloop
 
   RTS
 }
