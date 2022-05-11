@@ -13,9 +13,9 @@ VDU23,1,0;0;0;0;:REM Hide cursor
 :
 REM Set palette
 VDU19,0,0,0,0;
-VDU19,1,2,0,0;
-VDU19,2,7,0,0;
-VDU19,3,1,0,0;
+VDU19,1,1,0,0;
+VDU19,2,2,0,0;
+VDU19,3,7,0,0;
 :
 */EXOSCR
 *FX15

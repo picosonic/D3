@@ -190,7 +190,7 @@ unsigned char findnearestentry(const unsigned char r, const unsigned char g, con
 
   long best=((255*255)*3);
 
-  for (i=0; i<colours; i++)
+  for (i=0; i<(ext_colours!=0?ext_colours:colours); i++)
   {
     unsigned char pr, pg, pb;
 
@@ -213,6 +213,11 @@ unsigned char findnearestentry(const unsigned char r, const unsigned char g, con
   }
 
   return index;
+}
+
+unsigned char findpal(const unsigned char *impal, const unsigned char col)
+{
+  return (findnearestentry(impal[(col*3)+RGB_RED], impal[(col*3)+RGB_GREEN], impal[(col*3)+RGB_BLUE]));
 }
 
 unsigned char ditherclamp(const double value, const double qerr)
@@ -561,6 +566,8 @@ int main(int argc, char **argv)
     int offs;
     int ptr;
 
+    impal=ilGetPalette();
+
     for (offs=0; offs<height; offs+=8)
     {
       for (blockx=0; blockx<width; blockx+=4)
@@ -569,10 +576,10 @@ int main(int argc, char **argv)
         {
           ptr=((blocky+offs)*width)+blockx;
 
-          p1=imdata[ptr+0];
-          p2=imdata[ptr+1];
-          p3=imdata[ptr+2];
-          p4=imdata[ptr+3];
+          p1=findpal(impal, imdata[ptr+0]);
+          p2=findpal(impal, imdata[ptr+1]);
+          p3=findpal(impal, imdata[ptr+2]);
+          p4=findpal(impal, imdata[ptr+3]);
 
           // pack bits
           bc =(p1&2)<<6; bc|=(p1&1)<<3;
