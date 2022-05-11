@@ -3,7 +3,7 @@
 ORG &0000
 GUARD &0090
 
-EQUB &00 ; Placeholder
+.zptr1 EQUB 0, 0
 
 .zpend
 

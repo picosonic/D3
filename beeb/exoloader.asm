@@ -9,19 +9,10 @@ ORG &50
 
 INCLUDE "exomizer310decruncher.h.asm"
 
-ORG MAIN_LOAD_ADDR
+ORG EXO_LOAD_ADDR
 
 .start
-{
-  ; Entry point
-  JSR exo_loader
-
-  ; Back to OS
-  RTS
-}
-
-.exo_loader
-{
+{ 
   ; Set displayed chars per horizontal line (64) to match Spectrum (256 pixels)
   LDA #&01:STA CRTC00
   LDA #&40:STA CRTC01
@@ -44,6 +35,14 @@ ORG MAIN_LOAD_ADDR
   LDA #&0C:STA CRTC00
   LDA #(MODE8BASE) DIV 256:LSR A:LSR A:LSR A:STA CRTC01
 
+  JSR exo_loader
+
+  ; Back to OS
+  RTS
+}
+
+.exo_loader
+{
   LDX #lo(xscr)
   LDY #hi(xscr)
   LDA #hi(MODE8BASE)

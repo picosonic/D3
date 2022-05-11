@@ -13,8 +13,13 @@ GUARD MODE8BASE
 EQUB &00 ; Placeholder
 .dataend
 
+; Import modules
+INCLUDE "gfx.asm"
+
 .codestart
 INCLUDE "init.asm"
+
+  JSR cls
 
 .infiniteloop
   JMP infiniteloop
@@ -30,7 +35,7 @@ ORG &00
 CLEAR &00, &FF
 .plingboot
 EQUS "*BASIC", &0D ; Reset to BASIC
-EQUS "PAGE=&1900", &0D ; Set PAGE
+EQUS "PAGE=&1300", &0D ; Set PAGE
 EQUS "*FX21", &0D ; Flush buffer
 EQUS "CLOSE#0:CH.", '"', "LOADER", '"', &0D ; Close "!BOOT" and run the main code
 EQUS "REM https://github.com/picosonic/D3/", &0D ; Repo URL
@@ -39,7 +44,7 @@ EQUS "REM D3 build ", TIME$ ; Add a build date
 
 SAVE "!BOOT", plingboot, plingend
 PUTBASIC "loader.bas", "$.LOADER"
-PUTFILE "EXOSCR", "$.EXOSCR", MAIN_LOAD_ADDR
+PUTFILE "EXOSCR", "$.EXOSCR", EXO_LOAD_ADDR
 SAVE "EXTRA", extradata, extraend
 SAVE "DIZZY3", start, codeend, codestart
 
