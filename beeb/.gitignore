@@ -1,3 +1,9 @@
+# Screen loader stuff
+XSCR
 loadscr
+EXOSCR
+
+# Utils
 img2beeb
+exomizer
 *.o

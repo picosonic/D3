@@ -39,7 +39,7 @@ EQUS "REM D3 build ", TIME$ ; Add a build date
 
 SAVE "!BOOT", plingboot, plingend
 PUTBASIC "loader.bas", "$.LOADER"
-PUTFILE "loadscr", "$.LOADSCR", MODE8BASE
+PUTFILE "EXOSCR", "$.EXOSCR", MAIN_LOAD_ADDR
 SAVE "EXTRA", extradata, extraend
 SAVE "DIZZY3", start, codeend, codestart
 
@@ -47,7 +47,7 @@ PRINT "-------------------------------------------"
 PRINT "Zero page from &00 to ", ~zpend-1, "  (", ZP_ECONET_WORKSPACE-zpend, " bytes left )"
 PRINT "VARS from &400 to ", ~end_of_vars-1, "  (", SOUND_WORKSPACE-end_of_vars, " bytes left )"
 PRINT "EXTRA from ", ~extradata, " to ", ~extraend-1, "  (", NMI_WORKSPACE-extraend, " bytes left )"
-PRINT "DATA from ", ~datastart, " to ", ~dataend-1
+PRINT "DATA from ", ~datastart, " to ", ~dataend-1, "  (", dataend-datastart, " bytes )"
 PRINT "CODE from ", ~codestart, " to ", ~codeend-1, "  (", codeend-codestart, " bytes )"
 PRINT ""
 remaining = MODE8BASE-codeend
