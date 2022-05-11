@@ -51,7 +51,9 @@ FF58 - FFFF (Reserved)
 
 A20B - A426 (Death messages)
 
-A427 - A5B0 (Odd messages)
+A427 - A5B3 (Odd messages)
+
+A5B4 - A803 ?????
 
 A804 - AC83 (Movable object data)
  72 x movable items, 16 bytes each
@@ -72,7 +74,9 @@ A804 - AC83 (Movable object data)
    origy (y pos object starts)
    origfrm (starting frame ??)
 
-BEF9 - ???? @ FRAMES.DAT
+BEF9 - DD80 @ FRAMES.DAT
+
+DD81 - ????
 
 @ PRTDIZZY.PDS
 
