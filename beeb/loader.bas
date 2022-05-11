@@ -7,6 +7,8 @@ IF INKEY-256 A%=&EA:X%=0:Y%=&FF:IF USR(&FFF4) AND&FF00 THEN VDU26,12:PRINT"Pleas
 REM Load loading screen
 *FX229,1
 MODE1
+VDU23,1,0;0;0;0;:REM Hide cursor
+:
 REM Set palette
 VDU 19,0,0,0,0,0
 VDU 19,1,2,0,0,0

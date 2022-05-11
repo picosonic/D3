@@ -22,10 +22,6 @@ ORG MAIN_LOAD_ADDR
 
 .exo_loader
 {
-  ; Hide the cursor, with cursor start register (in scanlines)
-  LDA #&0A:STA CRTC00
-  LDA #&20:STA CRTC01
-
   ; Set displayed chars per horizontal line (64) to match Spectrum (256 pixels)
   LDA #&01:STA CRTC00
   LDA #&40:STA CRTC01
