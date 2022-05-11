@@ -10,7 +10,10 @@ GUARD MODE8BASE
 
 .start
 .datastart
-EQUB &00 ; Placeholder
+.frametable
+INCBIN "frametable.bin"
+.framedefs
+INCBIN "framedefs.bin"
 .dataend
 
 ; Import modules
@@ -19,7 +22,11 @@ INCLUDE "gfx.asm"
 .codestart
 INCLUDE "init.asm"
 
-  JSR cls
+  JSR clearplayarea
+
+  LDA #&2F:STA frmno
+  LDA #&00:STA frmx:STA frmy
+  JSR drawframe
 
 .infiniteloop
   JMP infiniteloop

@@ -4,6 +4,18 @@ ORG &0000
 GUARD &0090
 
 .zptr1 EQUB 0, 0
+.zptr2 EQUB 0, 0
+
+; Frame data
+.frmno EQUB 0
+.frmx EQUB 0
+.frmy EQUB 0
+.frmattri EQUB 0
+.frmwidth EQUB 0
+.frmheight EQUB 0
+.frmplot EQUB 0
+.frmreverse EQUB 0
+.frmlocation EQUW 0
 
 .zpend
 
@@ -22,7 +34,6 @@ ORG &880
 GUARD &08C0
 
 ; ---------------------------------------------------------
-; Variables, &E00 to &1900
+; Variables, &E00 to MAIN_LOAD_ADDR
 
 ORG &E00
-GUARD &18FF

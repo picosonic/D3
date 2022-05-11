@@ -1,5 +1,5 @@
-; Clear graphics screen
-.cls
+; Clear play area
+.clearplayarea
 {
   LDA #(MODE8BASE+(12*256)) DIV 256:STA zptr1+1
 
@@ -26,4 +26,54 @@
   BNE outerloop
 
   RTS
+}
+
+; Draw a frame to play area
+.drawframe
+{
+  ; Get offset to frame data
+  LDA frmno:ASL A:TAX
+
+  LDA frametable+1, X
+  CMP #&FF:BEQ done ; Don't draw NULL frames
+  CLC:ADC #hi(framedefs):STA zptr1+1
+
+  LDA frametable, X:CLC:ADC #lo(framedefs):STA zptr1
+  BCC samepage
+  INC zptr1+1
+.samepage
+
+  ; Get width
+  LDY #&00:LDA (zptr1), Y:ASL A:ASL A:STA frmwidth
+
+  ; Get height
+  INY:LDA (zptr1), Y:STA frmheight
+
+  LDX 255:INC zptr1:INC zptr1:LDY #&00
+.loop
+  TXA:PHA
+
+  LDA (zptr1), Y
+  AND #&F0
+  LSR A:LSR A:LSR A:LSR A
+  TAX:LDA convert_1bpp_to_2bpp, X
+  STA PLAYAREA, Y
+
+  LDA (zptr1), Y
+  AND #&0F
+  TAX:LDA convert_1bpp_to_2bpp, X
+  STA PLAYAREA, Y
+
+  INY
+
+  PLA:TAX
+  DEX
+  BNE loop
+
+.done
+  RTS
+
+.convert_1bpp_to_2bpp
+  EQUB &00, &11, &22, &33, &44, &55, &66, &77
+  EQUB &88, &99, &AA, &BB, &CC, &DD, &EE, &FF
 }
