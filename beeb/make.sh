@@ -40,7 +40,7 @@ then
   rm "${beebscr}" >/dev/null 2>&1
 
   # Convert from image to beeb format
-  ./${img2beeb} -f "${beebpal}" "${srcscr}" "${beebscr}"
+  ./${img2beeb} -f "${beebpal}" -d1 -X256 -Y192 "${srcscr}" "${beebscr}"
 
   # Compress beeb format with exomizer
   #
