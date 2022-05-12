@@ -9,6 +9,7 @@ img2beeb="img2beeb"
 exo="exomizer"
 beebpal="dizzy3_beeb.pal"
 beebscr="loadscr"
+exoscr="XSCR"
 srcscr="dizzy3_loader_beeb.png"
 
 # Check loader screen has changed before rebuilding it
@@ -50,7 +51,7 @@ then
   # -P-32 required when DONT_REUSE_OFFSET = 1
   # -f required when DECRUNCH_FORWARDS = 1
 
-  ./${exo} level -M256 -P+16-32 -c ${beebscr}@0x0000 -o XSCR
+  ./${exo} level -M256 -P+16-32 -c ${beebscr}@0x0000 -o ${exoscr}
 fi
 
 beebasm -v -i exoloader.asm
