@@ -3,8 +3,11 @@
 ORG &0000
 GUARD &0090
 
-.zptr1 EQUB 0, 0
-.zptr2 EQUB 0, 0
+.zptr1 EQUW 0
+.zidx1 EQUB 0
+
+.zptr2 EQUW 0
+.zidx2 EQUB 0
 
 ; Frame data
 .frmno EQUB 0

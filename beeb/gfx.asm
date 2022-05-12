@@ -49,22 +49,33 @@
   ; Get height
   INY:LDA (zptr1), Y:STA frmheight
 
-  LDX 255:INC zptr1:INC zptr1:LDY #&00
+  LDX 255
+  INC zptr1:INC zptr1 ; Move on past frame header
+
+  LDA #&00:TAY:STA zidx1:STA zidx2
 .loop
   TXA:PHA
 
+  ; High nibble
+  LDY zidx1
   LDA (zptr1), Y
   AND #&F0
   LSR A:LSR A:LSR A:LSR A
   TAX:LDA convert_1bpp_to_2bpp, X
+  LDY zidx2
   STA PLAYAREA, Y
+  INC zidx2
 
+  ; Low nibble
+  LDY zidx1
   LDA (zptr1), Y
   AND #&0F
   TAX:LDA convert_1bpp_to_2bpp, X
+  LDY zidx2
   STA PLAYAREA, Y
+  INC zidx2
 
-  INY
+  INC zidx1
 
   PLA:TAX
   DEX
