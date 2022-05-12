@@ -19,6 +19,7 @@ GUARD &0090
 .frmplot EQUB 0
 .frmreverse EQUB 0
 .frmlocation EQUW 0
+.frmcolour EQUB 0
 
 .zpend
 

@@ -49,6 +49,10 @@
   ; Get height
   INY:LDA (zptr1), Y:STA frmheight
 
+  ; Get colour mask
+  LDA frmattri:AND #&03:TAX
+  LDA colourmask, X:STA frmcolour
+
   LDX #&08
   INC zptr1:INC zptr1 ; Move on past frame header
 
@@ -63,7 +67,7 @@
   LSR A:LSR A:LSR A:LSR A
   TAX:LDA convert_1bpp_to_2bpp, X
   LDY zidx2
-  AND #&F0:STA PLAYAREA, Y
+  AND frmcolour:STA PLAYAREA, Y
 
   ; Low nibble
   LDY zidx1
@@ -71,7 +75,7 @@
   AND #&0F
   TAX:LDA convert_1bpp_to_2bpp, X
   LDY zidx2
-  STA PLAYAREA+8, Y
+  AND frmcolour:STA PLAYAREA+8, Y
   INC zidx2
 
   INC zidx1

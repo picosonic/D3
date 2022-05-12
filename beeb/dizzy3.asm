@@ -24,8 +24,9 @@ INCLUDE "init.asm"
 
   JSR clearplayarea
 
-  LDA #'A':STA frmno
+  LDA #&2F:STA frmno
   LDA #&00:STA frmx:STA frmy
+  LDA #PAL_WHITE:STA frmattri
   JSR drawframe
 
 .infiniteloop
