@@ -24,7 +24,7 @@ INCLUDE "init.asm"
 
   JSR clearplayarea
 
-  LDA #&2F:STA frmno
+  LDA #'A':STA frmno
   LDA #&00:STA frmx:STA frmy
   JSR drawframe
 

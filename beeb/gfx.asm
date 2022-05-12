@@ -49,7 +49,7 @@
   ; Get height
   INY:LDA (zptr1), Y:STA frmheight
 
-  LDX 255
+  LDX #&08
   INC zptr1:INC zptr1 ; Move on past frame header
 
   LDA #&00:TAY:STA zidx1:STA zidx2
@@ -84,7 +84,15 @@
 .done
   RTS
 
+; Table for 1bpp->2bpp graphics conversion
 .convert_1bpp_to_2bpp
   EQUB &00, &11, &22, &33, &44, &55, &66, &77
   EQUB &88, &99, &AA, &BB, &CC, &DD, &EE, &FF
+
+; Table for mask values to AND against 1bpp->2bpp values
+.colourmask
+  EQUB &00 ; Black
+  EQUB &0F ; Red
+  EQUB &F0 ; Green
+  EQUB &FF ; White
 }
