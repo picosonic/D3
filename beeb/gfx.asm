@@ -63,8 +63,7 @@
   LSR A:LSR A:LSR A:LSR A
   TAX:LDA convert_1bpp_to_2bpp, X
   LDY zidx2
-  STA PLAYAREA, Y
-  INC zidx2
+  AND #&F0:STA PLAYAREA, Y
 
   ; Low nibble
   LDY zidx1
@@ -72,7 +71,7 @@
   AND #&0F
   TAX:LDA convert_1bpp_to_2bpp, X
   LDY zidx2
-  STA PLAYAREA, Y
+  STA PLAYAREA+8, Y
   INC zidx2
 
   INC zidx1
