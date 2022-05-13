@@ -13,8 +13,6 @@ int main()
   FILE *rd;
   struct stat fs;
   uint8_t *roomdata;
-  int i, j, k;
-  int start, end;
 
   rd=fopen("roomdata.bin", "rb");
   if (rd==NULL) return 1;
@@ -24,32 +22,38 @@ int main()
 
   if (roomdata!=NULL)
   {
+    int room;
+
     fread(roomdata, fs.st_size, 1, rd);
     fclose(rd);
 
     // Process it
-    for (i=0; i<(NUMROOMS-1); i++)
+    for (room=0; room<(NUMROOMS-1); room++)
     {
-      start=(roomdata[i*2]);
-      start=((roomdata[(i*2)+1]<<8)+start);
+      int start, end;
 
-      end=(roomdata[(i+1)*2]);
-      end=((roomdata[((i+1)*2)+1]<<8)+end);
+      start=(roomdata[room*2]);
+      start=((roomdata[(room*2)+1]<<8)+start);
+
+      end=(roomdata[(room+1)*2]);
+      end=((roomdata[((room+1)*2)+1]<<8)+end);
 
       if (end!=start)
       {
-        printf("%d : 0x%.4x to 0x%.4x (len %d)\n", i, start, end, end-start);
+        int i;
+
+        printf("%d : 0x%.4x to 0x%.4x (len %d)\n", room, start, end, end-start);
 
         printf("  ");
 
-        for (j=start; j<end; j+=3)
+        for (i=start; i<end; i+=3)
         {
-          printf("[%.2x ", roomdata[(NUMROOMS*2)+j]);
-          printf("%dx%d", (roomdata[(NUMROOMS*2)+j+1])*2, roomdata[(NUMROOMS*2)+j+2]);
-          if (!(roomdata[(NUMROOMS*2)+j+1] & 0x80))
+          printf("[%.2x ", roomdata[(NUMROOMS*2)+i]);
+          printf("%dx%d", (roomdata[(NUMROOMS*2)+i+1])*2, roomdata[(NUMROOMS*2)+i+2]);
+          if (!(roomdata[(NUMROOMS*2)+i+1] & 0x80))
           {
-            printf(" 0x%.2x]", roomdata[(NUMROOMS*2)+j+3]);
-            j++;
+            printf(" 0x%.2x]", roomdata[(NUMROOMS*2)+i+3]);
+            i++;
           }
           else
             printf("]");
