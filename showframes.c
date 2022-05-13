@@ -27,6 +27,8 @@ void drawbin(const unsigned char *data)
 void drawbin_width(const unsigned char *data, const unsigned char width)
 {
   unsigned char done=0;
+
+  printf("|");
   
   while ((done*8)<width)
   {
@@ -35,7 +37,7 @@ void drawbin_width(const unsigned char *data, const unsigned char width)
     done++;
   }
   
-  printf("\n");
+  printf("|\n");
 }
 
 int main()
