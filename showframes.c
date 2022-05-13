@@ -46,8 +46,8 @@ int main()
   struct stat fs;
   uint8_t *framedata;
   int start;
-  int i, j;
-  int x, y;
+  int frame, y;
+  int width, height;
   int offs;
 
   rd=fopen("frames.bin", "rb");
@@ -62,27 +62,27 @@ int main()
     fclose(rd);
 
     // Process it
-    for (i=0; i<(NUMFRAMES-1); i++)
+    for (frame=0; frame<(NUMFRAMES-1); frame++)
     {
-      start=(framedata[i*2]);
-      start=((framedata[(i*2)+1]<<8)+start);
+      start=(framedata[frame*2]);
+      start=((framedata[(frame*2)+1]<<8)+start);
 
       // Check for valid pointer
       if (start<0xff00)
       {
-        printf("%d [%.2x] : 0x%.4x", i, i, start);
+        printf("%d [%.2x] : 0x%.4x", frame, frame, start);
 
-        x=framedata[(NUMFRAMES*2)+start]*4;
-        y=framedata[(NUMFRAMES*2)+start+1];
+        width=framedata[(NUMFRAMES*2)+start]*4;
+        height=framedata[(NUMFRAMES*2)+start+1];
 
-        printf(" (%dx%d)\n", x, y);
+        printf(" (%dx%d)\n", width, height);
 
         // Decode the framedata
         offs=0;
-        for (j=0; j<y; j++)
+        for (y=0; y<height; y++)
         {
-          drawbin_width(&framedata[(NUMFRAMES*2)+start+HEADERBYTES+offs], x);
-          offs+=(x/8);
+          drawbin_width(&framedata[(NUMFRAMES*2)+start+HEADERBYTES+offs], width);
+          offs+=(width/8);
         }
 
         printf("\n");
