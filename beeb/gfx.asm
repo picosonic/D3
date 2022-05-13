@@ -1,19 +1,33 @@
+; Wait for vertical trace
+.waitvsync
+{
+  TXA:PHA
+
+  LDA #&13
+  JSR OSBYTE
+
+  PLA:TAX
+
+  RTS
+}
+
 ; Clear play area
 .clearplayarea
 {
-  LDA #(MODE8BASE+(12*256)) DIV 256:STA zptr1+1
+  LDA #PLAYAREA DIV 256:STA zptr1+1
+  LDA #PLAYAREA MOD 256:STA zptr1
 
-  .outerloop
+.outerloop
   LDY #&10 ; Avoid left border
 
-  .leftloop
+.leftloop
   LDA #&00:STA (zptr1), Y
   INY
   BNE leftloop
 
   INC zptr1+1
 
-  .rightloop
+.rightloop
   LDA #&00:STA (zptr1), Y
   INY
   CPY #&F0 ; Avoid right border
@@ -27,6 +41,9 @@
 
   RTS
 }
+
+; widths 8/16/24/32/40/48/80, mostly 16/8/24/32
+; heights 2..45, mostly 8/16/24
 
 ; Draw a frame to play area
 .drawframe
@@ -67,7 +84,7 @@
   LSR A:LSR A:LSR A:LSR A
   TAX:LDA convert_1bpp_to_2bpp, X
   LDY zidx2
-  AND frmcolour:STA PLAYAREA, Y
+  AND frmcolour:STA PLAYAREA+16, Y
 
   ; Low nibble
   LDY zidx1
@@ -75,7 +92,7 @@
   AND #&0F
   TAX:LDA convert_1bpp_to_2bpp, X
   LDY zidx2
-  AND frmcolour:STA PLAYAREA+8, Y
+  AND frmcolour:STA PLAYAREA+24, Y
   INC zidx2
 
   INC zidx1
