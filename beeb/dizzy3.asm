@@ -24,10 +24,18 @@ INCLUDE "init.asm"
 
   JSR clearplayarea
 
-  LDA #&2F:STA frmno
+  LDA #'&':STA frmno
   LDA #&00:STA frmx:STA frmy
   LDA #PAL_WHITE:STA frmattri
+
+.loop
+  JSR waitvsync
   JSR drawframe
+
+  INC frmno
+  LDA frmno:CMP #'[':BNE loop
+  LDA #'&':STA frmno
+  LDA #&00:BEQ loop ; Always loop
 
 .infiniteloop
   JMP infiniteloop
