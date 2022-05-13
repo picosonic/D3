@@ -31,7 +31,7 @@ function drawclippedpixel(ctx, x, y, width, height, clipping)
      && (y>=(header+border)) && ((y+height)<=(ymax-border)))))
     return;
 
-    ctx.fillRect(x, y, width, height);
+  ctx.fillRect(x, y, width, height);
 }
 
 function drawframe(ctx, x, y, framenum, scale, hflip, style, frameplot, clipping)
