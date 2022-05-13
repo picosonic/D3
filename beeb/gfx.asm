@@ -39,6 +39,7 @@
   CMP #&7E ; Avoid bottom border
   BNE outerloop
 
+.^cpdone
   RTS
 }
 
@@ -48,11 +49,19 @@
 ; Draw a frame to play area
 .drawframe
 {
+  ; zptr1 = source pointer
+  ; zptr2 = screen pointer, add 0x08 to do pixels to the right, add 0x10 for next byte
+  ; zptr3 = left edge of frame screen pointer
+  ; ztmp1 = source bytes per row
+  ; ztmp2 = byte in current row counter
+  ; ztmp3 = total bytes in source
+  ; ztmp4 = full row counter
+
   ; Get offset to frame data
   LDA frmno:ASL A:TAX
 
   LDA frametable+1, X
-  CMP #&FF:BEQ done ; Don't draw NULL frames
+  CMP #&FF:BEQ cpdone ; Don't draw NULL frames
   CLC:ADC #hi(framedefs):STA zptr1+1
 
   LDA frametable, X:CLC:ADC #lo(framedefs):STA zptr1
@@ -60,8 +69,8 @@
   INC zptr1+1
 .samepage
 
-  ; Get width
-  LDY #&00:LDA (zptr1), Y:ASL A:ASL A:STA frmwidth
+  ; Get (width/4)
+  LDY #&00:LDA (zptr1), Y:STA frmwidth
 
   ; Get height
   INY:LDA (zptr1), Y:STA frmheight
@@ -70,13 +79,32 @@
   LDA frmattri:AND #&03:TAX
   LDA colourmask, X:STA frmcolour
 
-  LDX #&08
-  INC zptr1:INC zptr1 ; Move on past frame header
+  ; Move on past frame header
+  INC zptr1:INC zptr1
 
-  LDA #&00:TAY:STA zidx1:STA zidx2
+  ; Calculate bytes per row
+  LDA frmwidth:LSR A
+  PHA:STA ztmp1
+
+  ; Calculate total number of bytes in source frame
+  PLA:TAX ; Get bytes per row
+  LDA #&00
+.total
+  CLC:ADC frmheight
+  DEX
+  BNE total
+  STA ztmp3
+
+  ; Set source/dest to 0
+  LDA #&00:STA zidx1:STA zidx2:STA ztmp4
+
+  ; Point to start of top left of position to draw frame
+  LDA #PLAYAREA DIV 256:STA zptr3+1:STA zptr2+1
+  LDA #PLAYAREA MOD 256:CLC:ADC #&10:STA zptr3:STA zptr2 ; Includes skip over left border
+
 .loop
-  TXA:PHA
-
+  LDA #&00:STA ztmp2 ; Reset row counter
+.rowloop
   ; High nibble
   LDY zidx1
   LDA (zptr1), Y
@@ -84,7 +112,9 @@
   LSR A:LSR A:LSR A:LSR A
   TAX:LDA convert_1bpp_to_2bpp, X
   LDY zidx2
-  AND frmcolour:STA PLAYAREA+16, Y
+  AND frmcolour:STA (zptr2), Y
+
+  LDA zidx2:CLC:ADC #&08:STA zidx2 ; Advance to next block on the right
 
   ; Low nibble
   LDY zidx1
@@ -92,13 +122,37 @@
   AND #&0F
   TAX:LDA convert_1bpp_to_2bpp, X
   LDY zidx2
-  AND frmcolour:STA PLAYAREA+24, Y
-  INC zidx2
+  AND frmcolour:STA (zptr2), Y
 
+  LDA zidx2:CLC:ADC #&08:STA zidx2 ; Advance to next block on the right
+
+  ; Advance to next source byte
   INC zidx1
 
-  PLA:TAX
-  DEX
+  ; Advance row counter
+  INC ztmp2:LDA ztmp2
+  CMP ztmp1
+  BNE rowloop ; Go round again if we haven't completed the row
+
+  INC ztmp4
+
+  ; Reset to start of row, but one down
+  LDA #&00:STA zidx2
+  INC zptr3:LDA zptr3:STA zptr2
+  LDA zptr3+1:STA zptr2+1
+
+  ; If we're divisible by 8, need to move to top of next cell down
+  LDA ztmp4
+  AND #&07
+  CMP #&00
+  BNE nodiv8
+  LDA zptr3:SBC #&08:STA zptr3:STA zptr2
+  LDA zptr3+1:CLC:ADC #&02:STA zptr3+1:STA zptr2+1
+.nodiv8
+
+  ; Check to see if we've drawn all the source bytes
+  LDA zidx1
+  CMP ztmp3
   BNE loop
 
 .done

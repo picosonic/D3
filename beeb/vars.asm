@@ -9,6 +9,14 @@ GUARD &0090
 .zptr2 EQUW 0
 .zidx2 EQUB 0
 
+.zptr3 EQUW 0
+.zidx3 EQUB 0
+
+.ztmp1 EQUB 0
+.ztmp2 EQUB 0
+.ztmp3 EQUB 0
+.ztmp4 EQUB 0
+
 ; Frame data
 .frmno EQUB 0
 .frmx EQUB 0
