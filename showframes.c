@@ -45,10 +45,6 @@ int main()
   FILE *rd;
   struct stat fs;
   uint8_t *framedata;
-  int start;
-  int frame, y;
-  int width, height;
-  int offs;
 
   rd=fopen("frames.bin", "rb");
   if (rd==NULL) return 1;
@@ -58,18 +54,26 @@ int main()
 
   if (framedata!=NULL)
   {
+    int frame;
+
     fread(framedata, fs.st_size, 1, rd);
     fclose(rd);
 
     // Process it
     for (frame=0; frame<(NUMFRAMES-1); frame++)
     {
+      int start;
+
       start=(framedata[frame*2]);
       start=((framedata[(frame*2)+1]<<8)+start);
 
       // Check for valid pointer
       if (start<0xff00)
       {
+        int width, height;
+        int offs;
+        int y;
+
         printf("%d [%.2x] : 0x%.4x", frame, frame, start);
 
         width=framedata[(NUMFRAMES*2)+start]*4;
