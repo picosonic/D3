@@ -58,13 +58,21 @@
   ; ztmp4 = full row counter
 
   ; Get offset to frame data
-  LDA frmno:ASL A:TAX
+  LDA #hi(frametable):STA zptr2+1
+  LDA #lo(frametable):STA zptr2
 
-  LDA frametable+1, X
+  LDA frmno
+  BPL nochange
+  INC zptr2+1
+.nochange
+  ASL A:TAY
+
+  INY:LDA (zptr2), Y
   CMP #&FF:BEQ cpdone ; Don't draw NULL frames
   CLC:ADC #hi(framedefs):STA zptr1+1
 
-  LDA frametable, X:CLC:ADC #lo(framedefs):STA zptr1
+  DEY:LDA (zptr2), Y
+  CLC:ADC #lo(framedefs):STA zptr1
   BCC samepage
   INC zptr1+1
 .samepage
