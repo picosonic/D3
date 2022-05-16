@@ -84,7 +84,7 @@
   INY:LDA (zptr1), Y:STA frmheight
 
   ; Get colour mask
-  LDA frmattri:AND #&03:TAX
+  LDA frmattri:LSR A:AND #&03:TAX
   LDA colourmask, X:STA frmcolour
 
   ; Move on past frame header
