@@ -107,8 +107,30 @@
   LDA #&00:STA zidx1:STA zidx2:STA ztmp4
 
   ; Point to start of top left of position to draw frame
-  LDA #PLAYAREA DIV 256:STA zptr3+1:STA zptr2+1
-  LDA #PLAYAREA MOD 256:CLC:ADC #&10:STA zptr3:STA zptr2 ; Includes skip over left border
+  LDA #MODE8BASE DIV 256:STA zptr3+1:STA zptr2+1
+  LDA #MODE8BASE MOD 256:STA zptr3:STA zptr2
+
+  ; Advance to X/Y position
+  LDA frmy
+  BEQ noy
+  LSR A:LSR A ; Divide Y by 4
+  STA yjump+2 ; Store result as operand for ADC below
+  LDA zptr3+1 
+.yjump
+  CLC:ADC #&00
+  STA zptr3+1:STA zptr2+1
+.noy
+
+  LDX frmx:AND #&7F
+  BEQ nox
+.xloop
+  LDA zptr3:CLC:ADC #&08:STA zptr3:STA zptr2
+  BCC samepage2
+  INC zptr4
+.samepage2
+  DEX
+  BNE xloop
+.nox 
 
 .loop
   LDA #&00:STA ztmp2 ; Reset row counter
@@ -177,4 +199,31 @@
   EQUB &0F ; Red
   EQUB &F0 ; Green
   EQUB &FF ; White
+}
+
+.drawroom
+{
+  JSR clearplayarea
+
+  LDA #&00:STA frmattri:STA ztmp6
+
+  TAY
+.loop
+  LDA room0, Y:STA frmno:INY
+  LDA room0, Y:STA frmx:INY
+  LDA room0, Y:STA frmy:INY
+
+  ; When frmx top-bit not set, then also update attrib
+  LDA frmx:BMI sameattrib
+  LDA room0, Y:STA frmattri:INY
+.sameattrib
+
+  STY ztmp6
+  JSR drawframe
+  LDY ztmp6
+  CPY #(dataend-room0)
+  BCC loop
+
+.done
+  RTS
 }

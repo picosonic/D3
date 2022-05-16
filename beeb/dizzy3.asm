@@ -25,18 +25,7 @@ INCLUDE "rand.asm"
 .codestart
 INCLUDE "init.asm"
 
-  JSR clearplayarea
-
-  LDA #&00:STA frmno
-  LDA #&00:STA frmx:STA frmy
-  LDA #PAL_WHITE:STA frmattri
-
-.loop
-;  JSR waitvsync
-  JSR drawframe
-
-  INC frmno
-  LDA #&00:BEQ loop ; Always loop
+  JSR drawroom
 
 .infiniteloop
   JMP infiniteloop

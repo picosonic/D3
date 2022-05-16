@@ -12,10 +12,15 @@ GUARD &0090
 .zptr3 EQUW 0
 .zidx3 EQUB 0
 
+.zptr4 EQUW 0
+.zidx4 EQUB 0
+
 .ztmp1 EQUB 0
 .ztmp2 EQUB 0
 .ztmp3 EQUB 0
 .ztmp4 EQUB 0
+.ztmp5 EQUB 0
+.ztmp6 EQUB 0
 
 ; Seed for random number generator
 .seed EQUW &0000, &0000
