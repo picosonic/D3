@@ -114,6 +114,7 @@
   LDA frmy
   BEQ noy
   LSR A:LSR A ; Divide Y by 4
+  AND #&FE
   STA yjump+2 ; Store result as operand for ADC below
   LDA zptr3+1 
 .yjump
@@ -121,15 +122,17 @@
   STA zptr3+1:STA zptr2+1
 .noy
 
-  LDX frmx:AND #&7F
+  LDA frmx:AND #&7F
   BEQ nox
+  TAX
 .xloop
   LDA zptr3:CLC:ADC #&08:STA zptr3:STA zptr2
   BCC samepage2
-  INC zptr4
+  INC zptr3+1:INC zptr2+1
 .samepage2
   DEX
   BNE xloop
+  DEC zptr3+1:DEC zptr2+1
 .nox 
 
 .loop
