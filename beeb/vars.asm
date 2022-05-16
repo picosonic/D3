@@ -17,6 +17,9 @@ GUARD &0090
 .ztmp3 EQUB 0
 .ztmp4 EQUB 0
 
+; Seed for random number generator
+.seed EQUW &0000, &0000
+
 ; Frame data
 .frmno EQUB 0
 .frmx EQUB 0
@@ -42,7 +45,7 @@ GUARD &0800
 ; ---------------------------------------------------------
 ; Variables in printer buffer workspace, &880 to &8BF
 
-ORG &880
+ORG &0880
 GUARD &08C0
 
 ; ---------------------------------------------------------

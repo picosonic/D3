@@ -14,10 +14,13 @@ GUARD MODE8BASE
 INCBIN "frametable.bin"
 .framedefs
 INCBIN "framedefs.bin"
+.room0
+INCBIN "room0.bin"
 .dataend
 
 ; Import modules
 INCLUDE "gfx.asm"
+INCLUDE "rand.asm"
 
 .codestart
 INCLUDE "init.asm"
