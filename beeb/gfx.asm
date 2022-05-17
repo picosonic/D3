@@ -43,9 +43,6 @@
   RTS
 }
 
-; widths 8/16/24/32/40/48/80, mostly 16/8/24/32
-; heights 2..45, mostly 8/16/24
-
 ; Draw a frame to play area
 .drawframe
 {
@@ -56,6 +53,11 @@
   ; ztmp2 = byte in current row counter
   ; ztmp3 = total bytes in source
   ; ztmp4 = full row counter
+
+  ; Save registers
+  PHA
+  TXA:PHA
+  TYA:PHA
 
   ; Get offset to frame data
   LDA #hi(frametable):STA zptr2+1
@@ -214,6 +216,11 @@
   BNE loop
 
 .done
+  ; Restore registers
+  PLA:TAY
+  PLA:TAX
+  PLA
+
   RTS
 
 ; Table for 1bpp->2bpp graphics conversion
@@ -252,12 +259,48 @@
   LDA room0, Y:STA frmattri:INY
 .sameattrib
 
-  STY ztmp6
   JSR drawframe
-  LDY ztmp6
+
   CPY #(dataend-room0)
   BCC loop
 
-.done
+  JSR titlescreen ; Only for room 0
+
   RTS
+}
+
+.titlescreen
+{
+  ; Extra frames for room 0
+
+  LDY #&00
+
+.loop
+  LDA titledata, Y:STA frmno:INY
+  LDA titledata, Y:ASL A:ORA #&80:STA frmx:INY
+  LDA titledata, Y:STA frmy:INY
+  LDA titledata, Y:STA frmattri:INY
+
+  JSR drawframe
+
+  CPY #(titledataend-titledata)
+  BCC loop
+
+  RTS
+
+.titledata
+  EQUB 'D', 26, 108, 5
+  EQUB 'I', 27, 106, 5
+  EQUB 'Z', 28, 104, 5
+  EQUB 'Z', 29, 102, 5
+  EQUB 'Y', 30, 100, 5
+
+  EQUB 'D', 33, 100, 5
+  EQUB 'A', 34, 102, 5
+  EQUB 'I', 35, 104, 5
+  EQUB 'S', 36, 105, 5
+  EQUB 'Y', 37, 108, 5
+
+  EQUB 27, 29, 57, 6 ; DIZZY logo
+.titledataend
 }
