@@ -90,6 +90,19 @@
   ; Move on past frame header
   INC zptr1:INC zptr1
 
+  ; Get plot type
+  LDA frmattri:AND #&018
+  LSR A:LSR A
+  STA frmplot
+  ; Modify code
+  TAY
+  LDA plot_modes, Y:STA plot_high:STA plot_low
+  LDA plot_modes+1, Y:STA plot_high+1:STA plot_low+1
+
+  ; Get h-flip
+  LDA frmattri:AND #&80
+  STA frmreverse
+
   ; Calculate bytes per row
   LDA frmwidth:LSR A
   PHA:STA ztmp1
@@ -151,7 +164,10 @@
   LSR A:LSR A:LSR A:LSR A
   TAX:LDA convert_1bpp_to_2bpp, X
   LDY zidx2
-  AND frmcolour:STA (zptr2), Y
+  AND frmcolour
+.plot_high
+  NOP:NOP ; Plot mode (gets replaced at runtime)
+  STA (zptr2), Y
 
   LDA zidx2:CLC:ADC #&08:STA zidx2 ; Advance to next block on the right
 
@@ -161,7 +177,10 @@
   AND #&0F
   TAX:LDA convert_1bpp_to_2bpp, X
   LDY zidx2
-  AND frmcolour:STA (zptr2), Y
+  AND frmcolour
+.plot_low
+  NOP:NOP ; Plot mode (gets replaced at runtime)
+  STA (zptr2), Y
 
   LDA zidx2:CLC:ADC #&08:STA zidx2 ; Advance to next block on the right
 
@@ -208,6 +227,12 @@
   EQUB &0F ; Red
   EQUB &F0 ; Green
   EQUB &FF ; White
+
+; Code for the various plot modes
+.plot_modes
+  NOP:NOP ; Normal
+  ORA (zptr2), Y ; OR
+  EOR (zptr2), Y ; Exclusive OR
 }
 
 .drawroom
