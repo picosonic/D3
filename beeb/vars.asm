@@ -15,6 +15,9 @@ GUARD &0090
 .zptr4 EQUW 0
 .zidx4 EQUB 0
 
+.zptr5 EQUW 0
+.zidx5 EQUB 0
+
 .ztmp1 EQUB 0
 .ztmp2 EQUB 0
 .ztmp3 EQUB 0

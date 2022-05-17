@@ -13,3 +13,14 @@ PAL_BLACK = 0
 PAL_RED = 1
 PAL_GREEN = 2
 PAL_WHITE = 3
+
+; Message printing control codes
+PRT_END = 0
+PRT_XY = 128
+PRT_PLOT = 3
+PRT_GOSUB = 4
+PRT_REP = 5
+PRT_ENDREP = 6
+PRT_DRAWBOX = 9
+PRT_NR = 10
+PRT_PEN = 16

@@ -39,7 +39,6 @@
   CMP #&7E ; Avoid bottom border
   BNE outerloop
 
-.^cpdone
   RTS
 }
 
@@ -70,7 +69,7 @@
   ASL A:TAY
 
   INY:LDA (zptr2), Y
-  CMP #&FF:BEQ cpdone ; Don't draw NULL frames
+  CMP #&FF:BEQ jdone ; Don't draw NULL frames
   CLC:ADC #hi(framedefs):STA zptr1+1
 
   DEY:LDA (zptr2), Y
@@ -120,6 +119,12 @@
 
   ; Set source/dest to 0
   LDA #&00:STA zidx1:STA zidx2:STA ztmp4
+
+  ; Just for reachability
+  JMP cont
+.jdone
+  JMP done
+.cont
 
   ; Point to start of top left of position to draw frame
   LDA #MODE8BASE DIV 256:STA zptr3+1:STA zptr2+1
@@ -271,36 +276,131 @@
 
 .titlescreen
 {
-  ; Extra frames for room 0
+  LDA #hi(startmess):STA zptr5+1
+  LDA #lo(startmess):STA zptr5
+  JSR prtmessage
+
+  LDA #58:STA frmx
+  LDA #57:STA frmy
+  LDA #7:STA frmattri
+  LDA #27:STA frmno ; Dizzy logo
+  JSR drawframe
+
+  LDA #hi(roomnamepos):STA zptr5+1
+  LDA #lo(roomnamepos):STA zptr5
+  JSR prtmessage
+
+  LDA #hi(room0name):STA zptr5+1
+  LDA #lo(room0name):STA zptr5
+  JSR prtmessage
+
+  RTS
+
+.startmess
+  EQUB PRT_XY+51,49,PRT_PEN+3, "FANTASY:WORLD"
+
+  EQUB PRT_XY+56,80,PRT_PEN+2, "STARRING"
+  EQUB PRT_XY+52,89, "THE:YOLKFOLK"
+  EQUB PRT_XY+52,108,PRT_PEN+5,"D",PRT_XY+54,106,"I",PRT_XY+56,104,"Z"
+  EQUB PRT_XY+58,102,"Z",PRT_XY+60,100,"Y"
+
+  EQUB PRT_XY+67,100,"D",PRT_XY+69,102,"A",PRT_XY+71,104,"I"
+  EQUB PRT_XY+73,106,"S",PRT_XY+75,108,"Y"
+
+  EQUB PRT_XY+41,142, "DENZIL:DYLAN"
+  EQUB PRT_XY+67,136, "DOZY"
+  EQUB PRT_XY+78,136, "GRAND"
+  EQUB PRT_XY+78,144, "DIZZY"
+  EQUB PRT_PEN+6,":"
+
+  EQUB PRT_END
+
+.roomnamepos
+  EQUB PRT_PEN+4,PRT_XY+44,24
+  EQUB PRT_END
+
+.room0name
+  EQUB "SPC:OR:FIRE:TO:START", PRT_END
+}
+
+.prtmessage
+{
+  ; Control codes are
+  ; 0 - END
+  ; 128+X, Y
+  ; 3 - Plot chr/attr bit 0 chr bit 1 attr
+  ; 4 - GOSUB
+  ; 5 - REPEAT
+  ; 6 - ENDREPEAT
+  ; 9 - DRAW BOX width, height
+  ; 10 - NOP (but moves across like a char)
+  ; 16+(0-7) - Pen colour
+  ;
+  ; Pointer to message in zptr5
 
   LDY #&00
 
 .loop
-  LDA titledata, Y:STA frmno:INY
-  LDA titledata, Y:ASL A:ORA #&80:STA frmx:INY
-  LDA titledata, Y:STA frmy:INY
-  LDA titledata, Y:STA frmattri:INY
+  LDA (zptr5), Y:INY
 
+  ; Is it the end of the message
+  BEQ done
+
+  ; Is it a change of X/Y
+  CMP #PRT_XY:BCS changexy
+
+  ; Anything else above control codes must be a character
+  CMP #' ':BCS mustbeachar
+
+  ; Is it a pen change
+  CMP #PRT_PEN:BCS changepen
+
+  ; Is it a plot type change
+  CMP #PRT_PLOT:BEQ changeplot
+
+  ; Anything else is not supported at this time
+  JMP done
+
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+  ; Byte in A must be a char, so print it at cursor position
+.mustbeachar
+  STA frmno
+  LDA messx:STA frmx
+  LDA messy:STA frmy
+  LDA messpen:STA frmattri
+  LDA messplot:STA frmplot
   JSR drawframe
+  LDA messx:CLC:ADC #&02:STA messx ; Advance cursor
+  JMP loop
 
-  CPY #(titledataend-titledata)
-  BCC loop
+  ; Change the X/Y position
+.changexy
+  STA messx
+  LDA (zptr5), Y:STA messy
+  INY
+  JMP loop
 
+  ; Change pen 
+.changepen
+  AND #&07:STA messpen
+  JMP loop
+
+  ; Change plot type
+.changeplot
+  LDA (zptr5), Y:STA messplot:INY
+  JMP loop
+
+.done
   RTS
 
-.titledata
-  EQUB 'D', 26, 108, 5
-  EQUB 'I', 27, 106, 5
-  EQUB 'Z', 28, 104, 5
-  EQUB 'Z', 29, 102, 5
-  EQUB 'Y', 30, 100, 5
-
-  EQUB 'D', 33, 100, 5
-  EQUB 'A', 34, 102, 5
-  EQUB 'I', 35, 104, 5
-  EQUB 'S', 36, 105, 5
-  EQUB 'Y', 37, 108, 5
-
-  EQUB 27, 29, 57, 6 ; DIZZY logo
-.titledataend
+; Message variables
+.messx
+  EQUB 0
+.messy
+  EQUB 0
+.messpen
+  EQUB 0
+.messplot
+  EQUB 0
 }
