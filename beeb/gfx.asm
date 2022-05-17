@@ -120,6 +120,12 @@
 .yjump
   CLC:ADC #&00
   STA zptr3+1:STA zptr2+1
+
+  ; Add small y offset
+  LDA frmy
+  AND #&07
+  STA ztmp4
+  CLC:ADC zptr3:STA zptr3:STA zptr2
 .noy
 
   LDA frmx:AND #&7F
