@@ -11,6 +11,35 @@
   RTS
 }
 
+; Palettes
+PAL_BLANK = &00
+PAL_GAME  = &01
+
+; Set palette to one specified in A
+.setpal
+{
+  ASL A:ASL A:ASL A:TAY
+  LDX #&00
+.loop
+  LDA #&13:JSR OSWRCH
+  LDA paltable, Y:JSR OSWRCH:INY:INX
+  LDA paltable, Y:JSR OSWRCH:INY:INX
+  LDA #&00:JSR OSWRCH:JSR OSWRCH:JSR OSWRCH
+  CPX #&08
+  BNE loop
+
+  RTS
+
+.paltable
+  ; blank palette
+  ; black, black, black, black
+  EQUB 0,0, 1,0, 2,0, 3,0
+
+  ; Game palette
+  ; black, red, green, white
+  EQUB 0,0, 1,1, 2,2, 3,7
+}
+
 ; Clear play area
 .clearplayarea
 {
@@ -216,9 +245,8 @@
 .nodiv8
 
   ; Check to see if we've drawn all the source bytes
-  LDA zidx1
-  CMP ztmp3
-  BNE loop
+  LDA zidx1:CMP ztmp3:BEQ done
+  JMP loop
 
 .done
   ; Restore registers
@@ -249,6 +277,8 @@
 
 .drawroom
 {
+  LDA #PAL_BLANK:JSR setpal
+
   JSR clearplayarea
 
   LDA #&00:STA frmattri:STA ztmp6
@@ -270,6 +300,8 @@
   BCC loop
 
   JSR titlescreen ; Only for room 0
+
+  LDA #PAL_GAME:JSR setpal
 
   RTS
 }
