@@ -14,8 +14,8 @@ GUARD MODE8BASE
 INCBIN "frametable.bin"
 .framedefs
 INCBIN "framedefs.bin"
-.room0
-INCBIN "room0.bin"
+
+INCLUDE "rooms.asm"
 .dataend
 
 ; Import modules

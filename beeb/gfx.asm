@@ -255,18 +255,18 @@
 
   TAY
 .loop
-  LDA room0, Y:STA frmno:INY
-  LDA room0, Y:STA frmx:INY
-  LDA room0, Y:STA frmy:INY
+  LDA room0data, Y:STA frmno:INY
+  LDA room0data, Y:STA frmx:INY
+  LDA room0data, Y:STA frmy:INY
 
   ; When frmx top-bit not set, then also update attrib
   LDA frmx:BMI sameattrib
-  LDA room0, Y:STA frmattri:INY
+  LDA room0data, Y:STA frmattri:INY
 .sameattrib
 
   JSR drawframe
 
-  CPY #(dataend-room0)
+  CPY #(dataend-room0data)
   BCC loop
 
   JSR titlescreen ; Only for room 0
@@ -290,8 +290,8 @@
   LDA #lo(roomnamepos):STA zptr5
   JSR prtmessage
 
-  LDA #hi(room0name):STA zptr5+1
-  LDA #lo(room0name):STA zptr5
+  LDA #hi(room0):STA zptr5+1
+  LDA #lo(room0):STA zptr5
   JSR prtmessage
 
   RTS
@@ -318,9 +318,6 @@
 .roomnamepos
   EQUB PRT_PEN+4,PRT_XY+12,24
   EQUB PRT_END
-
-.room0name
-  EQUB "SPC:OR:FIRE:TO:START", PRT_END
 }
 
 .prtmessage
