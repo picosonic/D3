@@ -12,7 +12,7 @@
   EQUW room80,room81,room82,room83,room84,room85,room86,room87
   EQUW room88,room89,room90,room91,room92,room93,room94,room95
   EQUW room96,room97,room98,room99,room100
-    
+
 .room0 EQUB "SPC:OR:FIRE:TO:START", PRT_END
 .room1
 .room2
@@ -115,5 +115,129 @@
 .room99
 .room100 EQUB ":::::THE:ATTIC::::::", PRT_END
 
-.room0data
-INCBIN "room0.bin"
+.roomtable
+  EQUW roomdata0 ,roomdata1 ,roomdata2 ,roomdata3 ,roomdata4
+  EQUW roomdata5 ,roomdata6 ,roomdata7 ,roomdata8 ,roomdata9
+  EQUW roomdata10,roomdata11,roomdata12,roomdata13,roomdata14
+  EQUW roomdata15,roomdata16,roomdata17,roomdata18,roomdata19
+  EQUW roomdata20,roomdata21,roomdata22,roomdata23,roomdata24
+  EQUW roomdata25,roomdata26,roomdata27,roomdata28,roomdata29
+  EQUW roomdata30,roomdata31,roomdata32,roomdata33,roomdata34
+  EQUW roomdata35,roomdata36,roomdata37,roomdata38,roomdata39
+  EQUW roomdata40,roomdata41,roomdata42,roomdata43,roomdata44
+  EQUW roomdata45,roomdata46,roomdata47,roomdata48,roomdata49
+  EQUW roomdata50,roomdata51,roomdata52,roomdata53,roomdata54
+  EQUW roomdata55,roomdata56,roomdata57,roomdata58,roomdata59
+  EQUW roomdata60,roomdata61,roomdata62,roomdata63,roomdata64
+  EQUW roomdata65,roomdata66,roomdata67,roomdata68,roomdata69
+  EQUW roomdata70,roomdata71,roomdata72,roomdata73,roomdata74
+  EQUW roomdata75,roomdata76,roomdata77,roomdata78,roomdata79
+  EQUW roomdata80,roomdata81,roomdata82,roomdata83,roomdata84
+  EQUW roomdata85,roomdata86,roomdata87,roomdata88,roomdata89
+  EQUW roomdata90,roomdata91,roomdata92,roomdata93,roomdata94
+  EQUW roomdata95,roomdata96,roomdata97,roomdata98,roomdata99
+  EQUW roomdata100,roomdataend
+
+.roomdata0 INCBIN "room0.bin"
+.roomdata1
+.roomdata2
+.roomdata3
+.roomdata4
+.roomdata5
+.roomdata6
+.roomdata7
+.roomdata8
+.roomdata9
+.roomdata10
+.roomdata11
+.roomdata12
+.roomdata13
+.roomdata14
+.roomdata15
+.roomdata16
+.roomdata17
+.roomdata18
+.roomdata19
+.roomdata20
+.roomdata21
+.roomdata22
+.roomdata23
+.roomdata24
+.roomdata25
+.roomdata26
+.roomdata27
+.roomdata28
+.roomdata29
+.roomdata30
+.roomdata31
+.roomdata32
+.roomdata33
+.roomdata34
+.roomdata35
+.roomdata36 INCBIN "room36.bin"
+.roomdata37
+.roomdata38
+.roomdata39
+.roomdata40
+.roomdata41
+.roomdata42
+.roomdata43
+.roomdata44
+.roomdata45
+.roomdata46
+.roomdata47
+.roomdata48
+.roomdata49
+.roomdata50
+.roomdata51
+.roomdata52
+.roomdata53
+.roomdata54
+.roomdata55
+.roomdata56
+.roomdata57
+.roomdata58
+.roomdata59
+.roomdata60
+.roomdata61
+.roomdata62
+.roomdata63
+.roomdata64
+.roomdata65
+.roomdata66
+.roomdata67
+.roomdata68
+.roomdata69
+.roomdata70
+.roomdata71
+.roomdata72
+.roomdata73
+.roomdata74
+.roomdata75
+.roomdata76
+.roomdata77
+.roomdata78
+.roomdata79
+.roomdata80
+.roomdata81
+.roomdata82
+.roomdata83
+.roomdata84
+.roomdata85
+.roomdata86
+.roomdata87
+.roomdata88
+.roomdata89
+.roomdata90
+.roomdata91
+.roomdata92
+.roomdata93
+.roomdata94
+.roomdata95
+.roomdata96
+.roomdata97
+.roomdata98
+.roomdata99
+.roomdata100
+.roomdataend
+

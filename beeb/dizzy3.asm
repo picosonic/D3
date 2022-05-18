@@ -25,7 +25,25 @@ INCLUDE "rand.asm"
 .codestart
 INCLUDE "init.asm"
 
-  JSR drawroom
+.drawloop
+  LDA #0:JSR drawroom
+  JSR waitabit
+  LDA #36:JSR drawroom
+  JSR waitabit
+
+  JMP drawloop
+
+.waitabit
+{
+  LDX #&00
+
+.somemore
+  JSR waitvsync
+  DEX
+  BNE somemore
+
+  RTS
+}
 
 .infiniteloop
   JMP infiniteloop

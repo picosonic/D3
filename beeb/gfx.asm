@@ -277,37 +277,92 @@ PAL_GAME  = &01
 
 .drawroom
 {
+  PHA ; Backup room number
+
+  ; Set up pointer to data for this room
+  ASL A:TAY
+  LDA roomtable, Y:STA roomptr
+  LDA roomtable+1, Y:STA roomptr+1
+
+  ; Set up pointer to data for next room
+  LDA roomtable+2, Y:STA nextroomptr
+  LDA roomtable+3, Y:STA nextroomptr+1
+
+  ; Clear palette to hide draw
   LDA #PAL_BLANK:JSR setpal
 
+  ; Clear play area
   JSR clearplayarea
 
+  ; Set up defaults
   LDA #&00:STA frmattri:STA ztmp6
 
   TAY
 .loop
-  LDA room0data, Y:STA frmno:INY
-  LDA room0data, Y:STA frmx:INY
-  LDA room0data, Y:STA frmy:INY
+  LDA (roomptr), Y:STA frmno:INY
+  LDA (roomptr), Y:STA frmx:INY
+  LDA (roomptr), Y:STA frmy:INY
 
   ; When frmx top-bit not set, then also update attrib
   LDA frmx:BMI sameattrib
-  LDA room0data, Y:STA frmattri:INY
+  LDA (roomptr), Y:STA frmattri:INY
 .sameattrib
 
+  ; All the data has been read for this frame, so draw it
   JSR drawframe
 
-  CPY #(dataend-room0data)
-  BCC loop
+  ; Advance room pointer to next tile
+  TYA:CLC:ADC roomptr:STA roomptr
+  BCC samepage
+  INC roomptr+1
+.samepage
 
-  JSR titlescreen ; Only for room 0
+  ; Check if we're done
+  LDY #&00
+  LDA roomptr+1:CMP nextroomptr+1:BNE loop
+  LDA roomptr:CMP nextroomptr:BNE loop
 
+  ; If this is first room (title screen), show extra chars
+  PLA
+  BNE playscr
+  JSR titlescreen
+.playscr
+
+  ; Write the room name
+  JSR writeroomname
+
+  ; Show room in game palette
   LDA #PAL_GAME:JSR setpal
 
   RTS
 }
 
+.writeroomname
+{
+  PHA
+
+  ; Set pen colour and position cursor
+  LDA #hi(roomnamepos):STA zptr5+1
+  LDA #lo(roomnamepos):STA zptr5
+  JSR prtmessage
+
+  ; Set pointer to room name
+  PLA:ASL A:TAY
+  LDA roomnames, Y:STA zptr5
+  LDA roomnames+1, Y:STA zptr5+1
+  JSR prtmessage
+
+  RTS
+
+.roomnamepos
+  EQUB PRT_PEN+4,PRT_XY+12,24
+  EQUB PRT_END
+}
+
 .titlescreen
 {
+  PHA
+
   LDA #hi(startmess):STA zptr5+1
   LDA #lo(startmess):STA zptr5
   JSR prtmessage
@@ -318,13 +373,7 @@ PAL_GAME  = &01
   LDA #27:STA frmno ; Dizzy logo
   JSR drawframe
 
-  LDA #hi(roomnamepos):STA zptr5+1
-  LDA #lo(roomnamepos):STA zptr5
-  JSR prtmessage
-
-  LDA #hi(room0):STA zptr5+1
-  LDA #lo(room0):STA zptr5
-  JSR prtmessage
+  PLA
 
   RTS
 
@@ -345,10 +394,6 @@ PAL_GAME  = &01
   EQUB PRT_XY+46,144, "DIZZY"
   EQUB PRT_PEN+6,":"
 
-  EQUB PRT_END
-
-.roomnamepos
-  EQUB PRT_PEN+4,PRT_XY+12,24
   EQUB PRT_END
 }
 

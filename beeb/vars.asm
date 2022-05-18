@@ -18,6 +18,9 @@ GUARD &0090
 .zptr5 EQUW 0
 .zidx5 EQUB 0
 
+.roomptr EQUW 0
+.nextroomptr EQUW 0
+
 .ztmp1 EQUB 0
 .ztmp2 EQUB 0
 .ztmp3 EQUB 0
