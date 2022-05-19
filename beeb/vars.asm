@@ -3,6 +3,8 @@
 ORG &0000
 GUARD &0090
 
+.zpstart
+
 .zptr1 EQUW 0
 .zidx1 EQUB 0
 
@@ -50,6 +52,10 @@ GUARD &0090
 
 ORG &0400
 GUARD &0800
+
+.start_of_vars
+
+EQUB 0 ; Placeholder
 
 .end_of_vars
 
