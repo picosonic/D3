@@ -1,5 +1,7 @@
 ; OS defines
 INCLUDE "os.asm"
+INCLUDE "inkey.asm"
+INCLUDE "internal.asm"
 
 ; Variable and constant defines
 INCLUDE "consts.asm"
@@ -19,8 +21,9 @@ INCLUDE "rooms.asm"
 .dataend
 
 ; Import modules
-INCLUDE "gfx.asm"
+INCLUDE "input.asm"
 INCLUDE "rand.asm"
+INCLUDE "gfx.asm"
 
 .codestart
 INCLUDE "init.asm"
@@ -29,6 +32,8 @@ INCLUDE "init.asm"
   LDA #0:JSR drawroom
   JSR waitabit
   LDA #36:JSR drawroom
+  JSR waitabit
+  LDA #52:JSR drawroom
   JSR waitabit
 
   JMP drawloop
@@ -47,6 +52,31 @@ INCLUDE "init.asm"
 
 .infiniteloop
   JMP infiniteloop
+
+; Handler for VBLANK event
+.eventhandler
+{
+  ; Save registers
+  PHP
+  PHA
+  TXA
+  PHA
+  TYA
+  PHA
+
+  JSR read_input
+
+  ; Restore registers
+  PLA
+  TAY
+  PLA
+  TAX
+  PLA
+  PLP
+
+  RTS
+}
+
 .codeend
 
 ORG &0900

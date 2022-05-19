@@ -24,7 +24,13 @@
 
   LDX #&FF:TXS ; Clear stack
 
+  ; Set up vsync event handler
+  LDA #eventhandler MOD 256:STA EVNTV
+  LDA #eventhandler DIV 256:STA EVNTV+1
+
   CLI
+
+  LDA #&0E:LDX #&04:JSR OSBYTE ; Enable vsync event handler
 
   ; Clear variables in language workspace
 .clearvars

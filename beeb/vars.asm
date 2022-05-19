@@ -5,6 +5,9 @@ GUARD &0090
 
 .zpstart
 
+; Input bitfield
+.keys EQUB &00
+
 .zptr1 EQUW 0
 .zidx1 EQUB 0
 

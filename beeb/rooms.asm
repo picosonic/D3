@@ -190,7 +190,7 @@
 .roomdata49
 .roomdata50
 .roomdata51
-.roomdata52
+.roomdata52 INCBIN "room52.bin"
 .roomdata53
 .roomdata54
 .roomdata55
