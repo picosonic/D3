@@ -23,6 +23,9 @@ GUARD &0090
 .zptr5 EQUW 0
 .zidx5 EQUB 0
 
+.zptr6 EQUW 0
+.zidx6 EQUB 0
+
 .roomptr EQUW 0
 .nextroomptr EQUW 0
 
@@ -58,7 +61,8 @@ GUARD &0800
 
 .start_of_vars
 
-EQUB 0 ; Placeholder
+; Non-zero to clip draw routine to play area
+.cliptoplayarea EQUB 0
 
 .end_of_vars
 

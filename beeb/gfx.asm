@@ -71,6 +71,39 @@ PAL_GAME  = &01
   RTS
 }
 
+; Test if pixel about to be plotted would overwrite border or header
+.test_clip
+{
+  ; Clipping
+  LDA cliptoplayarea:BEQ done ; Don't clip when clipping disabled
+
+  ; Create pointer to where plotting will take place
+  LDA zptr2+1:STA zptr6+1
+  LDA zptr2:CLC:ADC zidx2:STA zptr6
+  BCC samepage
+  INC zptr6+1
+.samepage
+
+  LDA zptr6+1
+  CMP #hi(PLAYAREA):BCC do_clip ; Clip top
+  CMP #hi(ROMSBASE)-2:BCS do_clip ; Clip bottom
+  AND #&01:BNE try_right
+  LDA zptr6:CMP #&10:BCC do_clip ; Clip left
+.try_right
+  LDA zptr6+1
+  AND #&01:BEQ ok_right
+  LDA zptr6:CMP #&F0:BCS do_clip ; Clip right
+.ok_right
+
+  LDA #&00:BEQ done
+
+.do_clip
+  LDA #&FF
+
+.done
+  RTS
+}
+
 ; Draw a frame to play area
 .drawframe
 {
@@ -193,6 +226,13 @@ PAL_GAME  = &01
 .loop
   LDA #&00:STA ztmp2 ; Reset row counter
 .rowloop
+
+  ; Clipping
+  JSR test_clip:BEQ no_clip
+  LDA #&00:BEQ nextnibble
+
+.no_clip
+
   ; High nibble
   LDY zidx1
   LDA (zptr1), Y
@@ -205,7 +245,14 @@ PAL_GAME  = &01
   NOP:NOP ; Plot mode (gets replaced at runtime)
   STA (zptr2), Y
 
+.nextnibble
   LDA zidx2:CLC:ADC #&08:STA zidx2 ; Advance to next block on the right
+
+  ; Clipping
+  JSR test_clip:BEQ no_clip2
+  LDA #&00:BEQ nextsourcebyte
+
+.no_clip2
 
   ; Low nibble
   LDY zidx1
@@ -217,6 +264,8 @@ PAL_GAME  = &01
 .plot_low
   NOP:NOP ; Plot mode (gets replaced at runtime)
   STA (zptr2), Y
+
+.nextsourcebyte
 
   LDA zidx2:CLC:ADC #&08:STA zidx2 ; Advance to next block on the right
 
@@ -428,6 +477,8 @@ PAL_GAME  = &01
   ;
   ; Pointer to message in zptr5
 
+  LDA #&00:STA cliptoplayarea
+
   LDY #&00
 
 .loop
@@ -482,6 +533,8 @@ PAL_GAME  = &01
   JMP loop
 
 .done
+  LDA #&01:STA cliptoplayarea
+
   RTS
 
 ; Message variables

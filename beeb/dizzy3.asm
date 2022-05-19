@@ -29,6 +29,8 @@ INCLUDE "gfx.asm"
 .entrypoint
 INCLUDE "init.asm"
 
+  LDA #&01:STA cliptoplayarea
+
 .drawloop
   LDA #0:JSR drawroom
   JSR waitabit
