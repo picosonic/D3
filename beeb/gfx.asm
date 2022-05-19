@@ -301,7 +301,7 @@ PAL_GAME  = &01
   PLA
   
   ; Write the room name as a blank one
-  LDA #70:JSR writeroomname
+  LDA #ROOM_EMPTY:JSR writeroomname
 
   ; Show room in game palette
   LDA #PAL_GAME:JSR setpal

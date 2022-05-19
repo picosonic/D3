@@ -24,3 +24,6 @@ PRT_ENDREP = 6
 PRT_DRAWBOX = 9
 PRT_NR = 10
 PRT_PEN = 16
+
+; Room related
+ROOM_EMPTY = 70
