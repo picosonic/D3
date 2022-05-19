@@ -20,12 +20,13 @@ INCBIN "framedefs.bin"
 INCLUDE "rooms.asm"
 .dataend
 
+.codestart
 ; Import modules
 INCLUDE "input.asm"
 INCLUDE "rand.asm"
 INCLUDE "gfx.asm"
 
-.codestart
+.entrypoint
 INCLUDE "init.asm"
 
 .drawloop
@@ -100,7 +101,7 @@ SAVE "!BOOT", plingboot, plingend
 PUTBASIC "loader.bas", "$.LOADER"
 PUTFILE "EXOSCR", "$.EXOSCR", EXO_LOAD_ADDR
 SAVE "EXTRA", extradata, extraend
-SAVE "DIZZY3", start, codeend, codestart
+SAVE "DIZZY3", start, codeend, entrypoint
 
 PRINT "-------------------------------------------"
 PRINT "Zero page from ", ~zpstart, " to ", ~zpend-1, "  (", ZP_ECONET_WORKSPACE-zpend, " bytes left )"
@@ -108,6 +109,8 @@ PRINT "VARS from ", ~start_of_vars, " to ", ~end_of_vars-1, "  (", SOUND_WORKSPA
 PRINT "EXTRA from ", ~extradata, " to ", ~extraend-1, "  (", NMI_WORKSPACE-extraend, " bytes left )"
 PRINT "DATA from ", ~datastart, " to ", ~dataend-1, "  (", dataend-datastart, " bytes )"
 PRINT "CODE from ", ~codestart, " to ", ~codeend-1, "  (", codeend-codestart, " bytes )"
+PRINT ""
+PRINT "Main code entry point ", ~entrypoint
 PRINT ""
 remaining = MODE8BASE-codeend
 PRINT "Bytes left : ", ~remaining, "  (", remaining, " bytes )"
