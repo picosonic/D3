@@ -294,6 +294,22 @@ PAL_GAME  = &01
   ; Clear play area
   JSR clearplayarea
 
+  ; If this is an empty room, then stop now
+  LDA roomptr+1:CMP nextroomptr+1:BNE roomok
+  LDA roomptr:CMP nextroomptr:BNE roomok
+
+  PLA
+  
+  ; Write the room name as a blank one
+  LDA #70:JSR writeroomname
+
+  ; Show room in game palette
+  LDA #PAL_GAME:JSR setpal
+
+  RTS
+
+.roomok
+
   ; Set up defaults
   LDA #&00:STA frmattri:STA ztmp6
 
