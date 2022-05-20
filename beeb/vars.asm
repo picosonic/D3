@@ -51,6 +51,8 @@ GUARD &0090
 .frmlocation EQUW 0
 .frmcolour EQUB 0
 
+.roomno EQUB 0
+
 .zpend
 
 ; ---------------------------------------------------------
