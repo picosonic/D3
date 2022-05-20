@@ -8,11 +8,11 @@ PLAYAREA = MODE8BASE+(12*256)
 MAIN_LOAD_ADDR = &1300
 EXO_LOAD_ADDR = &1900
 
-; Colours
+; Colours (as per Spectrum offsets)
 PAL_BLACK = 0
-PAL_RED = 1
-PAL_GREEN = 2
-PAL_WHITE = 3
+PAL_RED = 2
+PAL_GREEN = 4
+PAL_WHITE = 7
 
 ; Message printing control codes
 PRT_END = 0
