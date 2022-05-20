@@ -39,6 +39,8 @@ INCLUDE "init.asm"
   JSR waitabit
   LDA #52:JSR drawroom
   JSR waitabit
+  LDA #87:JSR drawroom
+  JSR waitabit
 
   JMP drawloop
 

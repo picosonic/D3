@@ -225,7 +225,7 @@
 .roomdata84
 .roomdata85
 .roomdata86
-.roomdata87
+.roomdata87 INCBIN "room87.bin"
 .roomdata88
 .roomdata89
 .roomdata90
