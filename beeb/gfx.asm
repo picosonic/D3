@@ -104,6 +104,50 @@ PAL_GAME  = &01
   RTS
 }
 
+; Flip frame horizontally
+.flipframe
+{
+  ; Save registers
+  PHA
+  TXA:PHA
+  TYA:PHA
+
+  ; Point at flipped frame memory
+  LDA #lo(flippedframe):STA zptr6
+  LDA #hi(flippedframe):STA zptr6+1
+
+  LDY #&00 ; Initialise offset counter
+.yloop
+  LDX ztmp1 ; Set row counter to bytes/row
+  STY ztmp4 ; Cache start of row offset
+.xloop
+    STX ztmp6 ; Cache row counter
+    LDA (zptr1), Y ; Load source byte
+    TAX:LDA flip_lut, X ; FLip pixels using look up table
+    PHA ; Cache flipped pixels
+    STY ztmp5 ; Cache offset counter
+    LDA ztmp4:CLC:ADC ztmp6:TAY:DEY ; Add row to start of row offset
+    PLA ; Restore flipped pixels
+    STA (zptr6), Y ; Store flipped pixels in flippedframe buffer
+    LDY ztmp5 ; Restore offset counter
+    INY ; Advance offset
+    LDX ztmp6 ; Restore row counter
+    DEX:BNE xloop ; Carry on until row counter is zero
+  CPY ztmp3:BNE yloop ; Carry on until all source bytes processed
+
+  ; Point at newly flipped frame as the one to render
+  LDA #lo(flippedframe):STA zptr1
+  LDA #hi(flippedframe):STA zptr1+1
+
+.done
+  ; Restore registers
+  PLA:TAY
+  PLA:TAX
+  PLA
+
+  RTS
+}
+
 ; Draw a frame to play area
 .drawframe
 {
@@ -178,6 +222,11 @@ PAL_GAME  = &01
   DEX
   BNE total
   STA ztmp3
+
+  ; Flip frame horizontally if required
+  LDA frmreverse:BEQ dontflip
+  JSR flipframe
+.dontflip
 
   ; Set source/dest to 0
   LDA #&00:STA zidx1:STA zidx2:STA ztmp4
