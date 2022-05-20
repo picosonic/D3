@@ -375,7 +375,7 @@ PAL_GAME  = &01
 
 .drawroom
 {
-  PHA ; Backup room number
+  STA roomno ; Backup room number
 
   ; Set up pointer to data for this room
   ASL A:TAY
@@ -396,8 +396,6 @@ PAL_GAME  = &01
   LDA roomptr+1:CMP nextroomptr+1:BNE roomok
   LDA roomptr:CMP nextroomptr:BNE roomok
 
-  PLA
-  
   ; Write the room name as a blank one
   LDA #ROOM_EMPTY:JSR writeroomname
 
@@ -437,7 +435,7 @@ PAL_GAME  = &01
   LDA roomptr:CMP nextroomptr:BNE loop
 
   ; If this is first room (title screen), show extra chars
-  PLA
+  LDA roomno
   BNE playscr
   JSR titlescreen
 .playscr
@@ -445,23 +443,46 @@ PAL_GAME  = &01
   ; Write the room name
   JSR writeroomname
 
+  ; Draw any coins in this room
+  JSR putcoinsinroom
+
   ; Show room in game palette
   LDA #PAL_GAME:JSR setpal
 
   RTS
 }
 
+.putcoinsinroom
+{
+  LDX #&00
+.loop
+  STX ztmp6:TXA:ASL A:CLC:ADC ztmp6:TAY ; Y = X*3
+
+  ; Is current coin in current room
+  LDA cointable+2, Y:CMP roomno:BNE nextroom
+
+  LDA #&00:STA frmno ; Coin frame
+  LDA #PAL_WHITE:STA frmattri
+  LDA cointable, Y:STA frmx
+  LDA cointable+1, Y:STA frmy
+  JSR drawframe
+
+.nextroom
+
+  INX:CPX totalcoins:BNE loop
+
+  RTS
+}
+
 .writeroomname
 {
-  PHA
-
   ; Set pen colour and position cursor
   LDA #hi(roomnamepos):STA zptr5+1
   LDA #lo(roomnamepos):STA zptr5
   JSR prtmessage
 
   ; Set pointer to room name
-  PLA:ASL A:TAY
+  LDA roomno:ASL A:TAY
   LDA roomnames, Y:STA zptr5
   LDA roomnames+1, Y:STA zptr5+1
   JSR prtmessage
@@ -475,8 +496,6 @@ PAL_GAME  = &01
 
 .titlescreen
 {
-  PHA
-
   LDA #hi(startmess):STA zptr5+1
   LDA #lo(startmess):STA zptr5
   JSR prtmessage
@@ -486,8 +505,6 @@ PAL_GAME  = &01
   LDA #7:STA frmattri
   LDA #27:STA frmno ; Dizzy logo
   JSR drawframe
-
-  PLA
 
   RTS
 
