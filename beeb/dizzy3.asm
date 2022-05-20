@@ -29,6 +29,7 @@ INCLUDE "gfx.asm"
 .entrypoint
 INCLUDE "init.asm"
 
+  ; Default to drawing frames clipped to play area
   LDA #&01:STA cliptoplayarea
 
 .drawloop
@@ -62,18 +63,14 @@ INCLUDE "init.asm"
   ; Save registers
   PHP
   PHA
-  TXA
-  PHA
-  TYA
-  PHA
+  TXA:PHA
+  TYA:PHA
 
   JSR read_input
 
   ; Restore registers
-  PLA
-  TAY
-  PLA
-  TAX
+  PLA:TAY
+  PLA:TAX
   PLA
   PLP
 
