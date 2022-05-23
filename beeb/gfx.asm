@@ -469,7 +469,7 @@ PAL_GAME  = &01
 
 .nextroom
 
-  INX:CPX totalcoins:BNE loop
+  INX:CPX #totalcoins:BNE loop
 
   RTS
 }

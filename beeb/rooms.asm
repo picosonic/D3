@@ -274,5 +274,4 @@
   EQUB 70,64,76
 .endcointable
 
-.totalcoins
-  EQUB (endcointable-cointable)/3
+totalcoins = (endcointable-cointable)/3
