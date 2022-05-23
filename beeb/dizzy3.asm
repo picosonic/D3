@@ -18,6 +18,7 @@ INCBIN "frametable.bin"
 INCBIN "framedefs.bin"
 
 INCLUDE "rooms.asm"
+INCLUDE "objects.asm"
 .dataend
 
 .codestart
