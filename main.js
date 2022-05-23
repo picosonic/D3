@@ -395,8 +395,20 @@ function updatekeystate(e, dir)
         {
           gs.room--;
 
-          while ((gs.room>0) && (roomtable[gs.room].len==0))
-            gs.room--;
+          drawroom(gs.room);
+        }
+      }
+      e.preventDefault();
+      break;
+
+    case 38: // cursor up
+    case 87: // W
+    case 59: // semicolon
+      if (dir==1)
+      {
+        if ((gs.room+16)<=maxroom)
+        {
+          gs.room+=16;
 
           drawroom(gs.room);
         }
@@ -412,11 +424,23 @@ function updatekeystate(e, dir)
         {
           gs.room++;
 
-          while ((gs.room<maxroom) && (roomtable[gs.room].len==0))
-            gs.room++;
+          drawroom(gs.room);
+        }
+      e.preventDefault();
+      break;
+
+    case 40: // cursor down
+    case 83: // S
+    case 190: // dot
+      if (dir==1)
+      {
+        if (gs.room>16)
+        {
+          gs.room-=16;
 
           drawroom(gs.room);
         }
+      }
       e.preventDefault();
       break;
 
