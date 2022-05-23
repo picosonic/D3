@@ -494,6 +494,39 @@ PAL_GAME  = &01
   EQUB PRT_END
 }
 
+.windowrou
+{
+  ; dontupdatedizzy = 1 ; Stop Dizzy from moving
+  JSR prtmessage
+
+.^windowrou2
+  JSR handoffandwait ; Wait for new key press
+.^windowrou1
+  JSR resetuproom
+
+  ; dontupdatedizzy = 0 ; Allow Dizzy to move again
+
+  RTS
+}
+
+; Wait until nothing pressed, then wait for something to be pressed
+.handoffandwait
+{
+  LDA keys:BNE handoffandwait
+
+.waitforkey
+  LDA keys:BEQ waitforkey
+
+  RTS
+}
+
+.resetuproom
+{
+  LDA roomno:JSR drawroom
+
+  RTS
+}
+
 .titlescreen
 {
   LDA #hi(startmess):STA zptr5+1
@@ -551,7 +584,9 @@ PAL_GAME  = &01
   LDA (zptr5), Y:INY
 
   ; Is it the end of the message
-  BEQ done
+  BNE notdone
+  JMP done
+.notdone
 
   ; Is it a change of X/Y
   CMP #PRT_XY:BCS changexy
@@ -564,6 +599,8 @@ PAL_GAME  = &01
 
   ; Is it a plot type change
   CMP #PRT_PLOT:BEQ changeplot
+
+  CMP #PRT_DRAWBOX:BEQ drawbox
 
   ; Anything else is not supported at this time
   JMP done
@@ -584,8 +621,7 @@ PAL_GAME  = &01
   ; Change the X/Y position
 .changexy
   STA messx
-  LDA (zptr5), Y:STA messy
-  INY
+  LDA (zptr5), Y:STA messy:INY
   JMP loop
 
   ; Change pen 
@@ -596,6 +632,117 @@ PAL_GAME  = &01
   ; Change plot type
 .changeplot
   LDA (zptr5), Y:STA messplot:INY
+  JMP loop
+
+.drawbox
+  ; Draw a box from messx,messy with messwidth,messheight
+  ;
+  ;   44          44
+  ;42 46 40 40 40 46 43
+  ;   41          41
+  ;   41          41
+  ;   41          41
+  ;42 46 40 40 40 46 43
+  ;   45          45
+  
+  LDA (zptr5), Y:CLC:ADC #&02:STA ztmp5:STA messwidth:INC messwidth:INC messwidth:INY
+  LDA (zptr5), Y:CLC:ADC #&02:STA ztmp6:STA messheight:INC messheight:INC messheight:INY
+  TYA:PHA ; Cache Y index
+
+  LDA messx:CLC:ADC #&20:STA frmx ; Set X position
+  LDA messy:STA frmy ; Set Y position
+  LDA messpen:STA frmattri ; Store attributes
+  LDA messplot:STA frmplot ; Store draw style
+
+  LDY #&00
+.boxyloop
+  LDX #&00
+.boxxloop
+  ; Depending on where we are draw different frame
+
+  ; Check for "middle"
+  CPX #02:BCC ch0
+  CPY #02:BCC ch0
+  CPX ztmp5:BCS ch0
+  CPY ztmp6:BCS ch0
+  LDA #':':JMP dodraw ; Blank space
+
+.ch0
+  ; Check for intersections
+  CPX #01:BNE ch0b ; Check for left side
+  CPY #01:BEQ intersect
+  CPY ztmp6:BEQ intersect
+  LDA #&01:BNE ch1 ; Always branch - not an intersection
+.ch0b
+  CPX ztmp5:BNE ch1; Check for right side
+  CPY #01:BEQ intersect
+  CPY ztmp6:BEQ intersect
+  LDA #&01:BNE ch1 ; Always branch - not an intersection
+
+.intersect
+  LDA #46:BNE dodraw ; Intersection
+
+.ch1
+  ; Check for left edge
+  CPX #01:BNE ch2 ; Is it the left edge
+  CPY #00:BNE ch1b ; Is it the top edge
+  LDA #44:BNE dodraw ; Top of vertical bar
+.ch1b
+  CPY ztmp6:BCC ch1c ; Is it the bottom edge
+  LDA #45:BNE dodraw ; Bottom of vertical bar
+.ch1c
+  LDA #41:BNE dodraw ; Vertical bar
+
+.ch2
+  ; Check for right edge
+  CPX ztmp5:BNE ch3 ; Is it the right edge
+  CPY #00:BNE ch2b ; Is it the top edge
+  LDA #44:BNE dodraw ; Top of vertical bar
+.ch2b
+  CPY ztmp6:BCC ch2c ; Is it the bottom edge
+  LDA #45:BNE dodraw ; Bottom of vertical bar
+.ch2c
+  LDA #41:BNE dodraw ; Vertical bar
+
+.ch3
+  ; Check for top edge
+  CPY #01:BNE ch4 ; Is it the top edge
+  CPX #00:BNE ch3b; Is it the left edge
+  LDA #42:BNE dodraw ; Left horizontal bar
+.ch3b
+  CPX ztmp5:BCC ch3c; Is it the right edge
+  LDA #43:BNE dodraw
+.ch3c
+  LDA #40:BNE dodraw ; Horizontal bar
+
+.ch4
+  ; Check for bottom edge
+  CPY ztmp6:BNE ch5
+  CPX #00:BNE ch4b; Is it the left edge
+  LDA #42:BNE dodraw ; Left horizontal bar
+.ch4b
+  CPX ztmp5:BCC ch4c; Is it the right edge
+  LDA #43:BNE dodraw
+.ch4c
+  LDA #40:BNE dodraw ; Horiztonal bar
+
+.dodraw
+  STA frmno:JSR drawframe
+
+.ch5
+
+  LDA frmx:CLC:ADC #&02:STA frmx ; Advance X position
+  INX:CPX messwidth:BEQ loopxdone
+  JMP boxxloop
+.loopxdone
+
+  LDA messx:CLC:ADC #&20:STA frmx ; Reset X position
+  LDA frmy:CLC:ADC #&08:STA frmy ; Advance Y position
+  INY:CPY messheight:BEQ loopydone
+  JMP boxyloop
+.loopydone
+
+  PLA:TAY ; Restore Y index
   JMP loop
 
 .done
@@ -611,5 +758,10 @@ PAL_GAME  = &01
 .messpen
   EQUB 0
 .messplot
+  EQUB 0
+
+.messwidth
+  EQUB 0
+.messheight
   EQUB 0
 }

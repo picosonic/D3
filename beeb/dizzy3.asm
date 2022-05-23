@@ -41,6 +41,11 @@ INCLUDE "init.asm"
   LDA #52:JSR drawroom
   JSR waitabit
   LDA #87:JSR drawroom
+
+  LDA #hi(youfoundcoinmess):STA zptr5+1
+  LDA #lo(youfoundcoinmess):STA zptr5
+  JSR windowrou
+
   JSR waitabit
 
   JMP drawloop
