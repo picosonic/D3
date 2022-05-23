@@ -53,6 +53,14 @@ GUARD &0090
 
 .roomno EQUB 0
 
+; Dizzy position
+.dizzyx EQUB 10
+.dizzyy EQUB 10
+.dizzyfrm EQUB 10
+.dizzyox EQUB 10
+.dizzyoy EQUB 10
+.dizzyofrm EQUB 10
+
 .zpend
 
 ; ---------------------------------------------------------
