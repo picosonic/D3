@@ -457,3 +457,31 @@ noofmoving = (endofmovingdata-movingdata)/16
   EQUB PRT_XY+22,88,"WELL:DONE@",PRT_PEN+6
   EQUB PRT_XY+23,96,"YOU:FOUND"
   EQUB PRT_XY+26,104,"A:COIN",PRT_END
+
+.resetmoving
+{
+  LDA #lo(movingdata):STA zptr4
+  LDA #hi(movingdata):STA zptr4+1
+
+  LDX #&00
+.loop
+
+  LDY #origroom:LDA (zptr4), Y:LDY #room:STA (zptr4), Y
+  LDY #origx:LDA (zptr4), Y:LDY #movex:STA (zptr4), Y
+  LDY #origy:LDA (zptr4), Y:LDY #movey:STA (zptr4), Y
+  LDY #origfrm:LDA (zptr4), Y:LDY #movefrm:STA (zptr4), Y
+
+  LDA #&00
+  LDY #var1:STA (zptr4), Y
+  LDY #delaycounter:STA (zptr4), Y
+
+  ; Advance to next object
+  LDA zptr4:CLC:ADC #&10:STA zptr4
+  BCC samepage
+  INC zptr4+1
+.samepage
+
+  INX:CPX #noofmoving:BNE loop ; Loop until done
+
+  RTS
+}
