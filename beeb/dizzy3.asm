@@ -33,6 +33,8 @@ INCLUDE "init.asm"
   ; Default to drawing frames clipped to play area
   LDA #&01:STA cliptoplayarea
 
+  JSR resetmoving ; Put all the objects back to their starting positions
+
 .drawloop
   LDA #0:JSR drawroom
   JSR waitabit
@@ -50,6 +52,7 @@ INCLUDE "init.asm"
 
   JMP drawloop
 
+; Wait for 256 vblanks ~ 5 seconds @ 50Hz
 .waitabit
 {
   LDX #&00
