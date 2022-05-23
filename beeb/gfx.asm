@@ -446,6 +446,9 @@ PAL_GAME  = &01
   ; Draw any coins in this room
   JSR putcoinsinroom
 
+  ; Draw any objects in this room (after coins so objects can hide coins)
+  JSR putobjectsinroom
+
   ; Show room in game palette
   LDA #PAL_GAME:JSR setpal
 
@@ -459,7 +462,7 @@ PAL_GAME  = &01
   STX ztmp6:TXA:ASL A:CLC:ADC ztmp6:TAY ; Y = X*3
 
   ; Is current coin in current room
-  LDA cointable+2, Y:CMP roomno:BNE nextroom
+  LDA cointable+2, Y:CMP roomno:BNE nextcoin
 
   LDA #&00:STA frmno ; Coin frame
   LDA #PAL_WHITE:STA frmattri
@@ -467,9 +470,39 @@ PAL_GAME  = &01
   LDA cointable+1, Y:STA frmy
   JSR drawframe
 
-.nextroom
+.nextcoin
 
   INX:CPX #totalcoins:BNE loop
+
+  RTS
+}
+
+.putobjectsinroom
+{
+  LDA #lo(movingdata):STA zptr4
+  LDA #hi(movingdata):STA zptr4+1
+
+  LDX #&00
+.loop
+  ; Is current object in current room
+  LDY #room:LDA (zptr4), Y:CMP roomno:BNE nextobject
+
+  LDY #movefrm:LDA (zptr4), Y:STA frmno
+  LDY #colour:LDA (zptr4), Y:STA frmattri
+  LDY #movex:LDA (zptr4), Y:STA frmx
+  LDY #movey:LDA (zptr4), Y:STA frmy
+
+  JSR drawframe
+
+.nextobject
+
+  ; Advance to next object
+  LDA zptr4:CLC:ADC #&10:STA zptr4
+  BCC samepage
+  INC zptr4+1
+.samepage
+
+  INX:CPX #noofmoving:BNE loop ; Loop until done
 
   RTS
 }
