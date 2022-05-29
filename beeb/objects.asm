@@ -60,15 +60,15 @@ daisy1 = 19
 
  EQUB 51,portswitch,66 ,78 ,122,0   ,0   ,0   ,0  ,0 ,0 ,5+64,51 ,66 ,78 ,122
 
-;.shopkeeperhere
-; EQUB 22,pickupable,68 ,136,105
-; EQUW                pigmycowmess,shoptalk
-; EQUB                   0 ,0 ,7+64,255,68,136,105
-;
-;.shopkeeperhere1
-; EQUB 22,crowbar,68+4,136,105
-; EQUW                pigmycowmess,shoptalk
-; EQUB                0 ,0 ,7+64+128,255,68+4,136,105
+.shopkeeperhere
+ EQUB 22,pickupable,68 ,136,105
+ EQUW                pigmycowmess,shoptalk
+ EQUB                   0 ,0 ,7+64,255,68,136,105
+
+.shopkeeperhere1
+ EQUB 22,crowbar,68+4,136,105
+ EQUW                pigmycowmess,shoptalk
+ EQUB                0 ,0 ,7+64+128,255,68+4,136,105
 
  EQUB 72,pickupable,62 ,144,11
  EQUW                blackholemess
@@ -199,7 +199,6 @@ daisy1 = 19
 
 .dozyfloathere
  EQUB 45,dozyfloat,68 ,139,32,0  ,0  ,0   ,0,      0 ,0 ,7+64+16+8,45,68,139,32
-
 
  EQUB 36,pickupable,68 ,144,19
  EQUW                jugmess,proxjug
@@ -348,6 +347,8 @@ noofmoving = (endofmovingdata-movingdata)/16
 .pickaxemess EQUB "A:RUSTY:OLD:PICKAXE",PRT_END
 .rugmess EQUB "AN:OLD:THICK:RUG",PRT_END
 .windowmess EQUB "A:WINDOW:FRAME",PRT_END
+
+.shoptalk EQUW beanhere+room
 
 ;;;;;;;;;;;;;;;;;
 
