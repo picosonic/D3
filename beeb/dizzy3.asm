@@ -120,7 +120,8 @@ PRINT "EXTRA from ", ~extradata, " to ", ~extraend-1, "  (", NMI_WORKSPACE-extra
 PRINT "DATA from ", ~datastart, " to ", ~dataend-1, "  (", dataend-datastart, " bytes )"
 PRINT "CODE from ", ~codestart, " to ", ~codeend-1, "  (", codeend-codestart, " bytes )"
 PRINT ""
-PRINT "Main code entry point ", ~entrypoint
+PRINT "Main code entry point : ", ~entrypoint
+PRINT "Objects : ", ~movingdata, "..", ~endofmovingdata, " (", noofmoving, " objs )"
 PRINT ""
 remaining = MODE8BASE-codeend
 PRINT "Bytes left : ", ~remaining, "  (", remaining, " bytes )"
