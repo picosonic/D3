@@ -198,7 +198,7 @@ PAL_GAME  = &01
   INC zptr1:INC zptr1
 
   ; Get plot type
-  LDA frmattri:AND #&018
+  LDA frmattri:AND #&18
   LSR A:LSR A
   STA frmplot
   ; Modify code
@@ -260,7 +260,10 @@ PAL_GAME  = &01
 .noy
 
   LDA frmx:AND #&7F
-  BEQ nox
+  BEQ nox ; Don't advance pointer if it's 0
+  CMP #&5E:BCC onscreen ; Check if frame is onscreen (visible)
+  JMP done
+.onscreen
   TAX
 .xloop
   LDA zptr3:CLC:ADC #&08:STA zptr3:STA zptr2

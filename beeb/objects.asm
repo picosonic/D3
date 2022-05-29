@@ -200,6 +200,7 @@ daisy1 = 19
 .dozyfloathere
  EQUB 45,dozyfloat,68 ,139,32,0  ,0  ,0   ,0,      0 ,0 ,7+64+16+8,45,68,139,32
 
+
  EQUB 36,pickupable,68 ,144,19
  EQUW                jugmess,proxjug
  EQUB                 0 ,0 ,5+64,36,68 ,144,19
