@@ -196,7 +196,7 @@ PAL_GAME  = &01
 
   ; Move on past frame header
   INC zptr1:INC zptr1
-  LDA zptr1:CMP #03:BCS samepageb
+  LDA zptr1:CMP #02:BCS samepageb ; If it's >= 2 then no page crossed
   INC zptr1+1
 .samepageb
 
