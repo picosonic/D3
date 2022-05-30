@@ -48,6 +48,10 @@ INCLUDE "init.asm"
   LDA #lo(youfoundcoinmess):STA zptr5
   JSR windowrou
 
+  ;LDA #hi(inventory):STA zptr5+1
+  ;LDA #lo(inventory):STA zptr5
+  ;JSR prtmessage
+
   JSR waitabit
 
   JMP drawloop

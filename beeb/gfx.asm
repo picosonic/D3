@@ -568,14 +568,16 @@ PAL_GAME  = &01
 
 .titlescreen
 {
+  ; Print all the title screen text
   LDA #hi(startmess):STA zptr5+1
   LDA #lo(startmess):STA zptr5
   JSR prtmessage
 
+  ; Dizzy logo
   LDA #58:STA frmx
   LDA #57:STA frmy
   LDA #7:STA frmattri
-  LDA #27:STA frmno ; Dizzy logo
+  LDA #27:STA frmno
   JSR drawframe
 
   RTS
@@ -615,6 +617,7 @@ PAL_GAME  = &01
   ;
   ; Pointer to message in zptr5
 
+  ; Disable clipping so we can print room name, lives and coin counts
   LDA #&00:STA cliptoplayarea
 
   LDY #&00

@@ -460,6 +460,12 @@ noofmoving = (endofmovingdata-movingdata)/16
   EQUB PRT_XY+23,96,"YOU:FOUND"
   EQUB PRT_XY+26,104,"A:COIN",PRT_END
 
+.inventory
+  EQUB PRT_PEN+4,PRT_XY+6,56,PRT_DRAWBOX,22,6,PRT_XY+16,76
+
+.carrymess
+  EQUB PRT_PEN+5,"YOU:ARE:CARRYING",PRT_PEN+2,PRT_END
+
 .resetmoving
 {
   LDA #lo(movingdata):STA zptr4
