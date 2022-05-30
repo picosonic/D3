@@ -196,6 +196,9 @@ PAL_GAME  = &01
 
   ; Move on past frame header
   INC zptr1:INC zptr1
+  LDA zptr1:CMP #03:BCS samepageb
+  INC zptr1+1
+.samepageb
 
   ; Get plot type
   LDA frmattri:AND #&18
