@@ -33,6 +33,10 @@ INCLUDE "init.asm"
   ; Default to drawing frames clipped to play area
   LDA #&01:STA cliptoplayarea
 
+  ; Reset coins
+  LDA #&FF:STA coins
+  JSR addtocoins
+
   JSR resetmoving ; Put all the objects back to their starting positions
 
 .drawloop
@@ -44,6 +48,7 @@ INCLUDE "init.asm"
   JSR waitabit
   LDA #87:JSR drawroom
 
+  JSR addtocoins
   LDA #hi(youfoundcoinmess):STA zptr5+1
   LDA #lo(youfoundcoinmess):STA zptr5
   JSR windowrou

@@ -74,6 +74,9 @@ GUARD &0800
 ; Non-zero to clip draw routine to play area
 .cliptoplayarea EQUB 0
 
+; Count of collected coins
+.coins EQUB 0
+
 .end_of_vars
 
 ; ---------------------------------------------------------

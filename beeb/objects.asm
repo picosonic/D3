@@ -493,3 +493,36 @@ noofmoving = (endofmovingdata-movingdata)/16
 
   RTS
 }
+
+.addtocoins
+{
+  INC coins
+
+  ; Determine how many 10s
+  LDX #0:LDA coins
+.more10s
+  CMP #11:BCC nomore10s
+  SBC #10:INX
+  JMP more10s
+.nomore10s
+  PHA:TXA:CLC:ADC #'0':STA noofcoinsmess
+
+  ; Determine how many units
+  LDX #0:PLA
+.moreunits
+  CMP #2:BCC nomoreunits
+  SBC #1:INX
+  JMP moreunits
+.nomoreunits
+  TXA:CLC:ADC #'0':STA noofcoinsmess+1
+
+  ; Draw the full coins message
+  LDA #hi(coinsmess):STA zptr5+1
+  LDA #lo(coinsmess):STA zptr5
+  JSR prtmessage
+
+  RTS
+
+.coinsmess EQUB PRT_PEN+6, PRT_XY+46,8
+.noofcoinsmess EQUB 0, 0, PRT_END
+}
