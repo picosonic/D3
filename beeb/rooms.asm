@@ -138,6 +138,20 @@
   EQUW roomdata95,roomdata96,roomdata97,roomdata98,roomdata99
   EQUW roomdata100,roomdataend
 
+; Set up for room banks to include roomdata, roomname, roommessages
+;
+;roomstart = *
+;ORG roomstart
+;GUARD roomend
+;CLEAR roomstart, roomend
+;
+;.bankNstart
+; ....
+;.bankNend
+;
+; Then after each room bank definition
+;SAVE "bankN", bankNstart, bankNend
+
 .roomdata0 INCBIN "room0.bin"
 .roomdata1
 .roomdata2
