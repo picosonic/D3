@@ -195,6 +195,13 @@ DD03 - DD3F (DIZZY logo)
   48x20 pixels
 
 DF3D - F1A8 @ DIZZYFRM.DAT
+  39 masked frames
+  2 x front
+  7 x jump up
+  8 x walk left
+  8 x walk right
+  7 x spin left
+  7 x spin right
 
 DFB0 - F19E (Dizzy sprite + masks)
   24x20 pixels (48)
