@@ -523,6 +523,6 @@ noofmoving = (endofmovingdata-movingdata)/16
 
   RTS
 
-.coinsmess EQUB PRT_PEN+6, PRT_XY+46,8
+.coinsmess EQUB PRT_PEN+4, PRT_XY+46,8
 .noofcoinsmess EQUB 0, 0, PRT_END
 }
