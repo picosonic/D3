@@ -124,6 +124,11 @@ MODE6BASE = &6000
 MODE7BASE = &7C00
 ROMSBASE = &8000
 
+; OSFIND open modes
+OPENIN = &40
+OPENOUT = &80
+OPENINOUT = &C0
+
 ; Zero page availibility
 ; &00 to &6F - available to machine code programs not using BASIC
 ; &70 to &8F - reserved by BASIC for the user
