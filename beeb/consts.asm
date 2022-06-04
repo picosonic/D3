@@ -27,3 +27,4 @@ PRT_PEN = 16
 
 ; Room related
 ROOM_EMPTY = 70
+BIGGESTROOM = 321
