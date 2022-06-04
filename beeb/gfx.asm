@@ -410,7 +410,35 @@ PAL_GAME  = &01
 
   RTS
 
+.roomlen
+  EQUW &00
+
 .roomok
+  ; Determine room length
+  SEC
+  LDA nextroomptr:SBC roomptr:STA roomlen
+  LDA nextroomptr+1:SBC roomptr+1:STA roomlen+1
+
+  ; Load the data for this room
+  LDA roomptr:STA fcb+9
+  LDA roomptr+1:STA fcb+10
+  LDA #lo(roomdata):STA fcb+1:STA roomptr
+  LDA #hi(roomdata):STA fcb+2:STA roomptr+1
+  LDA roomlen:STA fcb+5
+  LDA roomlen+1:STA fcb+6
+
+  ; See if this is the room already loaded
+  LDA fcb:CMP roomno:BEQ loaded
+
+  LDX #lo(fcb):LDY #hi(fcb)
+  LDA #3 ; Get bytes from media using new sequential pointer
+  JSR OSGBPB
+
+.loaded
+  ; Add offset
+  CLC
+  LDA roomptr:ADC roomlen:STA nextroomptr
+  LDA roomptr+1:ADC roomlen+1:STA nextroomptr+1
 
   ; Set up defaults
   LDA #&00:STA frmattri:STA ztmp6

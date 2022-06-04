@@ -39,27 +39,54 @@ INCLUDE "init.asm"
 
   JSR resetmoving ; Put all the objects back to their starting positions
 
-.drawloop
-  LDA #0:JSR drawroom
-  JSR waitabit
-  LDA #36:JSR drawroom
-  JSR waitabit
-  LDA #52:JSR drawroom
-  JSR waitabit
-  LDA #87:JSR drawroom
+  ; Open roomdata file
+  LDX #lo(roomdatafn)
+  LDY #hi(roomdatafn)
+  LDA #OPENIN
+  JSR OSFIND
+  STA fcb ; Store file handle
 
-  JSR addtocoins
-  LDA #hi(youfoundcoinmess):STA zptr5+1
-  LDA #lo(youfoundcoinmess):STA zptr5
-  JSR windowrou
+  LDA #00:STA loadedroom
+.drawloop
+  LDA loadedroom:JSR drawroom
+  JSR waitabit
+
+  ;JSR addtocoins
+  ;LDA #hi(youfoundcoinmess):STA zptr5+1
+  ;LDA #lo(youfoundcoinmess):STA zptr5
+  ;JSR windowrou
 
   ;LDA #hi(inventory):STA zptr5+1
   ;LDA #lo(inventory):STA zptr5
   ;JSR prtmessage
 
-  JSR waitabit
+.nextroom
+  INC loadedroom
 
+  ; Check for overflow
+  LDA loadedroom:CMP #102:BNE keepgoing
+  LDA #&00:STA loadedroom
+.keepgoing
+
+  ; Set up pointer to data for this room
+  LDA loadedroom:ASL A:TAY
+  LDA roomtable, Y:STA roomptr
+  LDA roomtable+1, Y:STA roomptr+1
+
+  ; Set up pointer to data for next room
+  LDA roomtable+2, Y:STA nextroomptr
+  LDA roomtable+3, Y:STA nextroomptr+1
+
+  ; If this is an empty room, then skip it
+  LDA roomptr+1:CMP nextroomptr+1:BNE lroomok
+  LDA roomptr:CMP nextroomptr:BNE lroomok
+  JMP nextroom
+
+.lroomok
   JMP drawloop
+
+.loadedroom
+  EQUB &00
 
 ; Wait for 256 vblanks ~ 5 seconds @ 50Hz
 .waitabit
@@ -119,6 +146,7 @@ EQUS "REM D3 build ", TIME$ ; Add a build date
 SAVE "!BOOT", plingboot, plingend
 PUTBASIC "loader.bas", "$.LOADER"
 PUTFILE "EXOSCR", "$.EXOSCR", EXO_LOAD_ADDR
+PUTFILE "roomdata.bin", "$.RMDATA", 0
 SAVE "EXTRA", extradata, extraend
 SAVE "DIZZY3", start, codeend, entrypoint
 
