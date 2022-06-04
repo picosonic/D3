@@ -46,7 +46,7 @@ INCLUDE "init.asm"
   JSR OSFIND
   STA fcb ; Store file handle
 
-  LDA #00:STA loadedroom
+  LDA #0:STA loadedroom
 .drawloop
   LDA loadedroom:JSR drawroom
   JSR waitabit
@@ -64,7 +64,7 @@ INCLUDE "init.asm"
   INC loadedroom
 
   ; Check for overflow
-  LDA loadedroom:CMP #102:BNE keepgoing
+  LDA loadedroom:CMP #101:BCC keepgoing
   LDA #&00:STA loadedroom
 .keepgoing
 
