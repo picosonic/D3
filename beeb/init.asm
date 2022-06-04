@@ -2,7 +2,7 @@
   CLD
 
   ; Initialisation
-  LDA #&8C:LDX #&0C:JSR OSBYTE ; Select TAPE filing system with 1200 baud (to turn off DFS)
+  ;LDA #&8C:LDX #&0C:JSR OSBYTE ; Select TAPE filing system with 1200 baud (to turn off DFS)
   LDA #&0F:LDX #&00:JSR OSBYTE ; Flush all buffers
   LDA #&C9:LDX #&01:LDY #&00:JSR OSBYTE ; Kbd irqs off!
   LDA #&04:LDX #&01:JSR OSBYTE ; Disable cursor editing
