@@ -88,6 +88,57 @@ function drawframe(ctx, x, y, framenum, scale, hflip, style, frameplot, clipping
   ctx.restore();
 }
 
+function drawdizzy(ctx, x, y, framenum, scale)
+{
+  if ((framenum<0) || (framenum>=dizzytable.length)) return;
+
+  var offs=dizzytable[framenum];
+  var px=0;
+  var py=0;
+  var fheight=dizzydefs[offs++];
+  var fwidth=24;
+
+  ctx.save();
+
+  offs++;
+
+  for (py=0; py<fheight; py++)
+  {
+    var done=0;
+
+    while ((done*8)<fwidth)
+    {
+      var bitmask=0x80;
+      var mask=dizzydefs[offs++];
+      var data=dizzydefs[offs++];
+
+      while (bitmask>0)
+      {
+        if ((mask&bitmask)==0)
+        {
+          if ((data&bitmask)>0)
+            ctx.fillStyle="#ffffff";
+          else
+            ctx.fillStyle="#000000";
+          
+          drawclippedpixel(ctx, Math.floor(x+(px*scale)), Math.floor(y+(py*scale)), Math.ceil(scale), Math.ceil(scale), true);
+
+        }
+
+        px++;
+
+        bitmask>>=1;
+      }
+
+      done++;
+    }
+    
+    px=0;
+  }
+
+  ctx.restore();
+}
+
 function writestring(ctx, x, y, text, scale, style, clipping)
 {
   for (var i=0; i<text.length; i++)
@@ -269,6 +320,8 @@ function drawroom(roomnum)
     default:
       break;
   }
+  
+  drawdizzy(gs.ctx, 100, 100, roomnum%dizzytable.length, 1);
 }
 
 // Update state
