@@ -14,9 +14,12 @@ var gs={
   acc:0, // accumulated time since last frame
   lasttime:0, // time of last frame
 
-  // Canvas object
+  // Canvas objects
   canvas:null,
   ctx:null,
+
+  dizzycanvas:null,
+  dizzyctx:null,
 
   room:0,
   flames:[], flamerate:4,
@@ -320,8 +323,9 @@ function drawroom(roomnum)
     default:
       break;
   }
-  
-  drawdizzy(gs.ctx, 100, 100, roomnum%dizzytable.length, 1);
+
+  gs.dizzyctx.clearRect(0, 0, gs.dizzycanvas.width, gs.dizzycanvas.height);
+  drawdizzy(gs.dizzyctx, 100, 100, roomnum%dizzytable.length, 1);
 }
 
 // Update state
@@ -433,6 +437,13 @@ function resize()
 
   gs.canvas.style.transformOrigin='0 0';
   gs.canvas.style.transform='scale('+(width/xmax)+')';
+
+  // Dizzy canvas
+  gs.dizzycanvas.style.top=top+"px";
+  gs.dizzycanvas.style.left=left+"px";
+
+  gs.dizzycanvas.style.transformOrigin='0 0';
+  gs.dizzycanvas.style.transform='scale('+(width/xmax)+')';
 }
 
 function updatekeystate(e, dir)
@@ -535,6 +546,9 @@ function startup()
 
   gs.canvas=document.getElementById('canvas');
   gs.ctx=gs.canvas.getContext('2d');
+
+  gs.dizzycanvas=document.getElementById('dizzy');
+  gs.dizzyctx=gs.dizzycanvas.getContext('2d');
 
   resize();
   window.addEventListener("resize", resize);
