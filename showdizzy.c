@@ -82,7 +82,7 @@ int main()
 
         height=framedata[(NUMFRAMES*2)+start];
 
-        printf(" (%dx%d)\n", WIDTH, height);
+        printf(" (%dx%d) / %.2x\n", WIDTH, height, framedata[(NUMFRAMES*2)+start+1]);
 
         // Decode the framedata
         offs=0;
