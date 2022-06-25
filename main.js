@@ -18,15 +18,53 @@ var gs={
   canvas:null,
   ctx:null,
 
+  // Dizzy
+  keystate:0, // keyboard bitfield [action][down][right][up][left]
   dizzycanvas:null,
   dizzyctx:null,
+  x:124, // x position
+  y:154, // y position
+  px:0, // previous x position
+  py:0, // previous y position
+  vs:0, // vertical speed
+  hs:0, // horizontal speed
+  jump:false, // jumping
+  fall:false, // falling
+  dir:0, // direction (-1=left, 0=none, 1=right)
+  maxvs:1, // max vertical speed
+  maxhs:1, // max horizontal speed
+  walkspeed:2, // walking speed
+  jumpspeed:6, // jumping speed
+  sequence:0, // sequence being used for animation
+  animation:0, // current frame within sequence
+  animdelay:6, // frames until next animation frame
 
-  room:0,
+  // physics in pixels per frame @ 60fps
+  gravity:0.5,
+  terminalvelocity:5,
+  friction:1,
+
+  // Room
+  room:36,
+  newroom:false,
   flames:[], flamerate:4,
   water:[], waterrate:6,
+  solid:[],
 
   debug:false
 };
+
+// Clear both keyboard input state
+function clearinputstate()
+{
+  gs.keystate=0;
+}
+
+// Check if an input is set in keyboard input state
+function ispressed(keybit)
+{
+  return ((gs.keystate&keybit)!=0);
+}
 
 function drawclippedpixel(ctx, x, y, width, height, clipping)
 {
@@ -198,6 +236,7 @@ function drawroom(roomnum)
 
   gs.water=[];
   gs.flames=[];
+  gs.solid=[];
 
   gs.ctx.fillStyle="#000000";
   gs.ctx.fillRect(border, header+border, xmax-(border*2), ymax-header-(border*2));
@@ -231,8 +270,8 @@ function drawroom(roomnum)
 
     drawframe(gs.ctx, (framex*4)-128, framey, framenum, 1, framereverse, getpalette(framecolour), frameplot, true);
 
-    // When in debug, show where the solid frames are
-    if ((gs.debug) && (framesolid))
+    // Check for solid
+    if (framesolid)
     {
       var offs=frametable[framenum];
       var fx=(framex*4)-128;
@@ -246,8 +285,14 @@ function drawroom(roomnum)
       if ((fx+fwidth)>(xmax-border)) fwidth=((xmax-border)-fx); // right
       if ((fy+fheight)>(ymax-border)) fheight=((ymax-border)-fy); // bottom
 
-      gs.ctx.fillStyle="rgba(255,0,255,0.5)";
-      gs.ctx.fillRect(fx, fy, fwidth, fheight);
+      gs.solid.push({"x":fx,"y":fy,"w":fwidth,"h":fheight});
+
+      // When in debug, show where the solid frames are
+      if (gs.debug)
+      {
+        gs.ctx.fillStyle="rgba(255,0,255,0.5)";
+        gs.ctx.fillRect(fx, fy, fwidth, fheight);
+      }
     }
   }
 
@@ -323,14 +368,282 @@ function drawroom(roomnum)
     default:
       break;
   }
+}
+
+function setsequence(seq)
+{
+  if (gs.sequence!=seq)
+  {
+    gs.sequence=seq;
+    gs.animation=0;
+  }
+}
+
+// Handle slowing player down by friction
+function standcheck()
+{
+  // When no horizontal movement pressed, slow down by friction
+  if (((!ispressed(1)) && (!ispressed(4))) ||
+      ((ispressed(1)) && (ispressed(4))))
+  {
+    // Going left
+    if (gs.dir==-1)
+    {
+      if (gs.hs<0)
+      {
+        gs.hs+=gs.friction;
+      }
+      else
+      {
+        gs.hs=0;
+        gs.dir=0;
+        setsequence(0);
+      }
+    }
+
+    // Going right
+    if (gs.dir==1)
+    {
+      if (gs.hs>0)
+      {
+        gs.hs-=gs.friction;
+      }
+      else
+      {
+        gs.hs=0;
+        gs.dir=0;
+        setsequence(0);
+      }
+    }
+  }
+}
+
+// When jumping and vertical speed positive (down) set to falling
+function jumpcheck()
+{
+  // When jumping ..
+  if (gs.jump)
+  {
+    // Check if loosing altitude
+    if (gs.vs>=0)
+    {
+      gs.jump=false;
+      gs.fall=true;
+    }
+  }
+}
+
+// Check if character collides with solid background
+function collide(x, y)
+{
+  // Look through the room for a collision
+  for (var i=0; i<gs.solid.length; i++)
+  {
+    if (((x+22)>=gs.solid[i].x) && // right of player vs left of object
+        ((y+20)>=gs.solid[i].y) && // bottom of player vs top of object
+        (x<=(gs.solid[i].x+gs.solid[i].w)) && // left of player vs right of object
+        (y<=(gs.solid[i].y+gs.solid[i].h))) // top of player vs bottom of object
+      return true;
+  }
+    
+  return false;
+}
+
+// Check for player being on the ground
+function groundcheck()
+{
+  // Check we are on the ground
+  if (collide(gs.x, gs.y+1))
+  {
+    gs.vs=0;
+    gs.jump=false;
+    gs.fall=false;
+    
+    // Check for jump pressed
+    if (ispressed(16))
+    {
+      gs.jump=true;
+      gs.vs=-gs.jumpspeed;
+    }
+  }
+  else
+  {
+    // Check for jump pressed
+    if ((ispressed(16)) && (gs.jump==false) && (gs.fall==false))
+    {
+      gs.jump=true;
+      gs.vs=-gs.jumpspeed;
+    }
+
+    // We're in the air, increase falling speed until we're at terminal velocity
+    if (gs.vs<gs.terminalvelocity)
+      gs.vs+=gs.gravity;
+
+    // Set falling flag when vertical speed is positive
+    if (gs.vs>0)
+      gs.fall=true;
+  }
+}
+
+// Move character by up to horizontal/vertical speeds, stopping when a collision occurs
+function collisioncheck()
+{
+  // check for horizontal collisions
+  if ((!gs.newroom) && (collide(gs.x+gs.hs, gs.y)))
+  {
+    // A collision occured, so move the character until it hits
+    while (!collide(gs.x+(gs.hs>0?1:-1), gs.y))
+      gs.x+=(gs.hs>0?1:-1);
+
+    // Stop horizontal movement
+    gs.hs=0;
+  }
+  gs.x+=gs.hs;
+  
+  // check for vertical collisions
+  if ((!gs.newroom) && (collide(gs.x, gs.y+gs.vs)))
+  {
+    // A collision occured, so move the character until it hits
+    while (!collide(gs.x, gs.y+(gs.vs>0?1:-1)))
+      gs.y+=(gs.vs>0?1:-1);
+
+    // Stop vertical movement
+    gs.vs=0;
+  }
+  gs.y+=gs.vs;
+}
+
+// Changing to a new room
+function newroom()
+{
+  // Check we have not left the map entirely
+  if ((gs.room<0) || (gs.room>100))
+  {
+    gs.room=36;
+    gs.x=124;
+    gs.y=154;
+    gs.hs=0;
+    gs.vs=0;
+    gs.dir=0;
+    gs.jump=false;
+    gs.fall=false;
+  }
+
+  gs.newroom=true;
+
+  drawroom(gs.room);
+}
+
+// Check for player leaving room
+function offscreencheck()
+{
+  // Going left
+  if (gs.x<8)
+  {
+    gs.x=225;
+    gs.room--;
+    newroom();
+  }
+
+  // Going right
+  if (gs.x>225)
+  {
+    gs.x=8;
+    gs.room++;
+    newroom();
+  }
+  
+  // Going up
+  if (gs.y<26)
+  {
+    gs.y=154;
+    gs.room+=16;
+    newroom();
+  }
+  
+  // Going down
+  if (gs.y>162)
+  {
+    gs.y=50;
+    gs.room-=16;
+    newroom();
+  }
+}
+
+// Update the position of player
+function updatemovements()
+{
+  // If newroom and not colliding, reset flag
+  if ((gs.newroom) && (!collide(gs.x, gs.y)))
+    gs.newroom=false;
+
+  // Check if the player has left the room
+  offscreencheck();
+
+  // Check if the player on the ground or falling
+  groundcheck();
+
+  // Process jumping
+  jumpcheck();
+
+  // Move payer by appropriate amount, up to a collision
+  collisioncheck();
+
+  // If no input, slow the player using friction
+  standcheck();
+
+  // Move player when a key is pressed
+  if (gs.keystate!=0)
+  {
+    // Left key
+    if ((ispressed(1)) && (!ispressed(4)))
+    {
+      gs.hs=-gs.walkspeed;
+      gs.dir=-1;
+      setsequence((gs.jump||gs.fall)?4:1);
+    }
+
+    // Right key
+    if ((ispressed(4)) && (!ispressed(1)))
+    {
+      gs.hs=gs.walkspeed;
+      gs.dir=1;
+      setsequence((gs.jump||gs.fall)?5:2);
+    }
+  }
+  
+  if ((gs.x!=gs.px) || (gs.y!=gs.py))
+  {
+    gs.px=gs.x;
+    gs.py=gs.y;
+  }
+
+  if (gs.dir==0)
+  {
+    if ((gs.jump) || (gs.fall))
+      setsequence(3);
+    
+    if ((!gs.jump) && (!gs.fall))
+      setsequence(0);
+  }
 
   gs.dizzyctx.clearRect(0, 0, gs.dizzycanvas.width, gs.dizzycanvas.height);
-  drawdizzy(gs.dizzyctx, 100, 100, roomnum%dizzytable.length, 1);
+  drawdizzy(gs.dizzyctx, gs.x, gs.y, sequences[gs.sequence][gs.animation], 1);
+  
+  gs.animdelay--;
+  if (gs.animdelay<=0)
+  {
+    gs.animation=((gs.animation+1)%sequences[gs.sequence].length);
+    gs.animdelay=6;
+  }
 }
 
 // Update state
 function update()
 {
+  // Apply keystate/physics to player
+  updatemovements();
+
   // Animate flames
   for (var i=0; i<gs.flames.length; i++)
   {
@@ -454,14 +767,9 @@ function updatekeystate(e, dir)
     case 65: // A
     case 90: // Z
       if (dir==1)
-      {
-        if (gs.room>0)
-        {
-          gs.room--;
-
-          drawroom(gs.room);
-        }
-      }
+        gs.keystate|=1;
+      else
+        gs.keystate&=~1;
       e.preventDefault();
       break;
 
@@ -469,14 +777,9 @@ function updatekeystate(e, dir)
     case 87: // W
     case 59: // semicolon
       if (dir==1)
-      {
-        if ((gs.room+16)<=maxroom)
-        {
-          gs.room+=16;
-
-          drawroom(gs.room);
-        }
-      }
+        gs.keystate|=2;
+      else
+        gs.keystate&=~2;
       e.preventDefault();
       break;
 
@@ -484,12 +787,9 @@ function updatekeystate(e, dir)
     case 68: // D
     case 88: // X
       if (dir==1)
-        if (gs.room<maxroom)
-        {
-          gs.room++;
-
-          drawroom(gs.room);
-        }
+        gs.keystate|=4;
+      else
+        gs.keystate&=~4;
       e.preventDefault();
       break;
 
@@ -497,14 +797,18 @@ function updatekeystate(e, dir)
     case 83: // S
     case 190: // dot
       if (dir==1)
-      {
-        if (gs.room>16)
-        {
-          gs.room-=16;
+        gs.keystate|=8;
+      else
+        gs.keystate&=~8;
+      e.preventDefault();
+      break;
 
-          drawroom(gs.room);
-        }
-      }
+    case 13: // enter
+    case 32: // space
+      if (dir==1)
+        gs.keystate|=16;
+      else
+        gs.keystate&=~16;
       e.preventDefault();
       break;
 
