@@ -27,8 +27,13 @@ if [ ${srcdate} -gt ${beebdate} ]
 then
   if [ ! -x ${img2beeb} ]
   then
-    echo "Can't find img2beeb"
-    exit 1
+    make img2beeb
+
+    if [ ! -x ${img2beeb} ]
+    then
+      echo "Can't find img2beeb"
+      exit 1
+    fi
   fi
 
   if [ ! -x ${exo} ]
