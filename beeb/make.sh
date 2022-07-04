@@ -60,4 +60,5 @@ then
 fi
 
 beebasm -v -i exoloader.asm
+beebasm -v -i speech.asm
 beebasm -v -i dizzy3.asm -do dizzy3.ssd -opt 3 -title 'DIZZY3'

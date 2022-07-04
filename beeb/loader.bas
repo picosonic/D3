@@ -18,8 +18,7 @@ VDU19,2,2,0,0;
 VDU19,3,7,0,0;
 :
 */EXOSCR
-*FX15
-A=INKEY(500)
+*/SPEECH
 :
 REM Load extra datafile
 *L.EXTRA
