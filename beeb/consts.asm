@@ -5,8 +5,8 @@ MODE8BASE  = &5000
 
 PLAYAREA = MODE8BASE+(12*256)
 
-MAIN_LOAD_ADDR = &1300
-EXO_LOAD_ADDR = &1900
+MAIN_LOAD_ADDR = DFS_OPEN_FILE_BUFFER2 ; We only need 1 concurrent open file, so load where 2nd file buffer starts
+EXO_LOAD_ADDR = DFS_PAGE
 
 ; Colours (as per Spectrum offsets)
 PAL_BLACK = 0

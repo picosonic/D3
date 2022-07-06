@@ -126,8 +126,8 @@ INCLUDE "init.asm"
 
 .codeend
 
-ORG &0900
-GUARD &0D00
+ORG SERIAL_OUT_BUFFER
+GUARD NMI_WORKSPACE
 .extradata
 INCLUDE "extra.asm"
 .extraend
@@ -136,7 +136,7 @@ ORG &00
 CLEAR &00, &FF
 .plingboot
 EQUS "*BASIC", &0D ; Reset to BASIC
-EQUS "PAGE=&1300", &0D ; Set PAGE
+EQUS "PAGE=&1300", &0D ; Set PAGE to second file buffer (as we only use 1 file at a time)
 EQUS "*FX21", &0D ; Flush buffer
 EQUS "CLOSE#0:CH.", '"', "LOADER", '"', &0D ; Close "!BOOT" and run the main code
 EQUS "REM https://github.com/picosonic/D3/", &0D ; Repo URL

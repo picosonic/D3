@@ -1,7 +1,7 @@
 ; Zero page variables
 
-ORG &0000
-GUARD &0090
+ORG ZEROPAGE
+GUARD ZP_ECONET_WORKSPACE
 
 .zpstart
 
@@ -66,8 +66,8 @@ GUARD &0090
 ; ---------------------------------------------------------
 ; Variables in LANGUAGE workspace, &400 to &7FF
 
-ORG &0400
-GUARD &0800
+ORG LANGUAGE_WORKSPACE
+GUARD SOUND_WORKSPACE
 
 .start_of_vars
 
@@ -82,10 +82,5 @@ GUARD &0800
 ; ---------------------------------------------------------
 ; Variables in printer buffer workspace, &880 to &8BF
 
-ORG &0880
-GUARD &08C0
-
-; ---------------------------------------------------------
-; Variables, &E00 to MAIN_LOAD_ADDR
-
-ORG &E00
+ORG PRINTER_BUFFER
+GUARD ENVELOPE_DEFS
