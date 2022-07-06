@@ -33,6 +33,7 @@
   LDA #&0E:LDX #&04:JSR OSBYTE ; Enable vsync event handler
 
   ; Clear variables in language workspace
+  LDX #&00
 .clearvars
   STA LANGUAGE_WORKSPACE,X
   STA LANGUAGE_WORKSPACE+&100,X
