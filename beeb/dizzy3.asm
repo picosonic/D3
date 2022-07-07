@@ -146,6 +146,7 @@ EQUS "REM D3 build ", TIME$ ; Add a build date
 SAVE "!BOOT", plingboot, plingend
 PUTBASIC "loader.bas", "$.LOADER"
 PUTFILE "EXOSCR", "$.EXOSCR", EXO_LOAD_ADDR
+PUTFILE "MELODY", "$.MELODY", EXO_LOAD_ADDR
 PUTFILE "SPEECH", "$.SPEECH", EXO_LOAD_ADDR
 PUTFILE "roomdata.bin", "$.RMDATA", 0
 SAVE "EXTRA", extradata, extraend

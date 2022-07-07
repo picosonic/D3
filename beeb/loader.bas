@@ -19,6 +19,7 @@ VDU19,3,7,0,0;
 :
 */EXOSCR
 */SPEECH
+REM */MELODY
 :
 REM Load extra datafile
 *L.EXTRA
