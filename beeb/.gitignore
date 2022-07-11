@@ -2,8 +2,12 @@
 XSCR
 loadscr
 EXOSCR
+
+# Generted data files
 SPEECH
 MELODY
+RMDATA
+RMTABLE
 
 # Utils
 img2beeb

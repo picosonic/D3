@@ -148,7 +148,7 @@ PUTBASIC "loader.bas", "$.LOADER"
 PUTFILE "EXOSCR", "$.EXOSCR", EXO_LOAD_ADDR
 PUTFILE "MELODY", "$.MELODY", EXO_LOAD_ADDR
 PUTFILE "SPEECH", "$.SPEECH", EXO_LOAD_ADDR
-PUTFILE "roomdata.bin", "$.RMDATA", 0
+PUTFILE "RMDATA", "$.RMDATA", 0
 SAVE "EXTRA", extradata, extraend
 SAVE "DIZZY3", start, codeend, entrypoint
 

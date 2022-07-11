@@ -1,3 +1,4 @@
+; Room data filename
 .roomdatafn
 EQUS "RMDATA", &0D
 
@@ -126,7 +127,7 @@ EQUB &00, &00, &00, &00 ; Sequential pointer (low byte first)
 .room100 EQUB ":::::THE:ATTIC::::::", PRT_END
 
 .roomtable
-INCBIN "roomtable.bin"
+INCBIN "RMTABLE"
 
 .roomdata
 SKIP BIGGESTROOM
