@@ -443,7 +443,9 @@ PAL_GAME  = &01
   ; Set up defaults
   LDA #&00:STA frmattri:STA ztmp6
 
-  TAY
+  ; Skip attributes
+  TAY:LDA (roomptr), Y:TAY
+
 .loop
   LDA (roomptr), Y:STA frmno:INY
   LDA (roomptr), Y:STA frmx:INY
@@ -549,9 +551,8 @@ PAL_GAME  = &01
   JSR prtmessage
 
   ; Set pointer to room name
-  LDA roomno:ASL A:TAY
-  LDA roomnames, Y:STA zptr5
-  LDA roomnames+1, Y:STA zptr5+1
+  LDA #hi(roomdata+1):STA zptr5+1
+  LDA #lo(roomdata+1):STA zptr5
   JSR prtmessage
 
   RTS
