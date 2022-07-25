@@ -22,8 +22,9 @@ var gs={
   keystate:0, // keyboard bitfield [action][down][right][up][left]
   dizzycanvas:null,
   dizzyctx:null,
-  x:124, // x position
-  y:154, // y position
+  x:124, // x position, from left
+  y:154, // y position, from top
+  h:0, // current sprite height
   px:0, // previous x position
   py:0, // previous y position
   vs:0, // vertical speed
@@ -138,6 +139,8 @@ function drawdizzy(ctx, x, y, framenum, scale)
   var py=0;
   var fheight=dizzydefs[offs++];
   var fwidth=24;
+
+  gs.h=fheight;
 
   ctx.save();
 
@@ -520,8 +523,8 @@ function newroom()
   if ((gs.room<0) || (gs.room>100))
   {
     gs.room=36;
-    gs.x=124;
-    gs.y=154;
+    gs.x=124; // 46
+    gs.y=154; // 168
     gs.hs=0;
     gs.vs=0;
     gs.dir=0;
