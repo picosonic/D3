@@ -19,6 +19,7 @@ INCBIN "framedefs.bin"
 
 INCLUDE "rooms.asm"
 INCLUDE "objects.asm"
+INCLUDE "dizzyfrm.asm"
 .dataend
 
 .codestart

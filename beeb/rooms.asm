@@ -9,7 +9,7 @@ EQUB &00, &00, &00, &00 ; Pointer to data (low byte first)
 EQUB &00, &00, &00, &00 ; Number of bytes to transfer (low byte first)
 EQUB &00, &00, &00, &00 ; Sequential pointer (low byte first)
 
-.skyroomname
+.emptyroomname
 EQUB "::::::::SKY:::::::::", PRT_END
 
 .roomtable
