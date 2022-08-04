@@ -28,3 +28,8 @@ PRT_PEN = 16
 ; Room related
 ROOM_EMPTY = 70
 BIGGESTROOM = 342
+
+; Frame plotting modes
+PLOT_NORMAL = &00
+PLOT_OR = &08
+PLOT_XOR = &10
