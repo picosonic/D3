@@ -148,6 +148,41 @@ PAL_GAME  = &01
   RTS
 }
 
+; Draw Dizzy
+.drawdizzy
+{
+  ; Save registers
+  PHA
+  TXA:PHA
+  TYA:PHA
+
+  ; Get pointer to frame data
+  LDA #hi(dizzytable):STA zptr2+1
+  LDA #lo(dizzytable):STA zptr2
+
+  LDA frmno
+  ASL A:TAY ; Y = A * 2
+
+  ; Get low byte of pointer
+  LDA (zptr2), Y
+  STA zptr1
+
+  ; Get high byte of pointer
+  INY:LDA (zptr2), Y
+  STA zptr1+1
+
+  ; Set (width/4)
+  LDA #DIZZY_WIDTH/4:STA frmwidth
+
+  ; Get height
+  LDY #&00:LDA (zptr1), Y:STA frmheight
+
+  ; Set frame attributes
+  LDA #PAL_WHITE+PLOT_XOR:STA frmattri
+
+  JMP render
+}
+
 ; Draw a frame to play area
 .drawframe
 {
@@ -172,12 +207,14 @@ PAL_GAME  = &01
   BPL nochange
   INC zptr2+1
 .nochange
-  ASL A:TAY
+  ASL A:TAY ; Y = A * 2
 
+  ; Get high byte of offset
   INY:LDA (zptr2), Y
   CMP #&FF:BEQ jdone ; Don't draw NULL frames
   CLC:ADC #hi(framedefs):STA zptr1+1
 
+  ; Get low byte of offset
   DEY:LDA (zptr2), Y
   CLC:ADC #lo(framedefs):STA zptr1
   BCC samepage
@@ -189,6 +226,8 @@ PAL_GAME  = &01
 
   ; Get height
   INY:LDA (zptr1), Y:STA frmheight
+
+.^render
 
   ; Get colour mask
   LDA frmattri:LSR A:AND #&03:TAX
@@ -204,6 +243,7 @@ PAL_GAME  = &01
   LDA frmattri:AND #&18
   LSR A:LSR A
   STA frmplot
+
   ; Modify code
   TAY
   LDA plot_modes, Y:STA plot_high:STA plot_low
@@ -487,6 +527,14 @@ PAL_GAME  = &01
 
   ; Show room in game palette
   LDA #PAL_GAME:JSR setpal
+
+  ;;;;; TEMPORARILY DRAW SOME DIZZY FRAMES TO TEST ;;;;;
+  LDA roomno:AND #&1F:STA frmno
+  LDA #184:STA frmx
+  LDA #136:STA frmy
+  LDA #PAL_WHITE:STA frmattri
+  JSR drawdizzy
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
   RTS
 }
