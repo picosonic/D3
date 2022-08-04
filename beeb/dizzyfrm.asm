@@ -1,3 +1,5 @@
+DIZZY_WIDTH = (3*8)
+
 .dizzytable
 EQUW frame00, frame01, frame02, frame03, frame04, frame05, frame06, frame07, frame08
 EQUW frame09, frame10, frame11, frame12, frame13, frame14, frame15, frame16, frame17
