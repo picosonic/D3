@@ -69,7 +69,7 @@ var roomtable=[
 {"offs":0x14bd,"len":179,"name":":::THE:WEST:WING::::"},
 {"offs":0x1570,"len":246,"name":"::THE:BANQUET:HALL::"},
 {"offs":0x1666,"len":172,"name":":::THE:EAST:WING::::"},
-{"offs":0x1712,"len":0,"name":""},
+{"offs":0x1712,"len":0,"name":"::::::::SKY:::::::::"}, // emptyroom
 {"offs":0x1712,"len":203,"name":"KEEP:OUT@:DOZY;S:HUT"},
 {"offs":0x17dd,"len":302,"name":"::::DENZIL;S:PAD::::"},
 {"offs":0x190b,"len":238,"name":":DAISY;S:EMPTY:HUT::"},
@@ -111,7 +111,7 @@ var cointable=[
 {"x":52,"y":102,"room":59},
 {"x":58,"y":136,"room":55},
 {"x":76,"y":128,"room":55},
-{"x":56,"y":72,"room":73},
+{"x":56,"y":72,"room":73}, //
 {"x":82,"y":152,"room":86},
 {"x":44,"y":160,"room":24},
 {"x":36,"y":104,"room":22},
@@ -134,6 +134,6 @@ var cointable=[
 {"x":56,"y":88,"room":75},
 {"x":50,"y":72,"room":40},
 {"x":76,"y":80,"room":72},
-{"x":86,"y":88,"room":52},
+{"x":86,"y":88,"room":52}, //
 {"x":70,"y":64,"room":76}
 ];
