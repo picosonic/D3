@@ -165,7 +165,7 @@ function drawdizzy(ctx, x, y, framenum, scale)
           else
             ctx.fillStyle="#000000";
           
-          drawclippedpixel(ctx, Math.floor(x+(px*scale)), Math.floor(y+(py*scale)), Math.ceil(scale), Math.ceil(scale), true);
+          drawclippedpixel(ctx, Math.floor(x+(px*scale)), Math.floor(y+(20-fheight)+(py*scale)), Math.ceil(scale), Math.ceil(scale), true);
 
         }
 
