@@ -165,7 +165,7 @@ function drawdizzy(ctx, x, y, framenum, scale)
           else
             ctx.fillStyle="#000000";
           
-          drawclippedpixel(ctx, Math.floor(x+(px*scale)), Math.floor(y+(py*scale)), Math.ceil(scale), Math.ceil(scale), true);
+          drawclippedpixel(ctx, Math.floor(x+(px*scale)), Math.floor(y+(20-fheight)+(py*scale)), Math.ceil(scale), Math.ceil(scale), true);
 
         }
 
@@ -829,6 +829,24 @@ function updatekeystate(e, dir)
   }
 }
 
+// Generate water sprites
+function generatewater()
+{
+  for (dframe=92; dframe<96; dframe++)
+  {
+    var orig=frametable[dframe-1];
+    var xor=frametable[dframe];
+    var dwidth=framedefs[orig++]*4;
+    var dheight=framedefs[orig++];
+    xor+=2;
+
+    for (var count=0; count<((dwidth/8)*dheight); count++)
+    {
+      framedefs[xor++]^=framedefs[orig++];
+    }
+  }
+}
+
 // Startup called once when page is loaded
 function startup()
 {
@@ -859,6 +877,8 @@ function startup()
 
   resize();
   window.addEventListener("resize", resize);
+
+  generatewater();
 
   resetobjects();
 
