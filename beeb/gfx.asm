@@ -646,8 +646,9 @@ PAL_GAME  = &01
 .titlescreen
 {
   ; Print all the title screen text
-  LDA #hi(startmess):STA zptr5+1
-  LDA #lo(startmess):STA zptr5
+  LDA #hi(roomdata+22):STA zptr5+1
+  LDA #lo(roomdata+22):STA zptr5
+
   JSR prtmessage
 
   ; Dizzy logo
@@ -658,25 +659,6 @@ PAL_GAME  = &01
   JSR drawframe
 
   RTS
-
-.startmess
-  EQUB PRT_XY+19,49,PRT_PEN+3, "FANTASY:WORLD"
-
-  EQUB PRT_XY+24,80,PRT_PEN+2, "STARRING"
-  EQUB PRT_XY+20,89, "THE:YOLKFOLK"
-  EQUB PRT_XY+20,108,PRT_PEN+5,"D",PRT_XY+22,106,"I",PRT_XY+24,104,"Z"
-  EQUB PRT_XY+26,102,"Z",PRT_XY+28,100,"Y"
-
-  EQUB PRT_XY+35,100,"D",PRT_XY+37,102,"A",PRT_XY+39,104,"I"
-  EQUB PRT_XY+41,106,"S",PRT_XY+43,108,"Y"
-
-  EQUB PRT_XY+9,142, "DENZIL:DYLAN"
-  EQUB PRT_XY+35,136, "DOZY"
-  EQUB PRT_XY+46,136, "GRAND"
-  EQUB PRT_XY+46,144, "DIZZY"
-  EQUB PRT_PEN+6,":"
-
-  EQUB PRT_END
 }
 
 .prtmessage
