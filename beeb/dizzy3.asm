@@ -34,8 +34,11 @@ INCLUDE "init.asm"
   ; Default to drawing frames clipped to play area
   LDA #&01:STA cliptoplayarea
 
+  ; Reset loaded room number
+  LDA #&FF:STA loadedroomno
+
   ; Reset coins
-  LDA #&FF:STA coins
+  STA coins
   JSR addtocoins
 
   JSR resetmoving ; Put all the objects back to their starting positions

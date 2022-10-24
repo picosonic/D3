@@ -460,19 +460,20 @@ PAL_GAME  = &01
   LDA nextroomptr+1:SBC roomptr+1:STA roomlen+1
 
   ; Load the data for this room
-  LDA roomptr:STA fcb+9
-  LDA roomptr+1:STA fcb+10
-  LDA #lo(roomdata):STA fcb+1:STA roomptr
-  LDA #hi(roomdata):STA fcb+2:STA roomptr+1
-  LDA roomlen:STA fcb+5
-  LDA roomlen+1:STA fcb+6
+  LDA roomptr:STA fcb+9                      ; Sequential pointer (offset into file)
+  LDA roomptr+1:STA fcb+10                   ;
+  LDA #lo(roomdata):STA fcb+1:STA roomptr    ; Destination buffer
+  LDA #hi(roomdata):STA fcb+2:STA roomptr+1  ;
+  LDA roomlen:STA fcb+5                      ; Bytes to transfer
+  LDA roomlen+1:STA fcb+6                    ;
 
   ; See if this is the room already loaded
-  LDA fcb:CMP roomno:BEQ loaded
+  LDA loadedroomno:CMP roomno:BEQ loaded
 
   LDX #lo(fcb):LDY #hi(fcb)
-  LDA #3 ; Get bytes from media using new sequential pointer
+  LDA #3 ; Get bytes from media, using new sequential pointer
   JSR OSGBPB
+  LDA roomno:STA loadedroomno ; Mark new room as the currently loaded one
 
 .loaded
   ; Add offset

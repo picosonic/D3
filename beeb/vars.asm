@@ -51,15 +51,16 @@ GUARD ZP_ECONET_WORKSPACE
 .frmlocation EQUW 0
 .frmcolour EQUB 0
 
-.roomno EQUB 0
+.roomno EQUB 0 ; Current room
+.loadedroomno EQUB 0 ; Last room loaded from disk
 
 ; Dizzy position
-.dizzyx EQUB 10 ; X
-.dizzyy EQUB 10 ; Y
-.dizzyfrm EQUB 10 ; Frame
-.dizzyox EQUB 10 ; Old X
-.dizzyoy EQUB 10 ; Old Y
-.dizzyofrm EQUB 10 ; Old frame
+.dizzyx EQUB 0 ; X
+.dizzyy EQUB 0 ; Y
+.dizzyfrm EQUB 0 ; Frame
+.dizzyox EQUB 0 ; Old X
+.dizzyoy EQUB 0 ; Old Y
+.dizzyofrm EQUB 0 ; Old frame
 
 .zpend
 
