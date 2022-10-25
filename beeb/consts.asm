@@ -44,3 +44,7 @@ PAD_START  = &10
 PAD_SELECT = &20
 PAD_B      = &40
 PAD_A      = &80
+
+; String offsets
+STR_roomname = 0
+STR_startmess = 1

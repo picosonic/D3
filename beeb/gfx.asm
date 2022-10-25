@@ -420,6 +420,29 @@ PAL_GAME  = &01
   EOR (zptr2), Y ; Exclusive OR
 }
 
+; Find pointer to string[A] in room string table
+.findroomstr
+{
+  PHA
+
+  LDA #hi(roomdata):STA zptr5+1
+  LDA #lo(roomdata):STA zptr5
+
+  PLA ; Recover offset
+  TAY:INY ; Skip data pointer
+  LDA zptr5:CLC:ADC (zptr5), Y:STA zptr5 ; Increment lo part of pointer
+  
+  BCC samepage ; Check page for overflow
+  INC zptr5+1
+
+.samepage
+
+  ;PLA
+
+.done
+  RTS
+}
+
 .drawroom
 {
   STA roomno ; Backup room number
@@ -600,8 +623,7 @@ PAL_GAME  = &01
   JSR prtmessage
 
   ; Set pointer to room name
-  LDA #hi(roomdata+1):STA zptr5+1
-  LDA #lo(roomdata+1):STA zptr5
+  LDA #STR_roomname:JSR findroomstr
   JSR prtmessage
 
   RTS
@@ -647,9 +669,7 @@ PAL_GAME  = &01
 .titlescreen
 {
   ; Print all the title screen text
-  LDA #hi(roomdata+22):STA zptr5+1
-  LDA #lo(roomdata+22):STA zptr5
-
+  LDA #STR_startmess:JSR findroomstr
   JSR prtmessage
 
   ; Dizzy logo
