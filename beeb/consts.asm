@@ -28,8 +28,19 @@ PRT_PEN = 16
 ; Room related
 ROOM_EMPTY = 70
 BIGGESTROOM = 342
+STARTROOM = 36
 
 ; Frame plotting modes
 PLOT_NORMAL = &00
 PLOT_OR = &08
 PLOT_XOR = &10
+
+; Gamepad equivalent bit flags
+PAD_RIGHT  = &01
+PAD_LEFT   = &02
+PAD_DOWN   = &04
+PAD_UP     = &08
+PAD_START  = &10
+PAD_SELECT = &20
+PAD_B      = &40
+PAD_A      = &80

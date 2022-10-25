@@ -50,47 +50,99 @@ INCLUDE "init.asm"
   JSR OSFIND
   STA fcb ; Store file handle
 
-  LDA #0:STA loadedroom
-.drawloop
-  LDA loadedroom:JSR drawroom
-  JSR waitabit
+  ; Load initial room
+  LDA #STARTROOM:JSR drawroom
 
-  ;JSR addtocoins
-  ;LDA #hi(youfoundcoinmess):STA zptr5+1
-  ;LDA #lo(youfoundcoinmess):STA zptr5
-  ;JSR windowrou
+.gameloop
+{
+  JSR process_inputs
 
-  ;LDA #hi(inventory):STA zptr5+1
-  ;LDA #lo(inventory):STA zptr5
-  ;JSR prtmessage
+  ; See if room changed
+  LDA roomno:CMP loadedroomno:BEQ same
 
-.nextroom
-  INC loadedroom
+  JSR drawroom
+  ; Wait until nothing pressed
+.holdon
+  LDX keys:BNE holdon
 
-  ; Check for overflow
-  LDA loadedroom:CMP #101:BCC keepgoing
-  LDA #&00:STA loadedroom
-.keepgoing
+.same
 
-  ; Set up pointer to data for this room
-  LDA loadedroom:ASL A:TAY
-  LDA roomtable, Y:STA roomptr
-  LDA roomtable+1, Y:STA roomptr+1
+  JMP gameloop
+}
 
-  ; Set up pointer to data for next room
-  LDA roomtable+2, Y:STA nextroomptr
-  LDA roomtable+3, Y:STA nextroomptr+1
+.process_inputs
+{
+  LDX keys
+  BEQ done ; Nothing pressed
 
-  ; If this is an empty room, then skip it
-  LDA roomptr+1:CMP nextroomptr+1:BNE lroomok
-  LDA roomptr:CMP nextroomptr:BNE lroomok
-  JMP nextroom
+.case_right
+  TXA:AND #PAD_RIGHT
+  BEQ case_left
+  INC roomno
 
-.lroomok
-  JMP drawloop
+.case_left
+  TXA:AND #PAD_LEFT
+  BEQ case_up
+  DEC roomno
 
-.loadedroom
-  EQUB &00
+.case_up
+  TXA:AND #PAD_UP
+  BEQ case_down
+  LDA roomno:CLC:ADC #&10:STA roomno
+
+.case_down
+  TXA:AND #PAD_DOWN
+  BEQ checkno
+  LDA roomno:SEC:SBC #&10:STA roomno
+
+.checkno
+  LDA roomno:CMP #101:BCC done
+  LDA #STARTROOM:STA roomno ; Reset
+
+.done
+  RTS
+}
+
+;.drawloop
+  ;LDA loadedroom:JSR drawroom
+  ;JSR waitabit
+;
+  ;;JSR addtocoins
+  ;;LDA #hi(youfoundcoinmess):STA zptr5+1
+  ;;LDA #lo(youfoundcoinmess):STA zptr5
+  ;;JSR windowrou
+;
+  ;;LDA #hi(inventory):STA zptr5+1
+  ;;LDA #lo(inventory):STA zptr5
+  ;;JSR prtmessage
+;
+;.nextroom
+  ;INC loadedroom
+;
+  ;; Check for overflow
+  ;LDA loadedroom:CMP #101:BCC keepgoing
+  ;LDA #&00:STA loadedroom
+;.keepgoing
+;
+  ;; Set up pointer to data for this room
+  ;LDA loadedroom:ASL A:TAY
+  ;LDA roomtable, Y:STA roomptr
+  ;LDA roomtable+1, Y:STA roomptr+1
+;
+  ;; Set up pointer to data for next room
+  ;LDA roomtable+2, Y:STA nextroomptr
+  ;LDA roomtable+3, Y:STA nextroomptr+1
+;
+  ;; If this is an empty room, then skip it
+  ;LDA roomptr+1:CMP nextroomptr+1:BNE lroomok
+  ;LDA roomptr:CMP nextroomptr:BNE lroomok
+  ;JMP nextroom
+;
+;.lroomok
+  ;JMP drawloop
+;
+;.loadedroom
+;  EQUB &00
 
 ; Wait for 256 vblanks ~ 5 seconds @ 50Hz
 .waitabit
