@@ -242,6 +242,7 @@ PAL_GAME  = &01
   ; Get plot type
   LDA frmattri:AND #&18
   LSR A:LSR A
+  CMP #&06:BEQ jdone ; DONT ALLOW PLOT TYPE 6
   STA frmplot
 
   ; Modify code
@@ -432,9 +433,6 @@ PAL_GAME  = &01
   LDA roomtable+2, Y:STA nextroomptr
   LDA roomtable+3, Y:STA nextroomptr+1
 
-  ; Clear palette to hide draw
-  LDA #PAL_BLANK:JSR setpal
-
   ; Clear play area
   JSR clearplayarea
 
@@ -443,10 +441,9 @@ PAL_GAME  = &01
   LDA roomptr:CMP nextroomptr:BNE roomok
 
   ; Write the room name as a blank one
-  LDA #ROOM_EMPTY:JSR writeroomname
+  ;LDA #ROOM_EMPTY:JSR writeroomname ; TODO FIX
 
-  ; Show room in game palette
-  LDA #PAL_GAME:JSR setpal
+  LDA roomno:STA loadedroomno ; Mark new room as the currently loaded one
 
   RTS
 
@@ -454,6 +451,9 @@ PAL_GAME  = &01
   EQUW &00
 
 .roomok
+  ; Clear palette to hide draw
+  LDA #PAL_BLANK:JSR setpal
+
   ; Determine room length
   SEC
   LDA nextroomptr:SBC roomptr:STA roomlen
