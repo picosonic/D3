@@ -46,5 +46,7 @@ PAD_B      = &40
 PAD_A      = &80
 
 ; String offsets
-STR_roomname = 0
-STR_startmess = 1
+STR_roomname = 1
+
+; Room 0
+STR_startmess = 2

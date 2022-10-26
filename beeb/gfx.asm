@@ -447,7 +447,7 @@ PAL_GAME  = &01
   LDA #lo(roomdata):STA zptr5
 
   PLA ; Recover offset
-  TAY:INY ; Skip data pointer
+  TAY
   LDA zptr5:CLC:ADC (zptr5), Y:STA zptr5 ; Increment lo part of pointer
   
   BCC done ; Check page for overflow
