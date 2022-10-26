@@ -53,6 +53,7 @@ GUARD ZP_ECONET_WORKSPACE
 
 .roomno EQUB 0 ; Current room
 .loadedroomno EQUB 0 ; Last room loaded from disk
+.roomlen EQUW 0 ; Length of active roomdata
 
 ; Dizzy position
 .dizzyx EQUB 0 ; X

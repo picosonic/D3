@@ -425,6 +425,24 @@ PAL_GAME  = &01
 {
   PHA
 
+  ; Check for empty room
+  LDA roomlen:BNE roomnotempty
+  LDA roomlen+1:BNE roomnotempty
+
+  ; Check for room name being requested
+  PLA
+  BNE invalidstr
+  LDA #hi(emptyroomname):STA zptr5+1
+  LDA #lo(emptyroomname):STA zptr5
+  JMP done
+
+  ; Some other string being requested - invalid, so return empty string
+.invalidstr
+  LDA #hi(emptystring):STA zptr5+1
+  LDA #lo(emptystring):STA zptr5
+  JMP done
+
+.roomnotempty
   LDA #hi(roomdata):STA zptr5+1
   LDA #lo(roomdata):STA zptr5
 
@@ -432,15 +450,14 @@ PAL_GAME  = &01
   TAY:INY ; Skip data pointer
   LDA zptr5:CLC:ADC (zptr5), Y:STA zptr5 ; Increment lo part of pointer
   
-  BCC samepage ; Check page for overflow
+  BCC done ; Check page for overflow
   INC zptr5+1
-
-.samepage
-
-  ;PLA
 
 .done
   RTS
+
+.emptystring
+  EQUB PRT_END
 }
 
 .drawroom
@@ -463,15 +480,15 @@ PAL_GAME  = &01
   LDA roomptr+1:CMP nextroomptr+1:BNE roomok
   LDA roomptr:CMP nextroomptr:BNE roomok
 
+  ; Set roomlen to empty
+  LDA #&00:STA roomlen:STA roomlen+1
+
   ; Write the room name as a blank one
-  ;LDA #ROOM_EMPTY:JSR writeroomname ; TODO FIX
+  JSR writeroomname
 
   LDA roomno:STA loadedroomno ; Mark new room as the currently loaded one
 
   RTS
-
-.roomlen
-  EQUW &00
 
 .roomok
   ; Clear palette to hide draw
