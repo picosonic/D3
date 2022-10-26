@@ -201,12 +201,14 @@ EQUS "REM D3 build ", TIME$ ; Add a build date
 
 SAVE "!BOOT", plingboot, plingend
 PUTBASIC "loader.bas", "$.LOADER"
+PUTBASIC "treasure.bas", "$.SHOWTRE"
 PUTFILE "EXOSCR", "$.EXOSCR", EXO_LOAD_ADDR
 PUTFILE "MELODY", "$.MELODY", EXO_LOAD_ADDR
 PUTFILE "SPEECH", "$.SPEECH", EXO_LOAD_ADDR
 PUTFILE "RMDATA", "$.RMDATA", 0
 SAVE "EXTRA", extradata, extraend
 SAVE "DIZZY3", start, codeend, entrypoint
+PUTFILE "TREPIC", "TREPIC", MODE8BASE
 
 PRINT "-------------------------------------------"
 PRINT "Zero page from ", ~zpstart, " to ", ~zpend-1, "  (", ZP_ECONET_WORKSPACE-zpend, " bytes left )"

@@ -59,6 +59,49 @@ then
   ./${exo} level -M256 -P+16-32 -c ${beebscr}@0x0000 -o ${exoscr}
 fi
 
+# Set filenames
+img2beeb="img2beeb"
+beebpal="dizzy2_beeb.pal"
+beebscr="TREPIC"
+srcscr="dizzy2_picture.png"
+
+# Check screen has changed before rebuilding it
+beebdate=`stat -c %Y ${beebscr} 2>/dev/null`
+srcdate=`stat -c %Y ${srcscr} 2>/dev/null`
+
+# If no screen found, force build
+if [ "${beebdate}" == "" ]
+then
+  beebdate=0
+fi
+
+# When source is newer, rebuild
+if [ ${srcdate} -gt ${beebdate} ]
+then
+  if [ ! -x ${img2beeb} ]
+  then
+    make img2beeb
+
+    if [ ! -x ${img2beeb} ]
+    then
+      echo "Can't find img2beeb"
+      exit 1
+    fi
+  fi
+
+  if [ ! -x ${exo} ]
+  then
+    echo "Can't find exomizer"
+    exit 1
+  fi
+
+  # Remove old screen
+  rm "${beebscr}" >/dev/null 2>&1
+
+  # Convert from image to beeb format
+  ./${img2beeb} -f "${beebpal}" -d1 -X256 -Y128 "${srcscr}" "${beebscr}"
+fi
+
 beebasm -v -i exoloader.asm
 beebasm -v -i melody.asm
 beebasm -v -i speech.asm
