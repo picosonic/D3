@@ -79,6 +79,9 @@ GUARD SOUND_WORKSPACE
 ; Count of collected coins
 .coins EQUB 0
 
+; When drawing flipped frame, it's built here
+.flippedframe SKIP 190 ; Biggest frame (&b6) - a branch, is 190 bytes
+
 .end_of_vars
 
 ; ---------------------------------------------------------
