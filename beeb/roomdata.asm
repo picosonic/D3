@@ -9,9 +9,9 @@ INCLUDE "consts.asm"
 
 .room0
 {
-EQUB roomdata-room0 ; 0
-EQUB roomname-room0 ; 1
-EQUB startmess-room0 ; 2
+EQUW roomdata-room0 ; 0
+EQUW roomname-room0 ; 1
+EQUW startmess-room0 ; 2
 
 .roomname
 EQUB "SPC:OR:FIRE:TO:START", PRT_END
@@ -43,8 +43,8 @@ INCBIN "rooms/room0.bin"
 
 .room1
 {
-EQUB roomdata-room1 ; 0
-EQUB roomname-room1 ; 1
+EQUW roomdata-room1 ; 0
+EQUW roomname-room1 ; 1
 
 .roomname
 EQUB PRT_END
@@ -57,8 +57,8 @@ INCBIN "rooms/room1.bin"
 
 .room2
 {
-EQUB roomdata-room2 ; 0
-EQUB roomname-room2 ; 1
+EQUW roomdata-room2 ; 0
+EQUW roomname-room2 ; 1
 
 .roomname
 EQUB PRT_END
@@ -71,8 +71,8 @@ INCBIN "rooms/room2.bin"
 
 .room3
 {
-EQUB roomdata-room3 ; 0
-EQUB roomname-room3 ; 1
+EQUW roomdata-room3 ; 0
+EQUW roomname-room3 ; 1
 
 .roomname
 EQUB PRT_END
@@ -106,8 +106,8 @@ INCBIN "rooms/room3.bin"
 
 .room22
 {
-EQUB roomdata-room22 ; 0
-EQUB roomname-room22 ; 1
+EQUW roomdata-room22 ; 0
+EQUW roomname-room22 ; 1
 
 .roomname
 EQUB ":THE:MARKET:SQUARE::", PRT_END
@@ -120,8 +120,8 @@ INCBIN "rooms/room22.bin"
 
 .room23
 {
-EQUB roomdata-room23 ; 0
-EQUB roomname-room23 ; 1
+EQUW roomdata-room23 ; 0
+EQUW roomname-room23 ; 1
 
 .roomname
 EQUB "A:STRANGE:NEW:WORLD@", PRT_END
@@ -134,8 +134,8 @@ INCBIN "rooms/room23.bin"
 
 .room24
 {
-EQUB roomdata-room24 ; 0
-EQUB roomname-room24 ; 1
+EQUW roomdata-room24 ; 0
+EQUW roomname-room24 ; 1
 
 .roomname
 EQUB ":INSIDE:THE:CHURCH::", PRT_END
@@ -157,8 +157,8 @@ INCBIN "rooms/room24.bin"
 
 .room31
 {
-EQUB roomdata-room31 ; 0
-EQUB roomname-room31 ; 1
+EQUW roomdata-room31 ; 0
+EQUW roomname-room31 ; 1
 
 .roomname
 EQUB "THE:AMAZING:ILLUSION", PRT_END
@@ -177,8 +177,8 @@ INCBIN "rooms/room31.bin"
 
 .room35
 {
-EQUB roomdata-room35 ; 0
-EQUB roomname-room35 ; 1
+EQUW roomdata-room35 ; 0
+EQUW roomname-room35 ; 1
 
 .roomname
 EQUB ":SMUGGLER;S:HIDEOUT:", PRT_END
@@ -191,11 +191,34 @@ INCBIN "rooms/room35.bin"
 
 .room36
 {
-EQUB roomdata-room36 ; 0
-EQUB roomname-room36 ; 1
+EQUW roomdata-room36 ; 0
+EQUW roomname-room36 ; 1
+EQUW trollgotapplemess-room36 ; 2
 
 .roomname
 EQUB "THE:CASTLE;S:DUNGEON", PRT_END
+
+.trollgotapplemess
+EQUB PRT_PEN+7,PRT_XY+2,48,PRT_DRAWBOX,13,5,PRT_PEN+3
+EQUB PRT_XY+11,72,"YOU:GIVE"
+EQUB PRT_XY+10,80,"THE:APPLE"
+EQUB PRT_XY+7,88,"TO:THE:TROLL",PRT_END
+
+EQUB PRT_PEN+5,PRT_XY+16,80,PRT_DRAWBOX,11,5,PRT_PEN+6
+EQUB PRT_XY+23,104,"&FOR:ME?"
+EQUB PRT_XY+22,112,"YOU;RE:SO"
+EQUB PRT_XY+22,120,"GENEROUS'",PRT_END
+
+EQUB PRT_PEN+5,PRT_XY+8,48,PRT_DRAWBOX,20,6,PRT_PEN+6
+EQUB PRT_XY+16,72,"&I;D:LIKE:TO:LET"
+EQUB PRT_XY+16,80,"YOU:PASS<:BUT:IF"
+EQUB PRT_XY+14,88,"THE:KING:FOUND:OUT"
+EQUB PRT_XY+15,96,"HE;D:TORTURE:ME@'",PRT_END
+
+EQUB PRT_PEN+5,PRT_XY+6,112,PRT_DRAWBOX,22,5,PRT_PEN+6
+EQUB PRT_XY+13,136,"&HOWEVER<:YOU:COULD"
+EQUB PRT_XY+14,144,"ESCAPE:THROUGH:THE"
+EQUB PRT_XY+11,152,"FIRE:USING:THE:WATER'",PRT_END,PRT_END
 
 .roomdata
 INCBIN "rooms/room36.bin"
@@ -210,8 +233,8 @@ INCBIN "rooms/room36.bin"
 
 .room39
 {
-EQUB roomdata-room39 ; 0
-EQUB roomname-room39 ; 1
+EQUW roomdata-room39 ; 0
+EQUW roomname-room39 ; 1
 
 .roomname
 EQUB "GOING:DOWN:THE:WELL@", PRT_END
@@ -224,8 +247,8 @@ INCBIN "rooms/room39.bin"
 
 .room40
 {
-EQUB roomdata-room40 ; 0
-EQUB roomname-room40 ; 1
+EQUW roomdata-room40 ; 0
+EQUW roomname-room40 ; 1
 
 .roomname
 EQUB ":THE:DRAGON;S:LAIR::", PRT_END
@@ -238,8 +261,8 @@ INCBIN "rooms/room40.bin"
 
 .room41
 {
-EQUB roomdata-room41 ; 0
-EQUB roomname-room41 ; 1
+EQUW roomdata-room41 ; 0
+EQUW roomname-room41 ; 1
 
 .roomname
 EQUB ":THE:DESERTED:MINES:", PRT_END
@@ -258,8 +281,8 @@ INCBIN "rooms/room41.bin"
 
 .room45
 {
-EQUB roomdata-room45 ; 0
-EQUB roomname-room45 ; 1
+EQUW roomdata-room45 ; 0
+EQUW roomname-room45 ; 1
 
 .roomname
 EQUB ":LOOKING:OUT:TO:SEA:", PRT_END
@@ -272,8 +295,8 @@ INCBIN "rooms/room45.bin"
 
 .room46
 {
-EQUB roomdata-room46 ; 0
-EQUB roomname-room46 ; 1
+EQUW roomdata-room46 ; 0
+EQUW roomname-room46 ; 1
 
 .roomname
 EQUB ":THE:DOCKS:AND:PIER:", PRT_END
@@ -286,8 +309,8 @@ INCBIN "rooms/room46.bin"
 
 .room47
 {
-EQUB roomdata-room47 ; 0
-EQUB roomname-room47 ; 1
+EQUW roomdata-room47 ; 0
+EQUW roomname-room47 ; 1
 
 .roomname
 EQUB ":FOURWAY:WAREHOUSE::", PRT_END
@@ -300,8 +323,8 @@ INCBIN "rooms/room47.bin"
 
 .room48
 {
-EQUB roomdata-room48 ; 0
-EQUB roomname-room48 ; 1
+EQUW roomdata-room48 ; 0
+EQUW roomname-room48 ; 1
 
 .roomname
 EQUB ":THE:BROKEN:BRIDGE::", PRT_END
@@ -314,8 +337,8 @@ INCBIN "rooms/room48.bin"
 
 .room49
 {
-EQUB roomdata-room49 ; 0
-EQUB roomname-room49 ; 1
+EQUW roomdata-room49 ; 0
+EQUW roomname-room49 ; 1
 
 .roomname
 EQUB "::THE:GUARD:HOUSE:::", PRT_END
@@ -328,8 +351,8 @@ INCBIN "rooms/room49.bin"
 
 .room50
 {
-EQUB roomdata-room50 ; 0
-EQUB roomname-room50 ; 1
+EQUW roomdata-room50 ; 0
+EQUW roomname-room50 ; 1
 
 .roomname
 EQUB ":::ARMOROG;S:DEN::::", PRT_END
@@ -342,8 +365,8 @@ INCBIN "rooms/room50.bin"
 
 .room51
 {
-EQUB roomdata-room51 ; 0
-EQUB roomname-room51 ; 1
+EQUW roomdata-room51 ; 0
+EQUW roomname-room51 ; 1
 
 .roomname
 EQUB "MOAT:AND:PORTCULLIS:", PRT_END
@@ -356,8 +379,8 @@ INCBIN "rooms/room51.bin"
 
 .room52
 {
-EQUB roomdata-room52 ; 0
-EQUB roomname-room52 ; 1
+EQUW roomdata-room52 ; 0
+EQUW roomname-room52 ; 1
 
 .roomname
 EQUB ":THE:ENTRANCE:HALL::", PRT_END
@@ -370,8 +393,8 @@ INCBIN "rooms/room52.bin"
 
 .room53
 {
-EQUB roomdata-room53 ; 0
-EQUB roomname-room53 ; 1
+EQUW roomdata-room53 ; 0
+EQUW roomname-room53 ; 1
 
 .roomname
 EQUB "THE:SNAP:HAPPY:GATOR", PRT_END
@@ -384,8 +407,8 @@ INCBIN "rooms/room53.bin"
 
 .room54
 {
-EQUB roomdata-room54 ; 0
-EQUB roomname-room54 ; 1
+EQUW roomdata-room54 ; 0
+EQUW roomname-room54 ; 1
 
 .roomname
 EQUB "THE:WIDE=EYED:DRAGON", PRT_END
@@ -398,8 +421,8 @@ INCBIN "rooms/room54.bin"
 
 .room55
 {
-EQUB roomdata-room55 ; 0
-EQUB roomname-room55 ; 1
+EQUW roomdata-room55 ; 0
+EQUW roomname-room55 ; 1
 
 .roomname
 EQUB "THE:BOTTOMLESS:WELL:", PRT_END
@@ -412,8 +435,8 @@ INCBIN "rooms/room55.bin"
 
 .room56
 {
-EQUB roomdata-room56 ; 0
-EQUB roomname-room56 ; 1
+EQUW roomdata-room56 ; 0
+EQUW roomname-room56 ; 1
 
 .roomname
 EQUB "THE:LIFT:CONTROL:HUT", PRT_END
@@ -426,8 +449,8 @@ INCBIN "rooms/room56.bin"
 
 .room57
 {
-EQUB roomdata-room57 ; 0
-EQUB roomname-room57 ; 1
+EQUW roomdata-room57 ; 0
+EQUW roomname-room57 ; 1
 
 .roomname
 EQUB ":BASE:OF:TREE:HOUSE:", PRT_END
@@ -440,8 +463,8 @@ INCBIN "rooms/room57.bin"
 
 .room58
 {
-EQUB roomdata-room58 ; 0
-EQUB roomname-room58 ; 1
+EQUW roomdata-room58 ; 0
+EQUW roomname-room58 ; 1
 
 .roomname
 EQUB "THE:SMELLY:ALLOTMENT", PRT_END
@@ -454,8 +477,8 @@ INCBIN "rooms/room58.bin"
 
 .room59
 {
-EQUB roomdata-room59 ; 0
-EQUB roomname-room59 ; 1
+EQUW roomdata-room59 ; 0
+EQUW roomname-room59 ; 1
 
 .roomname
 EQUB ":THE:LARGE:OAK:TREE:", PRT_END
@@ -468,8 +491,8 @@ INCBIN "rooms/room59.bin"
 
 .room60
 {
-EQUB roomdata-room60 ; 0
-EQUB roomname-room60 ; 1
+EQUW roomdata-room60 ; 0
+EQUW roomname-room60 ; 1
 
 .roomname
 EQUB "BASE:OF:THE:VOLCANO:", PRT_END
@@ -487,8 +510,8 @@ INCBIN "rooms/room60.bin"
 
 .room63
 {
-EQUB roomdata-room63 ; 0
-EQUB roomname-room63 ; 1
+EQUW roomdata-room63 ; 0
+EQUW roomname-room63 ; 1
 
 .roomname
 EQUB "::THE:CRAFTY:CLOUD::", PRT_END
@@ -507,8 +530,8 @@ INCBIN "rooms/room63.bin"
 
 .room67
 {
-EQUB roomdata-room67 ; 0
-EQUB roomname-room67 ; 1
+EQUW roomdata-room67 ; 0
+EQUW roomname-room67 ; 1
 
 .roomname
 EQUB ":::THE:WEST:WING::::", PRT_END
@@ -521,8 +544,8 @@ INCBIN "rooms/room67.bin"
 
 .room68
 {
-EQUB roomdata-room68 ; 0
-EQUB roomname-room68 ; 1
+EQUW roomdata-room68 ; 0
+EQUW roomname-room68 ; 1
 
 .roomname
 EQUB "::THE:BANQUET:HALL::", PRT_END
@@ -535,8 +558,8 @@ INCBIN "rooms/room68.bin"
 
 .room69
 {
-EQUB roomdata-room69 ; 0
-EQUB roomname-room69 ; 1
+EQUW roomdata-room69 ; 0
+EQUW roomname-room69 ; 1
 
 .roomname
 EQUB ":::THE:EAST:WING::::", PRT_END
@@ -553,8 +576,8 @@ INCBIN "rooms/room69.bin"
 
 .room71
 {
-EQUB roomdata-room71 ; 0
-EQUB roomname-room71 ; 1
+EQUW roomdata-room71 ; 0
+EQUW roomname-room71 ; 1
 
 .roomname
 EQUB "KEEP:OUT@:DOZY;S:HUT", PRT_END
@@ -567,8 +590,8 @@ INCBIN "rooms/room71.bin"
 
 .room72
 {
-EQUB roomdata-room72 ; 0
-EQUB roomname-room72 ; 1
+EQUW roomdata-room72 ; 0
+EQUW roomname-room72 ; 1
 
 .roomname
 EQUB "::::DENZIL;S:PAD::::", PRT_END
@@ -581,8 +604,8 @@ INCBIN "rooms/room72.bin"
 
 .room73
 {
-EQUB roomdata-room73 ; 0
-EQUB roomname-room73 ; 1
+EQUW roomdata-room73 ; 0
+EQUW roomname-room73 ; 1
 
 .roomname
 EQUB ":DAISY;S:EMPTY:HUT::", PRT_END
@@ -595,8 +618,8 @@ INCBIN "rooms/room73.bin"
 
 .room74
 {
-EQUB roomdata-room74 ; 0
-EQUB roomname-room74 ; 1
+EQUW roomdata-room74 ; 0
+EQUW roomname-room74 ; 1
 
 .roomname
 EQUB "THE:GIANT:BEANSTALK:", PRT_END
@@ -609,8 +632,8 @@ INCBIN "rooms/room74.bin"
 
 .room75
 {
-EQUB roomdata-room75 ; 0
-EQUB roomname-room75 ; 1
+EQUW roomdata-room75 ; 0
+EQUW roomname-room75 ; 1
 
 .roomname
 EQUB "COMPLEX:CLOUD:ROUTE:", PRT_END
@@ -623,8 +646,8 @@ INCBIN "rooms/room75.bin"
 
 .room76
 {
-EQUB roomdata-room76 ; 0
-EQUB roomname-room76 ; 1
+EQUW roomdata-room76 ; 0
+EQUW roomname-room76 ; 1
 
 .roomname
 EQUB "NEAR:THE:VOLCANO:TOP", PRT_END
@@ -637,8 +660,8 @@ INCBIN "rooms/room76.bin"
 
 .room77
 {
-EQUB roomdata-room77 ; 0
-EQUB roomname-room77 ; 1
+EQUW roomdata-room77 ; 0
+EQUW roomname-room77 ; 1
 
 .roomname
 EQUB ":THE:ACTIVE:VOLCANO:", PRT_END
@@ -659,8 +682,8 @@ INCBIN "rooms/room77.bin"
 
 .room83
 {
-EQUB roomdata-room83 ; 0
-EQUB roomname-room83 ; 1
+EQUW roomdata-room83 ; 0
+EQUW roomname-room83 ; 1
 
 .roomname
 EQUB ":::THE:WEST:TOWER:::", PRT_END
@@ -673,8 +696,8 @@ INCBIN "rooms/room83.bin"
 
 .room84
 {
-EQUB roomdata-room84 ; 0
-EQUB roomname-room84 ; 1
+EQUW roomdata-room84 ; 0
+EQUW roomname-room84 ; 1
 
 .roomname
 EQUB "THE:CASTLE:STAIRCASE", PRT_END
@@ -687,8 +710,8 @@ INCBIN "rooms/room84.bin"
 
 .room85
 {
-EQUB roomdata-room85 ; 0
-EQUB roomname-room85 ; 1
+EQUW roomdata-room85 ; 0
+EQUW roomname-room85 ; 1
 
 .roomname
 EQUB ":::THE:EAST:TOWER:::", PRT_END
@@ -701,8 +724,8 @@ INCBIN "rooms/room85.bin"
 
 .room86
 {
-EQUB roomdata-room86 ; 0
-EQUB roomname-room86 ; 1
+EQUW roomdata-room86 ; 0
+EQUW roomname-room86 ; 1
 
 .roomname
 EQUB ":THE:LONGJUMP:CLOUD:", PRT_END
@@ -715,8 +738,8 @@ INCBIN "rooms/room86.bin"
 
 .room87
 {
-EQUB roomdata-room87 ; 0
-EQUB roomname-room87 ; 1
+EQUW roomdata-room87 ; 0
+EQUW roomname-room87 ; 1
 
 .roomname
 EQUB "::THE:MEETING:HALL::", PRT_END
@@ -728,8 +751,8 @@ INCBIN "rooms/room87.bin"
 
 .room88
 {
-EQUB roomdata-room88 ; 0
-EQUB roomname-room88 ; 1
+EQUW roomdata-room88 ; 0
+EQUW roomname-room88 ; 1
 
 .roomname
 EQUB ":LIFT:TO:THE:ELDERS:", PRT_END
@@ -742,8 +765,8 @@ INCBIN "rooms/room88.bin"
 
 .room89
 {
-EQUB roomdata-room89 ; 0
-EQUB roomname-room89 ; 1
+EQUW roomdata-room89 ; 0
+EQUW roomname-room89 ; 1
 
 .roomname
 EQUB "DIZZY;S:PARENTS:HUT:", PRT_END
@@ -760,8 +783,8 @@ INCBIN "rooms/room89.bin"
 
 .room91
 {
-EQUB roomdata-room91 ; 0
-EQUB roomname-room91 ; 1
+EQUW roomdata-room91 ; 0
+EQUW roomname-room91 ; 1
 
 .roomname
 EQUB "::YET:MORE:CLOUDS:::", PRT_END
@@ -774,8 +797,8 @@ INCBIN "rooms/room91.bin"
 
 .room92
 {
-EQUB roomdata-room92 ; 0
-EQUB roomname-room92 ; 1
+EQUW roomdata-room92 ; 0
+EQUW roomname-room92 ; 1
 
 .roomname
 EQUB "MORE:;ORRIBLE:CLOUDS", PRT_END
@@ -788,8 +811,8 @@ INCBIN "rooms/room92.bin"
 
 .room93
 {
-EQUB roomdata-room93 ; 0
-EQUB roomname-room93 ; 1
+EQUW roomdata-room93 ; 0
+EQUW roomname-room93 ; 1
 
 .roomname
 EQUB "::THE:CLOUD:CASTLE::", PRT_END
@@ -802,8 +825,8 @@ INCBIN "rooms/room93.bin"
 
 .room94
 {
-EQUB roomdata-room94 ; 0
-EQUB roomname-room94 ; 1
+EQUW roomdata-room94 ; 0
+EQUW roomname-room94 ; 1
 
 .roomname
 EQUB ":::DAISY;S:PRISON:::", PRT_END
@@ -824,8 +847,8 @@ INCBIN "rooms/room94.bin"
 
 .room100
 {
-EQUB roomdata-room100 ; 0
-EQUB roomname-room100 ; 1
+EQUW roomdata-room100 ; 0
+EQUW roomname-room100 ; 1
 
 .roomname
 EQUB ":::::THE:ATTIC::::::", PRT_END

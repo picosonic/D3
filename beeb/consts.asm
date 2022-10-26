@@ -50,3 +50,6 @@ STR_roomname = 1
 
 ; Room 0
 STR_startmess = 2
+
+; Room 36
+STR_trollgotapplemess = 2

@@ -431,7 +431,7 @@ PAL_GAME  = &01
 
   ; Check for room name being requested
   PLA
-  BNE invalidstr
+  CMP #STR_roomname:BNE invalidstr
   LDA #hi(emptyroomname):STA zptr5+1
   LDA #lo(emptyroomname):STA zptr5
   JMP done
@@ -447,11 +447,14 @@ PAL_GAME  = &01
   LDA #lo(roomdata):STA zptr5
 
   PLA ; Recover offset
-  TAY
+  ASL A:TAY
   LDA zptr5:CLC:ADC (zptr5), Y:STA zptr5 ; Increment lo part of pointer
   
-  BCC done ; Check page for overflow
+  BCC samepage ; Check page for overflow
   INC zptr5+1
+
+.samepage
+  LDA zptr5+1:CLC:ADC (zptr5+1), Y:STA zptr5+1 ; Increment hi part of pointer
 
 .done
   RTS
@@ -525,7 +528,13 @@ PAL_GAME  = &01
   LDA #&00:STA frmattri:STA ztmp6
 
   ; Skip attributes
-  TAY:LDA (roomptr), Y:TAY
+  TAY
+  LDA (roomptr), Y:PHA:INY ; Get lo offset and save for later
+  LDA (roomptr), Y ; Get hi offset
+  BEQ sameptr
+  CLC:ADC roomptr+1:STA roomptr+1 ; Add hi offset
+.sameptr
+  PLA:TAY ; Get lo offset
 
 .loop
   LDA (roomptr), Y:STA frmno:INY
