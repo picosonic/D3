@@ -529,12 +529,14 @@ PAL_GAME  = &01
 
   ; Skip attributes
   TAY
-  LDA (roomptr), Y:PHA:INY ; Get lo offset and save for later
-  LDA (roomptr), Y ; Get hi offset
-  BEQ sameptr
-  CLC:ADC roomptr+1:STA roomptr+1 ; Add hi offset
-.sameptr
-  PLA:TAY ; Get lo offset
+  LDA (roomptr), Y:STA zptr6:INY:PHA
+  LDA (roomptr), Y:STA zptr6+1
+
+  CLC
+  PLA:ADC roomptr:STA roomptr
+  LDA zptr6+1:ADC roomptr+1:STA roomptr+1
+
+  LDY #&00
 
 .loop
   LDA (roomptr), Y:STA frmno:INY
