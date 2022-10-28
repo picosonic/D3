@@ -14,6 +14,7 @@
 ; Palettes
 PAL_BLANK = &00
 PAL_GAME  = &01
+PAL_DIZZY2 = $02
 
 ; Set palette to one specified in A
 .setpal
@@ -31,13 +32,17 @@ PAL_GAME  = &01
   RTS
 
 .paltable
-  ; blank palette
+  ; Blank palette
   ; black, black, black, black
   EQUB 0,0, 1,0, 2,0, 3,0
 
   ; Game palette
   ; black, red, green, white
   EQUB 0,0, 1,1, 2,2, 3,7
+
+  ; Dizzy2 screenshot palette
+  ; black, blue, yellow, white
+  EQUB 0,0, 1,4, 2,3, 3,7
 }
 
 ; Clear play area
