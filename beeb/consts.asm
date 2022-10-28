@@ -31,7 +31,7 @@ BIGGESTROOM = 919 ; Room 22
 STARTROOM = 36
 
 ; Frame plotting modes
-PLOT_NORMAL = &00
+PLOT_AND = &00
 PLOT_OR = &08
 PLOT_XOR = &10
 

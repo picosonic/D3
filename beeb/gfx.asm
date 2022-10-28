@@ -189,7 +189,7 @@ PAL_DIZZY2 = $02
 }
 
 ; Draw a frame to play area
-.drawframe
+.frame
 {
   ; zptr1 = source pointer
   ; zptr2 = screen pointer, add 0x08 to do pixels to the right, add 0x10 for next byte
@@ -468,9 +468,59 @@ PAL_DIZZY2 = $02
   EQUB PRT_END
 }
 
-.drawroom
+.roomsetup
 {
+  ; room data was compacted a lot,because of the amount
+  ; of memory it took, the edit has data
+  ;
+  ; 0=room
+  ; 1=FRAME
+  ; 2=X
+  ; 3=Y
+  ; 4=COLOUR +reverse stuff
+  ;
+  ; this was compacted to a table of word pointers to the start of the
+  ; of each room therefore using only 4 bytes.
+  ;
+  ; Then if the colour of the next frame is the same
+  ; as the previous then bit 7 of the X coord is set
+
   STA roomno ; Backup room number
+
+  ; Clear palette to hide draw
+  LDA #PAL_BLANK:JSR setpal
+
+  ; Clear play area
+  JSR clearplayarea
+
+  JSR drawfullroom
+
+  ; Draw any coins in this room
+  JSR putcoinsinroom
+
+  ; Draw any objects in this room (after coins so objects can hide coins)
+  JSR putobjectsinroom
+
+  ; Write the room name
+  JSR printroomname
+
+  ; Show room in game palette
+  LDA #PAL_GAME:JSR setpal
+
+  ;;;;; TEMPORARILY DRAW SOME DIZZY FRAMES TO TEST ;;;;;
+  LDA roomno:AND #&1F:STA frmno
+  LDA #184:STA frmx
+  LDA #136:STA frmy
+  LDA #PAL_WHITE:STA frmattri
+  JSR drawdizzy
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+  RTS
+}
+
+.drawfullroom
+{
+  LDA roomno
 
   ; Set up pointer to data for this room
   ASL A:TAY
@@ -481,9 +531,6 @@ PAL_DIZZY2 = $02
   LDA roomtable+2, Y:STA nextroomptr
   LDA roomtable+3, Y:STA nextroomptr+1
 
-  ; Clear play area
-  JSR clearplayarea
-
   ; If this is an empty room, then stop now
   LDA roomptr+1:CMP nextroomptr+1:BNE roomok
   LDA roomptr:CMP nextroomptr:BNE roomok
@@ -491,17 +538,11 @@ PAL_DIZZY2 = $02
   ; Set roomlen to empty
   LDA #&00:STA roomlen:STA roomlen+1
 
-  ; Write the room name as a blank one
-  JSR printroomname
-
   LDA roomno:STA loadedroomno ; Mark new room as the currently loaded one
 
   RTS
 
 .roomok
-  ; Clear palette to hide draw
-  LDA #PAL_BLANK:JSR setpal
-
   ; Determine room length
   SEC
   LDA nextroomptr:SBC roomptr:STA roomlen
@@ -543,7 +584,7 @@ PAL_DIZZY2 = $02
 
   LDY #&00
 
-.loop
+.thinglp
   LDA (roomptr), Y:STA frmno:INY
   LDA (roomptr), Y:STA frmx:INY
   LDA (roomptr), Y:STA frmy:INY
@@ -554,7 +595,7 @@ PAL_DIZZY2 = $02
 .sameattrib
 
   ; All the data has been read for this frame, so draw it
-  JSR drawframe
+  JSR frame
 
   ; Advance room pointer to next tile
   TYA:CLC:ADC roomptr:STA roomptr
@@ -564,35 +605,15 @@ PAL_DIZZY2 = $02
 
   ; Check if we're done
   LDY #&00
-  LDA roomptr+1:CMP nextroomptr+1:BNE loop
-  LDA roomptr:CMP nextroomptr:BNE loop
+  LDA roomptr+1:CMP nextroomptr+1:BNE thinglp
+  LDA roomptr:CMP nextroomptr:BNE thinglp
 
   ; If this is first room (title screen), show extra chars
   LDA roomno
-  BNE playscr
+  BNE done
   JSR titlescreen
-.playscr
 
-  ; Write the room name
-  JSR printroomname
-
-  ; Draw any coins in this room
-  JSR putcoinsinroom
-
-  ; Draw any objects in this room (after coins so objects can hide coins)
-  JSR putobjectsinroom
-
-  ; Show room in game palette
-  LDA #PAL_GAME:JSR setpal
-
-  ;;;;; TEMPORARILY DRAW SOME DIZZY FRAMES TO TEST ;;;;;
-  LDA roomno:AND #&1F:STA frmno
-  LDA #184:STA frmx
-  LDA #136:STA frmy
-  LDA #PAL_WHITE:STA frmattri
-  JSR drawdizzy
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+.done
   RTS
 }
 
@@ -609,7 +630,7 @@ PAL_DIZZY2 = $02
   LDA #PAL_WHITE:STA frmattri
   LDA cointable, Y:STA frmx
   LDA cointable+1, Y:STA frmy
-  JSR drawframe
+  JSR frame
 
 .nextcoin
 
@@ -633,7 +654,7 @@ PAL_DIZZY2 = $02
   LDY #movex:LDA (zptr4), Y:STA frmx
   LDY #movey:LDA (zptr4), Y:STA frmy
 
-  JSR drawframe
+  JSR frame
 
 .nextobject
 
@@ -694,7 +715,7 @@ PAL_DIZZY2 = $02
 
 .resetuproom
 {
-  LDA roomno:JSR drawroom
+  LDA roomno:JSR roomsetup
 
   RTS
 }
@@ -710,7 +731,7 @@ PAL_DIZZY2 = $02
   LDA #58:STA frmx
   LDA #57:STA frmy
   LDA #7:STA frmattri
-  JSR drawframe
+  JSR frame
 
   RTS
 }
@@ -769,7 +790,7 @@ PAL_DIZZY2 = $02
   LDA messy:STA frmy
   LDA messpen:STA frmattri
   LDA messplot:STA frmplot
-  JSR drawframe
+  JSR frame
   LDA messx:CLC:ADC #&02:STA messx ; Advance cursor
   JMP prtmessage1
 
@@ -882,7 +903,7 @@ PAL_DIZZY2 = $02
   LDA #40:BNE dodraw ; Horiztonal bar
 
 .dodraw
-  STA frmno:JSR drawframe
+  STA frmno:JSR frame
 
 .ch5
 

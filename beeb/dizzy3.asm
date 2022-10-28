@@ -51,7 +51,7 @@ INCLUDE "init.asm"
   STA fcb ; Store file handle
 
   ; Load initial room
-  LDA #STARTROOM:JSR drawroom
+  LDA #STARTROOM:JSR roomsetup
 
 .gameloop
 {
@@ -60,7 +60,7 @@ INCLUDE "init.asm"
   ; See if room changed
   LDA roomno:CMP loadedroomno:BEQ same
 
-  JSR drawroom
+  JSR roomsetup
   ; Wait until nothing pressed
 .holdon
   LDX keys:BNE holdon
