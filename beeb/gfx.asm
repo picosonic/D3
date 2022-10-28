@@ -497,6 +497,7 @@ PAL_DIZZY2 = $02
   STA noofwater:STA noofflames:STA breathingfire
 
   JSR checkbeanstalk
+  JSR checkfireout
 
   JSR drawfullroom
 
@@ -531,7 +532,20 @@ PAL_DIZZY2 = $02
   CMP #02:BNE done ; Check status of manure
 
   LDA #01:STA roomno:JSR drawfullroom ; Draw beanstalk
-  LDA #58:STA roomno ; Reset current room to be allotment ?? probably need to reload it?
+  LDA #58:STA roomno ; Reset current room to be allotment
+
+.done
+  RTS
+}
+
+.checkfireout
+{
+  LDA roomno:CMP #36:BNE done ; Make sure we are in the dungeon
+
+  LDA fireout:BNE done ; Check status of fire
+
+  LDA #02:STA roomno:JSR drawfullroom ; Draw fire
+  LDA #36:STA roomno ; Reset current room to be dungeon
 
 .done
   RTS
