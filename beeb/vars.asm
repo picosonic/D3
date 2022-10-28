@@ -55,13 +55,53 @@ GUARD ZP_ECONET_WORKSPACE
 .loadedroomno EQUB 0 ; Last room loaded from disk
 .roomlen EQUW 0 ; Length of active roomdata
 
-; Dizzy position
+; Dizzy position / status
 .dizzyx EQUB 0 ; X
 .dizzyy EQUB 0 ; Y
 .dizzyfrm EQUB 0 ; Frame
 .dizzyox EQUB 0 ; Old X
 .dizzyoy EQUB 0 ; Old Y
 .dizzyofrm EQUB 0 ; Old frame
+
+.dontupdatedizzy EQUB 0
+
+; Flames / water / lava
+.noofflames EQUB 0 ; Count of active flames
+.noofwater EQUB 0 ; Count of active water / lava
+.waterheight EQUB 0 ; Water line
+.watercolour EQUB 0 ; If "water" is actually water / lava
+
+.flamelist ; 4 * (X, Y, Frame)
+  EQUB 0, 0, 0
+  EQUB 0, 0, 0
+  EQUB 0, 0, 0
+  EQUB 0, 0, 0
+  EQUB 0
+
+.waterlist ; 8 * (X, Y, Frame)
+  EQUB 0, 0, 0
+  EQUB 0, 0, 0
+  EQUB 0, 0, 0
+  EQUB 0, 0, 0
+  EQUB 0, 0, 0
+  EQUB 0, 0, 0
+  EQUB 0, 0, 0
+  EQUB 0, 0, 0
+  EQUB 0
+
+.talkbefore
+  EQUB 0, 0, 0, 0, 0
+  EQUB 0
+
+.objectscarried
+  EQUB 0, 0, 0, 0
+.bag
+  EQUB 0
+
+; Dragon
+.dragonvar EQUB 0
+.breathingfire EQUB 0
+.dragonflame EQUB 0
 
 .zpend
 
@@ -73,14 +113,15 @@ GUARD SOUND_WORKSPACE
 
 .start_of_vars
 
+; When drawing flipped frame, it's built here
+.flippedframe SKIP 190 ; Biggest frame (&b6) - a branch, is 190 bytes
+
 ; Non-zero to clip draw routine to play area
 .cliptoplayarea EQUB 0
 
-; Count of collected coins
-.coins EQUB 0
-
-; When drawing flipped frame, it's built here
-.flippedframe SKIP 190 ; Biggest frame (&b6) - a branch, is 190 bytes
+.coins EQUB 0 ; Count of collected coins
+.fireout EQUB 0 ; Non-zero means fire in room 36 is out
+.ratcount EQUB 0 ; 0 / 1 / 2
 
 .end_of_vars
 

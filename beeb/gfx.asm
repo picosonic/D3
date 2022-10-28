@@ -493,6 +493,11 @@ PAL_DIZZY2 = $02
   ; Clear play area
   JSR clearplayarea
 
+  LDA #&00
+  STA noofwater:STA noofflames:STA breathingfire
+
+  JSR checkbeanstalk
+
   JSR drawfullroom
 
   ; Draw any coins in this room
@@ -515,6 +520,20 @@ PAL_DIZZY2 = $02
   JSR drawdizzy
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+  RTS
+}
+
+.checkbeanstalk
+{
+  LDA roomno:CMP #58:BNE done ; Make sure we are in the allotment
+
+  LDA manurehere+var1
+  CMP #02:BNE done ; Check status of manure
+
+  LDA #01:STA roomno:JSR drawfullroom ; Draw beanstalk
+  LDA #58:STA roomno ; Reset current room to be allotment ?? probably need to reload it?
+
+.done
   RTS
 }
 
@@ -689,15 +708,16 @@ PAL_DIZZY2 = $02
 
 .windowrou
 {
-  ; dontupdatedizzy = 1 ; Stop Dizzy from moving
+  LDA #&01:STA dontupdatedizzy ; Stop Dizzy being drawn
   JSR prtmessage
 
 .^windowrou2
   JSR handoffandwait ; Wait for new key press
 .^windowrou1
-  JSR resetuproom
+  JSR resetuproom ; Draw the room again
 
-  ; dontupdatedizzy = 0 ; Allow Dizzy to move again
+  LDA #&00:STA dontupdatedizzy ; Allow Dizzy to be drawn
+  JSR prtmessage
 
   RTS
 }

@@ -476,6 +476,36 @@ noofmoving = (endofmovingdata-movingdata)/16
 
   INX:CPX #noofmoving:BNE loop ; Loop until done
 
+  LDA &00
+  STA waterheight
+  STA fireout
+  STA ratcount
+  STA dragonhere+oldmovex
+  STA dragonhere1+oldmovex
+  STA doorhere+oldmovex
+  
+  LDA #&FF
+  ;STA shopkeepercount
+  STA rathere+var1
+
+  LDA #60
+  STA rathere+oldmovefrm
+
+  ;LDA fullwhiskeymess
+  ;STA whiskeyhere+oldmovex
+
+  LDA #&01
+  ;STA ratcoll+1
+
+  LDA #5+16+8
+  STA rathere+colour
+
+  LDY #&00:LDA #&00
+.scrubtalkbefore
+  STA talkbefore, Y
+  INY
+  CPY #&05:BNE scrubtalkbefore
+
   RTS
 }
 
