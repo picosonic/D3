@@ -208,7 +208,7 @@ PUTFILE "SPEECH", "$.SPEECH", EXO_LOAD_ADDR
 PUTFILE "RMDATA", "$.RMDATA", 0
 SAVE "EXTRA", extradata, extraend
 SAVE "DIZZY3", start, codeend, entrypoint
-PUTFILE "TREPIC", "TREPIC", MODE8BASE+(12*256)
+PUTFILE "TREPIC", "TREPIC", MODE8BASE
 
 PRINT "-------------------------------------------"
 PRINT "Zero page from ", ~zpstart, " to ", ~zpend-1, "  (", ZP_ECONET_WORKSPACE-zpend, " bytes left )"

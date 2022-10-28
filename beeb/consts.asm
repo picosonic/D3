@@ -99,7 +99,7 @@ STR_throwswitchmess = 2
 STR_killedbyportcullis = 3
 
 ; Room 52
-STR_lookatpicturemess = 2
+;STR_lookatpicturemess = 2
 
 ; Room 53
 STR_croctiedmess = 2
