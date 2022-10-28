@@ -487,7 +487,7 @@ PAL_GAME  = &01
   LDA #&00:STA roomlen:STA roomlen+1
 
   ; Write the room name as a blank one
-  JSR writeroomname
+  JSR printroomname
 
   LDA roomno:STA loadedroomno ; Mark new room as the currently loaded one
 
@@ -569,7 +569,7 @@ PAL_GAME  = &01
 .playscr
 
   ; Write the room name
-  JSR writeroomname
+  JSR printroomname
 
   ; Draw any coins in this room
   JSR putcoinsinroom
@@ -643,11 +643,11 @@ PAL_GAME  = &01
   RTS
 }
 
-.writeroomname
+.printroomname
 {
   ; Set pen colour and position cursor
-  LDA #hi(roomnamepos):STA zptr5+1
-  LDA #lo(roomnamepos):STA zptr5
+  LDA #hi(readytoprintname):STA zptr5+1
+  LDA #lo(readytoprintname):STA zptr5
   JSR prtmessage
 
   ; Set pointer to room name
@@ -656,7 +656,7 @@ PAL_GAME  = &01
 
   RTS
 
-.roomnamepos
+.readytoprintname
   EQUB PRT_PEN+4,PRT_XY+12,24
   EQUB PRT_END
 }
@@ -701,10 +701,10 @@ PAL_GAME  = &01
   JSR prtmessage
 
   ; Dizzy logo
+  LDA #27:STA frmno
   LDA #58:STA frmx
   LDA #57:STA frmy
   LDA #7:STA frmattri
-  LDA #27:STA frmno
   JSR drawframe
 
   RTS
@@ -730,7 +730,7 @@ PAL_GAME  = &01
 
   LDY #&00
 
-.loop
+.prtmessage1
   LDA (zptr5), Y:INY
 
   ; Is it the end of the message
@@ -750,7 +750,7 @@ PAL_GAME  = &01
   ; Is it a plot type change
   CMP #PRT_PLOT:BEQ changeplot
 
-  CMP #PRT_DRAWBOX:BEQ drawbox
+  CMP #PRT_DRAWBOX:BEQ drawboxrou
 
   ; Anything else is not supported at this time
   JMP done
@@ -766,25 +766,25 @@ PAL_GAME  = &01
   LDA messplot:STA frmplot
   JSR drawframe
   LDA messx:CLC:ADC #&02:STA messx ; Advance cursor
-  JMP loop
+  JMP prtmessage1
 
   ; Change the X/Y position
 .changexy
   STA messx
   LDA (zptr5), Y:STA messy:INY
-  JMP loop
+  JMP prtmessage1
 
   ; Change pen 
 .changepen
   AND #&07:STA messpen
-  JMP loop
+  JMP prtmessage1
 
   ; Change plot type
 .changeplot
   LDA (zptr5), Y:STA messplot:INY
-  JMP loop
+  JMP prtmessage1
 
-.drawbox
+.drawboxrou
   ; Draw a box from messx,messy with messwidth,messheight
   ;
   ;   44          44
@@ -893,7 +893,7 @@ PAL_GAME  = &01
 .loopydone
 
   PLA:TAY ; Restore Y index
-  JMP loop
+  JMP prtmessage1
 
 .done
   LDA #&01:STA cliptoplayarea
