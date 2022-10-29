@@ -18,6 +18,9 @@ INCBIN "RMTABLE"
 .roomdata
 SKIP BIGGESTROOM
 
+treasurepic = 101
+treasurelen = &3000
+
 ; Set up for room banks to include roomdata, roomname, roommessages
 ;
 ;roomstart = *

@@ -521,6 +521,47 @@ PAL_DIZZY2 = $02
   JSR drawdizzy
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+  JSR checkpicture
+
+  RTS
+}
+
+.checkpicture
+{
+  LDA roomno:CMP #4:BNE done ; Make sure we are in empty room 4
+
+  ; Clear palette to hide draw
+  LDA #PAL_BLANK:JSR setpal
+
+  ; Load the picture
+  LDA #treasurepic
+
+  ; Set up pointer to data
+  ASL A:TAY
+  LDA roomtable, Y:STA roomptr
+  LDA roomtable+1, Y:STA roomptr+1
+
+  LDA roomptr:STA fcb+9        ; Sequential pointer (offset into file)
+  LDA roomptr+1:STA fcb+10     ;
+  LDA #lo(MODE8BASE):STA fcb+1 ; Destination buffer
+  LDA #hi(MODE8BASE):STA fcb+2 ;
+  LDA #lo(treasurelen):STA fcb+5        ; Bytes to transfer
+  LDA #hi(treasurelen):STA fcb+6      ;
+
+  LDX #lo(fcb):LDY #hi(fcb)
+  LDA #3 ; Get bytes from media, using new sequential pointer
+  JSR OSGBPB
+
+  ; Show the picture with correct palette
+  LDA #PAL_DIZZY2:JSR setpal
+
+  ; Wait for no keys, then keypress
+  JSR handoffandwait
+
+  ; Revent to game palette
+  LDA #PAL_GAME:JSR setpal
+
+.done
   RTS
 }
 
