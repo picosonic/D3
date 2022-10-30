@@ -451,15 +451,20 @@ PAL_DIZZY2 = $02
   LDA #hi(roomdata):STA zptr5+1
   LDA #lo(roomdata):STA zptr5
 
+  ; Copy pointer from zptr5 to zptr4
+  LDA zptr5:STA zptr4
+  LDA zptr5+1:STA zptr4+1
+
   PLA ; Recover offset
   ASL A:TAY
-  LDA zptr5:CLC:ADC (zptr5), Y:STA zptr5 ; Increment lo part of pointer
+  LDA zptr5:CLC:ADC (zptr4), Y:STA zptr5 ; Increment lo part of pointer
   
   BCC samepage ; Check page for overflow
   INC zptr5+1
 
 .samepage
-  LDA zptr5+1:CLC:ADC (zptr5+1), Y:STA zptr5+1 ; Increment hi part of pointer
+  INY
+  LDA zptr5+1:CLC:ADC (zptr4), Y:STA zptr5+1 ; Increment hi part of pointer
 
 .done
   RTS
@@ -679,11 +684,6 @@ PAL_DIZZY2 = $02
   LDA roomptr+1:CMP nextroomptr+1:BNE thinglp
   LDA roomptr:CMP nextroomptr:BNE thinglp
 
-  ; If this is first room (title screen), show extra chars
-  LDA roomno
-  BNE done
-  JSR titlescreen
-
 .done
   RTS
 }
@@ -788,22 +788,6 @@ PAL_DIZZY2 = $02
 .resetuproom
 {
   LDA roomno:JSR roomsetup
-
-  RTS
-}
-
-.titlescreen
-{
-  ; Print all the title screen text
-  LDA #STR_startmess:JSR findroomstr
-  JSR prtmessage
-
-  ; Dizzy logo
-  LDA #27:STA frmno
-  LDA #58:STA frmx
-  LDA #57:STA frmy
-  LDA #7:STA frmattri
-  JSR frame
 
   RTS
 }
