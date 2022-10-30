@@ -774,6 +774,12 @@ PAL_DIZZY2 = $02
   RTS
 }
 
+.printandwait
+{
+  JSR prtmessage
+  ; Fall through ...
+}
+
 ; Wait until nothing pressed, then wait for something to be pressed
 .handoffandwait
 {
