@@ -39,6 +39,10 @@ GUARD ZP_ECONET_WORKSPACE
 ; Seed for random number generator
 .seed EQUW &0000, &0000
 
+; Frame counter
+.oldclock EQUB &00
+.clock EQUB &00
+
 ; Frame data
 .frmno EQUB 0
 .frmx EQUB 0

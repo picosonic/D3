@@ -16,7 +16,31 @@ EQUB "::::::::SKY:::::::::", PRT_END
 INCBIN "RMTABLE"
 
 .roomdata
-SKIP BIGGESTROOM
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; ONE TIME INIT - Lost when first room loaded
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+.onetimeinit
+  INCLUDE "init.asm"
+
+  ; Default to drawing frames clipped to play area
+  LDA #&01:STA cliptoplayarea
+
+  ; Reset loaded room number
+  LDA #&FF:STA loadedroomno
+
+  ; Open roomdata file
+  LDX #lo(roomdatafn)
+  LDY #hi(roomdatafn)
+  LDA #OPENIN
+  JSR OSFIND
+  STA fcb ; Store file handle
+
+  JMP titlescreen
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+.initend
+SKIP BIGGESTROOM-(initend-roomdata)
 
 treasurepic = 101
 treasurelen = &3000

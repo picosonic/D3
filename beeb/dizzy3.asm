@@ -28,22 +28,6 @@ INCLUDE "input.asm"
 INCLUDE "rand.asm"
 INCLUDE "gfx.asm"
 
-.entrypoint
-INCLUDE "init.asm"
-
-  ; Default to drawing frames clipped to play area
-  LDA #&01:STA cliptoplayarea
-
-  ; Reset loaded room number
-  LDA #&FF:STA loadedroomno
-
-  ; Open roomdata file
-  LDX #lo(roomdatafn)
-  LDY #hi(roomdatafn)
-  LDA #OPENIN
-  JSR OSFIND
-  STA fcb ; Store file handle
-
 .titlescreen
 {
   LDA #&01:STA dontupdatedizzy ; Stop Dizzy being drawn
@@ -77,6 +61,10 @@ INCLUDE "init.asm"
   JSR roomsetup
 
   LDA #&00:STA dontupdatedizzy ; Allow Dizzy to be drawn
+
+  ; Init clock
+  STA oldclock
+  STA clock
 
   ; Fall through into main game loop
 }  
@@ -131,63 +119,6 @@ INCLUDE "init.asm"
   RTS
 }
 
-;.drawloop
-  ;LDA loadedroom:JSR drawroom
-  ;JSR waitabit
-;
-  ;;JSR addtocoins
-  ;;LDA #hi(youfoundcoinmess):STA zptr5+1
-  ;;LDA #lo(youfoundcoinmess):STA zptr5
-  ;;JSR windowrou
-;
-  ;;LDA #hi(inventory):STA zptr5+1
-  ;;LDA #lo(inventory):STA zptr5
-  ;;JSR prtmessage
-;
-;.nextroom
-  ;INC loadedroom
-;
-  ;; Check for overflow
-  ;LDA loadedroom:CMP #101:BCC keepgoing
-  ;LDA #&00:STA loadedroom
-;.keepgoing
-;
-  ;; Set up pointer to data for this room
-  ;LDA loadedroom:ASL A:TAY
-  ;LDA roomtable, Y:STA roomptr
-  ;LDA roomtable+1, Y:STA roomptr+1
-;
-  ;; Set up pointer to data for next room
-  ;LDA roomtable+2, Y:STA nextroomptr
-  ;LDA roomtable+3, Y:STA nextroomptr+1
-;
-  ;; If this is an empty room, then skip it
-  ;LDA roomptr+1:CMP nextroomptr+1:BNE lroomok
-  ;LDA roomptr:CMP nextroomptr:BNE lroomok
-  ;JMP nextroom
-;
-;.lroomok
-  ;JMP drawloop
-;
-;.loadedroom
-;  EQUB &00
-
-; Wait for 256 vblanks ~ 5 seconds @ 50Hz
-.waitabit
-{
-  LDX #&00
-
-.somemore
-  JSR waitvsync
-  DEX
-  BNE somemore
-
-  RTS
-}
-
-.infiniteloop
-  JMP infiniteloop
-
 ; Handler for VBLANK event
 .eventhandler
 {
@@ -196,6 +127,8 @@ INCLUDE "init.asm"
   PHA
   TXA:PHA
   TYA:PHA
+
+  INC clock
 
   JSR read_input
 
@@ -234,7 +167,7 @@ PUTFILE "MELODY", "$.MELODY", EXO_LOAD_ADDR
 PUTFILE "SPEECH", "$.SPEECH", EXO_LOAD_ADDR
 PUTFILE "RMDATA", "$.RMDATA", 0
 SAVE "EXTRA", extradata, extraend
-SAVE "DIZZY3", start, codeend, entrypoint
+SAVE "DIZZY3", start, codeend, onetimeinit
 PUTFILE "TREPIC", "TREPIC", MODE8BASE
 PUTFILE "loadscr", "FRAME", MODE8BASE
 
@@ -245,7 +178,7 @@ PRINT "EXTRA from ", ~extradata, " to ", ~extraend-1, "  (", NMI_WORKSPACE-extra
 PRINT "DATA from ", ~datastart, " to ", ~dataend-1, "  (", dataend-datastart, " bytes )"
 PRINT "CODE from ", ~codestart, " to ", ~codeend-1, "  (", codeend-codestart, " bytes )"
 PRINT ""
-PRINT "Main code entry point : ", ~entrypoint
+PRINT "Main code entry point : ", ~onetimeinit
 PRINT "Objects : ", ~movingdata, "..", ~endofmovingdata, " (", noofmoving, " objs )"
 PRINT ""
 remaining = MODE8BASE-codeend
