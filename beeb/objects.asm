@@ -509,6 +509,16 @@ noofmoving = (endofmovingdata-movingdata)/16
   RTS
 }
 
+; Reset coins
+.resetcoins
+{
+  LDA #&FF:STA coins
+
+  ; More to do
+
+  ; Fall through ...
+}
+
 .addtocoins
 {
   INC coins

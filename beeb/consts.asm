@@ -28,6 +28,7 @@ PRT_PEN = 16
 ; Room related
 ROOM_EMPTY = 70
 BIGGESTROOM = 919 ; Room 22
+TITLEROOM = 0
 STARTROOM = 36
 
 ; Frame plotting modes

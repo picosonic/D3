@@ -37,12 +37,6 @@ INCLUDE "init.asm"
   ; Reset loaded room number
   LDA #&FF:STA loadedroomno
 
-  ; Reset coins
-  STA coins
-  JSR addtocoins
-
-  JSR resetmoving ; Put all the objects back to their starting positions
-
   ; Open roomdata file
   LDX #lo(roomdatafn)
   LDY #hi(roomdatafn)
@@ -50,10 +44,44 @@ INCLUDE "init.asm"
   JSR OSFIND
   STA fcb ; Store file handle
 
-  ; Load initial room
-  LDA #STARTROOM:JSR roomsetup
+.titlescreen
+{
+  LDA #&01:STA dontupdatedizzy ; Stop Dizzy being drawn
 
-.gameloop
+  LDA #TITLEROOM:STA roomno
+  JSR roomsetup
+
+  ; Print all the title screen text
+  LDA #STR_startmess:JSR findroomstr
+  JSR prtmessage
+
+  ; Dizzy logo
+  LDA #27:STA frmno
+  LDA #58:STA frmx
+  LDA #57:STA frmy
+  LDA #7:STA frmattri
+  JSR frame
+
+.keeptesting
+  ; Wait until "START" pressed
+  LDA #INKEY_SPACE:JSR scankey
+  BEQ keeptesting
+
+  JSR resetmoving ; Put all the objects back to their starting positions
+  JSR resetcoins
+  ; JSR resetcarrying
+
+  ; ......
+
+  LDA #STARTROOM:STA roomno
+  JSR roomsetup
+
+  LDA #&00:STA dontupdatedizzy ; Allow Dizzy to be drawn
+
+  ; Fall through into main game loop
+}  
+
+.maingamelp
 {
   JSR process_inputs
 
@@ -67,7 +95,7 @@ INCLUDE "init.asm"
 
 .same
 
-  JMP gameloop
+  JMP maingamelp
 }
 
 .process_inputs
