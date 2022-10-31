@@ -223,5 +223,5 @@ PRINT "Main code entry point : ", ~onetimeinit
 PRINT "Objects : ", ~movingdata, "..", ~endofmovingdata, " (", noofmoving, " objs )"
 PRINT ""
 remaining = MODE8BASE-codeend
-PRINT "Bytes left : ", ~remaining, "  (", remaining, " bytes )"
+PRINT "Bytes left before screen memory : ", ~remaining, "  (", remaining, " bytes )"
 PRINT "-------------------------------------------"
