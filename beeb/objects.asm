@@ -544,10 +544,26 @@ noofmoving = (endofmovingdata-movingdata)/16
   ; Draw the full coins message
   LDA #hi(coinsmess):STA zptr5+1
   LDA #lo(coinsmess):STA zptr5
-  JSR prtmessage
-
-  RTS
+  JMP prtmessage
 
 .coinsmess EQUB PRT_PEN+4, PRT_XY+46,8
 .noofcoinsmess EQUB 0, 0, PRT_END
+}
+
+.subfromlives
+{
+  ; Subtract 1 from lives
+  DEC lives
+
+  ; Inject lives number into number of lives messages, using repeat count
+  LDA lives:STA nooflivesmess+1
+
+  ; Print number of lives (as eggs)
+  LDA #hi(livesmess):STA zptr5+1
+  LDA #lo(livesmess):STA zptr5
+
+  JMP prtmessage
+
+.livesmess EQUB PRT_PEN+4, PRT_XY+14,8, ":::", PRT_XY+14,8
+.nooflivesmess EQUB PRT_REP, 1, "/", PRT_ENDREP, PRT_END
 }

@@ -55,16 +55,21 @@ INCLUDE "gfx.asm"
   JSR resetcoins
   ; JSR resetcarrying
 
-  ; ......
-
+  LDA #&03:STA lives ; Set the number of lives to start with
+  ;LDA #46:STA startx
+  ;LDA #168:STA starty
   LDA #STARTROOM:STA roomno
   JSR roomsetup
 
-  LDA #&00:STA dontupdatedizzy ; Allow Dizzy to be drawn
+  LDA #&00:STA completedgame
 
-  ; Init clock
+.nextlife
+  JSR subfromlives
+
+  LDA #&00
   STA oldclock
-  STA clock
+  STA clock ; Init clock
+  STA dontupdatedizzy ; Allow Dizzy to be drawn
 
   ; Fall through into main game loop
 }  

@@ -107,6 +107,18 @@ GUARD ZP_ECONET_WORKSPACE
 .breathingfire EQUB 0
 .dragonflame EQUB 0
 
+; Non-zero to clip draw routine to play area
+.cliptoplayarea EQUB 0
+
+.coins EQUB 0 ; Count of collected coins
+.lives EQUB 0 ; Number of lives remaining
+.fireout EQUB 0 ; Non-zero means fire in room 36 is out
+.ratcount EQUB 0 ; 0 / 1 / 2
+.completedgame EQUB 0
+
+.printloops EQUB 0 ; Number of remaining loops when doing print repeats
+.printidx EQUB 0 ; Place to loop back to on repeats
+
 .zpend
 
 ; ---------------------------------------------------------
@@ -119,13 +131,6 @@ GUARD SOUND_WORKSPACE
 
 ; When drawing flipped frame, it's built here
 .flippedframe SKIP 190 ; Biggest frame (&b6) - a branch, is 190 bytes
-
-; Non-zero to clip draw routine to play area
-.cliptoplayarea EQUB 0
-
-.coins EQUB 0 ; Count of collected coins
-.fireout EQUB 0 ; Non-zero means fire in room 36 is out
-.ratcount EQUB 0 ; 0 / 1 / 2
 
 .end_of_vars
 

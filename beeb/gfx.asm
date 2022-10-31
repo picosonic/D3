@@ -830,7 +830,7 @@ PAL_DIZZY2 = $02
   CMP #PRT_XY:BCS changexy
 
   ; Anything else above control codes must be a character
-  CMP #' ':BCS mustbeachar
+  CMP #' ':BCS mustbechar
 
   ; Is it a pen change
   CMP #PRT_PEN:BCS changepen
@@ -838,7 +838,14 @@ PAL_DIZZY2 = $02
   ; Is it a plot type change
   CMP #PRT_PLOT:BEQ changeplot
 
+  ; Is it a box drawing command
   CMP #PRT_DRAWBOX:BEQ drawboxrou
+
+  ; Is it a start repeat
+  CMP #PRT_REP:BEQ repeat
+
+  ; Is it an end repeat
+  CMP #PRT_ENDREP:BEQ endrepeat
 
   ; Anything else is not supported at this time
   JMP done
@@ -846,7 +853,7 @@ PAL_DIZZY2 = $02
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
   ; Byte in A must be a char, so print it at cursor position
-.mustbeachar
+.mustbechar
   STA frmno
   LDA messx:CLC:ADC #&20:STA frmx
   LDA messy:STA frmy
@@ -870,6 +877,21 @@ PAL_DIZZY2 = $02
   ; Change plot type
 .changeplot
   LDA (zptr5), Y:STA messplot:INY
+  JMP prtmessage1
+
+  ; Start repeat
+.repeat
+  LDA (zptr5), Y:STA printloops:INY ; Save count
+  STY printidx ; Save where to loop to
+  JMP prtmessage1
+
+  ; End repeat
+.endrepeat
+  ; Do we need to loop again
+  DEC printloops:LDA printloops
+  BEQ noloop
+  LDY printidx
+.noloop
   JMP prtmessage1
 
 .drawboxrou
