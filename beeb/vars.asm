@@ -55,6 +55,7 @@ GUARD ZP_ECONET_WORKSPACE
 .frmlocation EQUW 0
 .frmcolour EQUB 0
 
+.eggcount EQUB 0 ; Dizzy animation countdown
 .roomno EQUB 0 ; Current room
 .loadedroomno EQUB 0 ; Last room loaded from disk
 .roomlen EQUW 0 ; Length of active roomdata

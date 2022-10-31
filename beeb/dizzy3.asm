@@ -82,11 +82,18 @@ INCLUDE "gfx.asm"
   LDA roomno:CMP loadedroomno:BEQ same
 
   JSR roomsetup
+
   ; Wait until nothing pressed
 .holdon
   LDX keys:BNE holdon
 
 .same
+
+  LDA dontupdatedizzy
+  BNE nodraw
+
+  JSR updatedizzy
+.nodraw
 
   JMP maingamelp
 }
@@ -121,6 +128,35 @@ INCLUDE "gfx.asm"
   LDA #STARTROOM:STA roomno ; Reset
 
 .done
+  RTS
+}
+
+.updatedizzy
+{
+  JSR waitvsync
+
+  ; See if we are allowed to run yet
+  DEC eggcount:LDA eggcount
+  BEQ timetoupdate
+  RTS
+
+  .timetoupdate
+  LDA #4:STA eggcount ; Schedule next update in 4 frames time
+
+  ;;;;; TEMPORARILY DRAW A DIZZY FRAME TO TEST ;;;;;
+  ; Rub out
+  LDA dizzyfrm:AND #&1F:STA frmno
+  LDA dizzyx:STA frmx
+  LDA dizzyy:STA frmy
+  LDA #PAL_WHITE:STA frmattri
+  JSR drawdizzy
+  
+  ; Draw new
+  INC dizzyfrm
+  LDA dizzyfrm:AND #&1F:STA frmno
+  JSR drawdizzy
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
   RTS
 }
 

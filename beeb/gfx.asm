@@ -492,6 +492,8 @@ PAL_DIZZY2 = $02
 
   STA roomno ; Backup room number
 
+  LDA #&01:STA dontupdatedizzy ; Stop Dizzy being drawn
+
   ; Clear palette to hide draw
   LDA #PAL_BLANK:JSR setpal
 
@@ -518,13 +520,16 @@ PAL_DIZZY2 = $02
   ; Show room in game palette
   LDA #PAL_GAME:JSR setpal
 
-  ;;;;; TEMPORARILY DRAW SOME DIZZY FRAMES TO TEST ;;;;;
-  LDA roomno:AND #&1F:STA frmno
-  LDA #184:STA frmx
-  LDA #136:STA frmy
+  LDA #&00:STA dontupdatedizzy ; Allow Dizzy to be drawn
+
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ; Draw initial frame (so there is something to rub out)
+  LDA dizzyfrm:AND #&1F:STA frmno
+  LDA dizzyx:STA frmx
+  LDA dizzyy:STA frmy
   LDA #PAL_WHITE:STA frmattri
   JSR drawdizzy
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
   RTS
 }

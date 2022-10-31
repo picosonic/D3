@@ -29,6 +29,13 @@ INCBIN "RMTABLE"
   ; Reset loaded room number
   LDA #&FF:STA loadedroomno
 
+  ; Reset animation countdown
+  LDA #&02:STA eggcount
+
+  LDA #&00:STA dizzyfrm
+  LDA #184:STA dizzyx
+  LDA #136:STA dizzyy
+
   ; Open roomdata file
   LDX #lo(roomdatafn)
   LDY #hi(roomdatafn)
