@@ -78,19 +78,6 @@ INCLUDE "gfx.asm"
   ; Fall through into main game loop
 }  
 
-.resetcarrying
-{
-  LDA #&00
-  STA objectscarried
-  STA objectscarried+2
-  STA objectscarried+3
-
-  LDA #OBJ_BAG:STA objectscarried+2 ; Bag
-  LDA #OBJ_APPLE:STA objectscarried ; Apple
-
-  RTS
-}
-
 .maingamelp
 {
   JSR process_inputs
@@ -113,6 +100,19 @@ INCLUDE "gfx.asm"
 .nodraw
 
   JMP maingamelp
+}
+
+.resetcarrying
+{
+  LDA #&00
+  STA objectscarried
+  STA objectscarried+2
+  STA objectscarried+3
+
+  LDA #OBJ_BAG:STA objectscarried+2 ; Bag
+  LDA #OBJ_APPLE:STA objectscarried ; Apple
+
+  RTS
 }
 
 .process_inputs
