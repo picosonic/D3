@@ -18,7 +18,6 @@ INCBIN "frametable.bin"
 INCBIN "framedefs.bin"
 
 INCLUDE "rooms.asm"
-INCLUDE "objects.asm"
 INCLUDE "dizzyfrm.asm"
 .dataend
 
@@ -199,7 +198,112 @@ INCLUDE "gfx.asm"
   RTS
 }
 
+.resetmoving
+{
+  LDX #lo(objresetcmd)
+  LDY #hi(objresetcmd)
+  JSR OSCLI
+
+  LDA &00
+  STA waterheight
+  STA fireout
+  STA ratcount
+  STA dragonhere+oldmovex
+  STA dragonhere1+oldmovex
+  STA doorhere+oldmovex
+  
+  LDA #&FF
+  ;STA shopkeepercount
+  STA rathere+var1
+
+  LDA #60
+  STA rathere+oldmovefrm
+
+  ;LDA fullwhiskeymess
+  ;STA whiskeyhere+oldmovex
+
+  LDA #&01
+  ;STA ratcoll+1
+
+  LDA #5+16+8
+  STA rathere+colour
+
+  LDY #&00:LDA #&00
+.scrubtalkbefore
+  STA talkbefore, Y
+  INY
+  CPY #&05:BNE scrubtalkbefore
+
+  RTS
+
+.objresetcmd
+  EQUS "L.OBJDATA", &0D
+}
+
+; Reset coins
+.resetcoins
+{
+  LDA #&FF:STA coins
+
+  ; More to do
+
+  ; Fall through ...
+}
+
+.addtocoins
+{
+  INC coins
+
+  ; Determine how many 10s
+  LDX #0:LDA coins
+.more10s
+  CMP #11:BCC nomore10s
+  SBC #10:INX
+  JMP more10s
+.nomore10s
+  PHA:TXA:CLC:ADC #'0':STA noofcoinsmess
+
+  ; Determine how many units
+  LDX #0:PLA
+.moreunits
+  CMP #2:BCC nomoreunits
+  SBC #1:INX
+  JMP moreunits
+.nomoreunits
+  TXA:CLC:ADC #'0':STA noofcoinsmess+1
+
+  ; Draw the full coins message
+  LDA #hi(coinsmess):STA zptr5+1
+  LDA #lo(coinsmess):STA zptr5
+  JMP prtmessage
+
+.coinsmess EQUB PRT_PEN+4, PRT_XY+46,8
+.noofcoinsmess EQUB 0, 0, PRT_END
+}
+
+.subfromlives
+{
+  ; Subtract 1 from lives
+  DEC lives
+
+  ; Inject lives number into number of lives messages, using repeat count
+  LDA lives:STA nooflivesmess+1
+
+  ; Print number of lives (as eggs)
+  LDA #hi(livesmess):STA zptr5+1
+  LDA #lo(livesmess):STA zptr5
+
+  JMP prtmessage
+
+.livesmess EQUB PRT_PEN+4, PRT_XY+14,8, ":::", PRT_XY+14,8
+.nooflivesmess EQUB PRT_REP, 1, "/", PRT_ENDREP, PRT_END
+}
+
 .codeend
+
+INCLUDE "objects.asm"
+
+.objend
 
 ORG SERIAL_OUT_BUFFER
 GUARD NMI_WORKSPACE
@@ -240,6 +344,6 @@ PRINT ""
 PRINT "Main code entry point : ", ~onetimeinit
 PRINT "Objects : ", ~movingdata, "..", ~endofmovingdata, " (", noofmoving, " objs )"
 PRINT ""
-remaining = MODE8BASE-codeend
+remaining = MODE8BASE-objend
 PRINT "Bytes left before screen memory : ", ~remaining, "  (", remaining, " bytes )"
 PRINT "-------------------------------------------"

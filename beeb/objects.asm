@@ -66,7 +66,7 @@ OBJ_BAG = 1
 OBJ_PORTCULLIS = 2
 
 .porthere
- EQUB 51,portcullis,76 ,136,120,96,136,   0   ,4  ,0 ,0 ,7   ,51 ,76 ,96,120
+ EQUB 51,portcullis,76 ,96,120,96,136,   0   ,4  ,0 ,0 ,7   ,51 ,76 ,96,120
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -79,7 +79,7 @@ OBJ_SWITCH = 3
 OBJ_SHOPKEEPER = 4
 
 .shopkeeperhere
- EQUB 22,pickupable,68 ,136,105
+ EQUB 255,pickupable,68 ,136,105
  EQUW                pigmycowmess,shoptalk
  EQUB                   0 ,0 ,7+64,255,68,136,105
 
@@ -88,7 +88,7 @@ OBJ_SHOPKEEPER = 4
 OBJ_SHOPKEEPER2 = 5
 
 .shopkeeperhere1
- EQUB 22,crowbar,68+4,136,105
+ EQUB 255,crowbar,68+4,136,105
  EQUW                pigmycowmess,shoptalk
  EQUB                0 ,0 ,7+64+128,255,68+4,136,105
 
@@ -113,7 +113,7 @@ OBJ_MANURE = 7
 
 OBJ_APPLE = 8
 
- EQUB 36,pickupable,58 ,136,17
+ EQUB 255,pickupable,58 ,136,17
  EQUW                applemess,proxapple
  EQUB                 0 ,0 ,4+64,255,58 ,136,17
 
@@ -131,7 +131,7 @@ OBJ_BONE = 9
 OBJ_BEAN = 10
 
 .beanhere
- EQUB 22,pickupable,68 ,160,2
+ EQUB 255,pickupable,62 ,144,2
  EQUW                greenbeanmess,proxbean
  EQUB                 0 ,0 ,4+64,255 ,62 ,144,2
 
@@ -171,7 +171,7 @@ OBJ_DRAGON = 14
 OBJ_SLEEPINGPOTION = 15
 
 .sleepingpotionhere
- EQUB 45,pickupable,80 ,128,15
+ EQUB 255,pickupable,80 ,128,15
  EQUW                sleeppotionmess,proxsleep
  EQUB                 0 ,0 ,6+64,255,80 ,128,15
 
@@ -186,7 +186,7 @@ OBJ_CROCODILE = 16
 OBJ_ROPE = 17
 
 .ropehere
- EQUB 68,pickupable,76 ,160,14
+ EQUB 255,pickupable,76 ,160,14
  EQUW                ropemess,proxcroc
  EQUB                 0 ,0 ,7+64,255,76 ,160,14
 
@@ -225,7 +225,7 @@ OBJ_WHISKEYBOTTLE = 21
 
 OBJ_LIFT = 22
 
- EQUB 71,lift      ,52 ,56 ,125,56,112,   0   ,1  ,0 ,0 ,7+16,71 ,52,48 ,125
+ EQUB 71,lift      ,52 ,48 ,125,56,112,   0   ,1  ,0 ,0 ,7+16,71 ,52,48 ,125
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -265,7 +265,7 @@ OBJ_KEY2 = 27
 
 OBJ_LIFT3 = 28
 
- EQUB 88,lift      ,58 ,56 ,125,56,136,   0   ,1  ,0 ,0 ,7+16,88 ,58,48 ,125
+ EQUB 88,lift      ,58 ,48 ,125,56,136,   0   ,1  ,0 ,0 ,7+16,88 ,58,48 ,125
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -314,7 +314,7 @@ OBJ_BUCKETEMPTY = 34
 
 OBJ_BUCKETFULL = 35
 
- EQUB 60,pickupable,46 ,144,5
+ EQUB 255,pickupable,46 ,144,5
  EQUW                fullbucketmess,proxfullbucket
  EQUB                 0 ,0 ,5+64,255,46 ,144,5
 
@@ -388,7 +388,7 @@ OBJ_BREAD = 43
 OBJ_RAT = 44
 
 .rathere
- EQUB 36,rat       ,42 ,73 ,104,44,80 ,   0   ,2  ,0 ,0 ,5+16+8,36,96,73 ,104
+ EQUB 36,rat       ,96 ,73 ,104,44,80 ,   0   ,2  ,0 ,0 ,5+16+8,36,96,73 ,104
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -401,7 +401,7 @@ OBJ_TROLL = 45
 
 OBJ_DAGGER = 46
 
- EQUB 69,dagger    ,78 ,136,169 ,0 ,0 ,   0   ,0  ,0 ,0 ,7+64 ,69,40,112 ,169
+ EQUB 69,dagger    ,40 ,112,169 ,0 ,0 ,   0   ,0  ,0 ,0 ,7+64 ,69,40,112 ,169
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -448,7 +448,7 @@ OBJ_GOLDENEGG2 = 51
 OBJ_CROWBAR = 52
 
 .crowbarhere
- EQUB 88,pickupable,48 ,80,4
+ EQUB 255,pickupable,48 ,80,4
  EQUW              crowbarmess,proxcrowbar
  EQUB                   0 ,0 ,5+64,255,48,80,4
 
@@ -512,14 +512,14 @@ OBJ_CARPET = 60
 OBJ_CARPET2 = 61
 
 .carpethere1
- EQUB 94,crowbar  ,46 ,152,210 ,0 ,0 ,   0   ,0  ,0 ,0 ,  2,255,46,152,210
+ EQUB 255,crowbar  ,46 ,152,210 ,0 ,0 ,   0   ,0  ,0 ,0 ,  2,255,46,152,210
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 OBJ_LIFT5 = 62
 
 .daisylifthere
- EQUB 94,lift     ,74 ,56,125,56,120,   0   ,2  ,0 ,0  ,7  ,94 ,74,48,125
+ EQUB 94,lift     ,74 ,48,125,56,120,   0   ,2  ,0 ,0  ,7  ,94 ,74,48,125
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -557,7 +557,7 @@ OBJ_DENZIL = 66
 OBJ_DAISY2 = 67
 
 .daisy1here
- EQUB 73,daisy1,48 ,77,35,  0,0,0,2,   0 ,0 ,7+64,255,48,77,35
+ EQUB 255,daisy1,48 ,77,35,  0,0,0,2,   0 ,0 ,7+64,255,48,77,35
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -736,121 +736,3 @@ noofmoving = (endofmovingdata-movingdata)/16
   EQUB 94 ;;room
   EQUB 34,152 ;;;x,y
   EQUB 4,16 ;;;w,h
-
-
-.resetmoving
-{
-  LDA #lo(movingdata):STA zptr4
-  LDA #hi(movingdata):STA zptr4+1
-
-  LDX #&00
-.loop
-
-  LDY #origroom:LDA (zptr4), Y:LDY #room:STA (zptr4), Y
-  LDY #origx:LDA (zptr4), Y:LDY #movex:STA (zptr4), Y
-  LDY #origy:LDA (zptr4), Y:LDY #movey:STA (zptr4), Y
-  LDY #origfrm:LDA (zptr4), Y:LDY #movefrm:STA (zptr4), Y
-
-  LDA #&00
-  LDY #var1:STA (zptr4), Y
-  LDY #delaycounter:STA (zptr4), Y
-
-  ; Advance to next object
-  LDA zptr4:CLC:ADC #&10:STA zptr4
-  BCC samepage
-  INC zptr4+1
-.samepage
-
-  INX:CPX #noofmoving:BNE loop ; Loop until done
-
-  LDA &00
-  STA waterheight
-  STA fireout
-  STA ratcount
-  STA dragonhere+oldmovex
-  STA dragonhere1+oldmovex
-  STA doorhere+oldmovex
-  
-  LDA #&FF
-  ;STA shopkeepercount
-  STA rathere+var1
-
-  LDA #60
-  STA rathere+oldmovefrm
-
-  ;LDA fullwhiskeymess
-  ;STA whiskeyhere+oldmovex
-
-  LDA #&01
-  ;STA ratcoll+1
-
-  LDA #5+16+8
-  STA rathere+colour
-
-  LDY #&00:LDA #&00
-.scrubtalkbefore
-  STA talkbefore, Y
-  INY
-  CPY #&05:BNE scrubtalkbefore
-
-  RTS
-}
-
-; Reset coins
-.resetcoins
-{
-  LDA #&FF:STA coins
-
-  ; More to do
-
-  ; Fall through ...
-}
-
-.addtocoins
-{
-  INC coins
-
-  ; Determine how many 10s
-  LDX #0:LDA coins
-.more10s
-  CMP #11:BCC nomore10s
-  SBC #10:INX
-  JMP more10s
-.nomore10s
-  PHA:TXA:CLC:ADC #'0':STA noofcoinsmess
-
-  ; Determine how many units
-  LDX #0:PLA
-.moreunits
-  CMP #2:BCC nomoreunits
-  SBC #1:INX
-  JMP moreunits
-.nomoreunits
-  TXA:CLC:ADC #'0':STA noofcoinsmess+1
-
-  ; Draw the full coins message
-  LDA #hi(coinsmess):STA zptr5+1
-  LDA #lo(coinsmess):STA zptr5
-  JMP prtmessage
-
-.coinsmess EQUB PRT_PEN+4, PRT_XY+46,8
-.noofcoinsmess EQUB 0, 0, PRT_END
-}
-
-.subfromlives
-{
-  ; Subtract 1 from lives
-  DEC lives
-
-  ; Inject lives number into number of lives messages, using repeat count
-  LDA lives:STA nooflivesmess+1
-
-  ; Print number of lives (as eggs)
-  LDA #hi(livesmess):STA zptr5+1
-  LDA #lo(livesmess):STA zptr5
-
-  JMP prtmessage
-
-.livesmess EQUB PRT_PEN+4, PRT_XY+14,8, ":::", PRT_XY+14,8
-.nooflivesmess EQUB PRT_REP, 1, "/", PRT_ENDREP, PRT_END
-}
