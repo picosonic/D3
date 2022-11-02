@@ -110,7 +110,9 @@ GUARD ZP_ECONET_WORKSPACE
 
 ; Non-zero to clip draw routine to play area
 .cliptoplayarea EQUB 0
-
+.startx EQUB 0 ; Starting X position
+.starty EQUB 0 ; Starting Y position
+.startroom EQUB 0 ; Starting room id
 .coins EQUB 0 ; Count of collected coins
 .lives EQUB 0 ; Number of lives remaining
 .fireout EQUB 0 ; Non-zero means fire in room 36 is out
