@@ -735,7 +735,7 @@ PAL_DIZZY2 = $02
 .nextobject
 
   ; Advance to next object
-  LDA zptr4:CLC:ADC #&10:STA zptr4
+  LDA zptr4:CLC:ADC #movingsize:STA zptr4
   BCC samepage
   INC zptr4+1
 .samepage
