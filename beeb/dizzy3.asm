@@ -53,13 +53,17 @@ INCLUDE "gfx.asm"
 
   JSR resetmoving ; Put all the objects back to their starting positions
   JSR resetcoins
-  ; JSR resetcarrying
+  JSR resetcarrying
 
   LDA #&03:STA lives ; Set the number of lives to start with
-  ;LDA #46:STA startx
-  ;LDA #168:STA starty
-  LDA #STARTROOM:STA roomno
+  LDA #46:STA startx
+  LDA #168:STA starty
+  LDA #STARTROOM:STA startroom
+  
+  ;;;;;;;;
+  STA roomno
   JSR roomsetup
+  ;;;;;;;;
 
   LDA #&00:STA completedgame
 
@@ -73,6 +77,19 @@ INCLUDE "gfx.asm"
 
   ; Fall through into main game loop
 }  
+
+.resetcarrying
+{
+  LDA #&00
+  STA objectscarried
+  STA objectscarried+2
+  STA objectscarried+3
+
+  LDA #OBJ_BAG:STA objectscarried+2 ; Bag
+  LDA #OBJ_APPLE:STA objectscarried ; Apple
+
+  RTS
+}
 
 .maingamelp
 {
@@ -209,6 +226,7 @@ PUTFILE "SPEECH", "$.SPEECH", EXO_LOAD_ADDR
 PUTFILE "RMDATA", "$.RMDATA", 0
 SAVE "EXTRA", extradata, extraend
 SAVE "DIZZY3", start, codeend, onetimeinit
+SAVE "OBJDATA", movingdata, endofmovingdata
 PUTFILE "TREPIC", "TREPIC", MODE8BASE
 PUTFILE "loadscr", "FRAME", MODE8BASE
 
