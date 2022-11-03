@@ -13,6 +13,8 @@
 
 #define NUMFRAMES 39
 
+//#define ASMOUT 1
+
 void drawbin(const unsigned char *data)
 {
   unsigned char mask=0x80;
@@ -26,9 +28,29 @@ void drawbin(const unsigned char *data)
   }
 }
 
+void hexbin(const unsigned char *data)
+{
+  unsigned char mask=0x80;
+
+  fprintf(stderr, "%%");
+
+  while (mask>0)
+  {
+    fprintf(stderr, "%c", (((*data)&mask)>0)?'1':'0');
+
+    mask>>=1;
+  }
+
+  fprintf(stderr, ",");
+}
+
 void drawbin_width(const unsigned char *data, const unsigned char width, const unsigned char mask)
 {
   unsigned char done=0;
+
+#ifdef ASMOUT
+  if (!mask) fprintf(stderr, "EQUB ");
+#endif
 
   printf("|");
   
@@ -37,11 +59,21 @@ void drawbin_width(const unsigned char *data, const unsigned char width, const u
     if (((mask) && (!(done&1))) || ((!mask) && (done&1)))
         drawbin(&data[done]);
 
+#ifdef ASMOUT
+  if ((!mask) && (done&1))
+    hexbin(&data[done]);
+#endif
+
     done++;
   }
   
   if (!mask)
     printf("|\n");
+
+#ifdef ASMOUT
+  if (!mask)
+    fprintf(stderr, "\n");
+#endif
 }
 
 int main()
@@ -83,6 +115,11 @@ int main()
         height=framedata[(NUMFRAMES*2)+start];
 
         printf(" (%dx%d) / %.2x\n", WIDTH, height, framedata[(NUMFRAMES*2)+start+1]);
+
+#ifdef ASMOUT
+        fprintf(stderr, ".frame%.2d\n", frame);
+        fprintf(stderr, "EQUB %.2d,%.2d\n", height, framedata[(NUMFRAMES*2)+start+1]);
+#endif
 
         // Decode the framedata
         offs=0;
