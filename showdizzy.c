@@ -64,7 +64,7 @@ int main()
     fclose(rd);
 
     // Process it
-    for (frame=0; frame<(NUMFRAMES-1); frame++)
+    for (frame=0; frame<NUMFRAMES; frame++)
     {
       int start;
 
