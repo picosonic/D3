@@ -678,8 +678,25 @@ PAL_DIZZY2 = $02
   ; All the data has been read for this frame, so draw it
   JSR frame
 
+  TYA:PHA
+  
+  ; Check for water
+  LDA frmno
+  CMP #91:BNE checkflame
+
+  JSR addtowater
+
+  ; Check for flame
+.checkflame
+  LDA frmno
+  CMP #115:BNE otherobj
+
+  JSR addtoflame
+
+.otherobj
+
   ; Advance room pointer to next tile
-  TYA:CLC:ADC roomptr:STA roomptr
+  PLA:CLC:ADC roomptr:STA roomptr
   BCC samepage
   INC roomptr+1
 .samepage
@@ -690,6 +707,60 @@ PAL_DIZZY2 = $02
   LDA roomptr:CMP nextroomptr:BNE thinglp
 
 .done
+  RTS
+}
+
+.addtoflame
+{
+  LDA #lo(flamelist):STA zptr6
+  LDA #hi(flamelist):STA zptr6+1
+  LDA #0:STA ztmp6
+  LDA noofflames:TAY
+  INC noofflames
+
+  JMP joinaddtothing
+}
+
+.addtowater
+{
+  LDA frmattri:STA watercolour
+  LDA #3:STA ztmp6
+
+  ; Check if we're at the broken bridge
+  LDA roomno:CMP #48:BNE normalwater
+
+  LDA waterheight
+
+  ; .....
+
+.normalwater
+  LDA #lo(waterlist):STA zptr6
+  LDA #hi(waterlist):STA zptr6+1
+
+  LDA noofwater:TAY
+  INC noofwater
+
+  ; Fall through
+}
+
+.joinaddtothing
+{
+  ; Frame in ztmp6
+  ; Array pointer in zptr6
+
+  ; Index in Y
+  TYA:BEQ first
+
+  STY ztmp5:TYA:ASL A:CLC:ADC ztmp5:TAY ; Y = Y*3
+
+.first
+  ; Data is stored as X, Y, Frame
+  LDA frmx:STA (zptr6), Y ; X
+  INY
+  LDA frmy:STA (zptr6), Y ; Y
+  INY
+  LDA ztmp6:STA (zptr6), Y ; Frame
+
   RTS
 }
 

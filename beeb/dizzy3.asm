@@ -92,6 +92,9 @@ INCLUDE "gfx.asm"
 
 .same
 
+.afterdomoving
+  JSR updateflames
+
   LDA dontupdatedizzy
   BNE nodraw
 
@@ -101,12 +104,45 @@ INCLUDE "gfx.asm"
   JMP maingamelp
 }
 
+.updateflames
+{
+  ; First check if there are flames
+  LDA noofflames:BEQ done
+
+  TAX
+  LDA #lo(flamelist):STA zptr4
+  LDA #hi(flamelist):STA zptr4+1
+
+  ; Update flame loop
+  LDA #115:STA frmno
+  LDA clock:AND #&01:TAY:LDA flamecolours, Y:STA frmattri
+
+  LDY #&00
+.updateflamelp
+
+  LDA (zptr4), Y:STA frmx:INY
+  LDA (zptr4), Y:STA frmy:INY
+  INY
+  JSR frame
+
+  DEX:BNE updateflamelp
+
+.done
+  RTS
+
+.flamecolours
+  EQUB     &02  ; Red
+  EQUB &80+&07  ; White (h-flip)
+}
+
 .resetcarrying
 {
   LDA #&00
   STA objectscarried
+  STA objectscarried+1
   STA objectscarried+2
   STA objectscarried+3
+  STA objectscarried+4
 
   LDA #OBJ_BAG:STA objectscarried+2 ; Bag
   LDA #OBJ_APPLE:STA objectscarried ; Apple
