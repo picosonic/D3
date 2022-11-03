@@ -56,9 +56,6 @@ GUARD ZP_ECONET_WORKSPACE
 .frmcolour EQUB 0
 
 .eggcount EQUB 0 ; Dizzy animation countdown
-.roomno EQUB 0 ; Current room
-.loadedroomno EQUB 0 ; Last room loaded from disk
-.roomlen EQUW 0 ; Length of active roomdata
 
 ; Dizzy position / status
 .dizzyx EQUB 0 ; X
@@ -142,3 +139,11 @@ GUARD SOUND_WORKSPACE
 
 ORG PRINTER_BUFFER
 GUARD ENVELOPE_DEFS
+
+.start_of_buff
+
+.roomno EQUB 0 ; Current room
+.loadedroomno EQUB 0 ; Last room loaded from disk
+.roomlen EQUW 0 ; Length of active roomdata
+
+.end_of_buff
