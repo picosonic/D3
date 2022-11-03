@@ -138,9 +138,7 @@ INCLUDE "gfx.asm"
 .resetcarrying
 {
   LDA #&00
-  STA objectscarried
   STA objectscarried+1
-  STA objectscarried+2
   STA objectscarried+3
   STA objectscarried+4
 
