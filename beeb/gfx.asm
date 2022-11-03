@@ -523,6 +523,8 @@ PAL_DIZZY2 = $02
   LDA #&00:STA dontupdatedizzy ; Allow Dizzy to be drawn
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  LDA roomno:BEQ done
+
   ; Draw initial frame (so there is something to rub out)
   LDA dizzyfrm:AND #&1F:STA frmno
   LDA dizzyx:STA frmx
@@ -531,6 +533,7 @@ PAL_DIZZY2 = $02
   JSR drawdizzy
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+.done
   RTS
 }
 
