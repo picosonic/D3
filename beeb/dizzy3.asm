@@ -93,6 +93,7 @@ INCLUDE "gfx.asm"
 .same
 
 .afterdomoving
+  JSR updatewater
   JSR updateflames
 
   LDA dontupdatedizzy
@@ -102,6 +103,37 @@ INCLUDE "gfx.asm"
 .nodraw
 
   JMP maingamelp
+}
+
+.updatewater
+{
+  ; First check if there is any water
+  LDA noofwater:BEQ done
+
+  TAX
+  LDA #lo(waterlist):STA zptr4
+  LDA #hi(waterlist):STA zptr4+1  
+
+  ; Get water colour, e.g. water or lava
+  LDA watercolour:AND #&E7:ORA #&10:STA frmattri
+
+  LDY #&00
+.updatewaterlp
+
+  LDA (zptr4), Y:STA frmx:INY
+  LDA (zptr4), Y:STA frmy:INY
+  LDA (zptr4), Y
+  STA zidx4:INC zidx4:LDA zidx4:AND #&03:STA (zptr4), Y:INY
+  CLC:ADC #92:STA frmno
+
+  JSR frame
+
+  ; ...
+
+  DEX:BNE updatewaterlp
+
+.done
+  RTS
 }
 
 .updateflames
