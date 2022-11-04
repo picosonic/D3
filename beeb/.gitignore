@@ -15,3 +15,6 @@ RMTABLE
 img2beeb
 exomizer
 *.o
+
+# Other
+.~*#
