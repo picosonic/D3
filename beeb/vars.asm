@@ -56,6 +56,25 @@ GUARD ZP_ECONET_WORKSPACE
 .frmcolour EQUB 0
 
 .eggcount EQUB 0 ; Dizzy animation countdown
+.x EQUB 0
+.ox EQUB 0
+.y EQUB 0
+.oy EQUB 0
+.dy EQUB 0
+.ff EQUB 0
+.of EQUB 0
+.floor EQUB 0
+.animation EQUB 0
+.sequence EQUB 0
+.lookx EQUB 0
+.looky EQUB 0
+
+.startx EQUB 0 ; Starting X position
+.starty EQUB 0 ; Starting Y position
+.oldx EQUB 0
+.oldy EQUB 0
+.oldox EQUB 0
+.oldoy EQUB 0
 
 ; Dizzy position / status
 .dizzyx EQUB 0 ; X
@@ -107,14 +126,6 @@ GUARD ZP_ECONET_WORKSPACE
 
 ; Non-zero to clip draw routine to play area
 .cliptoplayarea EQUB 0
-.startx EQUB 0 ; Starting X position
-.starty EQUB 0 ; Starting Y position
-.startroom EQUB 0 ; Starting room id
-.coins EQUB 0 ; Count of collected coins
-.lives EQUB 0 ; Number of lives remaining
-.fireout EQUB 0 ; Non-zero means fire in room 36 is out
-.ratcount EQUB 0 ; 0 / 1 / 2
-.completedgame EQUB 0
 
 .printloops EQUB 0 ; Number of remaining loops when doing print repeats
 .printidx EQUB 0 ; Place to loop back to on repeats
@@ -151,8 +162,36 @@ GUARD ENVELOPE_DEFS
 
 .start_of_buff
 
+.lastroom EQUB 0
 .roomno EQUB 0 ; Current room
+.newroomno EQUB 0
+.oldroomno EQUB 0
 .loadedroomno EQUB 0 ; Last room loaded from disk
 .roomlen EQUW 0 ; Length of active roomdata
+.spritenothere EQUB 0
+.killed EQUB 0
+.killedmess EQUW 0
+.coins EQUB 0 ; Count of collected coins
+.lives EQUB 0 ; Number of lives remaining
+.usepickup EQUB 0
+.pickup EQUB 0
+.toomuchtohold EQUB 0
+.objecttodrop EQUB 0
+.cyclecolour EQUB 0
+.tryputdownvar EQUB 0
+.obstructinglift EQUB 0
+.drunk EQUB 0
+.shopkeepercount EQUB 0
+.spat EQUB 0
+.fireout EQUB 0 ; Non-zero means fire in room 36 is out
+.ratcount EQUB 0 ; 0 / 1 / 2
+.slotno EQUB 0
+.completedgame EQUB 0
+.holding EQUB 0
+.holdingix EQUB 0
+.holidingnumberix EQUB 0
+.deadmess EQUB 0
+.implode EQUB 0
+.startroom EQUB 0 ; Starting room id
 
 .end_of_buff

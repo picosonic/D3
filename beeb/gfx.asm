@@ -870,11 +870,50 @@ PAL_DIZZY2 = $02
   RTS
 }
 
+.startegress
+{
+  LDA startx:STA x
+  LDA starty:STA y
+  LDA startroom:STA newroomno
+
+  LDA #0
+  STA dy
+  STA floor
+  STA sequence ; Looking forward idle animation
+  STA animation ; Animation frame offset within sequence
+  STA killed ; Dizzy is not dead
+  STA obstructinglift ; Not obstructing lift
+  STA drunk ; Not drunk
+
+  LDA #10:STA usepickup
+
+  LDX #1
+  LDA newroomno:CMP #STARTROOM
+  BNE standforwardframe
+
+  LDA y:CMP #100:BCS standforwardframe
+
+  LDX #25
+
+.standforwardframe
+  STX ff
+
+.enterroom
+  LDA newroomno
+  STA roomno
+  STA startroom
+
+  LDA x:STA startx
+  LDA y:STA starty
+
+  ; Fall through
+}
+
 .resetuproom
 {
   LDA roomno:JSR roomsetup
 
-  RTS
+  RTS ; Needs to be a JMP plotnew ?
 }
 
 .prtmessage
@@ -1104,3 +1143,14 @@ PAL_DIZZY2 = $02
 .messheight
   EQUB 0
 }
+
+; Dizzy animation frames
+.seq0 EQUB 0,1,0,1,0,1,0,1 ; Looking forward idle
+.seq1 EQUB 9,10,11,12,13,14,15,16 ; Walking left
+.seq2 EQUB 17,18,19,20,21,22,23,24 ; Walking right
+.seq3 EQUB 2,3,4,5,6,7,8,1 ; Jumping/tumbling straight up/down
+.seq4 EQUB 25,26,27,28,29,30,31,9 ; Jump/tumble left
+.seq5 EQUB 32,33,34,35,36,37,38,17 ; Jump/tumble right
+.seq6 EQUB 4,5,5,6,6,5,5,4; bob upside down
+.seq7 EQUB 0,1,8,8,7,6,7,7; fall over backwards
+.seq8 EQUB 8,7,6,5,4,3,2,1; upside down tumble

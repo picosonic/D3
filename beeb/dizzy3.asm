@@ -105,39 +105,6 @@ INCLUDE "gfx.asm"
   JMP maingamelp
 }
 
-.process_inputs
-{
-  LDX keys
-  BEQ done ; Nothing pressed
-
-.case_right
-  TXA:AND #PAD_RIGHT
-  BEQ case_left
-  INC roomno
-
-.case_left
-  TXA:AND #PAD_LEFT
-  BEQ case_up
-  DEC roomno
-
-.case_up
-  TXA:AND #PAD_UP
-  BEQ case_down
-  LDA roomno:CLC:ADC #&10:STA roomno
-
-.case_down
-  TXA:AND #PAD_DOWN
-  BEQ checkno
-  LDA roomno:SEC:SBC #&10:STA roomno
-
-.checkno
-  LDA roomno:CMP #101:BCC done
-  LDA #STARTROOM:STA roomno ; Reset
-
-.done
-  RTS
-}
-
 .updatedizzy
 {
   ; Should be called from vsync, so wait for one
@@ -151,17 +118,79 @@ INCLUDE "gfx.asm"
   .timetoupdate
   LDA #4:STA eggcount ; Schedule next update in 4 frames time
 
-  ;;;;; TEMPORARILY DRAW A DIZZY FRAME TO TEST ;;;;;
   ; Rub out
-  LDA dizzyfrm:AND #&1F:STA frmno
+  LDA dizzyfrm:STA frmno
   LDA dizzyx:STA frmx
   LDA dizzyy:STA frmy
   LDA #PAL_WHITE:STA frmattri
   JSR drawdizzy
   
+;  LDA killed:BEQ notdeadyet
+;
+;  LDA sequence:CMP #6:BEQ cantstop
+;  CMP #7:BNE notkeelingover
+;
+;  LDA animation:CMP #7:BEQ cantstop
+;
+;  LDA #6:STA animation:BNE cantstop
+;
+;.notkeelingover
+;  BNE notdeadyet
+;
+;  STA animation
+;
+;  LDA #7:STA sequence:BNE cantstop
+;
+;.notdeadyet
+;  LDA sequence:CMP #3:BCS jumping
+;
+;.checkfloor
+;  LDA floor
+;  BEQ cantstop
+;
+;  LDX keys
+;  TXA:AND #PAD_LEFT:BNE tryright
+;  LDA #1:BNE tryjump
+;
+;.tryright
+;  TXA:AND #PAD_RIGHT:BNE trynone
+;  LDA #2:BNE tryjump
+;
+;.trynone
+;  LDA #0
+;.tryjump
+;  STA ztmp1
+;  TXA:AND #PAD_START:BEQ setsequnce ; No jump
+;
+;  LDA #0:STA animation
+;  LDA #255-8:STA dy
+;  LDA #3
+;
+;.setsequnce
+;  CLC:ADC ztmp1
+;
+;.cantstop
+;  ; Don't check keys
+;  LDA sequence
+;  ROL A:ROL A
+;  CLC:ADC animation:TAY
+;  LDA seq0, Y:STA ff
+;
+;  LDY animation:INY:TYA
+;  AND #7:STA animation
+;
+;  LDA roomno:STA oldroomno
+;
+;  LDA x:STA ztmp1
+;
+;.sidereturn
+;
+;.jumping ;;;;;
+;
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ; Draw new
   INC dizzyfrm
-  LDA dizzyfrm:AND #&1F:STA frmno
+  LDA dizzyfrm:AND #&1F:STA dizzyfrm:STA frmno
   JSR drawdizzy
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

@@ -1,3 +1,42 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Code in language workspace
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This is just for testing
+.process_inputs
+{
+  LDX keys
+  BEQ done ; Nothing pressed
+
+.case_right
+  TXA:AND #PAD_RIGHT
+  BEQ case_left
+  INC roomno
+
+.case_left
+  TXA:AND #PAD_LEFT
+  BEQ case_up
+  DEC roomno
+
+.case_up
+  TXA:AND #PAD_UP
+  BEQ case_down
+  LDA roomno:CLC:ADC #&10:STA roomno
+
+.case_down
+  TXA:AND #PAD_DOWN
+  BEQ checkno
+  LDA roomno:SEC:SBC #&10:STA roomno
+
+.checkno
+  LDA roomno:CMP #101:BCC done
+  LDA #STARTROOM:STA roomno ; Reset
+
+.done
+  RTS
+}
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 .updatewater
 {
   ; First check if there is any water
