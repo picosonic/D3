@@ -36,6 +36,11 @@ INCBIN "RMTABLE"
   LDA #184:STA dizzyx
   LDA #136:STA dizzyy
 
+  ; Load varcode
+  LDX #lo(varcodecmd)
+  LDY #hi(varcodecmd)
+  JSR OSCLI
+
   ; Open roomdata file
   LDX #lo(roomdatafn)
   LDY #hi(roomdatafn)
@@ -44,6 +49,9 @@ INCBIN "RMTABLE"
   STA fcb ; Store file handle
 
   JMP titlescreen
+
+.varcodecmd
+  EQUS "L.VARCODE", &0D
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 .initend

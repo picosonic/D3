@@ -122,7 +122,7 @@ GUARD ZP_ECONET_WORKSPACE
 .zpend
 
 ; ---------------------------------------------------------
-; Variables in LANGUAGE workspace, &400 to &7FF
+; Variables in LANGUAGE workspace, from &400
 
 ORG LANGUAGE_WORKSPACE
 GUARD SOUND_WORKSPACE
@@ -133,6 +133,15 @@ GUARD SOUND_WORKSPACE
 .flippedframe SKIP 190 ; Biggest frame (&b6) - a branch, is 190 bytes
 
 .end_of_vars
+
+; ---------------------------------------------------------
+; Code in LANGUAGE workspace, up to &7FF
+
+.start_of_var_code
+
+INCLUDE "varcode.asm"
+
+.end_of_var_code
 
 ; ---------------------------------------------------------
 ; Variables in printer buffer workspace, &880 to &8BF

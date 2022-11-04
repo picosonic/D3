@@ -54,11 +54,11 @@ INCLUDE "gfx.asm"
   JSR resetcoins
   JSR resetcarrying
 
-  LDA #&03:STA lives ; Set the number of lives to start with
+  LDA #3:STA lives ; Set the number of lives to start with
   LDA #46:STA startx
   LDA #168:STA starty
-  LDA #STARTROOM:STA startroom
-  
+  LDA #STARTROOM:STA startroom ; THE CASTLE'S DUNGEON
+
   ;;;;;;;;
   STA roomno
   JSR roomsetup
@@ -215,6 +215,7 @@ INCLUDE "gfx.asm"
 
 .updatedizzy
 {
+  ; Should be called from vsync, so wait for one
   JSR waitvsync
 
   ; See if we are allowed to run yet
@@ -225,7 +226,6 @@ INCLUDE "gfx.asm"
   .timetoupdate
   LDA #4:STA eggcount ; Schedule next update in 4 frames time
 
-  ;;;;; TEMPORARILY DRAW A DIZZY FRAME TO TEST ;;;;;
   ; Rub out
   LDA dizzyfrm:AND #&1F:STA frmno
   LDA dizzyx:STA frmx
@@ -394,6 +394,7 @@ PUTFILE "EXOSCR", "$.EXOSCR", EXO_LOAD_ADDR
 PUTFILE "SPEECH", "$.SPEECH", EXO_LOAD_ADDR
 PUTFILE "MELODY", "$.MELODY", EXO_LOAD_ADDR
 SAVE "EXTRA", extradata, extraend
+SAVE "VARCODE", start_of_var_code, end_of_var_code
 SAVE "DIZZY3", start, codeend, onetimeinit
 PUTFILE "RMDATA", "$.RMDATA", 0
 SAVE "OBJDATA", movingdata, endofmovingdata
@@ -402,7 +403,8 @@ PUTFILE "loadscr", "FRAME", MODE8BASE
 
 PRINT "-------------------------------------------"
 PRINT "Zero page from ", ~zpstart, " to ", ~zpend-1, "  (", ZP_ECONET_WORKSPACE-zpend, " bytes left )"
-PRINT "VARS from ", ~start_of_vars, " to ", ~end_of_vars-1, "  (", SOUND_WORKSPACE-end_of_vars, " bytes left )"
+PRINT "VARS from ", ~start_of_vars, " to ", ~end_of_vars-1
+PRINT "VARCODE from ", ~start_of_var_code, " to ", ~end_of_var_code-1, "  (", SOUND_WORKSPACE-end_of_var_code, " bytes left )"
 PRINT "BVARS from ", ~start_of_buff, " to ", ~end_of_buff-1, "  (", ENVELOPE_DEFS-end_of_buff, " bytes left )"
 PRINT "EXTRA from ", ~extradata, " to ", ~extraend-1, "  (", NMI_WORKSPACE-extraend, " bytes left )"
 PRINT "DATA from ", ~datastart, " to ", ~dataend-1, "  (", dataend-datastart, " bytes )"
