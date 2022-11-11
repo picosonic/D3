@@ -234,6 +234,18 @@ SAVE "OBJDATA", movingdata, endofmovingdata
 PUTFILE "TREPIC", "TREPIC", MODE8BASE
 PUTFILE "loadscr", "FRAME", MODE8BASE
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Hearts demo loads over the top of roomdata
+ORG MAIN_LOAD_ADDR
+CLEAR datastart, dataend
+GUARD dataend
+.hearts_start
+INCLUDE "hearts.asm"
+.hearts_end
+
+SAVE "HEARTS", hearts_start, hearts_end
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 PRINT "-------------------------------------------"
 PRINT "Zero page from ", ~zpstart, " to ", ~zpend-1, "  (", ZP_ECONET_WORKSPACE-zpend, " bytes left )"
 PRINT "Stack from ", ~start_of_stack, " to ", ~end_of_stack-1
