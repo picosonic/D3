@@ -18,6 +18,7 @@ colour = 11
 ;origy = 14
 ;origfrm = 15
 
+; Size of each object
 movingsize = 12
 
 ; Routine index
@@ -743,8 +744,7 @@ OBJ_RAILING4 = 71
 
 .endofmovingdata
 
-;noofmoving = (endofmovingdata-movingdata)/16
-noofmoving = (endofmovingdata-movingdata)/12
+noofmoving = (endofmovingdata-movingdata)/movingsize
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
