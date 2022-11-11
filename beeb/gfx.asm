@@ -828,9 +828,7 @@ PAL_DIZZY2 = $02
 
   ; Set pointer to room name
   LDA #STR_roomname:JSR findroomstr
-  JSR prtmessage
-
-  RTS
+  JMP prtmessage
 
 .readytoprintname
   EQUB PRT_PEN+4,PRT_XY+12,24
@@ -848,9 +846,7 @@ PAL_DIZZY2 = $02
   JSR resetuproom ; Draw the room again
 
   LDA #&00:STA dontupdatedizzy ; Allow Dizzy to be drawn
-  JSR prtmessage
-
-  RTS
+  JMP prtmessage
 }
 
 .printandwait
