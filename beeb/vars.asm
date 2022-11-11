@@ -138,11 +138,14 @@ GUARD ZP_ECONET_WORKSPACE
 ORG STACK
 GUARD USERV
 
+attrisize = ((MAXX/ATTR_GRID)/BITSPERBYTE) * ((MAXY-((5+1+1)*ATTR_GRID))/ATTR_GRID)
+
 .start_of_stack
 
 ; Attribute table, used for hit-detection on 8x8 grid of screen
+; 256x136 = 32x17 blocks = 4x17 bytes
 .attritable
-SKIP ((MAXX/ATTR_GRID)/BITSPERBYTE) * (MAXY/ATTR_GRID)
+SKIP attrisize
 
 .end_of_stack
 
