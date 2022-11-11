@@ -11,7 +11,7 @@ BYTESPERLINE = (MAXX*2)
 ; Hardware specific
 MODE8BASE  = &5000
 
-PLAYAREA = MODE8BASE+(6*BYTESPERLINE)
+PLAYAREA = MODE8BASE+((5+1)*BYTESPERLINE)
 
 MAIN_LOAD_ADDR = DFS_OPEN_FILE_BUFFER2 ; We only need 1 concurrent open file, so load where 2nd file buffer starts
 EXO_LOAD_ADDR = DFS_PAGE
