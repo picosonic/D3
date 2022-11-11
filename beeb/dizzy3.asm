@@ -12,12 +12,13 @@ GUARD MODE8BASE
 
 .start
 .datastart
+INCLUDE "rooms.asm"
+
 .frametable
 INCBIN "frametable.bin"
 .framedefs
 INCBIN "framedefs.bin"
 
-INCLUDE "rooms.asm"
 INCLUDE "dizzyfrm.asm"
 .dataend
 

@@ -1,20 +1,3 @@
-; Room data filename
-.roomdatafn
-EQUS "RMDATA", &0D
-
-; File control block
-.fcb
-EQUB &00 ; File handle
-EQUB &00, &00, &00, &00 ; Pointer to data (low byte first)
-EQUB &00, &00, &00, &00 ; Number of bytes to transfer (low byte first)
-EQUB &00, &00, &00, &00 ; Sequential pointer (low byte first)
-
-.emptyroomname
-EQUB "::::::::SKY:::::::::", PRT_END
-
-.roomtable
-INCBIN "RMTABLE"
-
 .roomdata
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; ONE TIME INIT - Lost when first room loaded
@@ -56,6 +39,23 @@ INCBIN "RMTABLE"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 .initend
 SKIP BIGGESTROOM-(initend-roomdata)
+
+; Room data filename
+.roomdatafn
+EQUS "RMDATA", &0D
+
+; File control block
+.fcb
+EQUB &00 ; File handle
+EQUB &00, &00, &00, &00 ; Pointer to data (low byte first)
+EQUB &00, &00, &00, &00 ; Number of bytes to transfer (low byte first)
+EQUB &00, &00, &00, &00 ; Sequential pointer (low byte first)
+
+.emptyroomname
+EQUB "::::::::SKY:::::::::", PRT_END
+
+.roomtable
+INCBIN "RMTABLE"
 
 treasurepic = 101
 treasurelen = &3000
