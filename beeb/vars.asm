@@ -133,6 +133,20 @@ GUARD ZP_ECONET_WORKSPACE
 .zpend
 
 ; ---------------------------------------------------------
+; Variables in STACK, from &100
+
+ORG STACK
+GUARD USERV
+
+.start_of_stack
+
+; Attribute table, used for hit-detection on 8x8 grid of screen
+.attritable
+SKIP ((MAXX/ATTR_GRID)/BITSPERBYTE) * (MAXY/ATTR_GRID)
+
+.end_of_stack
+
+; ---------------------------------------------------------
 ; Variables in LANGUAGE workspace, from &400
 
 ORG LANGUAGE_WORKSPACE

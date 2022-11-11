@@ -235,6 +235,7 @@ PUTFILE "loadscr", "FRAME", MODE8BASE
 
 PRINT "-------------------------------------------"
 PRINT "Zero page from ", ~zpstart, " to ", ~zpend-1, "  (", ZP_ECONET_WORKSPACE-zpend, " bytes left )"
+PRINT "Stack from ", ~start_of_stack, " to ", ~end_of_stack-1
 PRINT "VARS from ", ~start_of_vars, " to ", ~end_of_vars-1
 PRINT "VARCODE from ", ~start_of_var_code, " to ", ~end_of_var_code-1, "  (", SOUND_WORKSPACE-end_of_var_code, " bytes left )"
 PRINT "BVARS from ", ~start_of_buff, " to ", ~end_of_buff-1, "  (", ENVELOPE_DEFS-end_of_buff, " bytes left )"
@@ -246,5 +247,5 @@ PRINT "Main code entry point : ", ~onetimeinit
 PRINT "Objects : ", ~movingdata, "..", ~endofmovingdata, " (", noofmoving, " objs )"
 PRINT ""
 remaining = MODE8BASE-objend
-PRINT "Bytes left before screen memory : ", ~remaining, "  (", remaining, " bytes )"
+PRINT "Space before screen memory : ", ~remaining, "  (", remaining, " bytes left )"
 PRINT "-------------------------------------------"

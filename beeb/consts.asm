@@ -1,9 +1,17 @@
 ; Constants
 
+; Bits in a byte
+BITSPERBYTE = 8
+
+; Pixel resolution
+MAXX = 256
+MAXY = 192
+BYTESPERLINE = (MAXX*2)
+
 ; Hardware specific
 MODE8BASE  = &5000
 
-PLAYAREA = MODE8BASE+(12*256)
+PLAYAREA = MODE8BASE+(6*BYTESPERLINE)
 
 MAIN_LOAD_ADDR = DFS_OPEN_FILE_BUFFER2 ; We only need 1 concurrent open file, so load where 2nd file buffer starts
 EXO_LOAD_ADDR = DFS_PAGE
@@ -13,6 +21,9 @@ PAL_BLACK = 0
 PAL_RED = 2
 PAL_GREEN = 4
 PAL_WHITE = 7
+
+; Attribute related
+ATTR_GRID = 8
 
 ; Message printing control codes
 PRT_END = 0

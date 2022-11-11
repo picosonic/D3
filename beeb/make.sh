@@ -4,6 +4,10 @@ workdir=$1
 
 cd "${workdir}"
 
+# Set pixel resolution
+xmax=256
+ymax=192
+
 # Set filenames
 img2beeb="img2beeb"
 exo="exomizer"
@@ -46,7 +50,7 @@ then
   rm "${beebscr}" >/dev/null 2>&1
 
   # Convert from image to beeb format
-  ./${img2beeb} -f "${beebpal}" -d1 -X256 -Y192 "${srcscr}" "${beebscr}"
+  ./${img2beeb} -f "${beebpal}" -d1 -X${xmax} -Y${ymax} "${srcscr}" "${beebscr}"
 
   # Compress beeb format with exomizer
   #
@@ -99,7 +103,7 @@ then
   rm "${beebscr}" >/dev/null 2>&1
 
   # Convert from image to beeb format
-  ./${img2beeb} -f "${beebpal}" -d1 -X256 -Y192 "${srcscr}" "${beebscr}"
+  ./${img2beeb} -f "${beebpal}" -d1 -X${xmax} -Y${ymax} "${srcscr}" "${beebscr}"
 fi
 
 beebasm -v -i exoloader.asm
