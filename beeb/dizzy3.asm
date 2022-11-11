@@ -244,7 +244,7 @@ PRINT "DATA from ", ~datastart, " to ", ~dataend-1, "  (", dataend-datastart, " 
 PRINT "CODE from ", ~codestart, " to ", ~codeend-1, "  (", codeend-codestart, " bytes )"
 PRINT ""
 PRINT "Main code entry point : ", ~onetimeinit
-PRINT "Objects : ", ~movingdata, "..", ~endofmovingdata, " (", noofmoving, " objs )"
+PRINT "Objects : ", ~movingdata, "..", ~endofmovingdata, " (", endofmovingdata-movingdata, " bytes, ", noofmoving, " objs )"
 PRINT ""
 remaining = MODE8BASE-objend
 PRINT "Space before screen memory : ", ~remaining, "  (", remaining, " bytes left )"
