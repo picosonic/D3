@@ -748,14 +748,12 @@ noofmoving = (endofmovingdata-movingdata)/12
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; Temporarily blank messages
-.dozytalking
-.dougtalking
-.dylantalking
-.denziltalking
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+shoptalk = beanhere+room
+dozytalking = sleepingpotionhere+room
+denziltalking = ropehere+room
+dougtalking = crowbarhere+room
+duffmem = 0
+dylantalking = duffmem
 
 .nothingheremess EQUB PRT_END
 .bagmess EQUB "EXIT:AND:DON;T:DROP",PRT_END
@@ -783,8 +781,6 @@ noofmoving = (endofmovingdata-movingdata)/12
 .pickaxemess EQUB "A:RUSTY:OLD:PICKAXE",PRT_END
 .rugmess EQUB "AN:OLD:THICK:RUG",PRT_END
 .windowmess EQUB "A:WINDOW:FRAME",PRT_END
-
-.shoptalk EQUW beanhere+room
 
 ;;;;;;;;;;;;;;;;;
 
