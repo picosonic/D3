@@ -49,7 +49,7 @@ int main()
         for (i=start; i<end; i+=3)
         {
           printf("[%.2x ", roomdata[(NUMROOMS*2)+i]);
-          printf("%dx%d", (roomdata[(NUMROOMS*2)+i+1])*2, roomdata[(NUMROOMS*2)+i+2]);
+          printf("%dx%d", (roomdata[(NUMROOMS*2)+i+1]&0x7f)*2, roomdata[(NUMROOMS*2)+i+2]);
           if (!(roomdata[(NUMROOMS*2)+i+1] & 0x80))
           {
             printf(" 0x%.2x]", roomdata[(NUMROOMS*2)+i+3]);
