@@ -1,5 +1,7 @@
 ; The heart demo
 
+numhearts = 32
+
 .heartdemo
 {
   JSR resethearts
