@@ -1,33 +1,20 @@
-; 4 byte seeded "random" number generator
-.rand
+.random
 {
   LDA seed
-  ROL A
-  ROL A
-  EOR #&41
-  ROL A
-  ROL A
-  EOR #&93
-  ADC seed+1
+  SEC:SBC #&01
+  EOR seed+1
+  ASL A
+  PHA:LDA seed+2:ROR A:STA seed+2:PLA
   STA seed
+  EOR #&FF ; CPL
   ROL A
-  ROL A
-  EOR #&12
-  ROL A
-  ROL A
-  ADC seed+2
+  EOR #48
+  EOR seed+1
   STA seed+1
-  ADC seed
-  INC seed+2
-  BNE cont
-  PHA
-  LDA seed+3
-  CLC
-  ADC #&1D
-  STA seed+3
-  PLA
+  EOR seed+2
 
-.cont
-  EOR seed+3 
   RTS
+
+.seed
+  EQUB &59, &a3, &13
 }

@@ -36,9 +36,6 @@ GUARD ZP_ECONET_WORKSPACE
 .ztmp5 EQUB 0
 .ztmp6 EQUB 0
 
-; Seed for random number generator
-.seed EQUW &0000, &0000
-
 ; Frame counter
 .oldclock EQUB &00
 .clock EQUB &00
