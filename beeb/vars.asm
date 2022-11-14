@@ -81,8 +81,6 @@ GUARD ZP_ECONET_WORKSPACE
 .dizzyoy EQUB 0 ; Old Y
 .dizzyofrm EQUB 0 ; Old frame
 
-.dontupdatedizzy EQUB 0
-
 ; Flames / water / lava
 .noofflames EQUB 0 ; Count of active flames
 .noofwater EQUB 0 ; Count of active water / lava
@@ -184,6 +182,7 @@ GUARD ENVELOPE_DEFS
 .loadedroomno EQUB 0 ; Last room loaded from disk
 .roomlen EQUW 0 ; Length of active roomdata
 .spritenothere EQUB 0
+.dontupdatedizzy EQUB 0
 .killed EQUB 0
 .killedmess EQUW 0
 .coins EQUB 0 ; Count of collected coins
