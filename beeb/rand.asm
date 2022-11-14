@@ -1,7 +1,7 @@
 .random
 {
   LDA seed
-  SEC:SBC #&01
+  SEC:SBC #&01:CLC
   EOR seed+1
   ASL A
   PHA:LDA seed+2:ROR A:STA seed+2:PLA
