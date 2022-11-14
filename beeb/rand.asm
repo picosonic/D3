@@ -1,3 +1,5 @@
+; Original "random" number generator
+;   has a period of 1,100,896 after initial ~ 91,935 iterations
 .random
 {
   LDA seed
