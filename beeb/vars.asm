@@ -142,6 +142,7 @@ attrisize = ((MAXX/ATTR_GRID)/BITSPERBYTE) * ((MAXY-((5+1+1)*ATTR_GRID))/ATTR_GR
 ; Attribute table, used for hit-detection on 8x8 grid of screen
 ; 256x136 = 32x17 blocks = 4x17 bytes
 .attritable
+.hearttable
 SKIP attrisize
 
 .end_of_stack
