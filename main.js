@@ -824,9 +824,15 @@ function updatekeystate(e, dir)
       e.preventDefault();
       break;
 
+    // Keys to allow processing for
+    case 116: // F5
+      return;
+      break;
+
     default:
       break;
   }
+  e.preventDefault();
 }
 
 // Generate water sprites
