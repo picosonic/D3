@@ -237,8 +237,8 @@ PUTFILE "loadscr", "FRAME", MODE8BASE
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Hearts demo loads over the top of roomdata
 ORG MAIN_LOAD_ADDR
-CLEAR datastart, dataend
-GUARD dataend
+CLEAR datastart, datastart+BIGGESTROOM
+GUARD datastart+BIGGESTROOM
 .hearts_start
 INCLUDE "hearts.asm"
 .hearts_end
@@ -255,6 +255,7 @@ PRINT "BVARS from ", ~start_of_buff, " to ", ~end_of_buff-1, "  (", ENVELOPE_DEF
 PRINT "EXTRA from ", ~extradata, " to ", ~extraend-1, "  (", NMI_WORKSPACE-extraend, " bytes left )"
 PRINT "DATA from ", ~datastart, " to ", ~dataend-1, "  (", dataend-datastart, " bytes )"
 PRINT "CODE from ", ~codestart, " to ", ~codeend-1, "  (", codeend-codestart, " bytes )"
+PRINT "HEARTS from ", ~hearts_start, " to ", hearts_end-1, "  (", hearts_end-hearts_start, " bytes )"
 PRINT ""
 PRINT "Main code entry point : ", ~onetimeinit
 PRINT "Objects : ", ~movingdata, "..", ~endofmovingdata, " (", endofmovingdata-movingdata, " bytes, ", noofmoving, " objs )"
