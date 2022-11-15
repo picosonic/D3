@@ -206,6 +206,9 @@ DF3D - F1A8 @ DIZZYFRM.DAT
 DFB0 - F19E (Dizzy sprite + masks)
   24x20 pixels (48)
 
+F3CD - F3F1 - random()
+F3F2 - F3F4 - seed (starts as 59A313)
+
 FF01 - FFF2 (Item messages)
 
 ---------------------
