@@ -1,5 +1,7 @@
 ; Original "random" number generator
 ;   has a period of 1,100,896 after initial ~ 91,935 iterations
+;
+;   This 6502 code has been functionally verified against the original z80 code
 .random
 {
   LDA seed
