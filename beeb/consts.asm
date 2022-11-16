@@ -40,7 +40,14 @@ PRT_PEN = 16
 ROOM_EMPTY = 70
 BIGGESTROOM = 919 ; Room 22
 TITLEROOM = 0
+BEANSTALKROOM = 1
+FIREROOM = 2
+HEARTSROOM = 3
 STARTROOM = 36
+ALLOTMENTROOM = 58
+
+; External sprite id list
+INCLUDE "sprites.asm"
 
 ; Frame plotting modes
 PLOT_AND = &00
