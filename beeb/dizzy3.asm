@@ -40,7 +40,7 @@ INCLUDE "gfx.asm"
   JSR prtmessage
 
   ; Dizzy logo
-  LDA #27:STA frmno
+  LDA #SPR_DIZZYLOGO:STA frmno
   LDA #58:STA frmx
   LDA #57:STA frmy
   LDA #7:STA frmattri

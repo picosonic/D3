@@ -705,14 +705,14 @@ PAL_DIZZY2 = $02
   
   ; Check for water
   LDA frmno
-  CMP #91:BNE checkflame
+  CMP #SPR_WATER:BNE checkflame
 
   JSR addtowater
 
   ; Check for flame
 .checkflame
   LDA frmno
-  CMP #115:BNE otherobj
+  CMP #SPR_FLAME:BNE otherobj
 
   JSR addtoflame
 
@@ -796,7 +796,7 @@ PAL_DIZZY2 = $02
   ; Is current coin in current room
   LDA cointable+2, Y:CMP roomno:BNE nextcoin
 
-  LDA #&00:STA frmno ; Coin frame
+  LDA #SPR_COIN:STA frmno ; Coin frame
   LDA #PAL_WHITE:STA frmattri
   LDA cointable, Y:STA frmx
   LDA cointable+1, Y:STA frmy
@@ -1074,51 +1074,51 @@ PAL_DIZZY2 = $02
   LDA #&01:BNE ch1 ; Always branch - not an intersection
 
 .intersect
-  LDA #46:BNE dodraw ; Intersection
+  LDA #SPR_FRAMECROSS:BNE dodraw ; Intersection
 
 .ch1
   ; Check for left edge
   CPX #01:BNE ch2 ; Is it the left edge
   CPY #00:BNE ch1b ; Is it the top edge
-  LDA #44:BNE dodraw ; Top of vertical bar
+  LDA #SPR_FRAMETOP:BNE dodraw ; Top of vertical bar
 .ch1b
   CPY ztmp6:BCC ch1c ; Is it the bottom edge
-  LDA #45:BNE dodraw ; Bottom of vertical bar
+  LDA #SPR_FRAMEBOTTOM:BNE dodraw ; Bottom of vertical bar
 .ch1c
-  LDA #41:BNE dodraw ; Vertical bar
+  LDA #SPR_FRAMEVERT:BNE dodraw ; Vertical bar
 
 .ch2
   ; Check for right edge
   CPX ztmp5:BNE ch3 ; Is it the right edge
   CPY #00:BNE ch2b ; Is it the top edge
-  LDA #44:BNE dodraw ; Top of vertical bar
+  LDA #SPR_FRAMETOP:BNE dodraw ; Top of vertical bar
 .ch2b
   CPY ztmp6:BCC ch2c ; Is it the bottom edge
-  LDA #45:BNE dodraw ; Bottom of vertical bar
+  LDA #SPR_FRAMEBOTTOM:BNE dodraw ; Bottom of vertical bar
 .ch2c
-  LDA #41:BNE dodraw ; Vertical bar
+  LDA #SPR_FRAMEVERT:BNE dodraw ; Vertical bar
 
 .ch3
   ; Check for top edge
   CPY #01:BNE ch4 ; Is it the top edge
   CPX #00:BNE ch3b; Is it the left edge
-  LDA #42:BNE dodraw ; Left horizontal bar
+  LDA #SPR_FRAMELEFT:BNE dodraw ; Left horizontal bar
 .ch3b
   CPX ztmp5:BCC ch3c; Is it the right edge
-  LDA #43:BNE dodraw
+  LDA #SPR_FRAMERIGHT:BNE dodraw
 .ch3c
-  LDA #40:BNE dodraw ; Horizontal bar
+  LDA #SPR_FRAMEHORIZ:BNE dodraw ; Horizontal bar
 
 .ch4
   ; Check for bottom edge
   CPY ztmp6:BNE ch5
   CPX #00:BNE ch4b; Is it the left edge
-  LDA #42:BNE dodraw ; Left horizontal bar
+  LDA #SPR_FRAMELEFT:BNE dodraw ; Left horizontal bar
 .ch4b
   CPX ztmp5:BCC ch4c; Is it the right edge
-  LDA #43:BNE dodraw
+  LDA #SPR_FRAMERIGHT:BNE dodraw
 .ch4c
-  LDA #40:BNE dodraw ; Horiztonal bar
+  LDA #SPR_FRAMEHORIZ:BNE dodraw ; Horiztonal bar
 
 .dodraw
   STA frmno:JSR frame

@@ -57,7 +57,7 @@
   LDA waterlist, Y:STA frmy:INY
   LDA waterlist, Y
   STA zidx4:INC zidx4:LDA zidx4:AND #&03:STA waterlist, Y:INY
-  CLC:ADC #92:STA frmno
+  CLC:ADC #SPR_WATER0:STA frmno
 
   JSR frame
 
@@ -78,7 +78,7 @@
   TAX
 
   ; Update flame loop
-  LDA #115:STA frmno
+  LDA #SPR_FLAME:STA frmno
   LDA clock:AND #&01:TAY:LDA flamecolours, Y ; Set flame colour based on odd/even clock
   STA frmattri
 
