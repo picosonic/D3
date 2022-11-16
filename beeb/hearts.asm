@@ -6,22 +6,28 @@ numhearts = 32
 {
   JSR resethearts
 
-  ; TODO
+  LDA #0
 .allhearts
-  ; TODO
-
-  LDA #SPR_HEART3:STA frmno
-  LDA #16:STA frmx
-  LDA #160:STA frmy
-  LDA #PAL_RED:STA frmattri
-  JSR frame
+  CLC:ADC #&01:PHA
+  JSR updatehearts
+  PLA
+  BNE allhearts
 
   RTS
 }
 
 .resethearts
 {
-  ; TODO
+  LDY #&00:STY frmreverse
+  INY:STY frmplot
+  INY:STY frmattri
+
+  LDX #0:TXA
+.resetheartslp
+  STA hearttable+0, Y:INY
+  JSR random
+  STA hearttable+1, Y:INY
+  INX:CPX #numhearts:BNE resetheartslp
 
   RTS
 }
@@ -29,6 +35,11 @@ numhearts = 32
 .updatehearts
 {
   ; TODO
+  LDA #SPR_HEART3:STA frmno
+  LDA #32/4:STA frmx
+  LDA #160:STA frmy
+  LDA #PAL_RED:STA frmattri
+  JSR frame
 
   RTS
 }
