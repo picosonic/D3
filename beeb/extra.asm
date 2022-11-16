@@ -168,9 +168,9 @@ EQUB PRT_XY+10,104,"DROPPED:OUT@",PRT_END
   LDA #&FF:STA coins
 
   ; Clear the top bit of the room number to indicate coin not collected
-  LDX #totalcoins:LDY #2
+  LDX #totalcoins:LDY #0
 .resetcoinslp
-  LDA cointable, Y:AND #&7F:STA cointable, Y
+  LDA cointable+2, Y:AND #&7F:STA cointable+2, Y
   INY:INY:INY
   DEX:BNE resetcoinslp
 
