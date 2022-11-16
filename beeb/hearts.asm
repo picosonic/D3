@@ -10,6 +10,12 @@ numhearts = 32
 .allhearts
   ; TODO
 
+  LDA #SPR_HEART3:STA frmno
+  LDA #16:STA frmx
+  LDA #160:STA frmy
+  LDA #PAL_RED:STA frmattri
+  JSR frame
+
   RTS
 }
 

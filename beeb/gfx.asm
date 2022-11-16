@@ -505,6 +505,7 @@ PAL_DIZZY2 = $02
 
   JSR checkbeanstalk
   JSR checkfireout
+  JSR checkhearts ; TODO - this is temporary to test
 
   JSR drawfullroom
 
@@ -577,13 +578,13 @@ PAL_DIZZY2 = $02
 
 .checkbeanstalk
 {
-  LDA roomno:CMP #58:BNE done ; Make sure we are in the allotment
+  LDA roomno:CMP #ALLOTMENTROOM:BNE done ; Make sure we are in the allotment
 
   LDA manurehere+var1
   CMP #02:BNE done ; Check status of manure
 
-  LDA #01:STA roomno:JSR drawfullroom ; Draw beanstalk
-  LDA #58:STA roomno ; Reset current room to be allotment
+  LDA #BEANSTALKROOM:STA roomno:JSR drawfullroom ; Draw beanstalk
+  LDA #ALLOTMENTROOM:STA roomno ; Reset current room to be allotment
 
 .done
   RTS
@@ -591,15 +592,34 @@ PAL_DIZZY2 = $02
 
 .checkfireout
 {
-  LDA roomno:CMP #36:BNE done ; Make sure we are in the dungeon
+  LDA roomno:CMP #STARTROOM:BNE done ; Make sure we are in the dungeon
 
   LDA fireout:BNE done ; Check status of fire
 
-  LDA #02:STA roomno:JSR drawfullroom ; Draw fire
-  LDA #36:STA roomno ; Reset current room to be dungeon
+  LDA #FIREROOM:STA roomno:JSR drawfullroom ; Draw fire
+  LDA #STARTROOM:STA roomno ; Reset current room to be dungeon
 
 .done
   RTS
+}
+
+.checkhearts
+{
+  LDA roomno:CMP #HEARTSROOM:BNE done ; Make sure we are in the right room
+
+  ; Page in the hearts demo code
+  LDX #lo(heartscmd)
+  LDY #hi(heartscmd)
+  JSR OSCLI
+
+  ; Jump to hearts demo
+  JSR heartdemo
+
+.done
+  RTS
+
+.heartscmd
+  EQUS "L.HEARTS", &0D
 }
 
 .drawfullroom
