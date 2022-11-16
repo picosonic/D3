@@ -74,7 +74,7 @@ treasurelen = &3000
 ; Then after each room bank definition
 ;SAVE "bankN", bankNstart, bankNend
 
-.cointable ;  x   y   room
+.cointable ;  x,   y,   room (top bit indicates collected)
   EQUB 58 ,152,63
   EQUB 38 ,120,31
   EQUB 52 ,102,59
