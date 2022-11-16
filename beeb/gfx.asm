@@ -64,13 +64,13 @@ PAL_DIZZY2 = $02
 .rightloop
   LDA #&00:STA (zptr1), Y
   INY
-  CPY #&F0 ; Avoid right border
+  CPY #(MAXX-&10) ; Avoid right border
   BNE rightloop
 
   ; Next line
   INC zptr1+1
   LDA zptr1+1
-  CMP #&7E ; Avoid bottom border
+  CMP #hi(ROMSBASE)-2 ; Avoid bottom border
   BNE outerloop
 
   RTS
