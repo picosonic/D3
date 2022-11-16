@@ -505,7 +505,6 @@ PAL_DIZZY2 = $02
 
   JSR checkbeanstalk
   JSR checkfireout
-  JSR checkhearts ; TODO - this is temporary to test
 
   JSR drawfullroom
 
@@ -520,6 +519,8 @@ PAL_DIZZY2 = $02
 
   ; Show room in game palette
   LDA #PAL_GAME:JSR setpal
+
+  JSR checkhearts ; TODO - this is temporary to test
 
   LDA #&00:STA dontupdatedizzy ; Allow Dizzy to be drawn
 
@@ -1039,6 +1040,8 @@ PAL_DIZZY2 = $02
   ;42 46 40 40 40 46 43
   ;   45          45
   
+  LDA #10:STA usepickup
+
   LDA (zptr5), Y:CLC:ADC #&02:STA ztmp5:STA messwidth:INC messwidth:INC messwidth:INY
   LDA (zptr5), Y:CLC:ADC #&02:STA ztmp6:STA messheight:INC messheight:INC messheight:INY
   TYA:PHA ; Cache Y index
