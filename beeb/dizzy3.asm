@@ -255,7 +255,7 @@ PRINT "BVARS from ", ~start_of_buff, " to ", ~end_of_buff-1, "  (", ENVELOPE_DEF
 PRINT "EXTRA from ", ~extradata, " to ", ~extraend-1, "  (", NMI_WORKSPACE-extraend, " bytes left )"
 PRINT "DATA from ", ~datastart, " to ", ~dataend-1, "  (", dataend-datastart, " bytes )"
 PRINT "CODE from ", ~codestart, " to ", ~codeend-1, "  (", codeend-codestart, " bytes )"
-PRINT "HEARTS from ", ~hearts_start, " to ", hearts_end-1, "  (", hearts_end-hearts_start, " bytes )"
+PRINT "HEARTS from ", ~hearts_start, " to ", ~hearts_end-1, "  (", hearts_end-hearts_start, " bytes )"
 PRINT ""
 PRINT "Main code entry point : ", ~onetimeinit
 PRINT "Objects : ", ~movingdata, "..", ~endofmovingdata, " (", endofmovingdata-movingdata, " bytes, ", noofmoving, " objs )"
