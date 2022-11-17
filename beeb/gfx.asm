@@ -256,7 +256,7 @@ PAL_DIZZY2 = $02
   LDA plot_modes+1, Y:STA plot_high+1:STA plot_low+1
 
   ; Get h-flip
-  LDA frmattri:AND #&80
+  LDA frmattri:AND #ATTR_REVERSE
   STA frmreverse
 
   ; Calculate bytes per row

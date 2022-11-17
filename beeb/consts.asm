@@ -20,10 +20,13 @@ EXO_LOAD_ADDR = DFS_PAGE
 PAL_BLACK = 0
 PAL_RED = 2
 PAL_GREEN = 4
-PAL_WHITE = 7
+PAL_WHITE = 6
 
 ; Attribute related
 ATTR_GRID = 8
+
+ATTR_SOLID = &40 ; Clear means solid
+ATTR_REVERSE = &80 ; Set means h-flip
 
 ; Message printing control codes
 PRT_END = 0
