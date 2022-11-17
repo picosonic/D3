@@ -18,14 +18,18 @@ EXO_LOAD_ADDR = DFS_PAGE
 
 ; Colours (as per Spectrum offsets)
 PAL_BLACK = 0
+PAL_BLUE = 1
 PAL_RED = 2
+PAL_MAGENTA = 3
 PAL_GREEN = 4
-PAL_WHITE = 6
+PAL_CYAN = 5
+PAL_YELLOW = 6
+PAL_WHITE = 7
 
 ; Attribute related
 ATTR_GRID = 8
 
-ATTR_SOLID = &40 ; Clear means solid
+ATTR_NOTSOLID = &40 ; Set means not solid
 ATTR_REVERSE = &80 ; Set means h-flip
 
 ; Message printing control codes
@@ -56,6 +60,7 @@ INCLUDE "sprites.asm"
 PLOT_AND = &00
 PLOT_OR = &08
 PLOT_XOR = &10
+PLOT_NULL = &18 ; Invalid - don't plot
 
 ; Gamepad equivalent bit flags
 PAD_RIGHT  = &01

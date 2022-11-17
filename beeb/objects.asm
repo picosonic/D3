@@ -61,7 +61,7 @@ OBJ_HAWK = 0
 
  EQUB 49, hawk, 60, 80, SPR_HAWK0 
  EQUW nothingheremess
- EQUB 0, 2, 0, 0, PAL_GREEN+PLOT_NULL
+ EQUB 0, 2, 0, 0, PAL_CYAN+PLOT_NULL
  ;EQUB 49, 60, 80, SPR_HAWK0
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -88,7 +88,7 @@ OBJ_PORTCULLIS = 2
 
 OBJ_SWITCH = 3
 
- EQUB 51,portswitch,66 ,78 ,SPR_SWITCH,0   ,0   ,0   ,0  ,0 ,0 ,PAL_GREEN+ATTR_NOTSOLID
+ EQUB 51,portswitch,66 ,78 ,SPR_SWITCH,0   ,0   ,0   ,0  ,0 ,0 ,PAL_CYAN+ATTR_NOTSOLID
  ;EQUB 51 ,66 ,78 ,SPR_SWITCH
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -213,7 +213,7 @@ OBJ_SLEEPINGPOTION = 15
 .sleepingpotionhere
  EQUB OFFMAP,pickupable,80 ,128,SPR_SLEEPINGPOTION
  EQUW                sleeppotionmess,proxsleep
- EQUB                 0 ,0 ,PAL_WHITE+ATTR_NOTSOLID
+ EQUB                 0 ,0 ,PAL_YELLOW+ATTR_NOTSOLID
  ;EQUB OFFMAP,80 ,128,SPR_SLEEPINGPOTION
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -271,7 +271,7 @@ OBJ_WHISKEYBOTTLE = 21
 .whiskeyhere
  EQUB 53,pickupable,50 ,136,SPR_BRANDYBOTTLE
  EQUW                fullwhiskeymess,emptybottlemess
- EQUB                 0 ,0 ,PAL_WHITE+ATTR_NOTSOLID
+ EQUB                 0 ,0 ,PAL_YELLOW+ATTR_NOTSOLID
  ;EQUB 53 ,50 ,136,SPR_BRANDYBOTTLE
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -287,7 +287,7 @@ OBJ_LIFT = 22
 
 OBJ_MACHINE = 23
 
- EQUB 56,machines  ,50 ,116,SPR_MACHINE ,0   ,0   ,0   ,32 ,0 ,0 ,PAL_GREEN+ATTR_NOTSOLID
+ EQUB 56,machines  ,50 ,116,SPR_MACHINE ,0   ,0   ,0   ,32 ,0 ,0 ,PAL_CYAN+ATTR_NOTSOLID
  ;EQUB 56,50 ,116,SPR_MACHINE
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -297,7 +297,7 @@ OBJ_KEY = 24
 
  EQUB 85,pickupable,46 ,136,SPR_KEY
  EQUW                keymess,proxkey1
- EQUB                 0 ,0 ,PAL_WHITE+ATTR_NOTSOLID
+ EQUB                 0 ,0 ,PAL_YELLOW+ATTR_NOTSOLID
  ;EQUB 85 ,46 ,136,SPR_KEY
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -313,7 +313,7 @@ OBJ_LIFT2 = 25
 
 OBJ_MACHINE2 = 26
 
- EQUB 56,machines  ,72 ,116,SPR_MACHINE ,0   ,0   ,0   ,32 ,0 ,0 ,PAL_GREEN+ATTR_NOTSOLID
+ EQUB 56,machines  ,72 ,116,SPR_MACHINE ,0   ,0   ,0   ,32 ,0 ,0 ,PAL_CYAN+ATTR_NOTSOLID
  ;EQUB 56,72 ,116,SPR_MACHINE
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -323,7 +323,7 @@ OBJ_KEY2 = 27
 
  EQUB 24,pickupable,80 ,136,SPR_KEY
  EQUW                keymess,proxkey2
- EQUB                 0 ,0 ,PAL_WHITE+ATTR_NOTSOLID
+ EQUB                 0 ,0 ,PAL_YELLOW+ATTR_NOTSOLID
  ;EQUB 24 ,80 ,136,SPR_KEY
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -339,7 +339,7 @@ OBJ_LIFT3 = 28
 
 OBJ_MACHINE3 = 29
 
- EQUB 56,machines  ,52 ,156,SPR_MACHINE ,0   ,0   ,0   ,32 ,0 ,0 ,PAL_GREEN+ATTR_NOTSOLID
+ EQUB 56,machines  ,52 ,156,SPR_MACHINE ,0   ,0   ,0   ,32 ,0 ,0 ,PAL_CYAN+ATTR_NOTSOLID
  ;EQUB 56,52 ,156 ,SPR_MACHINE
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -349,7 +349,7 @@ OBJ_KEY3 = 30
 
  EQUB 60,pickupable,60 ,120,SPR_KEY
  EQUW                keymess,proxkey3
- EQUB                 0 ,0 ,PAL_WHITE+ATTR_NOTSOLID
+ EQUB                 0 ,0 ,PAL_YELLOW+ATTR_NOTSOLID
  ;EQUB 60 ,60 ,120,SPR_KEY
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -365,7 +365,7 @@ OBJ_LIFT4 = 31
 
 OBJ_MACHINE4 = 32
 
- EQUB 56,machines  ,70 ,156,SPR_MACHINE ,0   ,0   ,0   ,32 ,0 ,0 ,PAL_GREEN+ATTR_NOTSOLID
+ EQUB 56,machines  ,70 ,156,SPR_MACHINE ,0   ,0   ,0   ,32 ,0 ,0 ,PAL_CYAN+ATTR_NOTSOLID
  ;EQUB 56,70 ,156,SPR_MACHINE
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -375,7 +375,7 @@ OBJ_KEY4 = 33
 
  EQUB 48,pickupable,40 ,96,SPR_KEY
  EQUW                keymess,proxkey4
- EQUB                 0 ,0 ,PAL_WHITE+ATTR_NOTSOLID
+ EQUB                 0 ,0 ,PAL_YELLOW+ATTR_NOTSOLID
  ;EQUB 48 ,40 ,96,SPR_KEY
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -386,7 +386,7 @@ OBJ_BUCKETEMPTY = 34
 .buckethere
  EQUB 83,pickupable,80 ,144,SPR_BUCKET
  EQUW                mtbucketmess,proxmtbucket
- EQUB                 0 ,0 ,PAL_GREEN+ATTR_NOTSOLID
+ EQUB                 0 ,0 ,PAL_CYAN+ATTR_NOTSOLID
  ;EQUB 83,80 ,144,SPR_BUCKET
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -396,7 +396,7 @@ OBJ_BUCKETFULL = 35
 
  EQUB OFFMAP,pickupable,46 ,144,SPR_BUCKET
  EQUW                fullbucketmess,proxfullbucket
- EQUB                 0 ,0 ,PAL_GREEN+ATTR_NOTSOLID
+ EQUB                 0 ,0 ,PAL_CYAN+ATTR_NOTSOLID
  ;EQUB OFFMAP,46 ,144,SPR_BUCKET
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -466,7 +466,7 @@ OBJ_JUGOFWATER = 42
 
  EQUB 36,pickupable,68 ,144,SPR_JUGOFWATER
  EQUW                jugmess,proxjug
- EQUB                 0 ,0 ,PAL_GREEN+ATTR_NOTSOLID
+ EQUB                 0 ,0 ,PAL_CYAN+ATTR_NOTSOLID
  ;EQUB 36,68 ,144,SPR_JUGOFWATER
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -477,7 +477,7 @@ OBJ_BREAD = 43
 .loafhere
  EQUB 36,pickupable,72 ,144,SPR_BREAD
  EQUW                loafmess,proxloaf
- EQUB               0 ,0 ,PAL_WHITE+ATTR_NOTSOLID
+ EQUB               0 ,0 ,PAL_YELLOW+ATTR_NOTSOLID
  ;EQUB 36,72 ,144,SPR_BREAD
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -486,7 +486,7 @@ OBJ_BREAD = 43
 OBJ_RAT = 44
 
 .rathere
- EQUB 36,rat       ,96 ,73 ,SPR_RAT,44,80 ,   0   ,2  ,0 ,0 ,PAL_GREEN+PLOT_NULL
+ EQUB 36,rat       ,96 ,73 ,SPR_RAT,44,80 ,   0   ,2  ,0 ,0 ,PAL_CYAN+PLOT_NULL
  ;EQUB 36,96,73 ,SPR_RAT
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -513,7 +513,7 @@ OBJ_DOORKNOCKER = 47
 
  EQUB 89,pickupable,58 ,136,SPR_DOORKNOCKER
  EQUW            doorknockermess,proxdoor
- EQUB                 0 ,0 ,PAL_WHITE+ATTR_NOTSOLID
+ EQUB                 0 ,0 ,PAL_YELLOW+ATTR_NOTSOLID
  ;EQUB 89,58 ,136,SPR_DOORKNOCKER
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -564,7 +564,7 @@ OBJ_CROWBAR = 52
 .crowbarhere
  EQUB OFFMAP,pickupable,48 ,80,SPR_CROWBAR
  EQUW              crowbarmess,proxcrowbar
- EQUB                   0 ,0 ,PAL_GREEN+ATTR_NOTSOLID
+ EQUB                   0 ,0 ,PAL_CYAN+ATTR_NOTSOLID
  ;EQUB OFFMAP,48,80,SPR_CROWBAR
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -672,7 +672,7 @@ OBJ_DAISY = 63
 
 OBJ_SWITCH2 = 64
 
- EQUB 94,switch1 ,62 ,70,SPR_SWITCH,0   ,0   ,0   ,2  ,0 ,0 ,PAL_GREEN+ATTR_NOTSOLID+PLOT_OR
+ EQUB 94,switch1 ,62 ,70,SPR_SWITCH,0   ,0   ,0   ,2  ,0 ,0 ,PAL_CYAN+ATTR_NOTSOLID+PLOT_OR
  ;EQUB 94 ,62 ,70 ,SPR_SWITCH
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
