@@ -61,7 +61,7 @@ OBJ_HAWK = 0
 
  EQUB 49, hawk, 60, 80, SPR_HAWK0 
  EQUW nothingheremess
- EQUB 0, 2, 0, 0, 5+8+16
+ EQUB 0, 2, 0, 0, PAL_GREEN+PLOT_NULL
  ;EQUB 49, 60, 80, SPR_HAWK0
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -71,7 +71,7 @@ OBJ_BAG = 1
 
  EQUB 55, pickupable, 48, 144, SPR_BAG
  EQUW bagmess
- EQUB 0, 0, 0, 0, 2+64
+ EQUB 0, 0, 0, 0, PAL_RED+ATTR_NOTSOLID
  ;EQUB 55, 48, 144, SPR_BAG
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -80,7 +80,7 @@ OBJ_BAG = 1
 OBJ_PORTCULLIS = 2
 
 .porthere
- EQUB 51,portcullis,76 ,96,SPR_PORTCULLIS,96,136,   0   ,4  ,0 ,0 ,7
+ EQUB 51,portcullis,76 ,96,SPR_PORTCULLIS,96,136,   0   ,4  ,0 ,0 ,PAL_WHITE
  ;EQUB 51 ,76 ,96,SPR_PORTCULLIS
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -88,7 +88,7 @@ OBJ_PORTCULLIS = 2
 
 OBJ_SWITCH = 3
 
- EQUB 51,portswitch,66 ,78 ,SPR_SWITCH,0   ,0   ,0   ,0  ,0 ,0 ,5+64
+ EQUB 51,portswitch,66 ,78 ,SPR_SWITCH,0   ,0   ,0   ,0  ,0 ,0 ,PAL_GREEN+ATTR_NOTSOLID
  ;EQUB 51 ,66 ,78 ,SPR_SWITCH
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -99,7 +99,7 @@ OBJ_SHOPKEEPER = 4
 .shopkeeperhere
  EQUB OFFMAP,pickupable,68 ,136,SPR_SHOPKEEPER
  EQUW                pigmycowmess,shoptalk
- EQUB                   0 ,0 ,7+64
+ EQUB                   0 ,0 ,PAL_WHITE+ATTR_NOTSOLID
  ;EQUB OFFMAP,68,136,SPR_SHOPKEEPER
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -110,7 +110,7 @@ OBJ_SHOPKEEPER2 = 5
 .shopkeeperhere1
  EQUB OFFMAP,crowbar,68+4,136,SPR_SHOPKEEPER
  EQUW                pigmycowmess,shoptalk
- EQUB                0 ,0 ,7+64+128
+ EQUB                0 ,0 ,PAL_WHITE+ATTR_NOTSOLID+ATTR_REVERSE
  ;EQUB OFFMAP,68+4,136,SPR_SHOPKEEPER
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -120,7 +120,7 @@ OBJ_BLACKHOLE = 6
 
  EQUB 72,pickupable,62 ,144,SPR_BLACKHOLE
  EQUW                blackholemess
- EQUB        0   ,0  ,0 ,0 ,7+64
+ EQUB        0   ,0  ,0 ,0 ,PAL_WHITE+ATTR_NOTSOLID
  ;EQUB 72 ,62 ,144,SPR_BLACKHOLE
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -131,7 +131,7 @@ OBJ_MANURE = 7
 .manurehere
  EQUB 58,pickupable,72 ,170,SPR_MANURE
  EQUW                0 ;;;pickupmanuremess
- EQUB        0,   0,  0 ,0 ,2+64
+ EQUB        0,   0,  0 ,0 ,PAL_RED+ATTR_NOTSOLID
  ;EQUB 58,72 ,170,SPR_MANURE
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -141,7 +141,7 @@ OBJ_APPLE = 8
 
  EQUB OFFMAP,pickupable,58 ,136,SPR_APPLE
  EQUW                applemess,proxapple
- EQUB                 0 ,0 ,4+64
+ EQUB                 0 ,0 ,PAL_GREEN+ATTR_NOTSOLID
  ;EQUB OFFMAP,58 ,136,SPR_APPLE
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -152,7 +152,7 @@ OBJ_BONE = 9
 .bonehere
  EQUB 100,pickupable,52 ,160,SPR_BONE
  EQUW                           bonemess
- EQUB                                     0   ,0  ,0 ,0 ,7+64
+ EQUB                                     0   ,0  ,0 ,0 ,PAL_WHITE+ATTR_NOTSOLID
  ;EQUB 100 ,52 ,160,SPR_BONE
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -163,7 +163,7 @@ OBJ_BEAN = 10
 .beanhere
  EQUB OFFMAP,pickupable,62 ,144,SPR_BEAN
  EQUW                greenbeanmess,proxbean
- EQUB                 0 ,0 ,4+64
+ EQUB                 0 ,0 ,PAL_GREEN+ATTR_NOTSOLID
  ;EQUB OFFMAP ,62 ,144,SPR_BEAN
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -174,7 +174,7 @@ OBJ_GOLDENEGG = 11
 .goldenegghere
  EQUB 93,pickupable,80 ,152,SPR_GOLDENEGG
  EQUW                goldeneggmess,proxegg
- EQUB                 0 ,0 ,7+64
+ EQUB                 0 ,0 ,PAL_WHITE+ATTR_NOTSOLID
  ;EQUB 93 ,80 ,152,SPR_GOLDENEGG
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -184,7 +184,7 @@ OBJ_ROCK2 = 12
 
  EQUB 50,pickupable,86 ,160,SPR_SMALLSTONE2
  EQUW                rockmess,proxrock
- EQUB                 0 ,0 ,2+64
+ EQUB                 0 ,0 ,PAL_RED+ATTR_NOTSOLID
  ;EQUB 50 ,86 ,160,SPR_SMALLSTONE2
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -193,7 +193,7 @@ OBJ_ROCK2 = 12
 OBJ_ARMOROG = 13
 
 .armoroghere
- EQUB 50,armorog   ,54 ,156,SPR_GRUNT0,0   ,0   ,0   ,2  ,0 ,0 ,2+64+8
+ EQUB 50,armorog   ,54 ,156,SPR_GRUNT0,0   ,0   ,0   ,2  ,0 ,0 ,PAL_RED+ATTR_NOTSOLID+PLOT_OR
  ;EQUB 50 ,54 ,156,SPR_GRUNT0
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -202,7 +202,7 @@ OBJ_ARMOROG = 13
 OBJ_DRAGON = 14
 
 .dragonhere
- EQUB 54,dragon    ,68 ,152,SPR_DRAGONHEADCLOSED,0   ,0   ,0   ,0  ,0 ,0 ,2+64
+ EQUB 54,dragon    ,68 ,152,SPR_DRAGONHEADCLOSED,0   ,0   ,0   ,0  ,0 ,0 ,PAL_RED+ATTR_NOTSOLID
  ;EQUB 54 ,68 ,152,SPR_DRAGONHEADCLOSED
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -213,7 +213,7 @@ OBJ_SLEEPINGPOTION = 15
 .sleepingpotionhere
  EQUB OFFMAP,pickupable,80 ,128,SPR_SLEEPINGPOTION
  EQUW                sleeppotionmess,proxsleep
- EQUB                 0 ,0 ,6+64
+ EQUB                 0 ,0 ,PAL_WHITE+ATTR_NOTSOLID
  ;EQUB OFFMAP,80 ,128,SPR_SLEEPINGPOTION
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -221,7 +221,7 @@ OBJ_SLEEPINGPOTION = 15
 
 OBJ_CROCODILE = 16
 
- EQUB 53,crocodile ,70 ,152,SPR_CROCCLOSED,0   ,0   ,0   ,0  ,0 ,0 ,4+8
+ EQUB 53,crocodile ,70 ,152,SPR_CROCCLOSED,0   ,0   ,0   ,0  ,0 ,0 ,PAL_GREEN+PLOT_OR
  ;EQUB 53 ,70 ,152,SPR_CROCCLOSED
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -232,7 +232,7 @@ OBJ_ROPE = 17
 .ropehere
  EQUB OFFMAP,pickupable,76 ,160,SPR_ROPE
  EQUW                ropemess,proxcroc
- EQUB                 0 ,0 ,7+64
+ EQUB                 0 ,0 ,PAL_WHITE+ATTR_NOTSOLID
  ;EQUB OFFMAP,76 ,160,SPR_ROPE
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -242,7 +242,7 @@ OBJ_ROCK3 = 18
 
  EQUB 35,pickupable,58 ,136,SPR_SMALLSTONE3
  EQUW                rockmess,proxrock
- EQUB                 0 ,0 ,2+64
+ EQUB                 0 ,0 ,PAL_RED+ATTR_NOTSOLID
  ;EQUB 35 ,58,136,SPR_SMALLSTONE3
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -252,7 +252,7 @@ OBJ_ROCK0 = 19
 
  EQUB 53,pickupable,90 ,144,SPR_SMALLSTONE0
  EQUW                rockmess,proxrock
- EQUB                 0 ,0 ,2+64
+ EQUB                 0 ,0 ,PAL_RED+ATTR_NOTSOLID
  ;EQUB 53 ,90 ,144,SPR_SMALLSTONE0
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -260,7 +260,7 @@ OBJ_ROCK0 = 19
 
 OBJ_WOOD = 20
 
- EQUB 48,log       ,60 ,136,SPR_WOOD0,0   ,0   ,0   ,4  ,0 ,0 ,2+8
+ EQUB 48,log       ,60 ,136,SPR_WOOD0,0   ,0   ,0   ,4  ,0 ,0 ,PAL_RED+PLOT_OR
  ;EQUB 48 ,60 ,136,SPR_WOOD0
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -271,7 +271,7 @@ OBJ_WHISKEYBOTTLE = 21
 .whiskeyhere
  EQUB 53,pickupable,50 ,136,SPR_BRANDYBOTTLE
  EQUW                fullwhiskeymess,emptybottlemess
- EQUB                 0 ,0 ,6+64
+ EQUB                 0 ,0 ,PAL_WHITE+ATTR_NOTSOLID
  ;EQUB 53 ,50 ,136,SPR_BRANDYBOTTLE
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -279,7 +279,7 @@ OBJ_WHISKEYBOTTLE = 21
 
 OBJ_LIFT = 22
 
- EQUB 71,lift      ,52 ,48 ,SPR_LIFTTOP,56,112,   0   ,1  ,0 ,0 ,7+16
+ EQUB 71,lift      ,52 ,48 ,SPR_LIFTTOP,56,112,   0   ,1  ,0 ,0 ,PAL_WHITE+PLOT_XOR
  ;EQUB 71 ,52,48 ,SPR_LIFTTOP
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -287,7 +287,7 @@ OBJ_LIFT = 22
 
 OBJ_MACHINE = 23
 
- EQUB 56,machines  ,50 ,116,SPR_MACHINE ,0   ,0   ,0   ,32 ,0 ,0 ,5+64
+ EQUB 56,machines  ,50 ,116,SPR_MACHINE ,0   ,0   ,0   ,32 ,0 ,0 ,PAL_GREEN+ATTR_NOTSOLID
  ;EQUB 56,50 ,116,SPR_MACHINE
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -297,7 +297,7 @@ OBJ_KEY = 24
 
  EQUB 85,pickupable,46 ,136,SPR_KEY
  EQUW                keymess,proxkey1
- EQUB                 0 ,0 ,6+64
+ EQUB                 0 ,0 ,PAL_WHITE+ATTR_NOTSOLID
  ;EQUB 85 ,46 ,136,SPR_KEY
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -305,7 +305,7 @@ OBJ_KEY = 24
 
 OBJ_LIFT2 = 25
 
- EQUB 40,lift      ,40 ,56 ,SPR_LIFTTOP,56,134,   0   ,1  ,0 ,0 ,7+16
+ EQUB 40,lift      ,40 ,56 ,SPR_LIFTTOP,56,134,   0   ,1  ,0 ,0 ,PAL_WHITE+PLOT_XOR
  ;EQUB 40 ,40,56 ,SPR_LIFTTOP
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -313,7 +313,7 @@ OBJ_LIFT2 = 25
 
 OBJ_MACHINE2 = 26
 
- EQUB 56,machines  ,72 ,116,SPR_MACHINE ,0   ,0   ,0   ,32 ,0 ,0 ,5+64
+ EQUB 56,machines  ,72 ,116,SPR_MACHINE ,0   ,0   ,0   ,32 ,0 ,0 ,PAL_GREEN+ATTR_NOTSOLID
  ;EQUB 56,72 ,116,SPR_MACHINE
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -323,7 +323,7 @@ OBJ_KEY2 = 27
 
  EQUB 24,pickupable,80 ,136,SPR_KEY
  EQUW                keymess,proxkey2
- EQUB                 0 ,0 ,6+64
+ EQUB                 0 ,0 ,PAL_WHITE+ATTR_NOTSOLID
  ;EQUB 24 ,80 ,136,SPR_KEY
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -331,7 +331,7 @@ OBJ_KEY2 = 27
 
 OBJ_LIFT3 = 28
 
- EQUB 88,lift      ,58 ,48 ,SPR_LIFTTOP,56,136,   0   ,1  ,0 ,0 ,7+16
+ EQUB 88,lift      ,58 ,48 ,SPR_LIFTTOP,56,136,   0   ,1  ,0 ,0 ,PAL_WHITE+PLOT_XOR
  ;EQUB 88 ,58,48 ,SPR_LIFTTOP
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -339,7 +339,7 @@ OBJ_LIFT3 = 28
 
 OBJ_MACHINE3 = 29
 
- EQUB 56,machines  ,52 ,156,SPR_MACHINE ,0   ,0   ,0   ,32 ,0 ,0 ,5+64
+ EQUB 56,machines  ,52 ,156,SPR_MACHINE ,0   ,0   ,0   ,32 ,0 ,0 ,PAL_GREEN+ATTR_NOTSOLID
  ;EQUB 56,52 ,156 ,SPR_MACHINE
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -349,7 +349,7 @@ OBJ_KEY3 = 30
 
  EQUB 60,pickupable,60 ,120,SPR_KEY
  EQUW                keymess,proxkey3
- EQUB                 0 ,0 ,6+64
+ EQUB                 0 ,0 ,PAL_WHITE+ATTR_NOTSOLID
  ;EQUB 60 ,60 ,120,SPR_KEY
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -357,7 +357,7 @@ OBJ_KEY3 = 30
 
 OBJ_LIFT4 = 31
 
- EQUB 56,lift      ,60 ,104 ,SPR_LIFTTOP,104,140,   0   ,1  ,0 ,0 ,7+16
+ EQUB 56,lift      ,60 ,104 ,SPR_LIFTTOP,104,140,   0   ,1  ,0 ,0 ,PAL_WHITE+PLOT_XOR
  ;EQUB 56 ,60,104 ,SPR_LIFTTOP
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -365,7 +365,7 @@ OBJ_LIFT4 = 31
 
 OBJ_MACHINE4 = 32
 
- EQUB 56,machines  ,70 ,156,SPR_MACHINE ,0   ,0   ,0   ,32 ,0 ,0 ,5+64
+ EQUB 56,machines  ,70 ,156,SPR_MACHINE ,0   ,0   ,0   ,32 ,0 ,0 ,PAL_GREEN+ATTR_NOTSOLID
  ;EQUB 56,70 ,156,SPR_MACHINE
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -375,7 +375,7 @@ OBJ_KEY4 = 33
 
  EQUB 48,pickupable,40 ,96,SPR_KEY
  EQUW                keymess,proxkey4
- EQUB                 0 ,0 ,6+64
+ EQUB                 0 ,0 ,PAL_WHITE+ATTR_NOTSOLID
  ;EQUB 48 ,40 ,96,SPR_KEY
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -386,7 +386,7 @@ OBJ_BUCKETEMPTY = 34
 .buckethere
  EQUB 83,pickupable,80 ,144,SPR_BUCKET
  EQUW                mtbucketmess,proxmtbucket
- EQUB                 0 ,0 ,5+64
+ EQUB                 0 ,0 ,PAL_GREEN+ATTR_NOTSOLID
  ;EQUB 83,80 ,144,SPR_BUCKET
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -396,7 +396,7 @@ OBJ_BUCKETFULL = 35
 
  EQUB OFFMAP,pickupable,46 ,144,SPR_BUCKET
  EQUW                fullbucketmess,proxfullbucket
- EQUB                 0 ,0 ,5+64
+ EQUB                 0 ,0 ,PAL_GREEN+ATTR_NOTSOLID
  ;EQUB OFFMAP,46 ,144,SPR_BUCKET
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -406,7 +406,7 @@ OBJ_LEAF = 36
 
  EQUB 59,pickupable,52 ,102,SPR_LEAFYBIT1
  EQUW                leavesmess
- EQUB        0,   0,  0 ,0 ,4+64
+ EQUB        0,   0,  0 ,0 ,PAL_GREEN+ATTR_NOTSOLID
  ;EQUB 59,52 ,102,SPR_LEAFYBIT1
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -416,7 +416,7 @@ OBJ_COW = 37
 
  EQUB 58,pickupable,60 ,160,SPR_COW
  EQUW                pigmycowmess
- EQUB        0,   0,  0 ,0 ,7+64
+ EQUB        0,   0,  0 ,0 ,PAL_WHITE+ATTR_NOTSOLID
  ;EQUB 58,60 ,160,SPR_COW
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -426,7 +426,7 @@ OBJ_LEAF2 = 38
 
  EQUB 55,pickupable,58 ,136,SPR_LEAFYBIT1
  EQUW                leavesmess
- EQUB        0,   0,  0 ,0 ,4+64
+ EQUB        0,   0,  0 ,0 ,PAL_GREEN+ATTR_NOTSOLID
  ;EQUB 55,58 ,136,SPR_LEAFYBIT1
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -436,7 +436,7 @@ OBJ_RAILING = 39
 
  EQUB 55,pickupable,76 ,128,SPR_WOODENRAIL
  EQUW                railingmess
- EQUB        0,   0,  0 ,0 ,2+64
+ EQUB        0,   0,  0 ,0 ,PAL_RED+ATTR_NOTSOLID
  ;EQUB 55,76 ,128,SPR_WOODENRAIL
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -447,7 +447,7 @@ OBJ_DOZY = 40
 .dozyhere
  EQUB 45,pickupable,74 ,116,SPR_DOZY
  EQUW                dozyrou,dozytalking
- EQUB                   0 ,0 ,7+64
+ EQUB                   0 ,0 ,PAL_WHITE+ATTR_NOTSOLID
  ;EQUB 45,74 ,116,SPR_DOZY
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -456,7 +456,7 @@ OBJ_DOZY = 40
 OBJ_DOZYFLOAT = 41
 
 .dozyfloathere
- EQUB 45,dozyfloat,68 ,139,SPR_DOZY,0  ,0  ,0   ,0,      0 ,0 ,7+64+16+8
+ EQUB 45,dozyfloat,68 ,139,SPR_DOZY,0  ,0  ,0   ,0,      0 ,0 ,PAL_WHITE+ATTR_NOTSOLID+PLOT_NULL
  ;EQUB 45,68,139,SPR_DOZY
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -466,7 +466,7 @@ OBJ_JUGOFWATER = 42
 
  EQUB 36,pickupable,68 ,144,SPR_JUGOFWATER
  EQUW                jugmess,proxjug
- EQUB                 0 ,0 ,5+64
+ EQUB                 0 ,0 ,PAL_GREEN+ATTR_NOTSOLID
  ;EQUB 36,68 ,144,SPR_JUGOFWATER
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -477,7 +477,7 @@ OBJ_BREAD = 43
 .loafhere
  EQUB 36,pickupable,72 ,144,SPR_BREAD
  EQUW                loafmess,proxloaf
- EQUB               0 ,0 ,6+64
+ EQUB               0 ,0 ,PAL_WHITE+ATTR_NOTSOLID
  ;EQUB 36,72 ,144,SPR_BREAD
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -486,7 +486,7 @@ OBJ_BREAD = 43
 OBJ_RAT = 44
 
 .rathere
- EQUB 36,rat       ,96 ,73 ,SPR_RAT,44,80 ,   0   ,2  ,0 ,0 ,5+16+8
+ EQUB 36,rat       ,96 ,73 ,SPR_RAT,44,80 ,   0   ,2  ,0 ,0 ,PAL_GREEN+PLOT_NULL
  ;EQUB 36,96,73 ,SPR_RAT
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -495,7 +495,7 @@ OBJ_RAT = 44
 OBJ_TROLL = 45
 
 .trollhere
- EQUB 36,troll     ,78 ,136,SPR_TROLL ,44,80 ,   0   ,0  ,0 ,0 ,4+64
+ EQUB 36,troll     ,78 ,136,SPR_TROLL ,44,80 ,   0   ,0  ,0 ,0 ,PAL_GREEN+ATTR_NOTSOLID
  ;EQUB 36,78,136 ,SPR_TROLL
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -503,7 +503,7 @@ OBJ_TROLL = 45
 
 OBJ_DAGGER = 46
 
- EQUB 69,dagger    ,40 ,112,SPR_DAGGERBLADE ,0 ,0 ,   0   ,0  ,0 ,0 ,7+64
+ EQUB 69,dagger    ,40 ,112,SPR_DAGGERBLADE ,0 ,0 ,   0   ,0  ,0 ,0 ,PAL_WHITE+ATTR_NOTSOLID
  ;EQUB 69,40,112 ,SPR_DAGGERBLADE
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -513,7 +513,7 @@ OBJ_DOORKNOCKER = 47
 
  EQUB 89,pickupable,58 ,136,SPR_DOORKNOCKER
  EQUW            doorknockermess,proxdoor
- EQUB                 0 ,0 ,6+64
+ EQUB                 0 ,0 ,PAL_WHITE+ATTR_NOTSOLID
  ;EQUB 89,58 ,136,SPR_DOORKNOCKER
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -522,7 +522,7 @@ OBJ_DOORKNOCKER = 47
 OBJ_PLANK = 48
 
 .doorhere
- EQUB 84,door    ,34 ,144,SPR_PLANKOFWOOD ,0 ,0 ,   0   ,0  ,0 ,0 ,  2
+ EQUB 84,door    ,34 ,144,SPR_PLANKOFWOOD ,0 ,0 ,   0   ,0  ,0 ,0 ,  PAL_RED
  ;EQUB 84,34,144 ,SPR_PLANKOFWOOD
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -533,7 +533,7 @@ OBJ_GRANDDIZZY = 49
 .doughere
  EQUB 88,pickupable,42 ,76,SPR_GRANDDIZZY
  EQUW                dougrou,dougtalking
- EQUB                   0 ,0 ,7+64
+ EQUB                   0 ,0 ,PAL_WHITE+ATTR_NOTSOLID
  ;EQUB 88,42,76,SPR_GRANDDIZZY
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -542,7 +542,7 @@ OBJ_GRANDDIZZY = 49
 OBJ_DRAGON2 = 50
 
 .dragonhere1
- EQUB 40,dragon    ,68 ,152,SPR_DRAGONHEADCLOSED,0   ,0   ,0   ,0  ,0 ,0 ,4+64
+ EQUB 40,dragon    ,68 ,152,SPR_DRAGONHEADCLOSED,0   ,0   ,0   ,0  ,0 ,0 ,PAL_GREEN+ATTR_NOTSOLID
  ;EQUB 40 ,68 ,152,SPR_DRAGONHEADCLOSED
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -553,7 +553,7 @@ OBJ_GOLDENEGG2 = 51
 .goldenegghere1
  EQUB 40,pickupable,60 ,152,SPR_GOLDENEGG
  EQUW                goldeneggmess
- EQUB        0   ,0  ,0 ,0 ,7+64
+ EQUB        0   ,0  ,0 ,0 ,PAL_WHITE+ATTR_NOTSOLID
  ;EQUB 40 ,60,152,SPR_GOLDENEGG
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -564,7 +564,7 @@ OBJ_CROWBAR = 52
 .crowbarhere
  EQUB OFFMAP,pickupable,48 ,80,SPR_CROWBAR
  EQUW              crowbarmess,proxcrowbar
- EQUB                   0 ,0 ,5+64
+ EQUB                   0 ,0 ,PAL_GREEN+ATTR_NOTSOLID
  ;EQUB OFFMAP,48,80,SPR_CROWBAR
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -573,7 +573,7 @@ OBJ_CROWBAR = 52
 OBJ_WELLLID = 53
 
 .welllidhere
- EQUB 55,crowbar  ,46 ,160,SPR_WOOD0 ,0 ,0 ,   0   ,0  ,0 ,0 ,  2
+ EQUB 55,crowbar  ,46 ,160,SPR_WOOD0 ,0 ,0 ,   0   ,0  ,0 ,0 ,  PAL_RED
  ;EQUB 55,46,160,SPR_WOOD0
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -583,7 +583,7 @@ OBJ_PICKAXE = 54
 
  EQUB 87,pickupable,64 ,80,SPR_PICKAXE
  EQUW              pickaxemess,proxpickaxe
- EQUB                   0 ,0 ,2+64
+ EQUB                   0 ,0 ,PAL_RED+ATTR_NOTSOLID
  ;EQUB 87,64,80,SPR_PICKAXE
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -592,7 +592,7 @@ OBJ_PICKAXE = 54
 OBJ_STONE2 = 55
 
 .rockhere
- EQUB 41,crowbar  ,36 ,101,SPR_LARGESTONE2 ,0 ,0 ,   0   ,0  ,0 ,0 ,  2+8
+ EQUB 41,crowbar  ,36 ,101,SPR_LARGESTONE2 ,0 ,0 ,   0   ,0  ,0 ,0 ,  PAL_RED+PLOT_OR
  ;EQUB 41,36,101,SPR_LARGESTONE2
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -600,7 +600,7 @@ OBJ_STONE2 = 55
 
 OBJ_TROLL2 = 56
 
- EQUB 41,miner     ,96 ,120,SPR_TROLL ,44,80 ,   0   ,0  ,0 ,0 ,4+64
+ EQUB 41,miner     ,96 ,120,SPR_TROLL ,44,80 ,   0   ,0  ,0 ,0 ,PAL_GREEN+ATTR_NOTSOLID
  ;EQUB 41,96,120 ,SPR_TROLL
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -608,7 +608,7 @@ OBJ_TROLL2 = 56
 
 OBJ_DAGGER2 = 57
 
- EQUB 94,dagger    ,42 ,152,SPR_DAGGERBLADE ,0 ,0 ,   0   ,0  ,0 ,0 ,7+64
+ EQUB 94,dagger    ,42 ,152,SPR_DAGGERBLADE ,0 ,0 ,   0   ,0  ,0 ,0 ,PAL_WHITE+ATTR_NOTSOLID
  ;EQUB 94,42,152,SPR_DAGGERBLADE
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -616,7 +616,7 @@ OBJ_DAGGER2 = 57
 
 OBJ_DAGGER3 = 58
 
- EQUB 94,dagger    ,50 ,152,SPR_DAGGERBLADE ,0 ,0 ,   0   ,0  ,0 ,0 ,7+64
+ EQUB 94,dagger    ,50 ,152,SPR_DAGGERBLADE ,0 ,0 ,   0   ,0  ,0 ,0 ,PAL_WHITE+ATTR_NOTSOLID
  ;EQUB 94,50,152,SPR_DAGGERBLADE
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -626,7 +626,7 @@ OBJ_RUG = 59
 
  EQUB 40,pickupable,52 ,112,SPR_THICKRUG
  EQUW              rugmess,proxrug
- EQUB                   0 ,0 ,2+64
+ EQUB                   0 ,0 ,PAL_RED+ATTR_NOTSOLID
  ;EQUB 40,52,112,SPR_THICKRUG
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -636,7 +636,7 @@ OBJ_RUG = 59
 OBJ_CARPET = 60
 
 .carpethere
- EQUB OFFMAP,crowbar  ,40 ,152,SPR_GROUND ,0 ,0 ,   0   ,0  ,0 ,0 ,  2
+ EQUB OFFMAP,crowbar  ,40 ,152,SPR_GROUND ,0 ,0 ,   0   ,0  ,0 ,0 ,  PAL_RED
  ;EQUB OFFMAP,40,152,SPR_GROUND
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -646,7 +646,7 @@ OBJ_CARPET = 60
 OBJ_CARPET2 = 61
 
 .carpethere1
- EQUB OFFMAP,crowbar  ,46 ,152,SPR_GROUND ,0 ,0 ,   0   ,0  ,0 ,0 ,  2
+ EQUB OFFMAP,crowbar  ,46 ,152,SPR_GROUND ,0 ,0 ,   0   ,0  ,0 ,0 ,  PAL_RED
  ;EQUB OFFMAP,46,152,SPR_GROUND
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -655,7 +655,7 @@ OBJ_CARPET2 = 61
 OBJ_LIFT5 = 62
 
 .daisylifthere
- EQUB 94,lift     ,74 ,48,SPR_LIFTTOP,56,120,   0   ,2  ,0 ,0  ,7
+ EQUB 94,lift     ,74 ,48,SPR_LIFTTOP,56,120,   0   ,2  ,0 ,0  ,PAL_WHITE
  ;EQUB 94 ,74,48,SPR_LIFTTOP
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -664,7 +664,7 @@ OBJ_LIFT5 = 62
 OBJ_DAISY = 63
 
 .daisyhere
- EQUB 94,daisy   ,75 ,80,SPR_DAISY,0  ,0  ,0   ,2   ,  0 ,0 ,7+64+16+8
+ EQUB 94,daisy   ,75 ,80,SPR_DAISY,0  ,0  ,0   ,2   ,  0 ,0 ,PAL_WHITE+ATTR_NOTSOLID+PLOT_NULL
  ;EQUB 94,75,80,SPR_DAISY
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -672,7 +672,7 @@ OBJ_DAISY = 63
 
 OBJ_SWITCH2 = 64
 
- EQUB 94,switch1 ,62 ,70,SPR_SWITCH,0   ,0   ,0   ,2  ,0 ,0 ,5+64+8
+ EQUB 94,switch1 ,62 ,70,SPR_SWITCH,0   ,0   ,0   ,2  ,0 ,0 ,PAL_GREEN+ATTR_NOTSOLID+PLOT_OR
  ;EQUB 94 ,62 ,70 ,SPR_SWITCH
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -683,7 +683,7 @@ OBJ_DYLAN = 65
 .dylanhere
  EQUB 59,pickupable,72 ,147,SPR_DYLAN
  EQUW                dylanrou,dylantalking
- EQUB                   0 ,0 ,7+64
+ EQUB                   0 ,0 ,PAL_WHITE+ATTR_NOTSOLID
  ;EQUB 59,72,147,SPR_DYLAN
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -694,7 +694,7 @@ OBJ_DENZIL = 66
 .denzilhere
  EQUB 68,pickupable,80 ,155,SPR_DENZIL
  EQUW                denzilrou,denziltalking
- EQUB                   0 ,0 ,7+64
+ EQUB                   0 ,0 ,PAL_WHITE+ATTR_NOTSOLID
  ;EQUB 68,80,155,SPR_DENZIL
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -703,7 +703,7 @@ OBJ_DENZIL = 66
 OBJ_DAISY2 = 67
 
 .daisy1here
- EQUB OFFMAP,daisy1,48 ,77,SPR_DAISY,  0,0,0,2,   0 ,0 ,7+64
+ EQUB OFFMAP,daisy1,48 ,77,SPR_DAISY,  0,0,0,2,   0 ,0 ,PAL_WHITE+ATTR_NOTSOLID
  ;EQUB OFFMAP,48,77,SPR_DAISY
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -713,7 +713,7 @@ OBJ_RAILING2 = 68
 
  EQUB 56,pickupable,84 ,128,SPR_WOODENRAIL
  EQUW                railingmess
- EQUB        0,   0,  0 ,0 ,2+64
+ EQUB        0,   0,  0 ,0 ,PAL_RED+ATTR_NOTSOLID
  ;EQUB 56,84 ,128,SPR_WOODENRAIL
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -723,7 +723,7 @@ OBJ_RAILING3 = 69
 
  EQUB 72,pickupable,76 ,80,SPR_WOODENRAIL
  EQUW                railingmess
- EQUB        0,   0,  0 ,0 ,2+64
+ EQUB        0,   0,  0 ,0 ,PAL_RED+ATTR_NOTSOLID
  ;EQUB 72,76 ,80,SPR_WOODENRAIL
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -733,7 +733,7 @@ OBJ_WINDOW = 70
 
  EQUB 73,pickupable,56 ,72,SPR_WINDOW
  EQUW                windowmess
- EQUB        0,   0,  0 ,0 ,4+64
+ EQUB        0,   0,  0 ,0 ,PAL_GREEN+ATTR_NOTSOLID
  ;EQUB 73,56 ,72,SPR_WINDOW
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -743,7 +743,7 @@ OBJ_RAILING4 = 71
 
  EQUB 52,pickupable,86 ,88,SPR_WOODENRAIL
  EQUW                railingmess
- EQUB        0,   0,  0 ,0 ,7+64
+ EQUB        0,   0,  0 ,0 ,PAL_WHITE+ATTR_NOTSOLID
  ;EQUB 52,86 ,88,SPR_WOODENRAIL
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
