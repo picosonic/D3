@@ -11,6 +11,7 @@ numhearts = 32
   CLC:ADC #&01:PHA
   JSR updatehearts
   PLA
+  ;CMP #&04 ; Temporarily limit for debugging (later respond to keypress)
   BNE allhearts
 
   RTS
@@ -18,15 +19,27 @@ numhearts = 32
 
 .resethearts
 {
-  LDY #&00:STY frmreverse
-  INY:STY frmplot
-  INY:STY frmattri
+  ; Alternate between add and subtract
+  LDA addpatch:EOR #&20:STA addpatch ; &20 = SEC ^ CLC
+  LDA addpatch+1:EOR #&80:STA addpatch+1 ; &80 = SBC abs,Y ^ ADC abs,Y
+
+  LDY #&00:STY frmreverse ; 0 - Not flipped
+  INY:STY frmplot ; 1 - OR
+  INY:STY frmattri ; 2 - Red
+
+  LDA #lo(hearttable):STA zptr4
+  LDA #hi(hearttable):STA zptr4+1
 
   LDX #0:TXA
 .resetheartslp
-  STA hearttable+0, Y:INY
+  LDY #&00:STA (zptr4), Y
   JSR random
-  STA hearttable+1, Y:INY
+  INY:STA (zptr4), Y
+
+  INC zptr4
+
+  JSR printheart
+
   INX:CPX #numhearts:BNE resetheartslp
 
   RTS
@@ -34,26 +47,72 @@ numhearts = 32
 
 .updatehearts
 {
-  ; TODO
-  LDA #SPR_HEART3:STA frmno
-  LDA #32/4:STA frmx
-  LDA #160:STA frmy
-  LDA #PAL_RED:STA frmattri
-  JSR frame
+  LDA #lo(hearttable):STA zptr4
+  LDA #hi(hearttable):STA zptr4+1
+
+  LDX #0:TXA
+.updateheartslp
+  JSR printheart ; Rub it out
+
+  LDA (zptr4), Y
+  CLC:ADC #&04
+  STA (zptr4), Y
+
+  JSR printheart ; Draw in new position
+
+  ; Move on to next heart
+  INC zptr4
+  INC zptr4
+
+  INX:CPX #numhearts:BNE  updateheartslp
 
   RTS
 }
 
+; zptr4 = pointer to position in hearttable
 .printheart
 {
-  ; TODO
-.addpatch
-  ; TODO
+  PHA:TXA:PHA:TYA:PHA
 
+  ; print single heart (if large)
+
+  LDY #&00:LDA (zptr4), Y
+
+  ROR A:ROR A:ROR A:ROR A:ROR A:AND #&03 ; Top 3 bits only (A/32), so 0..7
+  BEQ done ; Don't try printing NULL heart frame
+
+  CLC:ADC #SPR_HEARTNULL
+  STA frmno
+
+  LDY #&01:LDA (zptr4), Y ; path 0-255
+
+  DEY
+.^addpatch
+  SEC:SBC (zptr4), Y ; count 0-255
+  AND #&7F
+  JSR getvalue
+
+  CLC:ADC #62
+  STA frmx
+
+  CLC:ADC #32
+  AND #&7F
+  JSR getvalue
+
+  ; A = A*3
+  PHA:ASL A:STA ztmp1:PLA:CLC:ADC ztmp1
+
+  CLC:ADC #110
+  STA frmy
+
+  JSR frame
+
+.done
+  PLA:TAY:PLA:TAX:PLA
   RTS
 }
 
-; zptr4 = pointer to poaition in hearttable
+; zptr4 = pointer to position in hearttable
 .getvalue
 {
   JSR getsincos:TAX
@@ -65,12 +124,12 @@ numhearts = 32
 .waspos
   LDA zptr4
 
-	JSR multiply ; max value 127*64 / a=-63 to +63
+  JSR multiply ; max value 127*64 / a=-63 to +63
 
 .b
   LDX #&00
   BEQ done
-	EOR #&FF:CLC:ADC #&01 ; Negate number
+  EOR #&FF:CLC:ADC #&01 ; Negate number
 
 .done
   RTS
