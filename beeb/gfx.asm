@@ -420,9 +420,9 @@ PAL_DIZZY2 = $02
 
 ; Code for the various plot modes
 .plot_modes
-  NOP:NOP ; Normal
-  ORA (zptr2), Y ; OR
-  EOR (zptr2), Y ; Exclusive OR
+  NOP:NOP ; 0 - Normal
+  ORA (zptr2), Y ; 1 - OR
+  EOR (zptr2), Y ; 2 - Exclusive OR
 }
 
 ; Find pointer to string[A] in room string table
