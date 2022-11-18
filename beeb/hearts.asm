@@ -53,12 +53,26 @@ numhearts = 32
   RTS
 }
 
+; zptr4 = pointer to poaition in hearttable
 .getvalue
 {
-  ; TODO
-.waspos
-  ; TODO
+  JSR getsincos:TAX
+  LDA #&00:STA b+1
 
+  TXA:BPL waspos
+  INC b+1
+
+.waspos
+  LDA zptr4
+
+	JSR multiply ; max value 127*64 / a=-63 to +63
+
+.b
+  LDX #&00
+  BEQ done
+	EOR #&FF:CLC:ADC #&01 ; Negate number
+
+.done
   RTS
 }
 
@@ -66,7 +80,10 @@ numhearts = 32
 ; return A=-64 to 64
 .getsincos
 {
-  ; TODO
+  LSR A ; max=63
+  TAY
+  LDA sincostable, Y
+
   RTS
 
 .sincostable
@@ -76,9 +93,18 @@ numhearts = 32
   EQUB -64,-63,-62,-61,-59,-56,-53,-49,-45,-40,-35,-30,-24,-18,-12,-6  ; quad 3
 }
 
+; A=no to multiply
+; X=multiplier
+; A=answer
 .multiply
 {
-  ; TODO
+  STA multlp+2
+
+  LDA #&00
+.multlp
+  CLC:ADC #&00
+  DEX
+  BNE multlp
 
   RTS
 }
