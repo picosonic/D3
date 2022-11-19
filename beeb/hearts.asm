@@ -27,6 +27,7 @@ numhearts = 32
   INY:STY frmplot ; 1 - OR
   INY:STY frmattri ; 2 - Red
 
+  ; Point to heart table
   LDA #lo(hearttable):STA zptr4
   LDA #hi(hearttable):STA zptr4+1
 
@@ -36,10 +37,12 @@ numhearts = 32
   JSR random
   INY:STA (zptr4), Y
 
-  INC zptr4
-
   JSR printheart
 
+  ; Move on to next heart
+  INC zptr4:INC zptr4
+
+  CLC:ADC #&08
   INX:CPX #numhearts:BNE resetheartslp
 
   RTS
@@ -47,22 +50,22 @@ numhearts = 32
 
 .updatehearts
 {
+  ; Point to heart table
   LDA #lo(hearttable):STA zptr4
   LDA #hi(hearttable):STA zptr4+1
 
   LDX #0:TXA
 .updateheartslp
-  JSR printheart ; Rub it out
+  JSR printheart
 
   LDA (zptr4), Y
   CLC:ADC #&04
   STA (zptr4), Y
 
-  JSR printheart ; Draw in new position
+  JSR printheart
 
   ; Move on to next heart
-  INC zptr4
-  INC zptr4
+  INC zptr4:INC zptr4
 
   INX:CPX #numhearts:BNE  updateheartslp
 
@@ -78,11 +81,11 @@ numhearts = 32
 
   LDY #&00:LDA (zptr4), Y
 
-  ROR A:ROR A:ROR A:ROR A:ROR A:AND #&03 ; Top 3 bits only (A/32), so 0..7
+  ROR A:ROR A:ROR A:ROR A:ROR A:AND #&03 ; Top 3 bits only (A/32)
   BEQ done ; Don't try printing NULL heart frame
 
   CLC:ADC #SPR_HEARTNULL
-  STA frmno
+  STA frmno ; 1..3 + HEART offset
 
   LDY #&01:LDA (zptr4), Y ; path 0-255
 
@@ -112,6 +115,7 @@ numhearts = 32
   RTS
 }
 
+; A=index into sincos table
 ; zptr4 = pointer to position in hearttable
 .getvalue
 {
@@ -122,7 +126,7 @@ numhearts = 32
   INC b+1
 
 .waspos
-  LDA zptr4
+  LDY #&00:LDA (zptr4), Y
 
   JSR multiply ; max value 127*64 / a=-63 to +63
 
