@@ -54,15 +54,15 @@ numhearts = 16
   LDA #lo(hearttable):STA zptr4
   LDA #hi(hearttable):STA zptr4+1
 
-  LDX #0:TXA
+  LDX #0:TXA:TAY
 .updateheartslp
-  JSR printheart
+  JSR printheart ; rub out
 
   LDA (zptr4), Y
   CLC:ADC #&04
   STA (zptr4), Y
 
-  JSR printheart
+  JSR printheart ; draw in new position
 
   ; Move on to next heart
   INC zptr4:INC zptr4
