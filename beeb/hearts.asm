@@ -123,6 +123,7 @@ numhearts = 16
   LDA #&00:STA b+1
 
   TXA:BPL waspos
+  EOR #&FF:CLC:ADC #&01 ; Negate number
   INC b+1
 
 .waspos
