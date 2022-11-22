@@ -1,6 +1,6 @@
 ; The heart demo
 
-numhearts = 32
+numhearts = 16
 
 .heartdemo
 {
@@ -11,7 +11,7 @@ numhearts = 32
   CLC:ADC #&01:PHA
   JSR updatehearts
   PLA
-  ;CMP #&04 ; Temporarily limit for debugging (later respond to keypress)
+
   BNE allhearts
 
   RTS
@@ -19,7 +19,7 @@ numhearts = 32
 
 .resethearts
 {
-  ; Alternate between add and subtract
+  ; Alternate between add (clockwise) and subtract (anticlockwise)
   LDA addpatch:EOR #&20:STA addpatch ; &20 = SEC ^ CLC
   LDA addpatch+1:EOR #&80:STA addpatch+1 ; &80 = SBC abs,Y ^ ADC abs,Y
 
