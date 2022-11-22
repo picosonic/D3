@@ -8,7 +8,8 @@ numhearts = 16
 
   LDA #0
 .allhearts
-  CLC:ADC #&01:PHA
+  CLC:ADC #&01
+  PHA
   JSR updatehearts
   PLA
 
@@ -23,9 +24,8 @@ numhearts = 16
   LDA addpatch:EOR #&20:STA addpatch ; &20 = SEC ^ CLC
   LDA addpatch+1:EOR #&80:STA addpatch+1 ; &80 = SBC abs,Y ^ ADC abs,Y
 
-  LDY #&00:STY frmreverse ; 0 - Not flipped
-  INY:STY frmplot ; 1 - OR
-  INY:STY frmattri ; 2 - Red
+  LDY #&00:STY frmreverse ; Not flipped
+  LDY #PAL_RED+PLOT_XOR:STY frmattri ; Red / XOR
 
   ; Point to heart table
   LDA #lo(hearttable):STA zptr4
