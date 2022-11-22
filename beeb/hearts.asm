@@ -159,16 +159,24 @@ numhearts = 16
 
 ; A=no to multiply
 ; X=multiplier
-; A=answer
+; A=answer high byte
 .multiply
 {
   STA multlp+2
 
-  LDA #&00
+  LDA #&00:STA ztmp4
 .multlp
   CLC:ADC #&00
+
+  BCC nooverflow ; Check for overflow
+  INC ztmp4
+
+.nooverflow
+
   DEX
   BNE multlp
+
+  LDA ztmp4
 
   RTS
 }
