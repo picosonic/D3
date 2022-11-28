@@ -17,6 +17,7 @@ Spectrum palette (GRB)
 5800 - 5AFF (Attributes)
 5B00 - 5BFF (Printer buffer)
 5C00 - 5CBF (System vars)
+5C66 - hearttable[]
 5CC0 - 5CCA (Reserved)
 5CCB - FF57 (Available)
 FF58 - FFFF (Reserved)
@@ -74,6 +75,12 @@ A804 - AC83 (Movable object data)
    origy (y pos object starts)
    origfrm (starting frame ??)
 
+B992 - theheartdemo()
+
+BA18 - resethearts()
+       set 0xfdff 0xba
+       set 0xfdfe 0x18
+       
 BEF9 - DD80 @ FRAMES.DAT
 
 DD81 - ????
@@ -208,6 +215,8 @@ DFB0 - F19E (Dizzy sprite + masks)
 
 F3CD - F3F1 - random()
 F3F2 - F3F4 - seed (starts as 59A313)
+
+F4B3 - roomsetup()
 
 FF01 - FFF2 (Item messages)
 
