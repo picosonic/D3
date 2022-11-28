@@ -24,7 +24,6 @@ numhearts = 16
   LDA addpatch:EOR #&20:STA addpatch ; &20 = SEC ^ CLC
   LDA addpatch+1:EOR #&80:STA addpatch+1 ; &80 = SBC abs,Y ^ ADC abs,Y
 
-  LDY #&00:STY frmreverse ; Not flipped
   LDY #PAL_RED+PLOT_XOR:STY frmattri ; Red / XOR
 
   ; Point to heart table
@@ -54,10 +53,11 @@ numhearts = 16
   LDA #lo(hearttable):STA zptr4
   LDA #hi(hearttable):STA zptr4+1
 
-  LDX #0:TXA:TAY
+  LDX #0:TXA
 .updateheartslp
   JSR printheart ; rub out
 
+  LDY #&00
   LDA (zptr4), Y
   CLC:ADC #&04
   STA (zptr4), Y
