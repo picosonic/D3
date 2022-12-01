@@ -754,8 +754,19 @@ PAL_DIZZY2 = $02
   LDA roomno:CMP #48:BNE normalwater
 
   LDA waterheight
+  EOR #&FF:CLC:ADC #1+168
+  STA frmy
 
-  ; .....
+  LDA #3:STA ztmp7
+.stretchwater
+  JSR frame
+  JSR normalwater
+  LDA frmx:CLC:ADC #8:STA frmx
+
+  DEC ztmp7:LDA ztmp7
+  BNE stretchwater
+
+  RTS
 
 .normalwater
   LDA #lo(waterlist):STA zptr6

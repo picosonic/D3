@@ -35,6 +35,7 @@ GUARD ZP_ECONET_WORKSPACE
 .ztmp4 EQUB 0
 .ztmp5 EQUB 0
 .ztmp6 EQUB 0
+.ztmp7 EQUB 0
 
 ; Frame counter
 .oldclock EQUB &00
