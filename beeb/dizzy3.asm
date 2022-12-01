@@ -164,7 +164,7 @@ INCLUDE "gfx.asm"
 ;  TXA:AND #PAD_START:BEQ setsequnce ; No jump
 ;
 ;  LDA #0:STA animation
-;  LDA #255-8:STA dy
+;  LDA #256-8:STA dy
 ;  LDA #3
 ;
 ;.setsequnce
