@@ -126,7 +126,7 @@ EQUB PRT_XY+10,104,"DROPPED:OUT@",PRT_END
   LDY #hi(objresetcmd)
   JSR OSCLI
 
-  LDA &00
+  LDA #&00
   STA waterheight
   STA fireout
   STA ratcount
