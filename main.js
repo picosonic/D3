@@ -49,7 +49,7 @@ var gs={
   room:36,
   newroom:false,
   flames:[], flamerate:4,
-  water:[], waterrate:6,
+  water:[], waterrate:6, waterheight:(0*6),
   solid:[],
 
   heartsetup:false,
@@ -276,7 +276,19 @@ function drawroom(roomnum)
 
     // Check for water
     if (framenum==91)
-      gs.water.push({"frm":framenum,"x":framex,"y":framey,"col":frameattrib,"delay":gs.waterrate});
+    {
+      // Check for extra processing on broken bridge
+      if (gs.room==48)
+      {
+        // x=52, y=184, attrib=0x47
+        framey=(0-gs.waterheight)+168;
+
+        for (var stretch=0; stretch<3; stretch++)
+          gs.water.push({"frm":framenum,"x":(framex+(8*stretch)),"y":framey,"col":frameattrib,"delay":gs.waterrate});
+      }
+      else
+        gs.water.push({"frm":framenum,"x":framex,"y":framey,"col":frameattrib,"delay":gs.waterrate});
+    }
 
     drawframe(gs.ctx, (framex*4)-128, framey, framenum, 1, framereverse, getpalette(framecolour), frameplot, true);
 
