@@ -53,7 +53,10 @@ var gs={
   solid:[],
 
   heartsetup:false,
+  numhearts:16,
   hearttable:[],
+  heartsclockwise:true, // rotation direction
+
   seed:[0x59, 0xa3, 0x13],
 
   debug:false
@@ -718,42 +721,59 @@ function getvalue(i, c)
 function printheart(count)
 {
   var a=gs.hearttable[count*2];
+  var c;
   var frameno;
   var frmx;
   var frmy;
   
-  a=(a/32)&0xff;
+  a=(a>>5)&0xff;
   a=a&0x03;
-  if (a==0) return;
+  if (a==0) return a;
   
   frameno=a+28;
   
   a=gs.hearttable[(count*2)+1]; // path 0-255
   
   // sub (anticlockwise) or add (clockwise)
-  a=(a+gs.hearttable[count*2])&0xff; // count 0-255
+  if (!gs.heartsclockwise)
+    a=(a+gs.hearttable[count*2])&0xff; // count 0-255
+  else
+    a=(a-gs.hearttable[count*2])&0xff; // count 0-255
+
   a=a&0x7f;
   
-  frmx=((getvalue(a, gs.hearttable[count*2])+62)*2)&0xff;
-  a=(a+32)&0xff;
-  a=a&127;
+  c=a;
+  a=getvalue(a, gs.hearttable[count*2]);
+  frmx=(a+62)&0xff;
+  a=c;
   
-  frmy=((getvalue(a, gs.hearttable[count*2])*3)+110)&0xff;
+  a=(a+32)&0x7f;
   
-  drawframe(gs.dizzyctx, frmx, frmy, frameno, 1, false, getpalette(2), 1, true);
+  a=getvalue(a, gs.hearttable[count*2]);
+  c=a;
+  a=(a+a)&0xff;
+  a=(a+c)&0xff;
+  
+  a=(a+110)&0xff;
+  frmy=a;
+
+  drawframe(gs.dizzyctx, frmx*2, frmy, frameno, 1, false, getpalette(2), 1, true);
+
+  return a;
 }
 
 function resethearts()
 {
   var a=0;
+  gs.heartsclockwise=!gs.heartsclockwise;
     
-  for (var count=0; count<16; count++)
+  for (var count=0; count<gs.numhearts; count++)
   {
     gs.hearttable[count*2]=a;
     a=random();
     gs.hearttable[(count*2)+1]=a;
     printheart(count);
-    a+=8;
+    a=(a+8)&0xff;
   }
 }
 
@@ -769,7 +789,7 @@ function updatehearts()
 
   gs.dizzyctx.clearRect(0, 0, gs.dizzycanvas.width, gs.dizzycanvas.height);
 
-  for (var count=0; count<16; count++)
+  for (var count=0; count<gs.numhearts; count++)
   {
     gs.hearttable[count*2]=(gs.hearttable[count*2]+1)&0xff;
 
