@@ -59,7 +59,7 @@ numhearts = 16
 
   LDY #&00
   LDA (zptr4), Y
-  CLC:ADC #&04
+  CLC:ADC #&01 ; affects speed of rotation
   STA (zptr4), Y
 
   JSR printheart ; draw in new position
@@ -81,6 +81,7 @@ numhearts = 16
 
   LDY #&00:LDA (zptr4), Y
 
+  ; determine heart size
   ROR A:ROR A:ROR A:ROR A:ROR A:AND #&03 ; Top 3 bits only (A/32)
   BEQ done ; Don't try printing NULL heart frame
 
@@ -93,10 +94,12 @@ numhearts = 16
 .^addpatch
   SEC:SBC (zptr4), Y ; count 0-255
   AND #&7F
+  PHA
   JSR getvalue
 
   CLC:ADC #62
   STA frmx
+  PLA
 
   CLC:ADC #32
   AND #&7F
