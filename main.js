@@ -52,6 +52,8 @@ var gs={
   water:[], waterrate:6,
   solid:[],
 
+  seed:[0x59, 0xa3, 0x13],
+
   debug:false
 };
 
@@ -502,7 +504,7 @@ function collisioncheck()
     gs.hs=0;
   }
   gs.x+=gs.hs;
-  
+
   // check for vertical collisions
   if ((!gs.newroom) && (collide(gs.x, gs.y+gs.vs)))
   {
@@ -555,7 +557,7 @@ function offscreencheck()
     gs.room++;
     newroom();
   }
-  
+
   // Going up
   if (gs.y<26)
   {
@@ -563,7 +565,7 @@ function offscreencheck()
     gs.room+=16;
     newroom();
   }
-  
+
   // Going down
   if (gs.y>162)
   {
@@ -614,7 +616,7 @@ function updatemovements()
       setsequence((gs.jump||gs.fall)?5:2);
     }
   }
-  
+
   if ((gs.x!=gs.px) || (gs.y!=gs.py))
   {
     gs.px=gs.x;
@@ -632,13 +634,59 @@ function updatemovements()
 
   gs.dizzyctx.clearRect(0, 0, gs.dizzycanvas.width, gs.dizzycanvas.height);
   drawdizzy(gs.dizzyctx, gs.x, gs.y, sequences[gs.sequence][gs.animation], 1);
-  
+
   gs.animdelay--;
   if (gs.animdelay<=0)
   {
     gs.animation=((gs.animation+1)%sequences[gs.sequence].length);
     gs.animdelay=6;
   }
+}
+
+function random()
+{
+  var a;
+  var c;
+  var oc;
+
+  a=gs.seed[0]&0xff;
+
+  a=(a-1)&0xff;
+
+  a=(a^gs.seed[1])&0xff;
+  c=0;
+
+  oc=c;
+  c=(a&0x80)>>7;
+  a=(a<<1)&0xff;
+  a|=oc;
+
+  oc=c;
+  c=gs.seed[2]&0x01;
+  gs.seed[2]>>=1;
+  gs.seed[2]|=oc<<7;
+
+  gs.seed[0]=a;
+
+  a=(a^0xff)&0xff;
+
+  oc=c;
+  c=(a&0x80)>>7;
+  a=(a<<1)&0xff;
+  a|=oc;
+
+  a=(a^48)&0xff;
+  c=0;
+
+  a=(a^gs.seed[1])&0xff;
+  c=0;
+
+  gs.seed[1]=a;
+
+  a=(a^gs.seed[2])&0xff;
+  c=0;
+
+  return a;
 }
 
 // Update state
