@@ -52,6 +52,8 @@ var gs={
   water:[], waterrate:6,
   solid:[],
 
+  heartsetup:false,
+  hearttable:[],
   seed:[0x59, 0xa3, 0x13],
 
   debug:false
@@ -687,6 +689,92 @@ function random()
   c=0;
 
   return a;
+}
+
+function getsincos(i)
+{
+  return [0, 6,12,18,24,30,35,40,45,49,53,56,59,61,62,63, // quad 0
+          64,63,62,61,59,56,53,49,45,40,35,30,24,18,12, 6, // quad 1
+	  -0,-6,-12,-18,-24,-30,-35,-40,-45,-49,-53,-56,-59,-61,-62,-63,  // quad 2
+	  -64,-63,-62,-61,-59,-56,-53,-49,-45,-40,-35,-30,-24,-18,-12,-6 // quad 3
+	  ][i>>1];
+}
+
+function getvalue(i, c)
+{
+  var a=getsincos(i);
+  var waspos=a>-1;
+ 
+  a=Math.abs(a);
+  a=a*c;
+  a=(a>>8)&0xff;
+  
+  if (waspos)
+    a=0-a;
+ 
+  return a;
+}
+
+function printheart(count)
+{
+  var a=gs.hearttable[count*2];
+  var frameno;
+  var frmx;
+  var frmy;
+  
+  a=(a/32)&0xff;
+  a=a&0x03;
+  if (a==0) return;
+  
+  frameno=a+28;
+  
+  a=gs.hearttable[(count*2)+1]; // path 0-255
+  
+  // sub (anticlockwise) or add (clockwise)
+  a=(a+gs.hearttable[count*2])&0xff; // count 0-255
+  a=a&0x7f;
+  
+  frmx=((getvalue(a, gs.hearttable[count*2])+62)*2)&0xff;
+  a=(a+32)&0xff;
+  a=a&127;
+  
+  frmy=((getvalue(a, gs.hearttable[count*2])*3)+110)&0xff;
+  
+  drawframe(gs.dizzyctx, frmx, frmy, frameno, 1, false, getpalette(2), 1, true);
+}
+
+function resethearts()
+{
+  var a=0;
+    
+  for (var count=0; count<16; count++)
+  {
+    gs.hearttable[count*2]=a;
+    a=random();
+    gs.hearttable[(count*2)+1]=a;
+    printheart(count);
+    a+=8;
+  }
+}
+
+function updatehearts()
+{
+  if (!gs.heartsetup)
+  {
+    resethearts();
+    gs.heartsetup=true;
+
+    return;
+  }
+
+  gs.dizzyctx.clearRect(0, 0, gs.dizzycanvas.width, gs.dizzycanvas.height);
+
+  for (var count=0; count<16; count++)
+  {
+    gs.hearttable[count*2]=(gs.hearttable[count*2]+1)&0xff;
+
+    printheart(count);
+  }
 }
 
 // Update state
