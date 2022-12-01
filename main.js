@@ -712,7 +712,7 @@ function getvalue(i, c)
   a=a*c;
   a=(a>>8)&0xff;
   
-  if (waspos)
+  if (!waspos)
     a=0-a;
  
   return a;
@@ -725,9 +725,9 @@ function printheart(count)
   var frameno;
   var frmx;
   var frmy;
-  
-  a=(a>>5)&0xff;
-  a=a&0x03;
+
+  // Determine heart size
+  a=(a>>5)&0x03;
   if (a==0) return a;
   
   frameno=a+28;
@@ -735,10 +735,10 @@ function printheart(count)
   a=gs.hearttable[(count*2)+1]; // path 0-255
   
   // sub (anticlockwise) or add (clockwise)
-  if (!gs.heartsclockwise)
-    a=(a+gs.hearttable[count*2])&0xff; // count 0-255
-  else
+  if (gs.heartsclockwise)
     a=(a-gs.hearttable[count*2])&0xff; // count 0-255
+  else
+    a=(a+gs.hearttable[count*2])&0xff; // count 0-255
 
   a=a&0x7f;
   
