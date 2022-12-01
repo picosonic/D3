@@ -61,7 +61,7 @@
 
   JSR frame
 
-  ; ...
+  ; TODO ... check for collision with water or lava ...
 
   DEX:BNE updatewaterlp
 
@@ -89,6 +89,8 @@
   LDA flamelist, Y:STA frmy:INY
   INY
   JSR frame
+
+  ; TODO ... check for collision with flame ...
 
   DEX:BNE updateflamelp
 
