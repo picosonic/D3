@@ -13,6 +13,9 @@ body
   width:100%;
   height:100%;
   overflow:hidden;
+
+  background:rgb(17,34,102);
+  background:radial-gradient(circle, rgba(17,34,102,1) 35%, rgba(3,17,75,1) 100%);
 }
 
 canvas
@@ -33,8 +36,3 @@ canvas
   image-rendering:crisp-edges;
 }
 
-#canvas
-{
-  background:rgb(17,34,102);
-  background:radial-gradient(circle, rgba(17,34,102,1) 35%, rgba(3,17,75,1) 100%);
-}

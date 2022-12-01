@@ -339,7 +339,7 @@ function drawroom(roomnum)
   }
 
   // Write name of room
-  writestring(gs.ctx, 7*8, 4*8, (roomtable[roomnum].name.length==0)?"::::::::::::::::::::":roomtable[roomnum].name, 1, getpalette(6), false);
+  writestring(gs.ctx, 6*8, 3*8, (roomtable[roomnum].name.length==0)?"::::::::::::::::::::":roomtable[roomnum].name, 1, getpalette(6), false);
 
   // Extra per-room processing
   switch (roomnum)
@@ -903,6 +903,13 @@ function resize()
     top=Math.floor((window.innerHeight/2)-(height/2));
   }
 
+  // Background canvas
+  gs.bgcanvas.style.top=top+"px";
+  gs.bgcanvas.style.left=left+"px";
+
+  gs.bgcanvas.style.transformOrigin='0 0';
+  gs.bgcanvas.style.transform='scale('+(width/xmax)+')';
+
   // Play canvas
   gs.canvas.style.top=top+"px";
   gs.canvas.style.left=left+"px";
@@ -1009,6 +1016,19 @@ function generatewater()
   }
 }
 
+// Load a png and display it on bg canvas
+function loadbg(fn)
+{
+  var image=new Image();
+
+  image.onload=function()
+  {
+    gs.bgctx.drawImage(image, 0, 0); // img, sx, sy, sw, sh, x, y, w, h
+  };
+
+  image.src=fn;
+}
+
 // Startup called once when page is loaded
 function startup()
 {
@@ -1031,11 +1051,16 @@ function startup()
     e.preventDefault();
   };
 
+  gs.bgcanvas=document.getElementById('bg');
+  gs.bgctx=gs.bgcanvas.getContext('2d');
+
   gs.canvas=document.getElementById('canvas');
   gs.ctx=gs.canvas.getContext('2d');
 
   gs.dizzycanvas=document.getElementById('dizzy');
   gs.dizzyctx=gs.dizzycanvas.getContext('2d');
+
+  loadbg('info/dizzy3_loader.png');
 
   resize();
   window.addEventListener("resize", resize);
