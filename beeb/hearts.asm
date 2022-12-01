@@ -123,7 +123,7 @@ numhearts = 16
   LDA #&00:STA b+1
 
   TXA:BPL waspos
-  EOR #&FF:CLC:ADC #&01 ; Negate number
+  EOR #&FF:CLC:ADC #&01 ; Negate number, -ve to +ve
   INC b+1
 
 .waspos
@@ -134,7 +134,7 @@ numhearts = 16
 .b
   LDX #&00
   BEQ done
-  EOR #&FF:CLC:ADC #&01 ; Negate number
+  EOR #&FF:CLC:ADC #&01 ; Negate number, +ve to -ve
 
 .done
   RTS
