@@ -59,7 +59,7 @@ var gs={
 
   seed:[0x59, 0xa3, 0x13],
 
-  debug:false
+  debug:true
 };
 
 // Clear both keyboard input state
@@ -187,6 +187,11 @@ function drawdizzy(ctx, x, y, framenum, scale)
     px=0;
   }
 
+  // DEBUG
+  ctx.strokeStyle="red";
+  ctx.strokeRect(x, y, fwidth, fheight);
+  //
+
   ctx.restore();
 }
 
@@ -230,6 +235,33 @@ function resetobjects()
   }
 }
 
+// Mark as solid/notsolid
+function setsolidity(fx, fy, fwidth, fheight, solid)
+{
+  var fxmin=Math.floor(fx/8);
+  var fymin=Math.floor(fy/8);
+  var fxmax=Math.ceil((fx+fwidth)/8);
+  var fymax=Math.ceil((fy+fheight)/8);
+
+  for (var y=fymin; y<fymax; y++)
+    for (var x=fxmin; x<fxmax; x++)
+      gs.solid[(y*(xmax/8))+x]=solid;
+}
+
+// Highlight where the solid blocks are
+function highlightsolid()
+{
+  for (var y=0; y<(ymax/8); y++)
+    for (var x=0; x<(xmax/8); x++)
+    {
+      if (gs.solid[(y*(xmax/8))+x])
+      {
+        gs.ctx.fillStyle="rgba(255,0,255,0.5)";
+        gs.ctx.fillRect(x*8, y*8, 7, 7);
+      }
+    }
+}
+
 // Draw a full room
 function drawroom(roomnum)
 {
@@ -246,7 +278,8 @@ function drawroom(roomnum)
 
   gs.water=[];
   gs.flames=[];
-  gs.solid=[];
+
+  setsolidity(0, 0, xmax, ymax, framesolid);
 
   gs.ctx.fillStyle="#000000";
   gs.ctx.fillRect(border, header+border, xmax-(border*2), ymax-header-(border*2));
@@ -292,8 +325,7 @@ function drawroom(roomnum)
 
     drawframe(gs.ctx, (framex*4)-128, framey, framenum, 1, framereverse, getpalette(framecolour), frameplot, true);
 
-    // Check for solid
-    if (framesolid)
+    // Set solidity
     {
       var offs=frametable[framenum];
       var fx=(framex*4)-128;
@@ -307,14 +339,7 @@ function drawroom(roomnum)
       if ((fx+fwidth)>(xmax-border)) fwidth=((xmax-border)-fx); // right
       if ((fy+fheight)>(ymax-border)) fheight=((ymax-border)-fy); // bottom
 
-      gs.solid.push({"x":fx,"y":fy,"w":fwidth,"h":fheight});
-
-      // When in debug, show where the solid frames are
-      if (gs.debug)
-      {
-        gs.ctx.fillStyle="rgba(255,0,255,0.5)";
-        gs.ctx.fillRect(fx, fy, fwidth, fheight);
-      }
+      setsolidity(fx, fy, fwidth, fheight, framesolid);
     }
   }
 
@@ -343,12 +368,25 @@ function drawroom(roomnum)
         var fy=objects[i].movey;
         var fwidth=framedefs[offs++]*4;
         var fheight=framedefs[offs++];
+        var framesolid=((objattrib&0x40)==0);
+
+        // Clipping
+        if (fx<border) { fwidth-=(border-fx); fx=border; } // left
+        if (fy<(header+border)) { fheight-=((header+border)-fy); fy=header+border; } // top
+        if ((fx+fwidth)>(xmax-border)) fwidth=((xmax-border)-fx); // right
+        if ((fy+fheight)>(ymax-border)) fheight=((ymax-border)-fy); // bottom
+
+        setsolidity(fx, fy, fwidth, fheight, framesolid);
 
         gs.ctx.fillStyle="rgba(255,255,0,0.5)";
         gs.ctx.fillRect(fx, fy, fwidth, fheight);
       }
     }
-  }
+ }
+
+ // When in debug, show where the solid blocks are
+ if (gs.debug)
+   highlightsolid();
 
   // Write name of room
   writestring(gs.ctx, 6*8, 3*8, (roomtable[roomnum].name.length==0)?"::::::::::::::::::::":roomtable[roomnum].name, 1, getpalette(6), false);
@@ -458,6 +496,19 @@ function jumpcheck()
 // Check if character collides with solid background
 function collide(x, y)
 {
+  var tx=Math.floor(x/8);
+  var ty=Math.floor(y/8);
+  var twidth=Math.floor(xmax/8);
+
+  if ((gs.solid[(ty*twidth)+tx]) || // top left
+      (gs.solid[(ty*twidth)+tx+3]) || // top right
+      (gs.solid[((ty+3)*twidth)+tx]) || // bottom left
+      (gs.solid[((ty+3)*twidth)+tx+3]))   // bottom right
+    return true;
+
+  return false;
+
+/*
   // Look through the room for a collision
   for (var i=0; i<gs.solid.length; i++)
   {
@@ -469,6 +520,7 @@ function collide(x, y)
   }
     
   return false;
+*/
 }
 
 // Check for player being on the ground
@@ -1022,9 +1074,7 @@ function generatewater()
     xor+=2;
 
     for (var count=0; count<((dwidth/8)*dheight); count++)
-    {
       framedefs[xor++]^=framedefs[orig++];
-    }
   }
 }
 
