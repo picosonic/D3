@@ -229,7 +229,7 @@ PUTFILE "MELODY", "$.MELODY", EXO_LOAD_ADDR
 SAVE "EXTRA", extradata, extraend
 SAVE "VARCODE", start_of_var_code, end_of_var_code
 SAVE "DIZZY3", start, codeend, onetimeinit
-PUTFILE "RMDATA", "$.RMDATA", 0
+PUTFILE "RMDATA", "$.RMDATA", &4000
 SAVE "OBJDATA", movingdata, endofmovingdata
 PUTFILE "TREPIC", "TREPIC", MODE8BASE
 PUTFILE "loadscr", "FRAME", MODE8BASE
