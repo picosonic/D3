@@ -60,20 +60,6 @@ INCBIN "RMTABLE"
 treasurepic = 101
 treasurelen = &3000
 
-; Set up for room banks to include roomdata, roomname, roommessages
-;
-;roomstart = *
-;ORG roomstart
-;GUARD roomend
-;CLEAR roomstart, roomend
-;
-;.bankNstart
-; ....
-;.bankNend
-;
-; Then after each room bank definition
-;SAVE "bankN", bankNstart, bankNend
-
 .cointable ;  x,   y,   room (top bit indicates collected)
   EQUB 58 ,152,63
   EQUB 38 ,120,31
