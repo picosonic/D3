@@ -32,6 +32,8 @@ IND3V = &0234 ; Spare                   &0234/5 nULA support: old BYTEV
 ZEROPAGE = &00 ; Start of zero page
 ZP_ECONET_WORKSPACE = &90 ; Econet private workspace at &90-&9F
 
+ROMSEL_CACHE = &F4 ; OS cache of ROMSEL value
+
 VDU_VARS = &300 ; VDU Variables at &0300-&037F
 LANGUAGE_WORKSPACE = &400 ; Current Language Workspace at &400-&7FF
 SOUND_WORKSPACE = &800 ; Sound workspace at &800-&83F
@@ -122,8 +124,9 @@ ULA_VID20 = SHEILABASE+&20 ; video control register
 ULA_VID21 = SHEILABASE+&21 ; colour palette
 ULA_VID22 = SHEILABASE+&22 ; border control
 ULA_VID23 = SHEILABASE+&23 ; 24-bit palette selection
-; Paged ROM selector
-PAGEROM = SHEILABASE+&30 ; paged ROM select (4 bit)
+; Paged ROM/RAM selector
+ROMSEL = SHEILABASE+&30 ; paged ROM select (4 bit)
+RAMSEL = SHEILABASE+&32 ; paged RAM select
 ; 6522 - System VIA
 SYSVIA_REGB = SHEILABASE+&40 ; Port B I/O
 SYSVIA_ORB = SYSVIA_REGB

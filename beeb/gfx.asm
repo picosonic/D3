@@ -448,8 +448,10 @@ PAL_DIZZY2 = $02
   JMP done
 
 .roomnotempty
-  LDA #hi(roomdata):STA zptr5+1
-  LDA #lo(roomdata):STA zptr5
+  LDA roomno
+  ASL A:TAY
+  LDA roomtable, Y:STA zptr5
+  LDA roomtable+1, Y:CLC:ADC #hi(ROMSBASE):STA zptr5+1
 
   ; Copy pointer from zptr5 to zptr4
   LDA zptr5:STA zptr4
@@ -653,25 +655,17 @@ PAL_DIZZY2 = $02
   LDA nextroomptr:SBC roomptr:STA roomlen
   LDA nextroomptr+1:SBC roomptr+1:STA roomlen+1
 
-  ; Load the data for this room
-  LDA roomptr:STA fcb+9                      ; Sequential pointer (offset into file)
-  LDA roomptr+1:STA fcb+10                   ;
-  LDA #lo(roomdata):STA fcb+1:STA roomptr    ; Destination buffer
-  LDA #hi(roomdata):STA fcb+2:STA roomptr+1  ;
-  LDA roomlen:STA fcb+5                      ; Bytes to transfer
-  LDA roomlen+1:STA fcb+6                    ;
-
   ; See if this is the room already loaded
   LDA loadedroomno:CMP roomno:BEQ loaded
 
-  LDX #lo(fcb):LDY #hi(fcb)
-  LDA #3 ; Get bytes from media, using new sequential pointer
-  JSR OSGBPB
   LDA roomno:STA loadedroomno ; Mark new room as the currently loaded one
 
 .loaded
+  PAGE_ROOMDATA
+
   ; Add offset
   CLC
+  LDA roomptr+1:ADC #hi(ROMSBASE):STA roomptr+1 ; Adjust to point to SWR
   LDA roomptr:ADC roomlen:STA nextroomptr
   LDA roomptr+1:ADC roomlen+1:STA nextroomptr+1
 
@@ -729,6 +723,8 @@ PAL_DIZZY2 = $02
   LDY #&00
   LDA roomptr+1:CMP nextroomptr+1:BNE thinglp
   LDA roomptr:CMP nextroomptr:BNE thinglp
+
+  PAGE_RESTORE
 
 .done
   RTS
@@ -859,8 +855,14 @@ PAL_DIZZY2 = $02
   JSR prtmessage
 
   ; Set pointer to room name
+  PAGE_ROOMDATA
+
   LDA #STR_roomname:JSR findroomstr
-  JMP prtmessage
+  JSR prtmessage
+  
+  PAGE_RESTORE
+
+  RTS
 
 .readytoprintname
   EQUB PRT_PEN+4,PRT_XY+12,24

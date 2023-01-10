@@ -24,13 +24,6 @@
   LDY #hi(varcodecmd)
   JSR OSCLI
 
-  ; Open roomdata file
-  LDX #lo(roomdatafn)
-  LDY #hi(roomdatafn)
-  LDA #OPENIN
-  JSR OSFIND
-  STA fcb ; Store file handle
-
   JMP titlescreen
 
 .varcodecmd
@@ -38,18 +31,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 .initend
-SKIP BIGGESTROOM-(initend-roomdata)
-
-; Room data filename
-.roomdatafn
-EQUS "RMDATA", &0D
-
-; File control block
-.fcb
-EQUB &00 ; File handle
-EQUB &00, &00, &00, &00 ; Pointer to data (low byte first)
-EQUB &00, &00, &00, &00 ; Number of bytes to transfer (low byte first)
-EQUB &00, &00, &00, &00 ; Sequential pointer (low byte first)
 
 .emptyroomname
 EQUB "::::::::SKY:::::::::", PRT_END

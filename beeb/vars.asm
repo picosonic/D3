@@ -8,6 +8,7 @@ GUARD ZP_ECONET_WORKSPACE
 ; Input bitfield
 .keys EQUB &00
 
+; Pointers and indexes
 .zptr1 EQUW 0
 .zidx1 EQUB 0
 
@@ -29,6 +30,7 @@ GUARD ZP_ECONET_WORKSPACE
 .roomptr EQUW 0
 .nextroomptr EQUW 0
 
+; Temporary variables
 .ztmp1 EQUB 0
 .ztmp2 EQUB 0
 .ztmp3 EQUB 0
@@ -181,7 +183,7 @@ GUARD ENVELOPE_DEFS
 .newroomno EQUB 0
 .oldroomno EQUB 0
 .loadedroomno EQUB 0 ; Last room loaded from disk
-.roomlen EQUW 0 ; Length of active roomdata
+.roomlen EQUW 0 ; Length of active room
 .spritenothere EQUB 0
 .dontupdatedizzy EQUB 0
 .killed EQUB 0

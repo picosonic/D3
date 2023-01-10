@@ -36,8 +36,12 @@ INCLUDE "gfx.asm"
   JSR roomsetup
 
   ; Print all the title screen text
+  PAGE_ROOMDATA
+
   LDA #STR_startmess:JSR findroomstr
   JSR prtmessage
+
+  PAGE_RESTORE
 
   ; Dizzy logo
   LDA #SPR_DIZZYLOGO:STA frmno
