@@ -564,6 +564,9 @@ PAL_DIZZY2 = $02
   LDY #hi(framepiccmd)
   JSR OSCLI
 
+  ; Page in roomdata sideways RAM
+  PAGE_ROOMDATA
+
   ; Re-draw the room
   LDA #52:JSR roomsetup
 
@@ -610,19 +613,11 @@ PAL_DIZZY2 = $02
 {
   LDA roomno:CMP #HEARTSROOM:BNE done ; Make sure we are in the right room
 
-  ; Page in the hearts demo code
-  LDX #lo(heartscmd)
-  LDY #hi(heartscmd)
-  JSR OSCLI
-
   ; Jump to hearts demo
   JSR heartdemo
 
 .done
   RTS
-
-.heartscmd
-  EQUS "L.HEARTS", &0D
 }
 
 .drawfullroom
@@ -661,8 +656,6 @@ PAL_DIZZY2 = $02
   LDA roomno:STA loadedroomno ; Mark new room as the currently loaded one
 
 .loaded
-  PAGE_ROOMDATA
-
   ; Add offset
   CLC
   LDA roomptr+1:ADC #hi(ROMSBASE):STA roomptr+1 ; Adjust to point to SWR
@@ -723,8 +716,6 @@ PAL_DIZZY2 = $02
   LDY #&00
   LDA roomptr+1:CMP nextroomptr+1:BNE thinglp
   LDA roomptr:CMP nextroomptr:BNE thinglp
-
-  PAGE_RESTORE
 
 .done
   RTS
@@ -855,14 +846,9 @@ PAL_DIZZY2 = $02
   JSR prtmessage
 
   ; Set pointer to room name
-  PAGE_ROOMDATA
-
   LDA #STR_roomname:JSR findroomstr
-  JSR prtmessage
-  
-  PAGE_RESTORE
+  JMP prtmessage
 
-  RTS
 
 .readytoprintname
   EQUB PRT_PEN+4,PRT_XY+12,24

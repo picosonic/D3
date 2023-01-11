@@ -27,21 +27,21 @@ INCLUDE "dizzyfrm.asm"
 INCLUDE "input.asm"
 INCLUDE "rand.asm"
 INCLUDE "gfx.asm"
+INCLUDE "hearts.asm"
 
 .titlescreen
 {
+  ; Page in roomdata sideways RAM
+  PAGE_ROOMDATA
+
   LDA #&01:STA dontupdatedizzy ; Stop Dizzy being drawn
 
   LDA #TITLEROOM:STA roomno
   JSR roomsetup
 
   ; Print all the title screen text
-  PAGE_ROOMDATA
-
   LDA #STR_startmess:JSR findroomstr
   JSR prtmessage
-
-  PAGE_RESTORE
 
   ; Dizzy logo
   LDA #SPR_DIZZYLOGO:STA frmno
@@ -238,18 +238,6 @@ SAVE "OBJDATA", movingdata, endofmovingdata
 PUTFILE "TREPIC", "TREPIC", MODE8BASE
 PUTFILE "loadscr", "FRAME", MODE8BASE
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; Hearts demo loads over the top of roomdata
-ORG MAIN_LOAD_ADDR
-CLEAR datastart, datastart+BIGGESTROOM
-GUARD datastart+BIGGESTROOM
-.hearts_start
-INCLUDE "hearts.asm"
-.hearts_end
-
-SAVE "HEARTS", hearts_start, hearts_end
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 PRINT "-------------------------------------------"
 PRINT "Zero page from ", ~zpstart, " to ", ~zpend-1, "  (", ZP_ECONET_WORKSPACE-zpend, " bytes left )"
 PRINT "Stack from ", ~start_of_stack, " to ", ~end_of_stack-1
@@ -259,7 +247,6 @@ PRINT "BVARS from ", ~start_of_buff, " to ", ~end_of_buff-1, "  (", ENVELOPE_DEF
 PRINT "EXTRA from ", ~extradata, " to ", ~extraend-1, "  (", NMI_WORKSPACE-extraend, " bytes left )"
 PRINT "DATA from ", ~datastart, " to ", ~dataend-1, "  (", dataend-datastart, " bytes )"
 PRINT "CODE from ", ~codestart, " to ", ~codeend-1, "  (", codeend-codestart, " bytes )"
-PRINT "HEARTS from ", ~hearts_start, " to ", ~hearts_end-1, "  (", hearts_end-hearts_start, " bytes )"
 PRINT ""
 PRINT "Main code entry point : ", ~onetimeinit
 PRINT "Objects : ", ~movingdata, "..", ~endofmovingdata, " (", endofmovingdata-movingdata, " bytes, ", noofmoving, " objs )"
