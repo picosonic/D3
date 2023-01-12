@@ -23,12 +23,6 @@ INCLUDE "hearts.asm"
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;ODD MESSAGES
 
-.youfoundcoinmess
-  EQUB PRT_PEN+5,PRT_XY+16,64,PRT_DRAWBOX,12,5,PRT_PEN+3
-  EQUB PRT_XY+22,88,"WELL:DONE@",PRT_PEN+6
-  EQUB PRT_XY+23,96,"YOU:FOUND"
-  EQUB PRT_XY+26,104,"A:COIN",PRT_END
-
 .inventory
   EQUB PRT_PEN+4,PRT_XY+6,56,PRT_DRAWBOX,22,6,PRT_XY+16,76
 

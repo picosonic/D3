@@ -1432,6 +1432,12 @@ EQUB PRT_XY+10,88,"YOUR:BAG:AND"
 EQUB PRT_XY+8,96,"EVERYTHING:HAS"
 EQUB PRT_XY+10,104,"DROPPED:OUT@",PRT_END
 
+.youfoundcoinmess
+  EQUB PRT_PEN+5,PRT_XY+16,64,PRT_DRAWBOX,12,5,PRT_PEN+3
+  EQUB PRT_XY+22,88,"WELL:DONE@",PRT_PEN+6
+  EQUB PRT_XY+23,96,"YOU:FOUND"
+  EQUB PRT_XY+26,104,"A:COIN",PRT_END
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 .roomdata_end
