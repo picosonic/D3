@@ -20,7 +20,7 @@ ENDMACRO
 
 PLAYAREA = MODE8BASE+((5+1)*BYTESPERLINE)
 
-MAIN_LOAD_ADDR = DFS_OPEN_FILE_BUFFER2 ; We only need 1 concurrent open file, so load where 2nd file buffer starts
+MAIN_LOAD_ADDR = DFS_OPEN_FILE_BUFFER1 ; We don't need to open any files, so load where 1st file buffer starts
 EXO_LOAD_ADDR = DFS_PAGE
 
 ; Colours (as per Spectrum offsets)
