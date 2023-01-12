@@ -8,6 +8,8 @@ cd "${workdir}"
 xmax=256
 ymax=192
 
+##############################################################
+
 # Set filenames
 img2beeb="img2beeb"
 exo="exomizer"
@@ -63,6 +65,8 @@ then
   ./${exo} level -M256 -P+16-32 -c ${beebscr}@0x0000 -o ${exoscr}
 fi
 
+##############################################################
+
 # Set filenames
 img2beeb="img2beeb"
 beebpal="dizzy2_beeb.pal"
@@ -106,8 +110,28 @@ then
   ./${img2beeb} -f "${beebpal}" -d1 -X${xmax} -Y${ymax} "${srcscr}" "${beebscr}"
 fi
 
+##############################################################
+
 beebasm -v -i exoloader.asm
 beebasm -v -i melody.asm
 beebasm -v -i speech.asm
 beebasm -v -i roomdata.asm
 beebasm -v -i dizzy3.asm -do dizzy3.ssd -opt 3 -title 'DIZZY3'
+
+##############################################################
+
+echo
+
+swrsize=`stat -c %s "RMDATA"`
+maxsize=$((16*1024))
+bytesleft=$((${maxsize}-${swrsize}))
+percent=$((200*${swrsize}/${maxsize} % 2 + 100*${swrsize}/${maxsize}))
+
+if [ ${bytesleft} -ge 0 ]
+then
+  echo "SWR is ${percent}% used - ( ${bytesleft} bytes left )"
+else
+  echo "OH NO - SWR is ${percent}% used - it's gone ovey by "$((0-${bytesleft}))" bytes"
+fi
+
+echo
