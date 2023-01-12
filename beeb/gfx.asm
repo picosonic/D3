@@ -972,6 +972,9 @@ PAL_DIZZY2 = $02
   ; Is it a plot type change
   CMP #PRT_PLOT:BEQ changeplot
 
+  ; IS it a gosub
+  CMP #PRT_GOSUB:BEQ gosub
+
   ; Is it a box drawing command
   CMP #PRT_DRAWBOX:BEQ drawboxrou
 
@@ -1011,6 +1014,33 @@ PAL_DIZZY2 = $02
   ; Change plot type
 .changeplot
   LDA (zptr5), Y:STA messplot:INY
+  JMP prtmessage1
+
+  ; Gosub - move message pointer to somewhere else, until END, then come back here
+  ;   next 2 bytes are 16-bit address to go to
+.gosub
+  ; Save current address
+  LDA zptr5:PHA   ; lo byte
+  LDA zptr5+1:PHA ; hi byte
+  TYA:PHA         ; offset
+
+  ; Get new addess
+  LDA (zptr5), Y:INY:PHA ; lo byte
+  LDA (zptr5), Y:INY     ; hi byte
+
+  ; Jump to new address
+  STA zptr5+1   ; lo byte
+  PLA:STA zptr5 ; hi byte
+  LDY #&00      ; offset
+
+  ; Print message from new location
+	JSR prtmessage1
+
+	; Continue from where we were (after gosub)
+  PLA:TAY:INY:INY  ; offset
+  PLA:STA zptr5+1  ; hi byte
+  PLA:STA zptr5    ; lo byte
+
   JMP prtmessage1
 
   ; Start repeat
