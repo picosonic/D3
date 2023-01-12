@@ -972,11 +972,11 @@ PAL_DIZZY2 = $02
   ; Is it a plot type change
   CMP #PRT_PLOT:BEQ changeplot
 
-  ; IS it a gosub
+  ; Is it a gosub
   CMP #PRT_GOSUB:BEQ gosub
 
   ; Is it a box drawing command
-  CMP #PRT_DRAWBOX:BEQ drawboxrou
+  CMP #PRT_DRAWBOX:BEQ drawboxjmp
 
   ; Is it a start repeat
   CMP #PRT_REP:BEQ repeat
@@ -986,6 +986,9 @@ PAL_DIZZY2 = $02
 
   ; Anything else is not supported at this time
   JMP done
+
+.drawboxjmp
+  JMP drawboxrou
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
