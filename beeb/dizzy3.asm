@@ -11,14 +11,17 @@ ORG MAIN_LOAD_ADDR
 GUARD MODE8BASE
 
 .start
-.datastart
 INCLUDE "rooms.asm"
 
+.datastart
+
+; Level tiles, object sprites, font
 .frametable
 INCBIN "frametable.bin"
 .framedefs
 INCBIN "framedefs.bin"
 
+; Dizzy sprites
 INCLUDE "dizzyfrm.asm"
 .dataend
 
@@ -27,7 +30,6 @@ INCLUDE "dizzyfrm.asm"
 INCLUDE "input.asm"
 INCLUDE "rand.asm"
 INCLUDE "gfx.asm"
-INCLUDE "hearts.asm"
 
 .titlescreen
 {
