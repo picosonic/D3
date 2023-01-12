@@ -978,6 +978,9 @@ PAL_DIZZY2 = $02
   ; Is it a box drawing command
   CMP #PRT_DRAWBOX:BEQ drawboxjmp
 
+  ; Is it a nop (skip)
+  CMP #PRT_NR:BEQ noproujmp
+
   ; Is it a start repeat
   CMP #PRT_REP:BEQ repeat
 
@@ -989,6 +992,9 @@ PAL_DIZZY2 = $02
 
 .drawboxjmp
   JMP drawboxrou
+
+.noproujmp
+  JMP noprou
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -1059,6 +1065,10 @@ PAL_DIZZY2 = $02
   BEQ noloop
   LDY printidx
 .noloop
+  JMP prtmessage1
+
+.noprou
+  LDA messx:CLC:ADC #&02:STA messx
   JMP prtmessage1
 
 .drawboxrou
