@@ -79,29 +79,19 @@ INCLUDE "hearts.asm"
   LDY #hi(objresetcmd)
   JSR OSCLI
 
+  ; Page in roomdata sideways RAM
+  PAGE_ROOMDATA
+
   LDA #&00
   STA waterheight
   STA fireout
   STA ratcount
-  STA dragonhere+oldmovex
-  STA dragonhere1+oldmovex
-  STA doorhere+oldmovex
   
   LDA #&FF
-  ;STA shopkeepercount
-  STA rathere+var1
-
-  LDA #60
-  STA rathere+oldmovefrm
-
-  ;LDA fullwhiskeymess
-  ;STA whiskeyhere+oldmovex
+  STA shopkeepercount
 
   LDA #&01
-  ;STA ratcoll+1
-
-  LDA #5+16+8
-  STA rathere+colour
+  ;STA ratcoll+1 ; TODO - waiting for rat routines
 
   LDY #&00:LDA #&00
 .scrubtalkbefore
