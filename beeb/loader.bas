@@ -10,12 +10,7 @@ REM Disable ESC processing
 REM Prepare screen
 MODE1
 VDU23,1,0;0;0;0;:REM Hide cursor
-:
-REM Set palette
-VDU19,0,0,0,0;
-VDU19,1,0,0,0;
-VDU19,2,0,0,0;
-VDU19,3,0,0,0;
+VDU19,1,0;0;19,2,0;0;19,3,0;0;:REM Blank palette
 :
 REM Sideways RAM loader
 DIM code 80
@@ -66,11 +61,7 @@ CALL swrcopy
 REM Load loading screen
 */EXOSCR
 :
-REM Set palette
-VDU19,0,0,0,0;
-VDU19,1,1,0,0;
-VDU19,2,2,0,0;
-VDU19,3,7,0,0;
+VDU19,1,1;0;19,2,2;0;19,3,7;0;:REM Set palette
 :
 */SPEECH
 REM */MELODY
