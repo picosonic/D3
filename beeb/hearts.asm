@@ -59,7 +59,7 @@ numhearts = 16
 
   LDY #&00
   LDA (zptr4), Y
-  CLC:ADC #&01 ; affects speed of rotation
+  CLC:ADC #&04 ; affects speed of rotation
   STA (zptr4), Y
 
   JSR printheart ; draw in new position
@@ -93,21 +93,23 @@ numhearts = 16
   DEY
 .^addpatch
   SEC:SBC (zptr4), Y ; count 0-255
-  AND #&7F
+  AND #&7F ; limit to <128
   PHA
   JSR getvalue
 
-  CLC:ADC #62
+  ; position x around centre of playarea
+  LSR A:CLC:ADC #62
   STA frmx
   PLA
 
-  CLC:ADC #32
-  AND #&7F
+  CLC:ADC #32 ; inverse sin
+  AND #&7F ; limit to <128
   JSR getvalue
 
   ; A = A*3
   PHA:ASL A:STA ztmp1:PLA:CLC:ADC ztmp1
 
+  ; position y around centre of playarea
   CLC:ADC #110
   STA frmy
 
@@ -127,6 +129,7 @@ numhearts = 16
 
   TXA:BPL waspos
   EOR #&FF:CLC:ADC #&01 ; Negate number, -ve to +ve
+  TAX
   INC b+1
 
 .waspos
@@ -153,11 +156,14 @@ numhearts = 16
 
   RTS
 
+; Sin wave lookup
+; Cos is 90' out of phase [+16]
+; -Sin is 180' out of phase [+32]
 .sincostable
-  EQUB 0, 6,12,18,24,30,35,40,45,49,53,56,59,61,62,63  ; quad 0
-  EQUB 64,63,62,61,59,56,53,49,45,40,35,30,24,18,12, 6  ; quad 1
-  EQUB -0,-6,-12,-18,-24,-30,-35,-40,-45,-49,-53,-56,-59,-61,-62,-63  ; quad 2
-  EQUB -64,-63,-62,-61,-59,-56,-53,-49,-45,-40,-35,-30,-24,-18,-12,-6  ; quad 3
+  EQUB 0, 6,12,18,24,30,35,40,45,49,53,56,59,61,62,63  ; quad 0 (0' to 90')
+  EQUB 64,63,62,61,59,56,53,49,45,40,35,30,24,18,12, 6  ; quad 1 (90' to 180')
+  EQUB -0,-6,-12,-18,-24,-30,-35,-40,-45,-49,-53,-56,-59,-61,-62,-63  ; quad 2 (180' to 270')
+  EQUB -64,-63,-62,-61,-59,-56,-53,-49,-45,-40,-35,-30,-24,-18,-12,-6  ; quad 3 (270' to 360')
 }
 
 ; A=no to multiply
