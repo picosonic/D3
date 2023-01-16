@@ -1,6 +1,6 @@
 ; Moving stuff
 
-; Offsets into 16-byte objects array (now 12)
+; Offsets into 16-byte objects array (now 12-byte)
 room = 0
 rou = 1
 movex = 2
@@ -18,10 +18,10 @@ colour = 11
 ;origy = 14
 ;origfrm = 15
 
-; Size of each object
+; Size of each object in bytes
 movingsize = 12
 
-; Null room off the map (don't draw)
+; Null room - off the map (don't draw)
 OFFMAP = 255
 
 ; Routine index
@@ -49,6 +49,9 @@ daisy1 = 19
 ;colour byte     7   6   5     4   3   2   1   0
 ;               rev:dull:atplot:plot: colour
 
+; All the moving things are defined here and stored in a file
+;   on the Beeb. When we want to reset them, we re-load this file
+;   over the top. The equivalent of resetroommoving().
 .movingdata
 
 ; room, rou, x, y, frm, oldx, oldy, ofrm, dly, v1, v2, col
