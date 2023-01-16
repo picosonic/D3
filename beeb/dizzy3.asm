@@ -57,8 +57,17 @@ INCLUDE "gfx.asm"
   LDA #INKEY_SPACE:JSR scankey
   BEQ keeptesting
 
+  ; Don't reset moving data on first load (as it's already loaded)
+.checkmoving
+  LDA #&01:BNE movingdone
   JSR resetmoving ; Put all the objects back to their starting positions
+.movingdone
+  LDA #&00:STA checkmoving+1
+
+  ; Reset coin positions
   JSR resetcoins
+
+  ; Reset what is being carried
   JSR resetcarrying
 
   LDA #3:STA lives ; Set the number of lives to start with
@@ -234,7 +243,7 @@ PUTFILE "SPEECH", "$.SPEECH", EXO_LOAD_ADDR
 PUTFILE "MELODY", "$.MELODY", EXO_LOAD_ADDR
 SAVE "EXTRA", extradata, extraend
 SAVE "VARCODE", start_of_var_code, end_of_var_code
-SAVE "DIZZY3", start, codeend, onetimeinit
+SAVE "DIZZY3", start, objend, onetimeinit
 PUTFILE "RMDATA", "$.RMDATA", &4000
 SAVE "OBJDATA", movingdata, endofmovingdata
 PUTFILE "TREPIC", "TREPIC", MODE8BASE
