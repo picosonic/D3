@@ -793,7 +793,9 @@ dylantalking = duffmem
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;DOZYROU
 .dozyrou
-  LDA #&FF:STA dozyhere+room:STA dozyfloathere+var1
+  LDA #OFFMAP:STA dozyhere+room
+  STA dozyfloathere+var1
+
   LDA #STR_pushdozymess:JSR findroomstr
   JMP windowrou
 
