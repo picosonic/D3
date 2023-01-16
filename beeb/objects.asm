@@ -791,6 +791,17 @@ dylantalking = duffmem
 .rugmess EQUB "AN:OLD:THICK:RUG",PRT_END
 .windowmess EQUB "A:WINDOW:FRAME",PRT_END
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TALKING TO YOLKFOLK
+
+.chatter
+  LDA #&01:STA dontupdatedizzy ; Stop Dizzy being drawn
+  JSR printandwait ; Print message and wait for user input to move on
+
+  LDA (zptr5), Y ; If next character to print is not END then show next message
+  CMP #PRT_END:BNE chatter
+
+  JMP windowrou1 ; Draw room again and allow dizzy to be drawn
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;DOZYROU
 .dozyrou
   LDA #OFFMAP:STA dozyhere+room
