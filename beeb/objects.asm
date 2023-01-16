@@ -791,17 +791,30 @@ dylantalking = duffmem
 .rugmess EQUB "AN:OLD:THICK:RUG",PRT_END
 .windowmess EQUB "A:WINDOW:FRAME",PRT_END
 
-;;;;;;;;;;;;;;;;;
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; Temporarily empty routines
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;DOZYROU
 .dozyrou
+  LDA #&FF:STA dozyhere+room:STA dozyfloathere+var1
+  LDA #STR_pushdozymess:JSR findroomstr
+  JMP windowrou
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;DOUG ROU
 .dougrou
+  LDA #STR_goonmysonmess:JSR findroomstr
+  JMP windowrou
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;DYLAN ROU
 .dylanrou
+  LDA #STR_trancemess:JSR findroomstr
+  JMP windowrou
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;DENZIL ROU
 .denzilrou
-  RTS
+  LDA #STR_stereoess:JSR findroomstr
+  JMP windowrou
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+; Proximity locations, when dropping things, to know how to interact
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;APPLE
 .proxapple
   EQUB 36 ;;room
