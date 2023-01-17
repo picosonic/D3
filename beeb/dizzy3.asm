@@ -85,6 +85,8 @@ INCLUDE "gfx.asm"
 .nextlife
   JSR subfromlives
 
+  ;TODO - JSR starteggres
+
   LDA #&00
   STA oldclock
   STA clock ; Init clock
