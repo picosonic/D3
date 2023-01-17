@@ -105,6 +105,43 @@ INCLUDE "hearts.asm"
   EQUS "L.OBJDATA", &0D
 }
 
+.resetroommoving
+{
+  LDA patch_BEQ:STA patchpick
+  JSR resetroommoving1
+  LDA patch_BNE:STA patchpick
+.resetroommoving1
+  LDA #lo(movingdata):STA zptr4
+  LDA #hi(movingdata):STA zptr4+1
+
+  LDX #&00
+.resetroommovinglp
+  LDY #rou:LDA (zptr4), Y ; Get routine id for this object
+  CMP #pickupable
+.patchpick
+  BEQ notprintyet
+
+  LDY #room:LDA (zptr4), Y:CMP roomno:BNE notprintyet
+  ; TODO jumptoroutine
+.notprintyet
+
+  ; Advance to next object
+  LDA zptr4:CLC:ADC #movingsize:STA zptr4
+  BCC samepage
+  INC zptr4+1
+.samepage
+
+  INX:CPX #noofmoving:BNE resetroommovinglp ; Loop until done
+
+.done
+  RTS
+
+.patch_BEQ
+  BEQ done
+.patch_BNE
+  BNE done
+}
+
 ; Reset coins
 .resetcoins
 {

@@ -51,7 +51,7 @@ daisy1 = 19
 
 ; All the moving things are defined here and stored in a file
 ;   on the Beeb. When we want to reset them, we re-load this file
-;   over the top. The equivalent of resetroommoving().
+;   over the top. The equivalent of resetmoving().
 .movingdata
 
 ; room, rou, x, y, frm, oldx, oldy, ofrm, dly, v1, v2, col
@@ -755,6 +755,59 @@ OBJ_RAILING4 = 71
 
 noofmoving = (endofmovingdata-movingdata)/movingsize
 
+; Reset moving items state
+.resetrous
+  EQUW resetportcullis
+  ;EQUW resetportswitch
+  ;EQUW resetpickupable
+  ;EQUW resetarmorog
+  ;EQUW resetdragon
+  ;EQUW resetcrocodile
+  ;EQUW resetlog
+  ;EQUW resethawk
+  ;EQUW resetmachines
+  ;EQUW resetlift
+  ;EQUW resetdozyfloat
+  ;EQUW resetrat
+  ;EQUW resettroll
+  ;EQUW resetdagger
+  ;EQUW resetdoor
+  ;EQUW printmoving  ;;;resetcrowbar
+  ;EQUW resetminer
+  ;EQUW resetdaisy
+  ;EQUW resetswitch1
+  ;EQUW resetdaisy1
+
+; Moving items routines
+.movingrous
+  EQUW portcullisrou
+  ;EQUW portswitchrou
+  ;EQUW pickupablerou
+  ;EQUW armorogrou
+  ;EQUW dragonrou
+  ;EQUW crocodilerou
+  ;EQUW logrou
+  ;EQUW hawkrou
+  ;EQUW machinesrou
+  ;EQUW liftrou
+  ;EQUW dozyfloatrou
+  ;EQUW ratrou
+  ;EQUW trollrou
+  ;EQUW daggerrou
+  ;EQUW doorrou
+  ;EQUW rethere            ;;crowbarrou
+  ;EQUW minerrou
+  ;EQUW daisyrou
+  ;EQUW switchrou1
+  ;EQUW daisyrou1
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;PORTCULLIS HERE
+.resetportcullis
+  RTS
+
+.portcullisrou
+  RTS
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 shoptalk = beanhere+room
@@ -804,6 +857,7 @@ dylantalking = duffmem
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;DOZYROU
 .dozyrou
+  ; TODO - more to add
   LDA #OFFMAP:STA dozyhere+room
   STA dozyfloathere+var1
 

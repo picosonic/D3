@@ -509,6 +509,7 @@ PAL_DIZZY2 = $02
   JSR checkfireout
 
   JSR drawfullroom
+  JSR resetroommoving
 
   ; Draw any coins in this room
   JSR putcoinsinroom
@@ -570,7 +571,7 @@ PAL_DIZZY2 = $02
   ; Re-draw the room
   LDA #52:JSR roomsetup
 
-   ; Revent to game palette
+   ; Revert to game palette
   LDA #PAL_GAME:JSR setpal
 
 .done
@@ -886,7 +887,7 @@ PAL_DIZZY2 = $02
   RTS
 }
 
-.startegress
+.starteggres
 {
   LDA startx:STA x
   LDA starty:STA y
@@ -929,7 +930,7 @@ PAL_DIZZY2 = $02
 {
   LDA roomno:JSR roomsetup
 
-  RTS ; Needs to be a JMP plotnew ?
+  RTS ; TODO - Needs to be a JMP plotnew ?
 }
 
 .prtmessage
