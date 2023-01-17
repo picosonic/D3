@@ -122,7 +122,9 @@ INCLUDE "hearts.asm"
   BEQ notprintyet
 
   LDY #room:LDA (zptr4), Y:CMP roomno:BNE notprintyet
-  ; TODO jumptoroutine
+  LDA #lo(resetrous):STA zptr5
+  LDA #hi(resetrous):STA zptr5+1
+  JSR jumptoroutine
 .notprintyet
 
   ; Advance to next object
@@ -140,6 +142,24 @@ INCLUDE "hearts.asm"
   BEQ done
 .patch_BNE
   BNE done
+}
+
+; zptr4 = current object
+; zptr5 = jump table to use
+.jumptoroutine
+{
+  LDY #rou:LDA (zptr4), Y ; Get routine id for this object
+  CMP #roucount-1
+  BCS done
+
+  ASL A:TAY
+  LDA (zptr5), Y:STA jump+1:INY
+  LDA (zptr5), Y:STA jump+2
+.jump
+  JMP duffmem
+
+.done
+  RTS
 }
 
 ; Reset coins

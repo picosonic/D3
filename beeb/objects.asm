@@ -45,6 +45,7 @@ miner = 16
 daisy = 17
 switch1 = 18
 daisy1 = 19
+roucount = 20
 
 ;colour byte     7   6   5     4   3   2   1   0
 ;               rev:dull:atplot:plot: colour
@@ -758,48 +759,91 @@ noofmoving = (endofmovingdata-movingdata)/movingsize
 ; Reset moving items state
 .resetrous
   EQUW resetportcullis
-  ;EQUW resetportswitch
-  ;EQUW resetpickupable
-  ;EQUW resetarmorog
-  ;EQUW resetdragon
-  ;EQUW resetcrocodile
-  ;EQUW resetlog
-  ;EQUW resethawk
-  ;EQUW resetmachines
-  ;EQUW resetlift
-  ;EQUW resetdozyfloat
-  ;EQUW resetrat
-  ;EQUW resettroll
-  ;EQUW resetdagger
-  ;EQUW resetdoor
-  ;EQUW printmoving  ;;;resetcrowbar
-  ;EQUW resetminer
-  ;EQUW resetdaisy
-  ;EQUW resetswitch1
-  ;EQUW resetdaisy1
+  EQUW resetportswitch
+  EQUW resetpickupable
+  EQUW resetarmorog
+  EQUW resetdragon
+  EQUW resetcrocodile
+  EQUW resetlog
+  EQUW resethawk
+  EQUW resetmachines
+  EQUW resetlift
+  EQUW resetdozyfloat
+  EQUW resetrat
+  EQUW resettroll
+  EQUW resetdagger
+  EQUW resetdoor
+  EQUW printmoving  ;;;resetcrowbar
+  EQUW resetminer
+  EQUW resetdaisy
+  EQUW resetswitch1
+  EQUW resetdaisy1
 
 ; Moving items routines
 .movingrous
   EQUW portcullisrou
-  ;EQUW portswitchrou
-  ;EQUW pickupablerou
-  ;EQUW armorogrou
-  ;EQUW dragonrou
-  ;EQUW crocodilerou
-  ;EQUW logrou
-  ;EQUW hawkrou
-  ;EQUW machinesrou
-  ;EQUW liftrou
-  ;EQUW dozyfloatrou
-  ;EQUW ratrou
-  ;EQUW trollrou
-  ;EQUW daggerrou
-  ;EQUW doorrou
-  ;EQUW rethere            ;;crowbarrou
-  ;EQUW minerrou
-  ;EQUW daisyrou
-  ;EQUW switchrou1
-  ;EQUW daisyrou1
+  EQUW portswitchrou
+  EQUW pickupablerou
+  EQUW armorogrou
+  EQUW dragonrou
+  EQUW crocodilerou
+  EQUW logrou
+  EQUW hawkrou
+  EQUW machinesrou
+  EQUW liftrou
+  EQUW dozyfloatrou
+  EQUW ratrou
+  EQUW trollrou
+  EQUW daggerrou
+  EQUW doorrou
+  EQUW rethere            ;;crowbarrou
+  EQUW minerrou
+  EQUW daisyrou
+  EQUW switchrou1
+  EQUW daisyrou1
+
+;; TEMPORARY - Placeholder empty routines
+.resetportswitch
+.resetpickupable
+.resetarmorog
+.resetdragon
+.resetcrocodile
+.resetlog
+.resethawk
+.resetmachines
+.resetlift
+.resetdozyfloat
+.resetrat
+.resettroll
+.resetdagger
+.resetdoor
+.printmoving
+.resetminer
+.resetdaisy
+.resetswitch1
+.resetdaisy1
+
+.portswitchrou
+.pickupablerou
+.armorogrou
+.dragonrou
+.crocodilerou
+.logrou
+.hawkrou
+.machinesrou
+.liftrou
+.dozyfloatrou
+.ratrou
+.trollrou
+.daggerrou
+.doorrou
+.rethere
+.minerrou
+.daisyrou
+.switchrou1
+.daisyrou1
+  RTS
+;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;PORTCULLIS HERE
 .resetportcullis
