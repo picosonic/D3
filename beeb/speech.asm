@@ -28,6 +28,7 @@ ORG EXO_LOAD_ADDR
 {
   ; Make sure we are not in decimal mode
   CLD
+  SEI
 
   ; Set sound pointer to start of sample
   LDA #speechdata MOD 256:STA sound_ptr
@@ -79,6 +80,7 @@ ORG EXO_LOAD_ADDR
   LDA #%00000000:STA SYSVIA_DDRA
 
   ; End program, go back to OS
+  CLI
   RTS
 }
 
