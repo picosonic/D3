@@ -138,6 +138,7 @@ INCLUDE "hearts.asm"
 .done
   RTS
 
+  ; Just to get branch opcodes for patching above
 .patch_BEQ
   BEQ done
 .patch_BNE

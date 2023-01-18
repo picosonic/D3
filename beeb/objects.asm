@@ -1,18 +1,18 @@
 ; Moving stuff
 
 ; Offsets into 16-byte objects array (now 12-byte)
-room = 0
-rou = 1
-movex = 2
-movey = 3
-movefrm = 4
+room = 0 ; Room that this object is currently in
+rou = 1 ; Routine index which specifies what to run for this object
+movex = 2 ; Current X position
+movey = 3 ; Current Y position
+movefrm = 4 ; Current sprite/frame id
 oldmovex = 5
 oldmovey = 6
 oldmovefrm = 7
-delay = 8
-delaycounter = 9
+delay = 8 ; If non-zero, is the number of steps to delay for
+delaycounter = 9 ; Counts from 0 to delay, then resets to 0
 var1 = 10
-colour = 11
+colour = 11 ; Colour for whole object when drawn
 ;origroom = 12
 ;origx = 13
 ;origy = 14
@@ -24,10 +24,10 @@ movingsize = 12
 ; Null room - off the map (don't draw)
 OFFMAP = 255
 
-; Routine index
+; Routine index values
 portcullis = 0
 portswitch = 1
-pickupable = 2
+pickupable = 2 ; An object which can be picked up
 armorog = 3
 dragon = 4
 crocodile = 5
@@ -45,6 +45,8 @@ miner = 16
 daisy = 17
 switch1 = 18
 daisy1 = 19
+
+; The number of routines defined
 roucount = 20
 
 ;colour byte     7   6   5     4   3   2   1   0
@@ -60,7 +62,6 @@ roucount = 20
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THE GUARD HOUSE
-
 OBJ_HAWK = 0
 
  EQUB 49, hawk, 60, 80, SPR_HAWK0 
@@ -70,7 +71,6 @@ OBJ_HAWK = 0
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THE BOTTOMLESS WELL
-
 OBJ_BAG = 1
 
  EQUB 55, pickupable, 48, 144, SPR_BAG
@@ -80,7 +80,6 @@ OBJ_BAG = 1
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; MOAT AND PORTCULLIS
-
 OBJ_PORTCULLIS = 2
 
 .porthere
@@ -89,7 +88,6 @@ OBJ_PORTCULLIS = 2
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; MOAT AND PORTCULLIS
-
 OBJ_SWITCH = 3
 
  EQUB 51,portswitch,66 ,78 ,SPR_SWITCH,0   ,0   ,0   ,0  ,0 ,0 ,PAL_CYAN+ATTR_NOTSOLID
@@ -97,7 +95,6 @@ OBJ_SWITCH = 3
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THE MARKET SQUARE
-
 OBJ_SHOPKEEPER = 4
 
 .shopkeeperhere
@@ -108,7 +105,6 @@ OBJ_SHOPKEEPER = 4
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THE MARKET SQUARE
-
 OBJ_SHOPKEEPER2 = 5
 
 .shopkeeperhere1
@@ -119,7 +115,6 @@ OBJ_SHOPKEEPER2 = 5
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; DENZIL'S PAD
-
 OBJ_BLACKHOLE = 6
 
  EQUB 72,pickupable,62 ,144,SPR_BLACKHOLE
@@ -129,7 +124,6 @@ OBJ_BLACKHOLE = 6
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THE SMELLY ALLOTMENT
-
 OBJ_MANURE = 7
 
 .manurehere
@@ -140,7 +134,6 @@ OBJ_MANURE = 7
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This item starts in your inventory
-
 OBJ_APPLE = 8
 
  EQUB OFFMAP,pickupable,58 ,136,SPR_APPLE
@@ -150,7 +143,6 @@ OBJ_APPLE = 8
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THE ATTIC
-
 OBJ_BONE = 9
 
 .bonehere
@@ -161,7 +153,6 @@ OBJ_BONE = 9
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This item is given to you by the shopkeeper
-
 OBJ_BEAN = 10
 
 .beanhere
@@ -172,7 +163,6 @@ OBJ_BEAN = 10
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THE CLOUD CASTLE
-
 OBJ_GOLDENEGG = 11
 
 .goldenegghere
@@ -183,7 +173,6 @@ OBJ_GOLDENEGG = 11
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; ARMOROG'S DEN
-
 OBJ_ROCK2 = 12
 
  EQUB 50,pickupable,86 ,160,SPR_SMALLSTONE2
@@ -193,7 +182,6 @@ OBJ_ROCK2 = 12
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; ARMOROG'S DEN
-
 OBJ_ARMOROG = 13
 
 .armoroghere
@@ -202,7 +190,6 @@ OBJ_ARMOROG = 13
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THE WIDE-EYED DRAGON
-
 OBJ_DRAGON = 14
 
 .dragonhere
@@ -211,7 +198,6 @@ OBJ_DRAGON = 14
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This item is given to you by Dozy
-
 OBJ_SLEEPINGPOTION = 15
 
 .sleepingpotionhere
@@ -222,7 +208,6 @@ OBJ_SLEEPINGPOTION = 15
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THE SNAP HAPPY GATOR
-
 OBJ_CROCODILE = 16
 
  EQUB 53,crocodile ,70 ,152,SPR_CROCCLOSED,0   ,0   ,0   ,0  ,0 ,0 ,PAL_GREEN+PLOT_OR
@@ -230,7 +215,6 @@ OBJ_CROCODILE = 16
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This item is given to you by Denzil
-
 OBJ_ROPE = 17
 
 .ropehere
@@ -241,7 +225,6 @@ OBJ_ROPE = 17
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; SMUGGLER'S HIDEOUT
-
 OBJ_ROCK3 = 18
 
  EQUB 35,pickupable,58 ,136,SPR_SMALLSTONE3
@@ -251,7 +234,6 @@ OBJ_ROCK3 = 18
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THE SNAP HAPPY GATOR
-
 OBJ_ROCK0 = 19
 
  EQUB 53,pickupable,90 ,144,SPR_SMALLSTONE0
@@ -261,7 +243,6 @@ OBJ_ROCK0 = 19
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THE BROKEN BRIDGE
-
 OBJ_WOOD = 20
 
  EQUB 48,log       ,60 ,136,SPR_WOOD0,0   ,0   ,0   ,4  ,0 ,0 ,PAL_RED+PLOT_OR
@@ -269,7 +250,6 @@ OBJ_WOOD = 20
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THE SNAP HAPPY GATOR
-
 OBJ_WHISKEYBOTTLE = 21
 
 .whiskeyhere
@@ -280,7 +260,6 @@ OBJ_WHISKEYBOTTLE = 21
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; KEEP OUT! DOZY'S HUT
-
 OBJ_LIFT = 22
 
  EQUB 71,lift      ,52 ,48 ,SPR_LIFTTOP,56,112,   0   ,1  ,0 ,0 ,PAL_WHITE+PLOT_XOR
@@ -288,7 +267,6 @@ OBJ_LIFT = 22
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THE LIFT CONTROL HUT
-
 OBJ_MACHINE = 23
 
  EQUB 56,machines  ,50 ,116,SPR_MACHINE ,0   ,0   ,0   ,32 ,0 ,0 ,PAL_CYAN+ATTR_NOTSOLID
@@ -296,7 +274,6 @@ OBJ_MACHINE = 23
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THE EAST TOWER
-
 OBJ_KEY = 24
 
  EQUB 85,pickupable,46 ,136,SPR_KEY
@@ -306,7 +283,6 @@ OBJ_KEY = 24
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THE DRAGON'S LAIR
-
 OBJ_LIFT2 = 25
 
  EQUB 40,lift      ,40 ,56 ,SPR_LIFTTOP,56,134,   0   ,1  ,0 ,0 ,PAL_WHITE+PLOT_XOR
@@ -314,7 +290,6 @@ OBJ_LIFT2 = 25
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THE LIFT CONTROL HUT
-
 OBJ_MACHINE2 = 26
 
  EQUB 56,machines  ,72 ,116,SPR_MACHINE ,0   ,0   ,0   ,32 ,0 ,0 ,PAL_CYAN+ATTR_NOTSOLID
@@ -322,7 +297,6 @@ OBJ_MACHINE2 = 26
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; INSIDE THE CHURCH
-
 OBJ_KEY2 = 27
 
  EQUB 24,pickupable,80 ,136,SPR_KEY
@@ -332,7 +306,6 @@ OBJ_KEY2 = 27
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; LIFT TO THE ELDERS
-
 OBJ_LIFT3 = 28
 
  EQUB 88,lift      ,58 ,48 ,SPR_LIFTTOP,56,136,   0   ,1  ,0 ,0 ,PAL_WHITE+PLOT_XOR
@@ -340,7 +313,6 @@ OBJ_LIFT3 = 28
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THE LIFT CONTROL HUT
-
 OBJ_MACHINE3 = 29
 
  EQUB 56,machines  ,52 ,156,SPR_MACHINE ,0   ,0   ,0   ,32 ,0 ,0 ,PAL_CYAN+ATTR_NOTSOLID
@@ -348,7 +320,6 @@ OBJ_MACHINE3 = 29
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; BASE OF THE VOLCANO
-
 OBJ_KEY3 = 30
 
  EQUB 60,pickupable,60 ,120,SPR_KEY
@@ -358,7 +329,6 @@ OBJ_KEY3 = 30
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THE LIFT CONTROL HUT
-
 OBJ_LIFT4 = 31
 
  EQUB 56,lift      ,60 ,104 ,SPR_LIFTTOP,104,140,   0   ,1  ,0 ,0 ,PAL_WHITE+PLOT_XOR
@@ -366,7 +336,6 @@ OBJ_LIFT4 = 31
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THE LIFT CONTROL HUT
-
 OBJ_MACHINE4 = 32
 
  EQUB 56,machines  ,70 ,156,SPR_MACHINE ,0   ,0   ,0   ,32 ,0 ,0 ,PAL_CYAN+ATTR_NOTSOLID
@@ -374,7 +343,6 @@ OBJ_MACHINE4 = 32
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THE BROKEN BRIDGE
-
 OBJ_KEY4 = 33
 
  EQUB 48,pickupable,40 ,96,SPR_KEY
@@ -384,7 +352,6 @@ OBJ_KEY4 = 33
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THE WEST TOWER
-
 OBJ_BUCKETEMPTY = 34
 
 .buckethere
@@ -395,7 +362,6 @@ OBJ_BUCKETEMPTY = 34
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This replaces the empty bucket when filled at base of volcano
-
 OBJ_BUCKETFULL = 35
 
  EQUB OFFMAP,pickupable,46 ,144,SPR_BUCKET
@@ -405,7 +371,6 @@ OBJ_BUCKETFULL = 35
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THE LARGE OAK TREE
-
 OBJ_LEAF = 36
 
  EQUB 59,pickupable,52 ,102,SPR_LEAFYBIT1
@@ -415,7 +380,6 @@ OBJ_LEAF = 36
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THE SMELLY ALLOTMENT
-
 OBJ_COW = 37
 
  EQUB 58,pickupable,60 ,160,SPR_COW
@@ -425,7 +389,6 @@ OBJ_COW = 37
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THE BOTTOMLESS WELL
-
 OBJ_LEAF2 = 38
 
  EQUB 55,pickupable,58 ,136,SPR_LEAFYBIT1
@@ -435,7 +398,6 @@ OBJ_LEAF2 = 38
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THE BOTTOMLESS WELL
-
 OBJ_RAILING = 39
 
  EQUB 55,pickupable,76 ,128,SPR_WOODENRAIL
@@ -445,7 +407,6 @@ OBJ_RAILING = 39
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; LOOKING OUT TO SEA
-
 OBJ_DOZY = 40
 
 .dozyhere
@@ -456,7 +417,6 @@ OBJ_DOZY = 40
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; LOOKING OUT TO SEA
-
 OBJ_DOZYFLOAT = 41
 
 .dozyfloathere
@@ -465,7 +425,6 @@ OBJ_DOZYFLOAT = 41
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THE CASTLE'S DUNGEON
-
 OBJ_JUGOFWATER = 42
 
  EQUB 36,pickupable,68 ,144,SPR_JUGOFWATER
@@ -475,7 +434,6 @@ OBJ_JUGOFWATER = 42
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THE CASTLE'S DUNGEON
-
 OBJ_BREAD = 43
 
 .loafhere
@@ -486,7 +444,6 @@ OBJ_BREAD = 43
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THE CASTLE'S DUNGEON
-
 OBJ_RAT = 44
 
 .rathere
@@ -495,7 +452,6 @@ OBJ_RAT = 44
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THE CASTLE'S DUNGEON
-
 OBJ_TROLL = 45
 
 .trollhere
@@ -504,7 +460,6 @@ OBJ_TROLL = 45
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THE EAST WING
-
 OBJ_DAGGER = 46
 
  EQUB 69,dagger    ,40 ,112,SPR_DAGGERBLADE ,0 ,0 ,   0   ,0  ,0 ,0 ,PAL_WHITE+ATTR_NOTSOLID
@@ -512,7 +467,6 @@ OBJ_DAGGER = 46
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; DIZZY'S PARENTS HUT
-
 OBJ_DOORKNOCKER = 47
 
  EQUB 89,pickupable,58 ,136,SPR_DOORKNOCKER
@@ -522,7 +476,6 @@ OBJ_DOORKNOCKER = 47
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THE CASTLE STAIRCASE
-
 OBJ_PLANK = 48
 
 .doorhere
@@ -531,7 +484,6 @@ OBJ_PLANK = 48
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; LIFT TO THE ELDERS
-
 OBJ_GRANDDIZZY = 49
 
 .doughere
@@ -542,7 +494,6 @@ OBJ_GRANDDIZZY = 49
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THE DRAGON'S LAIR
-
 OBJ_DRAGON2 = 50
 
 .dragonhere1
@@ -551,7 +502,6 @@ OBJ_DRAGON2 = 50
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THE DRAGON'S LAIR
-
 OBJ_GOLDENEGG2 = 51
 
 .goldenegghere1
@@ -562,7 +512,6 @@ OBJ_GOLDENEGG2 = 51
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This item is given to you by Doug
-
 OBJ_CROWBAR = 52
 
 .crowbarhere
@@ -573,7 +522,6 @@ OBJ_CROWBAR = 52
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THE BOTTOMLESS WELL
-
 OBJ_WELLLID = 53
 
 .welllidhere
@@ -582,7 +530,6 @@ OBJ_WELLLID = 53
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THE MEETING HALL
-
 OBJ_PICKAXE = 54
 
  EQUB 87,pickupable,64 ,80,SPR_PICKAXE
@@ -592,7 +539,6 @@ OBJ_PICKAXE = 54
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THE DESERTED MINES
-
 OBJ_STONE2 = 55
 
 .rockhere
@@ -601,7 +547,6 @@ OBJ_STONE2 = 55
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THE DESERTED MINES
-
 OBJ_TROLL2 = 56
 
  EQUB 41,miner     ,96 ,120,SPR_TROLL ,44,80 ,   0   ,0  ,0 ,0 ,PAL_GREEN+ATTR_NOTSOLID
@@ -609,7 +554,6 @@ OBJ_TROLL2 = 56
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; DAISY'S PRISON
-
 OBJ_DAGGER2 = 57
 
  EQUB 94,dagger    ,42 ,152,SPR_DAGGERBLADE ,0 ,0 ,   0   ,0  ,0 ,0 ,PAL_WHITE+ATTR_NOTSOLID
@@ -617,7 +561,6 @@ OBJ_DAGGER2 = 57
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; DAISY'S PRISON
-
 OBJ_DAGGER3 = 58
 
  EQUB 94,dagger    ,50 ,152,SPR_DAGGERBLADE ,0 ,0 ,   0   ,0  ,0 ,0 ,PAL_WHITE+ATTR_NOTSOLID
@@ -625,7 +568,6 @@ OBJ_DAGGER3 = 58
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THE DRAGON'S LAIR
-
 OBJ_RUG = 59
 
  EQUB 40,pickupable,52 ,112,SPR_THICKRUG
@@ -636,7 +578,6 @@ OBJ_RUG = 59
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; DAISY'S PRISON
 ; This is only shown when rug is used on daggers
-
 OBJ_CARPET = 60
 
 .carpethere
@@ -646,7 +587,6 @@ OBJ_CARPET = 60
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; DAISY'S PRISON
 ; This is only shown when rug is used on daggers
-
 OBJ_CARPET2 = 61
 
 .carpethere1
@@ -655,7 +595,6 @@ OBJ_CARPET2 = 61
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; DAISY'S PRISON
-
 OBJ_LIFT5 = 62
 
 .daisylifthere
@@ -664,7 +603,6 @@ OBJ_LIFT5 = 62
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; DAISY'S PRISON
-
 OBJ_DAISY = 63
 
 .daisyhere
@@ -673,7 +611,6 @@ OBJ_DAISY = 63
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; DAISY'S PRISON
-
 OBJ_SWITCH2 = 64
 
  EQUB 94,switch1 ,62 ,70,SPR_SWITCH,0   ,0   ,0   ,2  ,0 ,0 ,PAL_CYAN+ATTR_NOTSOLID+PLOT_OR
@@ -681,7 +618,6 @@ OBJ_SWITCH2 = 64
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THE LARGE OAK TREE
-
 OBJ_DYLAN = 65
 
 .dylanhere
@@ -692,7 +628,6 @@ OBJ_DYLAN = 65
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THE BANQUET HALL
-
 OBJ_DENZIL = 66
 
 .denzilhere
@@ -703,7 +638,6 @@ OBJ_DENZIL = 66
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Appears at DAISY'S EMPTY HUT, following rescue
-
 OBJ_DAISY2 = 67
 
 .daisy1here
@@ -712,7 +646,6 @@ OBJ_DAISY2 = 67
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THE LIFT CONTROL HUT
-
 OBJ_RAILING2 = 68
 
  EQUB 56,pickupable,84 ,128,SPR_WOODENRAIL
@@ -722,7 +655,6 @@ OBJ_RAILING2 = 68
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; DENZIL'S PAD
-
 OBJ_RAILING3 = 69
 
  EQUB 72,pickupable,76 ,80,SPR_WOODENRAIL
@@ -732,7 +664,6 @@ OBJ_RAILING3 = 69
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; DAISY'S EMPTY HUT
-
 OBJ_WINDOW = 70
 
  EQUB 73,pickupable,56 ,72,SPR_WINDOW
@@ -742,7 +673,6 @@ OBJ_WINDOW = 70
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THE ENTRANCE HALL
-
 OBJ_RAILING4 = 71
 
  EQUB 52,pickupable,86 ,88,SPR_WOODENRAIL
@@ -847,7 +777,12 @@ noofmoving = (endofmovingdata-movingdata)/movingsize
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;PORTCULLIS HERE
 .resetportcullis
-  RTS
+;  LDY #var1:LDA (zptr4), Y
+;  BNE resetrope1
+;.resetrope
+;  STA (zptr4), Y
+;.resetrope1
+;  RTS
 
 .portcullisrou
   RTS
@@ -1014,3 +949,66 @@ dylantalking = duffmem
   EQUB 34,152 ;;;x,y
   EQUB 4,16 ;;;w,h
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+.domoving
+{
+  LDA #lo(movingdata):STA zptr4
+  LDA #hi(movingdata):STA zptr4+1
+
+  LDX #&00
+.domovinglp
+  STX slotno ; Cache object slot incase it gets picked up
+
+  ; Check we are in the right room for this object
+  LDY #room:LDA (zptr4), Y:CMP roomno:BNE notinthisroom
+
+  LDY #rou:LDA (zptr4), Y ; Get routine id for this object
+  CMP #pickupable:BEQ skipdelay
+  ; If it's not pickupable, limit how often we run routine
+  JSR delayrou
+  BNE notinthisroom ; Check for delaycounter being zero, otherwise move on
+.skipdelay
+
+  LDA #lo(movingrous):STA zptr5
+  LDA #hi(movingrous):STA zptr5+1
+  JSR jumptoroutine
+
+.notinthisroom
+
+  ; Advance to next object
+  LDA zptr4:CLC:ADC #movingsize:STA zptr4
+  BCC samepage
+  INC zptr4+1
+.samepage
+
+  INX:CPX #noofmoving:BNE domovinglp ; Loop until done
+
+.done
+  RTS
+}
+
+; If delay value set, advance delaycounter until it matches delay
+; When a match occurs reset delaycounter to zero
+.delayrou
+{
+  ; See if delay is needed
+  LDY #delay:LDA (zptr4), Y
+  BEQ done
+
+  STA ztmp7 ; Store delay
+
+  ; Advance delaycounter
+  LDY #delaycounter:LDA (zptr4), Y
+  CLC:ADC #&01:STA (zptr4), Y
+
+  ; Compare delaycounter to delay
+  CMP ztmp7:BNE done ; If different, return
+
+  ; Reset counter, setting Z flag so that routine is run
+  LDA #&00:LDY #delaycounter:STA (zptr4), Y
+
+.done
+
+  RTS
+}
