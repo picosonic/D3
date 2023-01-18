@@ -70,22 +70,18 @@ INCLUDE "gfx.asm"
   ; Reset what is being carried
   JSR resetcarrying
 
+.resetlives
   LDA #3:STA lives ; Set the number of lives to start with
   LDA #46:STA startx
   LDA #168:STA starty
   LDA #STARTROOM:STA startroom ; THE CASTLE'S DUNGEON
-
-  ;;;;;;;;
-  STA roomno
-  JSR roomsetup
-  ;;;;;;;;
 
   LDA #&00:STA completedgame
 
 .nextlife
   JSR subfromlives
 
-  ;TODO - JSR starteggres
+  JSR starteggres
 
   LDA #&00
   STA oldclock
