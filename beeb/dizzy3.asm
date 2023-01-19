@@ -221,7 +221,7 @@ INCLUDE "gfx.asm"
 ;  LDA #0
 ;.tryjump
 ;  STA ztmp1
-;  TXA:AND #PAD_START:BEQ setsequnce ; No jump
+;  TXA:AND #PAD_JUMP:BEQ setsequnce ; No jump
 ;
 ;  LDA #0:STA animation
 ;  LDA #256-8:STA dy

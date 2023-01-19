@@ -69,15 +69,13 @@ PLOT_OR = &08
 PLOT_XOR = &10
 PLOT_NULL = &18 ; Invalid - don't plot
 
-; Gamepad equivalent bit flags
-PAD_RIGHT  = &01
-PAD_LEFT   = &02
-PAD_DOWN   = &04
-PAD_UP     = &08
-PAD_START  = &10
-PAD_SELECT = &20
-PAD_B      = &40
-PAD_A      = &80
+; Dizzy input equivalent bit flags
+PAD_JUMP   = &01
+PAD_RIGHT  = &02
+PAD_LEFT   = &04
+PAD_FIRE   = &08
+PAD_DOWN   = &10
+PAD_UP     = &20
 
 ; String offsets
 STR_roomname = 1
