@@ -986,7 +986,7 @@ PAL_DIZZY2 = $02
   CMP #PRT_REP:BEQ repeat
 
   ; Is it an end repeat
-  CMP #PRT_ENDREP:BEQ endrepeat
+  CMP #PRT_ENDREP:BEQ endrepeatjmp
 
   ; Anything else is not supported at this time
   JMP done
@@ -995,6 +995,8 @@ PAL_DIZZY2 = $02
   JMP drawboxrou
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+.endrepeatjmp
+  JMP endrepeat
 
   ; Byte in A must be a char, so print it at cursor position
 .mustbechar
@@ -1054,16 +1056,21 @@ PAL_DIZZY2 = $02
   ; Start repeat
 .repeat
   LDA (zptr5), Y:STA printloops:INY ; Save count
+  LDA printloops:BEQ noloop ; Loop counter is zero, so don't loop
   STY printidx ; Save where to loop to
+  JMP prtmessage1
+
+.noloop
+  LDA (zptr5), Y:INY
+  CMP #PRT_ENDREP:BNE noloop
   JMP prtmessage1
 
   ; End repeat
 .endrepeat
-  ; Do we need to loop again
   DEC printloops:LDA printloops
-  BEQ noloop
+  BEQ loopstop
   LDY printidx
-.noloop
+.loopstop
   JMP prtmessage1
 
 .drawboxrou
