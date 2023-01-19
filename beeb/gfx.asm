@@ -1034,7 +1034,7 @@ PAL_DIZZY2 = $02
   LDA zptr5+1:PHA ; hi byte
   TYA:PHA         ; offset
 
-  ; Get new addess
+  ; Get new address
   LDA (zptr5), Y:INY:PHA ; lo byte
   LDA (zptr5), Y:INY     ; hi byte
 
