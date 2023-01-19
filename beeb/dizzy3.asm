@@ -93,10 +93,39 @@ INCLUDE "gfx.asm"
 
 .maingamelp
 {
-  JSR process_inputs
+  JSR process_inputs ;;; TODO - move this
+
+.notpickup
+  LDA #&00:STA pickup
+  LDA usepickup:BEQ oktopickup
+  ;;;
+  JMP notfacing
+
+.oktopickup
+  LDA sequence
+  BNE notfacing
+
+.notfacing
+  JSR domoving
+  LDA killed
+  CMP #&01
+  BEQ wantaquickkill
+
+.afterdomoving
+  ;JSR pickupcoins
+  ;JSR tryputtingdown
+
+  JSR updatewater
+  JSR updateflames
+
+  ; JSR checkholdinghole
+  ; JSR checkifdrunk
+  ; JSR shopkeeperrou
+
+.wantaquickkill
 
   ; See if room changed
-  LDA roomno:CMP loadedroomno:BEQ same
+  LDA roomno:CMP loadedroomno:BEQ notanewroom
 
   JSR roomsetup
 
@@ -104,19 +133,37 @@ INCLUDE "gfx.asm"
 .holdon
   LDX keys:BNE holdon
 
-.same
+.notanewroom
 
-.afterdomoving
-  JSR updatewater
-  JSR updateflames
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   LDA dontupdatedizzy
   BNE nodraw
 
   JSR updatedizzy
 .nodraw
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+  ; Check for ESCAPE being pressed
+  LDA #INKEY_ESCAPE:JSR scankey ; Scan for ESCAPE
+  BNE quitted
+
+  ; Check for game being completed
+  LDA completedgame:BNE quitted
+
+.notdonegame
+  LDA killed:BEQ maingamelp
+  DEC killed:LDA killed:BNE maingamelp
 
   JMP maingamelp
+}
+
+; Go back to title screen
+.quitted
+{
+  ; acknowledge ESC
+  LDA #&7E:JSR OSBYTE
+
+  JMP titlescreen
 }
 
 .updatedizzy
