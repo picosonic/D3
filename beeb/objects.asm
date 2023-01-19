@@ -747,7 +747,6 @@ noofmoving = (endofmovingdata-movingdata)/movingsize
 .resettroll
 .resetdagger
 .resetdoor
-.printmoving
 .resetminer
 .resetdaisy
 .resetswitch1
@@ -775,17 +774,46 @@ noofmoving = (endofmovingdata-movingdata)/movingsize
   RTS
 ;;
 
+.printmoving
+{
+  LDY #movefrm:LDA (zptr4), Y:STA frmno
+  LDY #movex:LDA (zptr4), Y:STA frmx
+  LDY #movey:LDA (zptr4), Y:STA frmy
+  LDY #colour:LDA (zptr4), Y:AND %01000111:STA frmy
+
+  JSR frame
+
+  RTS
+}
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;PORTCULLIS HERE
 .resetportcullis
-;  LDY #var1:LDA (zptr4), Y
-;  BNE resetrope1
-;.resetrope
-;  STA (zptr4), Y
-;.resetrope1
-;  RTS
+{
+  LDY #var1:LDA (zptr4), Y
+  BNE resetrope1
+.resetrope
+  LDA #&00:STA (zptr4), Y
+  LDY #oldmovey:LDA (zptr4), Y
+  LDY #movey:STA (zptr4), Y
+.resetrope1
+  LDA #96:STA ztmp7 ; portcullis.origy
+  LDY #movey:LDA (zptr4), Y
+  DEC ztmp7:DEC ztmp7
+  LDA ztmp7:STA (zptr4), Y
+.drawropedownlp
+  INC ztmp7:INC ztmp7
+  LDA ztmp7:STA (zptr4), Y
+  JSR printmoving
+  LDY #movey:LDA (zptr4), Y
+  CMP ztmp7
+  BNE drawropedownlp
+  RTS
+}
 
 .portcullisrou
+{
   RTS
+}
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -826,6 +854,7 @@ dylantalking = duffmem
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TALKING TO YOLKFOLK
 
 .chatter
+{
   LDA #&01:STA dontupdatedizzy ; Stop Dizzy being drawn
   JSR printandwait ; Print message and wait for user input to move on
 
@@ -833,6 +862,7 @@ dylantalking = duffmem
   CMP #PRT_END:BNE chatter
 
   JMP windowrou1 ; Draw room again and allow dizzy to be drawn
+}
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;DOZYROU
 .dozyrou
