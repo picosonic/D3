@@ -8,6 +8,11 @@
   LDX keys
   BEQ done ; Nothing pressed
 
+.check_fire
+  TXA:AND #PAD_FIRE
+  BEQ case_right
+  LDA #&01:STA killed
+
 .case_right
   TXA:AND #PAD_RIGHT
   BEQ case_left

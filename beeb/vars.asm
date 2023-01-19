@@ -187,7 +187,7 @@ GUARD ENVELOPE_DEFS
 .spritenothere EQUB 0
 .dontupdatedizzy EQUB 0
 .killed EQUB 0
-.killedmess EQUW 0
+.killedmess EQUW 0 ; Pointer to message to show why Dizzy killed
 .coins EQUB 0 ; Count of collected coins
 .lives EQUB 0 ; Number of lives remaining
 .usepickup EQUB 0

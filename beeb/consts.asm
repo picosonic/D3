@@ -182,3 +182,15 @@ STR_goonmysonmess = 3
 STR_userugmess = 2
 STR_gottodaisymess = 3
 STR_daisyrunsmess = 4
+
+; Room 101 - special room
+ROOM_STRINGS = 101
+STR_deadwindow = 2
+STR_killedbyliftmess = 3
+STR_killedbyflame = 4
+STR_killedbywater = 5
+STR_killedbydaggersmess = 6
+STR_obstructingliftmess = 7
+STR_dropwhiskeymess = 8
+STR_holdingholemess = 9
+STR_youfoundcoinmess = 10

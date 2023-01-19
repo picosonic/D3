@@ -1379,8 +1379,23 @@ INCBIN "rooms/room100.bin"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 .room101
+{
+EQUW roomdata-room101 ; 0
+EQUW roomname-room101 ; 1
+EQUW deadwindow-room101 ; 2
+EQUW killedbyliftmess-room101 ; 3
+EQUW killedbyflame-room101 ; 4
+EQUW killedbywater-room101 ; 5
+EQUW killedbydaggersmess-room101 ; 6
+EQUW obstructingliftmess-room101 ; 7
+EQUW dropwhiskeymess-room101 ; 8
+EQUW holdingholemess-room101 ; 9
+EQUW youfoundcoinmess-room101 ; 10
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+.roomname ; DUMMY
+EQUB "PICOSONIC 2023", PRT_END
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;Generic dead messages
 
@@ -1437,6 +1452,9 @@ EQUB PRT_XY+10,104,"DROPPED:OUT@",PRT_END
   EQUB PRT_XY+22,88,"WELL:DONE@",PRT_PEN+6
   EQUB PRT_XY+23,96,"YOU:FOUND"
   EQUB PRT_XY+26,104,"A:COIN",PRT_END
+
+.roomdata
+}
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

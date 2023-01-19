@@ -223,8 +223,8 @@ INCLUDE "hearts.asm"
 
   JMP prtmessage
 
-.livesmess EQUB PRT_PEN+4, PRT_XY+14,8, ":::", PRT_XY+14,8
-.nooflivesmess EQUB PRT_REP, 1, "/", PRT_ENDREP, PRT_END
+.livesmess EQUB PRT_PEN+4, PRT_XY+14,8, ":::", PRT_XY+14,8 ; Clear lives display
+.nooflivesmess EQUB PRT_REP, 1, "/", PRT_ENDREP, PRT_END   ; Print lives count
 }
 
 .resetcarrying

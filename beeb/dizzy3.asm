@@ -78,7 +78,7 @@ INCLUDE "gfx.asm"
 
   LDA #&00:STA completedgame
 
-.nextlife
+.^nextlife
   JSR subfromlives
 
   JSR starteggres
@@ -98,12 +98,14 @@ INCLUDE "gfx.asm"
 .notpickup
   LDA #&00:STA pickup
   LDA usepickup:BEQ oktopickup
-  ;;;
+  SEC:SBC #&01:STA usepickup
   JMP notfacing
 
 .oktopickup
   LDA sequence
   BNE notfacing
+  LDA keys:AND #PAD_FIRE:BNE notfacing ; Check for FIRE / RETURN being pressed
+  LDA #&FF:STA pickup
 
 .notfacing
   JSR domoving
@@ -154,7 +156,38 @@ INCLUDE "gfx.asm"
   LDA killed:BEQ maingamelp
   DEC killed:LDA killed:BNE maingamelp
 
-  JMP maingamelp
+  LDA #&01:STA dontupdatedizzy ; Stop Dizzy being drawn
+
+  LDA roomno:PHA ; Cache room number
+  LDA #ROOM_STRINGS:STA roomno
+  LDA #STR_deadwindow:JSR findroomstr
+  JSR prtmessage
+  PLA:STA roomno ; Restore room number
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; This is here just to set killedmess
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  LDA roomno:PHA ; Cache room number
+  LDA #ROOM_STRINGS:STA roomno
+  LDA #STR_killedbydaggersmess:JSR findroomstr
+  PLA:STA roomno ; Restore room number
+
+  LDA zptr5:STA killedmess
+  LDA zptr5+1:STA killedmess+1
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+  LDA killedmess:STA zptr5
+  LDA killedmess+1:STA zptr5+1
+
+  JSR printandwait
+
+  LDA lives:BEQ toast ; Check for all lives used up
+
+  JMP nextlife
+
+.toast
+
+  ; Fall through into game end
 }
 
 ; Go back to title screen
