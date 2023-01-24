@@ -529,11 +529,21 @@ PAL_DIZZY2 = $02
   JSR drawfullroom
   JSR resetroommoving
 
-  ; Draw any coins in this room
-  JSR putcoinsinroom
+  if seecoins=0
+    ; Draw any coins in this room
+    JSR putcoinsinroom
 
-  ; Draw any objects in this room (after coins so objects can hide coins)
-  JSR putobjectsinroom
+    ; Draw any objects in this room (after coins so objects can hide coins)
+    JSR putobjectsinroom
+  endif
+
+  if seecoins=1
+    ; Draw any objects in this room
+    JSR putobjectsinroom
+
+    ; Draw any coins in this room
+    JSR putcoinsinroom
+  endif
 
   ; Write the room name
   JSR printroomname
