@@ -7,6 +7,9 @@ INCLUDE "internal.asm"
 INCLUDE "consts.asm"
 INCLUDE "vars.asm"
 
+; Debug settings
+seecoins = 0
+
 ORG MAIN_LOAD_ADDR
 GUARD MODE8BASE
 
