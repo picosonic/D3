@@ -63,12 +63,14 @@
   ; SPACE      START GAME        FIRE
   ;   Z           LEFT           LEFT
   ;   X           RIGHT         RIGHT
+  ;   K            UP             UP
+  ;   M           DOWN           DOWN
   ; SPACE         JUMP            UP
   ; ENTER   PICK UP/DROP/USE     FIRE
   ;   Q         QUIT GAME         -
   
-  LDX #KEY_COLON         : STX SYSVIA_REGA : ASL SYSVIA_REGA : LDA #0 : ROL A  ; ":"      UP
-  LDX #KEY_FWDSLASH      : STX SYSVIA_REGA : ASL SYSVIA_REGA : ROL A           ; "/"      DOWN
+  LDX #KEY_K             : STX SYSVIA_REGA : ASL SYSVIA_REGA : LDA #0 : ROL A  ; "K"      UP
+  LDX #KEY_M             : STX SYSVIA_REGA : ASL SYSVIA_REGA : ROL A           ; "M"      DOWN
 
   LDX #KEY_RETURN        : STX SYSVIA_REGA : ASL SYSVIA_REGA : ROL A           ; "RETURN" FIRE
   LDX #KEY_Z             : STX SYSVIA_REGA : ASL SYSVIA_REGA : ROL A           ; "Z"      LEFT
