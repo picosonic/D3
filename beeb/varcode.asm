@@ -3,10 +3,13 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This is just for testing
+.goback
+  RTS
+
 .process_inputs
 {
   LDX keys
-  BEQ done ; Nothing pressed
+  BEQ goback ; Nothing pressed
 
 .check_fire
   TXA:AND #PAD_FIRE
@@ -16,24 +19,45 @@
 .case_right
   TXA:AND #PAD_RIGHT
   BEQ case_left
-  INC roomno
+  INC dizzyx
 
 .case_left
   TXA:AND #PAD_LEFT
   BEQ case_up
-  DEC roomno
+  DEC dizzyx
 
 .case_up
   TXA:AND #PAD_UP
   BEQ case_down
-  LDA roomno:CLC:ADC #&10:STA roomno
+  DEC dizzyy:DEC dizzyy:DEC dizzyy:DEC dizzyy
 
 .case_down
   TXA:AND #PAD_DOWN
   BEQ checkno
-  LDA roomno:SEC:SBC #&10:STA roomno
+  INC dizzyy:INC dizzyy:INC dizzyy:INC dizzyy
 
 .checkno
+
+  ; See if we've gone offscreen to the left
+.chleft
+  LDA dizzyx:CMP #32:BCS chright
+  DEC roomno:LDA #92:STA dizzyx:JMP roomrange
+  ; See if we've gone offscreen to the right
+.chright
+  LDA dizzyx:CMP #92:BCC chtop
+  INC roomno:LDA #32:STA dizzyx:JMP roomrange
+  ; See if we've gone offscreen to the top
+.chtop
+  LDA dizzyy:CMP #40:BCS chbottom
+  LDA roomno:CLC:ADC #&10:STA roomno
+  LDA #168:STA dizzyy:JMP roomrange
+  ; See if we've gone offscreen to the bottom
+.chbottom
+  LDA dizzyy:CMP #168:BCC roomrange
+  LDA roomno:SEC:SBC #&10:STA roomno
+  LDA #40:STA dizzyy
+
+.roomrange
   LDA roomno:CMP #101:BCC done
   LDA #STARTROOM:STA roomno ; Reset
 

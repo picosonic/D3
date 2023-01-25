@@ -560,8 +560,8 @@ PAL_DIZZY2 = $02
 
   ; Draw initial frame (so there is something to rub out)
   LDA dizzyfrm:AND #&1F:STA frmno
-  LDA dizzyx:STA frmx
-  LDA dizzyy:STA frmy
+  LDA dizzyx:STA frmx:STA oldx
+  LDA dizzyy:STA frmy:STA oldy
   LDA #PAL_WHITE:STA frmattri
   JSR drawdizzy
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

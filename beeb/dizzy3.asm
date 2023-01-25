@@ -134,10 +134,6 @@ INCLUDE "gfx.asm"
 
   JSR roomsetup
 
-  ; Wait until nothing pressed
-.holdon
-  LDX keys:BNE holdon
-
 .notanewroom
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -217,8 +213,8 @@ INCLUDE "gfx.asm"
 
   ; Rub out
   LDA dizzyfrm:STA frmno
-  LDA dizzyx:STA frmx
-  LDA dizzyy:STA frmy
+  LDA oldx:STA frmx
+  LDA oldy:STA frmy
   LDA #PAL_WHITE:STA frmattri
   JSR drawdizzy
   
@@ -288,6 +284,8 @@ INCLUDE "gfx.asm"
   ; Draw new
   INC dizzyfrm
   LDA dizzyfrm:AND #&1F:STA dizzyfrm:STA frmno
+  LDA dizzyx:STA frmx:STA oldx
+  LDA dizzyy:STA frmy:STA oldy
   JSR drawdizzy
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
