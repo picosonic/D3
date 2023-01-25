@@ -1,0 +1,186 @@
+var prox=[
+{
+  "name":"proxapple",
+  "room":36,
+  "x":78,
+  "y":152,
+  "w":4,
+  "h":16
+},
+{
+  "name":"proxbean",
+  "room":58,
+  "x":71,
+  "y":160,
+  "w":8,
+  "h":16
+},
+{
+  "name":"proxegg",
+  "room":40,
+  "x":54,
+  "y":150,
+  "w":4,
+  "h":20
+},
+{
+  "name":"proxrock",
+  "room":48,
+  "x":72,
+  "y":80,
+  "w":10,
+  "h":30
+},
+{
+  "name":"proxsleep",
+  "room":54,
+  "x":60,
+  "y":150,
+  "w":10,
+  "h":30
+},
+{
+  "name":"proxcroc",
+  "room":53,
+  "x":68,
+  "y":140,
+  "w":10,
+  "h":20
+},
+{
+  "name":"proxkey1",
+  "room":56,
+  "x":51,
+  "y":120,
+  "w":4,
+  "h":16
+},
+{
+  "name":"proxkey2",
+  "room":56,
+  "x":73,
+  "y":120,
+  "w":4,
+  "h":16
+},
+{
+  "name":"proxkey3",
+  "room":56,
+  "x":53,
+  "y":160,
+  "w":4,
+  "h":16
+},
+{
+  "name":"proxkey4",
+  "room":56,
+  "x":71,
+  "y":160,
+  "w":4,
+  "h":16
+},
+{
+  "name":"proxmtbucket",
+  "room":60,
+  "x":46,
+  "y":144,
+  "w":4,
+  "h":16
+},
+{
+  "name":"proxfullbucket",
+  "room":58,
+  "x":71,
+  "y":160,
+  "w":8,
+  "h":16
+},
+{
+  "name":"proxjug",
+  "room":36,
+  "x":44,
+  "y":150,
+  "w":6,
+  "h":26
+},
+{
+  "name":"proxloaf",
+  "room":36,
+  "x":46,
+  "y":64,
+  "w":40,
+  "h":16
+},
+{
+  "name":"proxdoor",
+  "room":84,
+  "x":34,
+  "y":160,
+  "w":4,
+  "h":16
+},
+{
+  "name":"proxcrowbar",
+  "room":55,
+  "x":46,
+  "y":144,
+  "w":8,
+  "h":16
+},
+{
+  "name":"proxpickaxe",
+  "room":41,
+  "x":36,
+  "y":101,
+  "w":12,
+  "h":20
+},
+{
+  "name":"proxrug",
+  "room":94,
+  "x":34,
+  "y":152,
+  "w":4,
+  "h":16
+},
+{
+  "name":"proxpicture",
+  "room":52,
+  "x":62,
+  "y":104,
+  "w":5,
+  "h":16
+},
+{
+  "name":"proxknox",
+  "room":84,
+  "x":34,
+  "y":160,
+  "w":4,
+  "h":16
+},
+{
+  "name":"proxminer",
+  "room":41,
+  "x":90,
+  "y":120,
+  "w":2,
+  "h":32
+},
+{
+  "name":"proxshopkeeper",
+  "room":22,
+  "x":66,
+  "y":160,
+  "w":8,
+  "h":16
+},
+{
+  "name":"proxtroll",
+  "room":36,
+  "x":82,
+  "y":136,
+  "w":8,
+  "h":32
+}
+];

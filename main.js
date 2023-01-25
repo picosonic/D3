@@ -22,8 +22,8 @@ var gs={
   keystate:0, // keyboard bitfield [action][down][right][up][left]
   dizzycanvas:null,
   dizzyctx:null,
-  x:124, // x position, from left
-  y:154, // y position, from top
+  x:164, // x position, from left
+  y:125, // y position, from top
   h:0, // current sprite height
   px:0, // previous x position
   py:0, // previous y position
@@ -46,7 +46,7 @@ var gs={
   friction:1,
 
   // Room
-  room:36,
+  room:45,
   newroom:false,
   flames:[], flamerate:4,
   water:[], waterrate:6, waterheight:(0*6),
@@ -378,11 +378,29 @@ function drawroom(roomnum)
 
         setsolidity(fx, fy, fwidth, fheight, framesolid);
 
+        // Highlight object
         gs.ctx.fillStyle="rgba(255,255,0,0.5)";
         gs.ctx.fillRect(fx, fy, fwidth, fheight);
       }
     }
  }
+
+  // Highlight proximity areas which are in this room
+  if (gs.debug)
+  {
+    for (j=0; j<prox.length; j++)
+    {
+      if (prox[j].room==roomnum)
+      {
+        gs.ctx.fillStyle="rgba(0,255,255,0.5)";
+        gs.ctx.fillRect((prox[j].x*4)-128, prox[j].y, prox[j].w*4, prox[j].h);
+
+        gs.ctx.fillStyle="rgb(255,255,255)";
+        gs.ctx.font = "12px Sans";
+        gs.ctx.fillText(prox[j].name, (prox[j].x*4)-128, prox[j].y+12);
+      }
+    }
+  }
 
  // When in debug, show where the solid blocks are
  if (gs.debug)
@@ -501,9 +519,9 @@ function collide(x, y)
   var twidth=Math.floor(xmax/8);
 
   if ((gs.solid[(ty*twidth)+tx]) || // top left
-      (gs.solid[(ty*twidth)+tx+3]) || // top right
-      (gs.solid[((ty+3)*twidth)+tx]) || // bottom left
-      (gs.solid[((ty+3)*twidth)+tx+3]))   // bottom right
+      (gs.solid[(ty*twidth)+tx+2]) || // top right
+      (gs.solid[((ty+2)*twidth)+tx]) || // bottom left
+      (gs.solid[((ty+2)*twidth)+tx+2]))   // bottom right
     return true;
 
   return false;
