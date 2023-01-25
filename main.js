@@ -22,8 +22,8 @@ var gs={
   keystate:0, // keyboard bitfield [action][down][right][up][left]
   dizzycanvas:null,
   dizzyctx:null,
-  x:164, // x position, from left
-  y:125, // y position, from top
+  x:124, // x position, from left
+  y:154, // y position, from top
   h:0, // current sprite height
   px:0, // previous x position
   py:0, // previous y position
@@ -46,7 +46,7 @@ var gs={
   friction:1,
 
   // Room
-  room:45,
+  room:36,
   newroom:false,
   flames:[], flamerate:4,
   water:[], waterrate:6, waterheight:(0*6),
@@ -519,9 +519,9 @@ function collide(x, y)
   var twidth=Math.floor(xmax/8);
 
   if ((gs.solid[(ty*twidth)+tx]) || // top left
-      (gs.solid[(ty*twidth)+tx+2]) || // top right
-      (gs.solid[((ty+2)*twidth)+tx]) || // bottom left
-      (gs.solid[((ty+2)*twidth)+tx+2]))   // bottom right
+      (gs.solid[(ty*twidth)+tx+3]) || // top right
+      (gs.solid[((ty+3)*twidth)+tx]) || // bottom left
+      (gs.solid[((ty+3)*twidth)+tx+3]))   // bottom right
     return true;
 
   return false;
