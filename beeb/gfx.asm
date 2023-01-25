@@ -448,6 +448,9 @@ PAL_DIZZY2 = $02
 {
   PHA
 
+  ; Check for strings room
+  LDA roomno:CMP #ROOM_STRINGS:BEQ roomnotempty
+
   ; Check for empty room
   LDA roomlen:BNE roomnotempty
   LDA roomlen+1:BNE roomnotempty
