@@ -1,6 +1,6 @@
 #!/bin/bash
 
-workdir=$1
+workdir="$1"
 
 cd "${workdir}"
 
@@ -8,32 +8,51 @@ cd "${workdir}"
 xmax=256
 ymax=192
 
+# Tool names
+img2beeb="./img2beeb"
+exo="./exomizer"
+beebasm="beebasm"
+
+##############################################################
+
+function refreshrequired()
+{
+  local target="$1"
+  local targettime=`stat -c %Y ${target} 2>/dev/null`
+
+  if [ "${targettime}" == "" ]
+  then
+    return 0
+  fi
+  
+  for var in "$@"
+  do
+    local source="$var"
+    local sourcetime=`stat -c %Y ${source} 2>/dev/null`
+    
+    if [ ${sourcetime} -gt ${targettime} ]
+    then
+      return 0
+    fi
+  done
+
+  return 1
+}
+
 ##############################################################
 
 # Set filenames
-img2beeb="img2beeb"
-exo="exomizer"
+srcscr="dizzy3_loader_beeb.png"
 beebpal="dizzy3_beeb.pal"
 beebscr="loadscr"
 exoscr="XSCR"
-srcscr="dizzy3_loader_beeb.png"
-
-# Check loader screen has changed before rebuilding it
-beebdate=`stat -c %Y ${beebscr} 2>/dev/null`
-srcdate=`stat -c %Y ${srcscr} 2>/dev/null`
-
-# If no loader screen found, force build
-if [ "${beebdate}" == "" ]
-then
-  beebdate=0
-fi
 
 # When source is newer, rebuild
-if [ ${srcdate} -gt ${beebdate} ]
+if refreshrequired ${exoscr} ${beebpal} ${srcscr} ${beebscr}
 then
   if [ ! -x ${img2beeb} ]
   then
-    make img2beeb
+    make ${img2beeb}
 
     if [ ! -x ${img2beeb} ]
     then
@@ -52,7 +71,7 @@ then
   rm "${beebscr}" >/dev/null 2>&1
 
   # Convert from image to beeb format
-  ./${img2beeb} -f "${beebpal}" -d1 -X${xmax} -Y${ymax} "${srcscr}" "${beebscr}"
+  ${img2beeb} -f "${beebpal}" -d1 -X${xmax} -Y${ymax} "${srcscr}" "${beebscr}"
 
   # Compress beeb format with exomizer
   #
@@ -62,33 +81,22 @@ then
   # -P-32 required when DONT_REUSE_OFFSET = 1
   # -f required when DECRUNCH_FORWARDS = 1
 
-  ./${exo} level -M256 -P+16-32 -c ${beebscr}@0x0000 -o ${exoscr}
+  ${exo} level -M256 -P+16-32 -c ${beebscr}@0x0000 -o ${exoscr}
 fi
 
 ##############################################################
 
 # Set filenames
-img2beeb="img2beeb"
+srcscr="dizzy2_picture.png"
 beebpal="dizzy2_beeb.pal"
 beebscr="TREPIC"
-srcscr="dizzy2_picture.png"
-
-# Check screen has changed before rebuilding it
-beebdate=`stat -c %Y ${beebscr} 2>/dev/null`
-srcdate=`stat -c %Y ${srcscr} 2>/dev/null`
-
-# If no screen found, force build
-if [ "${beebdate}" == "" ]
-then
-  beebdate=0
-fi
 
 # When source is newer, rebuild
-if [ ${srcdate} -gt ${beebdate} ]
+if refreshrequired ${beebscr} ${beebpal} ${srcscr}
 then
   if [ ! -x ${img2beeb} ]
   then
-    make img2beeb
+    make ${img2beeb}
 
     if [ ! -x ${img2beeb} ]
     then
@@ -107,31 +115,54 @@ then
   rm "${beebscr}" >/dev/null 2>&1
 
   # Convert from image to beeb format
-  ./${img2beeb} -f "${beebpal}" -d1 -X${xmax} -Y${ymax} "${srcscr}" "${beebscr}"
+  ${img2beeb} -f "${beebpal}" -d1 -X${xmax} -Y${ymax} "${srcscr}" "${beebscr}"
 fi
 
 ##############################################################
 
-beebasm -v -i exoloader.asm
-beebasm -v -i melody.asm
-beebasm -v -i speech.asm
-beebasm -v -i roomdata.asm
-beebasm -v -i dizzy3.asm -do dizzy3.ssd -opt 3 -title 'DIZZY3'
-
-##############################################################
-
-echo
-
-swrsize=`stat -c %s "RMDATA"`
-maxsize=$((16*1024))
-bytesleft=$((${maxsize}-${swrsize}))
-percent=$((200*${swrsize}/${maxsize} % 2 + 100*${swrsize}/${maxsize}))
-
-if [ ${bytesleft} -ge 0 ]
+# Build exomiser'd loader screen loader if required
+if refreshrequired EXOSCR os.asm consts.asm exomizer310decruncher.h.asm exomizer310decruncher.asm XSCR exoloader.asm
 then
-  echo "SWR is ${percent}% used - ( ${bytesleft} bytes left )"
-else
-  echo "OH NO - SWR is ${percent}% used - it's gone ovey by "$((0-${bytesleft}))" bytes"
+  ${beebasm} -v -i exoloader.asm
 fi
 
-echo
+# Build melody if required
+if refreshrequired MELODY os.asm consts.asm internal.asm inkey.asm input.asm M02C1.bin M02C2.bin melody.asm
+then
+  ${beebasm} -v -i melody.asm
+fi
+
+# Build speech if required
+if refreshrequired SPEECH os.asm consts.asm speech.bin speech.asm
+then
+  ${beebasm} -v -i speech.asm
+fi
+
+# Build roomdata if required
+if refreshrequired RMDATA os.asm consts.asm rooms/room*.bin roomdata.asm
+then
+  ${beebasm} -v -i roomdata.asm
+
+  echo
+
+  swrsize=`stat -c %s "RMDATA"`
+  maxsize=$((16*1024))
+  bytesleft=$((${maxsize}-${swrsize}))
+  percent=$((200*${swrsize}/${maxsize} % 2 + 100*${swrsize}/${maxsize}))
+
+  if [ ${bytesleft} -ge 0 ]
+  then
+    echo "SWR is ${percent}% used - ( ${bytesleft} bytes left )"
+  else
+    echo "OH NO - SWR is ${percent}% used - it's gone ovey by "$((0-${bytesleft}))" bytes"
+    exit 1
+  fi
+
+  echo
+fi
+
+# Build main disk image if required
+if refreshrequired dizzy3.ssd os.asm inkey.asm internal.asm consts.asm vars.asm rooms.asm frametable.bin framedefs.bin dizzyfrm.asm input.asm rand.asm gfx.asm objects.asm extra.asm dizzy3.asm
+then
+  ${beebasm} -v -i dizzy3.asm -do dizzy3.ssd -opt 3 -title 'DIZZY3'
+fi
