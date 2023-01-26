@@ -10,6 +10,8 @@ SPEECH
 MELODY
 RMDATA
 RMTABLE
+loader.ssd
+loadertok.bin
 
 # Utils
 img2beeb

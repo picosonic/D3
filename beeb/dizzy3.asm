@@ -10,7 +10,23 @@ INCLUDE "vars.asm"
 ; Debug settings
 seecoins = 0
 
+ORG &00
+CLEAR &00, &FF
+.plingboot
+EQUS "*BASIC", &0D ; Reset to BASIC
+EQUS "PAGE=&1200", &0D ; Set PAGE to first file buffer (as we don't open any files from BASIC)
+EQUS "*FX21", &0D ; Flush buffer
+EQUS "CLOSE#0:CH.", '"', "LOADER", '"', &0D ; Close "!BOOT" and run the main code
+EQUS "REM https://github.com/picosonic/D3/", &0D ; Repo URL
+EQUS "REM D3 build ", TIME$ ; Add a build date
+.plingend
+SAVE "!BOOT", plingboot, plingend
+
+INCLUDE "loader2.asm"
+SAVE "LOADER", basicstart, basicend, &FF8023, &FF1900
+
 ORG MAIN_LOAD_ADDR
+CLEAR MAIN_LOAD_ADDR, MAIN_LOAD_ADDR+&2000
 GUARD MODE8BASE
 
 .start
@@ -304,19 +320,6 @@ GUARD NMI_WORKSPACE
 INCLUDE "extra.asm"
 .extraend
 
-ORG &00
-CLEAR &00, &FF
-.plingboot
-EQUS "*BASIC", &0D ; Reset to BASIC
-EQUS "PAGE=&1300", &0D ; Set PAGE to second file buffer (as we only use 1 file at a time)
-EQUS "*FX21", &0D ; Flush buffer
-EQUS "CLOSE#0:CH.", '"', "LOADER", '"', &0D ; Close "!BOOT" and run the main code
-EQUS "REM https://github.com/picosonic/D3/", &0D ; Repo URL
-EQUS "REM D3 build ", TIME$ ; Add a build date
-.plingend
-
-SAVE "!BOOT", plingboot, plingend
-PUTBASIC "loader.bas", "$.LOADER"
 PUTFILE "EXOSCR", "$.EXOSCR", EXO_LOAD_ADDR
 PUTFILE "SPEECH", "$.SPEECH", EXO_LOAD_ADDR
 PUTFILE "MELODY", "$.MELODY", EXO_LOAD_ADDR

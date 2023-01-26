@@ -161,8 +161,22 @@ then
   echo
 fi
 
+# Append asm to BASIC test
+if refreshrequired loadertok.bin loader.bas loader2.asm loader.asm
+then
+  # Tokenise the BASIC
+  ${beebasm} -v -i loader.asm -do loader.ssd 2>/dev/null
+
+  # Determine how big the tokenised BASIC file is from DFS catalogue
+  baslen=`dd if=loader.ssd bs=1 count=2 skip=268 2>/dev/null | hexdump -C | head -1 | awk '{ print $3$2 }'`
+
+  # Extract tokenised BASIC from disc image, then remove image
+  dd if=loader.ssd bs=1 count=$((0x${baslen})) skip=512 > loadertok.bin 2>/dev/null
+  rm loader.ssd >/dev/null 2>&1
+fi
+
 # Build main disk image if required
-if refreshrequired dizzy3.ssd os.asm inkey.asm internal.asm consts.asm vars.asm rooms.asm frametable.bin framedefs.bin dizzyfrm.asm input.asm rand.asm gfx.asm objects.asm extra.asm dizzy3.asm
+if refreshrequired dizzy3.ssd os.asm inkey.asm internal.asm consts.asm vars.asm rooms.asm frametable.bin framedefs.bin dizzyfrm.asm input.asm rand.asm gfx.asm objects.asm extra.asm loadertok.bin dizzy3.asm
 then
   ${beebasm} -v -i dizzy3.asm -do dizzy3.ssd -opt 3 -title 'DIZZY3'
 fi
