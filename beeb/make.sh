@@ -161,7 +161,7 @@ then
   echo
 fi
 
-# Append asm to BASIC test
+# Append loader asm to BASIC
 if refreshrequired loadertok.bin loader.bas loader2.asm loader.asm
 then
   # Tokenise the BASIC
