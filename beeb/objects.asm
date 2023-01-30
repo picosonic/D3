@@ -824,7 +824,7 @@ dougtalking = crowbarhere+room
 duffmem = 0
 dylantalking = duffmem
 
-.nothingheremess EQUB PRT_END
+.nothingheremess EQUB PRT_END ; Used to print nothing (e.g. empty inventory slot)
 .bagmess EQUB "EXIT:AND:DON;T:DROP",PRT_END
 .greenbeanmess EQUB "A:SINGLE:GREEN:BEAN",PRT_END
 .bonemess EQUB "A:FRESH:MEATY:BONE",PRT_END
