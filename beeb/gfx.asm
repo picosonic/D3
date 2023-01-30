@@ -1223,9 +1223,9 @@ PAL_DIZZY2 = $02
   RTS
 
 ; Message variables
-.messx
+.^messx
   EQUB 0
-.messy
+.^messy
   EQUB 0
 .messpen
   EQUB 0
