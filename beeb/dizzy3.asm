@@ -384,6 +384,16 @@ INCLUDE "gfx.asm"
   CPY #1 ; 2+bag*2
   BNE printwhatcarrying
 
+  ; If first item is empty, then nothing being carried
+  LDA objectscarried
+  BNE something
+
+  LDA #hi(nothingatallmess):STA zptr5+1
+  LDA #lo(nothingatallmess):STA zptr5
+  JSR prtmessage
+.something
+
+  ; Display prompt
   LDA #hi(selectitemmess):STA zptr5+1
   LDA #lo(selectitemmess):STA zptr5
   JSR prtmessage
