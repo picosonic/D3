@@ -103,6 +103,7 @@ INCLUDE "gfx.asm"
   JSR starteggres
 
   LDA #&00
+  STA bag
   STA oldclock
   STA clock ; Init clock
   STA dontupdatedizzy ; Allow Dizzy to be drawn
@@ -304,6 +305,96 @@ INCLUDE "gfx.asm"
   LDA dizzyy:STA frmy:STA oldy
   JSR drawdizzy
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+  RTS
+}
+
+; Y = slot (input)
+; A = object (output)
+.whatinslot
+{
+  LDA #hi(objectscarried):STA zptr6+1
+  LDA #lo(objectscarried):STA zptr6
+
+  LDA (zptr6), Y
+
+  RTS
+}
+
+; Y = number down menu list
+.printcarryingline
+{
+  ; Position cursor
+  TYA:ASL A:ASL A:ASL A ; YPOS = (8*Y)+80
+  CLC:ADC #88:STA messy
+  LDA #12:STA messx ; XPOS = 12
+
+  ; See what's in slot inventory[y]
+  LDA #hi(nothingheremess):STA zptr5+1
+  LDA #lo(nothingheremess):STA zptr5
+  JSR whatinslot:TAX
+  BEQ justprint
+
+  ; It's not empty, so look up object name
+  LDA #hi(movingdata+oldmovex):STA zptr4+1
+  LDA #lo(movingdata+oldmovex):STA zptr4
+
+.findslot
+  ; Advance to next object
+  LDA zptr4:CLC:ADC #movingsize:STA zptr4
+  BCC samepage
+  INC zptr4+1
+.samepage
+  DEX:BNE findslot
+
+  ; Copy string pointer from object[n][oldmovex]
+  LDY #&00
+  LDA (zptr4), Y:STA zptr5:INY
+  LDA (zptr4), Y:STA zptr5+1
+
+.justprint
+  JMP prtmessage
+}
+
+.tryputtingdown
+{
+  LDA #&01:STA dontupdatedizzy ; Stop Dizzy being drawn
+
+  ; Resize inventory box depending on bag size
+  LDA #hi(inventory):STA zptr5+1
+  LDA #lo(inventory):STA zptr5
+  LDA bag:BEQ nobaginvent
+  LDA #hi(inventorywithbag):STA zptr5+1
+  LDA #lo(inventorywithbag):STA zptr5
+.nobaginvent
+  JSR prtmessage
+
+  ; Change loop count depending on bag size
+  LDA bag:AND #&01
+  ASL A:CLC:ADC #&02
+  STA distdownmenu1+1
+
+  LDY #&00
+.printwhatcarrying
+  TYA:PHA
+  JSR printcarryingline
+  PLA:TAY
+  INY
+.distdownmenu1
+  CPY #1 ; 2+bag*2
+  BNE printwhatcarrying
+
+  LDA #hi(selectitemmess):STA zptr5+1
+  LDA #lo(selectitemmess):STA zptr5
+  JSR prtmessage
+
+  ;;;;;;;;;;;;;;;;;;;;
+  JSR handoffandwait ; Wait for new key press
+  JSR resetuproom ; Draw the room again
+  ;;;;;;;;;;;;;;;;;;;;
+
+.justexitinvent
+  LDA #&00:STA dontupdatedizzy ; Allow Dizzy to be drawn
 
   RTS
 }

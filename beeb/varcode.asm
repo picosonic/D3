@@ -14,7 +14,7 @@
 .check_fire
   TXA:AND #PAD_FIRE
   BEQ case_right
-  LDA #&01:STA killed
+  JMP tryputtingdown
 
 .case_right
   TXA:AND #PAD_RIGHT
