@@ -133,7 +133,7 @@ INCLUDE "gfx.asm"
   BEQ wantaquickkill
 
 .afterdomoving
-  ;JSR pickupcoins
+  JSR pickupcoins
   JSR tryputtingdown
 
   JSR updatewater
@@ -407,6 +407,49 @@ INCLUDE "gfx.asm"
 
 .justexitinvent
   LDA #&00:STA dontupdatedizzy ; Allow Dizzy to be drawn
+
+.done
+  RTS
+}
+
+.pickupcoins
+{
+  ; Do nothing if we're not allowed to pickup
+  LDA pickup:BEQ done
+
+  ; Scan through coins list to see if we are over an "active" coin
+  LDX #&00
+.testpickupcoin
+  STX ztmp6:TXA:ASL A:CLC:ADC ztmp6:TAY ; Y = X*3
+
+  ; Is current coin in current room
+  LDA cointable+2, Y:CMP roomno:BNE nocoinhere
+
+  ; TODO test collision
+
+  ; A coin was picked up
+  ORA #&80:STA cointable+2, Y
+  TXA:PHA:JSR addtocoins:PLA:TAX
+  
+  ; Prevent inventory showing and show coin message instead
+  LDA #&00:STA pickup
+
+  LDA roomno:PHA ; Cache room number
+  LDA #ROOM_STRINGS:STA roomno
+  LDA #STR_youfoundcoinmess:JSR findroomstr
+  PLA:STA roomno ; Restore room number
+
+  JSR prtmessage
+
+  ;;;;;;;;;;;;;;;;;;;;
+  JSR handoffandwait ; Wait for new key press
+  JSR resetuproom ; Draw the room again
+  ;;;;;;;;;;;;;;;;;;;;
+
+.notovercoin
+
+.nocoinhere
+  INX:CPX #totalcoins:BNE testpickupcoin
 
 .done
   RTS
