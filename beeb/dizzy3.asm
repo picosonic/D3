@@ -428,7 +428,7 @@ INCLUDE "gfx.asm"
   ; Test collision
   LDA cointable, Y:STA cx
   LDA cointable+1, Y:STA cy
-  LDA #16:STA cw
+  LDA #16:LSR A:LSR A:STA cw
   LDA #16:STA ch
   JSR collidewithdizzy3
   BEQ notovercoin
@@ -478,7 +478,7 @@ INCLUDE "gfx.asm"
   LDA dizzyy:CLC:ADC #eggheight ; calculate bottom diz
   CMP cy:BCC skipthis ; vs top obj
 
-  LDA cw:LSR A:LSR A:CLC:ADC cx ; calculate right obj
+  LDA cw:CLC:ADC cx ; calculate right obj
   CMP dizzyx:BCC skipthis ; vs left diz
 
   LDA cy:CLC:ADC ch ; calculate bottom obj

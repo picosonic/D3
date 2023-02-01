@@ -1053,7 +1053,36 @@ dylantalking = duffmem
   LDY movex:LDA (zptr4), Y:STA cx
   LDY movey:LDA (zptr4), Y:STA cy
 
-  ; TODO - look up object width/height
+  ; Get offset to frame data
+  LDA #hi(frametable):STA zptr2+1
+  LDA #lo(frametable):STA zptr2
+
+  LDY movefrm:LDA (zptr4), Y
+  BPL nochange
+  INC zptr2+1
+.nochange
+  ASL A:TAY ; Y = A * 2
+
+  ; Get high byte of offset
+  INY:LDA (zptr2), Y
+  CMP #&FF:BNE notempty
+  LDA #&00:STA cw:STA ch ; NULL frame
+  RTS
+.notempty
+  CLC:ADC #hi(framedefs):STA zptr1+1
+
+  ; Get low byte of offset
+  DEY:LDA (zptr2), Y
+  CLC:ADC #lo(framedefs):STA zptr1
+  BCC samepage
+  INC zptr1+1
+.samepage
+
+  ; Get (width/4)
+  LDY #&00:LDA (zptr1), Y:STA cw
+
+  ; Get height
+  INY:LDA (zptr1), Y:STA ch
 
   JMP collidewithdizzy3
 }
