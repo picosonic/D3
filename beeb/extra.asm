@@ -183,22 +183,15 @@ INCLUDE "hearts.asm"
   INC coins
 
   ; Determine how many 10s
-  LDX #0:LDA coins
+  LDX #0:SEC:LDA coins
 .more10s
-  CMP #11:BCC nomore10s
-  SBC #10:INX
-  JMP more10s
+  SBC #10:BCC nomore10s
+  INX
+  BNE more10s
 .nomore10s
   PHA:TXA:CLC:ADC #'0':STA noofcoinsmess
 
-  ; Determine how many units
-  LDX #0:PLA
-.moreunits
-  CMP #2:BCC nomoreunits
-  SBC #1:INX
-  JMP moreunits
-.nomoreunits
-  TXA:CLC:ADC #'0':STA noofcoinsmess+1
+  PLA:CLC:ADC #'0'+10:STA noofcoinsmess+1
 
   ; Draw the full coins message
   LDA #hi(coinsmess):STA zptr5+1
