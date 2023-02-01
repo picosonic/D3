@@ -68,8 +68,10 @@
   ; SPACE         JUMP            UP
   ; ENTER   PICK UP/DROP/USE     FIRE
   ;   Q         QUIT GAME         -
-  
-  LDX #KEY_K             : STX SYSVIA_REGA : ASL SYSVIA_REGA : LDA #0 : ROL A  ; "K"      UP
+
+  LDX #KEY_D             : STX SYSVIA_REGA : ASL SYSVIA_REGA : LDA #0 : ROL A  ; "D"      DEBUG
+
+  LDX #KEY_K             : STX SYSVIA_REGA : ASL SYSVIA_REGA : ROL A           ; "K"      UP
   LDX #KEY_M             : STX SYSVIA_REGA : ASL SYSVIA_REGA : ROL A           ; "M"      DOWN
 
   LDX #KEY_RETURN        : STX SYSVIA_REGA : ASL SYSVIA_REGA : ROL A           ; "RETURN" FIRE

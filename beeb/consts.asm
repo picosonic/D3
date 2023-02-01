@@ -76,6 +76,7 @@ PAD_LEFT   = &04
 PAD_FIRE   = &08
 PAD_DOWN   = &10
 PAD_UP     = &20
+PAD_DEBUG  = &40
 
 ; String offsets
 STR_roomname = 1

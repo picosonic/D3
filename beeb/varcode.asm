@@ -11,10 +11,10 @@
   LDX keys
   BEQ goback ; Nothing pressed
 
-.check_fire
-  TXA:AND #PAD_FIRE
+.check_debug
+  TXA:AND #PAD_DEBUG
   BEQ case_right
-  JMP tryputtingdown
+  LDA #&FF:STA pickup:JMP tryputtingdown
 
 .case_right
   TXA:AND #PAD_RIGHT
