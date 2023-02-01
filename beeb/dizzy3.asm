@@ -461,21 +461,6 @@ INCLUDE "gfx.asm"
   RTS
 }
 
-; Look up object[n] (zptr4) to get
-;   x=movex, y=movey
-;
-; Look up object[n].movefrm to get
-;   w, h
-.collidewithdizzy16
-{
-  LDY movex:LDA (zptr4), Y:STA cx
-  LDY movey:LDA (zptr4), Y:STA cy
-
-  ; TODO - look up object width/height
-
-  ; Fall through
-}
-
 ; cx = x
 ; cy = y
 ; cw = w
