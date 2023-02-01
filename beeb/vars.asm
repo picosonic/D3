@@ -211,4 +211,10 @@ GUARD ENVELOPE_DEFS
 .implode EQUB 0
 .startroom EQUB 0 ; Starting room id
 
+; Collision box
+.cx EQUB 0
+.cy EQUB 0
+.cw EQUB 0
+.ch EQUB 0
+
 .end_of_buff

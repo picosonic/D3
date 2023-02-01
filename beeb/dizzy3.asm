@@ -425,10 +425,16 @@ INCLUDE "gfx.asm"
   ; Is current coin in current room
   LDA cointable+2, Y:CMP roomno:BNE nocoinhere
 
-  ; TODO test collision
+  ; Test collision
+  LDA cointable, Y:STA cx
+  LDA cointable+1, Y:STA cy
+  LDA #16:STA cw
+  LDA #16:STA ch
+  JSR collidewithdizzy3
+  BEQ notovercoin
 
   ; A coin was picked up
-  ORA #&80:STA cointable+2, Y
+  LDA roomno:ORA #&80:STA cointable+2, Y
   TXA:PHA:JSR addtocoins:PLA:TAX
   
   ; Prevent inventory showing and show coin message instead
@@ -454,6 +460,53 @@ INCLUDE "gfx.asm"
 .done
   RTS
 }
+
+; Look up object[n] (zptr4) to get
+;   x=movex, y=movey
+;
+; Look up object[n].movefrm to get
+;   w, h
+.collidewithdizzy16
+{
+  LDY movex:LDA (zptr4), Y:STA cx
+  LDY movey:LDA (zptr4), Y:STA cy
+
+  ; TODO - look up object width/height
+
+  ; Fall through
+}
+
+; cx = x
+; cy = y
+; cw = w
+; ch = h
+;
+; return a = 0 when no collision
+.collidewithdizzy3
+{
+  LDA dontupdatedizzy:BNE skipthis
+  LDA killed:BNE skipthis
+
+  LDA dizzyx:CLC:ADC #eggwidth ; calculate right diz
+  CMP cx:BCC skipthis ; vs left obj
+
+  LDA dizzyy:CLC:ADC #eggheight ; calculate bottom diz
+  CMP cy:BCC skipthis ; vs top obj
+
+  LDA cw:LSR A:LSR A:CLC:ADC cx ; calculate right obj
+  CMP dizzyx:BCC skipthis ; vs left diz
+
+  LDA cy:CLC:ADC ch ; calculate bottom obj
+  CMP dizzyy:BCC skipthis; vs top diz
+
+  LDA #&FF:RTS ; Collision
+
+.skipthis
+  LDA #0:RTS
+}
+
+eggheight = 16
+eggwidth = 5
 
 .codeend
 

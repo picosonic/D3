@@ -14,7 +14,7 @@
 .check_debug
   TXA:AND #PAD_DEBUG
   BEQ case_right
-  LDA #&FF:STA pickup:JMP tryputtingdown
+  JMP resetcoins
 
 .case_right
   TXA:AND #PAD_RIGHT
