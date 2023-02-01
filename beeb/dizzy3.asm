@@ -116,16 +116,15 @@ INCLUDE "gfx.asm"
   JSR process_inputs ;;; TODO - move this
 
 .notpickup
-  LDA #&00:STA pickup
+  LDA #&00:STA pickup ; Disable pickup
   LDA usepickup:BEQ oktopickup
   SEC:SBC #&01:STA usepickup
   JMP notfacing
 
 .oktopickup
-  LDA sequence
-  BNE notfacing
-  LDA keys:AND #PAD_FIRE:BNE notfacing ; Check for FIRE / RETURN being pressed
-  LDA #&FF:STA pickup
+  LDA sequence:BNE notfacing
+  LDA keys:AND #PAD_FIRE:BEQ notfacing ; Check for FIRE / RETURN being pressed
+  LDA #&FF:STA pickup ; Enable pickup
 
 .notfacing
   JSR domoving
@@ -135,7 +134,7 @@ INCLUDE "gfx.asm"
 
 .afterdomoving
   ;JSR pickupcoins
-  ;JSR tryputtingdown
+  JSR tryputtingdown
 
   JSR updatewater
   JSR updateflames
@@ -358,6 +357,9 @@ INCLUDE "gfx.asm"
 
 .tryputtingdown
 {
+  ; Do nothing if we're not allowed to pickup
+  LDA pickup:BEQ done
+
   LDA #&01:STA dontupdatedizzy ; Stop Dizzy being drawn
 
   ; Resize inventory box depending on bag size
@@ -406,6 +408,7 @@ INCLUDE "gfx.asm"
 .justexitinvent
   LDA #&00:STA dontupdatedizzy ; Allow Dizzy to be drawn
 
+.done
   RTS
 }
 
