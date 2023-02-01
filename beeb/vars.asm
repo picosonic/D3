@@ -191,7 +191,7 @@ GUARD ENVELOPE_DEFS
 .coins EQUB 0 ; Count of collected coins
 .lives EQUB 0 ; Number of lives remaining
 .usepickup EQUB 0
-.pickup EQUB 0
+.pickup EQUB 0 ; Flag to say if we can pickup/drop objects
 .toomuchtohold EQUB 0
 .objecttodrop EQUB 0
 .cyclecolour EQUB 0
