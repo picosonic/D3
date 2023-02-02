@@ -68,8 +68,12 @@
 
 .updatewater
 {
-  ; First check if there is any water
+  ; First check if there is any water in current room
   LDA noofwater:BEQ done
+
+  ; Set water frame size for collision
+  LDA #32:LSR A:LSR A:STA cw
+  LDA #6:STA ch
 
   ; Save water count for loop
   TAX
@@ -82,16 +86,26 @@
   LDY #&00
 .updatewaterlp
 
-  LDA waterlist, Y:STA frmx:INY
-  LDA waterlist, Y:STA frmy:INY
+  LDA waterlist, Y:STA frmx:STA cx:INY
+  LDA waterlist, Y:STA frmy:STA cy:INY
   LDA waterlist, Y
   STA zidx4:INC zidx4:LDA zidx4:AND #&03:STA waterlist, Y:INY
   CLC:ADC #SPR_WATER0:STA frmno
 
   JSR frame
 
-  ; TODO ... check for collision with water or lava ...
+  ; Check for collision with water or lava
+  JSR collidewithdizzy3
+  BEQ notdrowned
 
+  LDA #STR_killedbyvolcano:STA deathmsg
+  LDA roomno:CMP #77:BEQ yesfellinlava
+  LDA #STR_killedbywater:STA deathmsg
+.yesfellinlava
+  LDA #01:STA killed
+  ;JSR killdizzy1
+
+.notdrowned
   DEX:BNE updatewaterlp
 
 .done
@@ -100,8 +114,12 @@
 
 .updateflames
 {
-  ; First check if there are flames
+  ; First check if there are flames in current room
   LDA noofflames:BEQ done
+
+  ; Set flame frame size for collision
+  LDA #16:LSR A:LSR A:STA cw
+  LDA #13:STA ch
 
   ; Save flame count for loop
   TAX
@@ -114,12 +132,20 @@
   LDY #&00
 .updateflamelp
 
-  LDA flamelist, Y:STA frmx:INY
-  LDA flamelist, Y:STA frmy:INY
+  LDA flamelist, Y:STA frmx:STA cx:INY
+  LDA flamelist, Y:STA frmy:STA cy:INY
   INY
   JSR frame
 
-  ; TODO ... check for collision with flame ...
+  ; Check for collision with flame
+  JSR collidewithdizzy3
+  BEQ notburnt
+
+  LDA #STR_killedbyflame:STA deathmsg
+  LDA #&01:STA killed
+  ;JSR killdizzy1
+
+.notburnt
 
   DEX:BNE updateflamelp
 

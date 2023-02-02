@@ -184,7 +184,7 @@ INCLUDE "gfx.asm"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   LDA roomno:PHA ; Cache room number
   LDA #ROOM_STRINGS:STA roomno
-  LDA #STR_killedbydaggersmess:JSR findroomstr
+  LDA deathmsg:JSR findroomstr
   PLA:STA roomno ; Restore room number
 
   LDA zptr5:STA killedmess

@@ -83,6 +83,7 @@ GUARD ZP_ECONET_WORKSPACE
 .dizzyox EQUB 0 ; Old X
 .dizzyoy EQUB 0 ; Old Y
 .dizzyofrm EQUB 0 ; Old frame
+.deathmsg EQUB 0 ; Message ID to use upon death
 
 ; Flames / water / lava
 .noofflames EQUB 0 ; Count of active flames
