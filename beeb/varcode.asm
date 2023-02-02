@@ -86,7 +86,7 @@
   LDY #&00
 .updatewaterlp
 
-  LDA waterlist, Y:STA frmx:STA cx:INY
+  LDA waterlist, Y:STA frmx:AND #&7F:STA cx:INY
   LDA waterlist, Y:STA frmy:STA cy:INY
   LDA waterlist, Y
   STA zidx4:INC zidx4:LDA zidx4:AND #&03:STA waterlist, Y:INY
@@ -132,7 +132,7 @@
   LDY #&00
 .updateflamelp
 
-  LDA flamelist, Y:STA frmx:STA cx:INY
+  LDA flamelist, Y:STA frmx:AND #&7F:STA cx:INY
   LDA flamelist, Y:STA frmy:STA cy:INY
   INY
   JSR frame
