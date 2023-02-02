@@ -71,12 +71,12 @@
   ; First check if there is any water in current room
   LDA noofwater:BEQ done
 
+  ; Save water count for loop
+  TAX
+
   ; Set water frame size for collision
   LDA #32:LSR A:LSR A:STA cw
   LDA #6:STA ch
-
-  ; Save water count for loop
-  TAX
 
   ; Get water colour, e.g. water or lava
   LDA watercolour
@@ -117,12 +117,12 @@
   ; First check if there are flames in current room
   LDA noofflames:BEQ done
 
+  ; Save flame count for loop
+  TAX
+
   ; Set flame frame size for collision
   LDA #16:LSR A:LSR A:STA cw
   LDA #13:STA ch
-
-  ; Save flame count for loop
-  TAX
 
   ; Update flame loop
   LDA #SPR_FLAME:STA frmno
