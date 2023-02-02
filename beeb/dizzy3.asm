@@ -355,10 +355,57 @@ INCLUDE "gfx.asm"
   JMP prtmessage
 }
 
+; zptr6 = proximitydata
+;
+; 0 = room
+; 1 = x
+; 2 = y
+; 3 = w
+; 4 = h
+; 5 = start of routine if overlap
+.checkproximity1
+{
+  LDY #&00
+  LDA (zptr6), Y ; Room
+  CMP roomno:BNE done:INY
+
+  LDA (zptr6), Y:STA cx:INY ; X
+  LDA (zptr6), Y:STA cy:INY ; Y
+  LDA (zptr6), Y:STA cw:INY ; Width
+  LDA (zptr6), Y:STA ch:INY ; Height
+
+  ; Do collision detect
+  JSR collidewithdizzy3:BEQ done
+
+  ; Jump to routing following prox
+  LDA zptr6:CLC:ADC #&04:STA zptr6
+  BCC samepage
+  INC zptr6+1
+.samepage
+  LDA zptr6+1:PHA
+  LDA zptr6:PHA
+
+.done
+  RTS
+}
+
+.proxpicture
+  EQUB 52      ;; room
+  EQUB 62, 104 ;; x, y
+  EQUB 5, 16   ;; w, h
+.proxpicturerou
+  PLA:PLA
+  JMP dotreasurepic
+
 .tryputtingdown
 {
   ; Do nothing if we're not allowed to pickup
   LDA pickup:BEQ done
+
+  ; Check proximity box for painting
+  LDA #hi(proxpicture):STA zptr6+1
+  LDA #lo(proxpicture):STA zptr6
+  JSR checkproximity1
 
   LDA #&01:STA dontupdatedizzy ; Stop Dizzy being drawn
 
