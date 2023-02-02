@@ -394,7 +394,7 @@ INCLUDE "gfx.asm"
   EQUB 62, 104 ;; x, y
   EQUB 5, 16   ;; w, h
 .proxpicturerou
-  PLA:PLA
+  PLA:PLA ; Prevent inventory appearing
   JMP dotreasurepic
 
 .tryputtingdown
