@@ -407,6 +407,9 @@ INCLUDE "gfx.asm"
   LDA #lo(proxpicture):STA zptr6
   JSR checkproximity1
 
+.tryputtingdown1
+  LDA #&01:STA tryputdownvar
+.inventoryrou
   LDA #&01:STA dontupdatedizzy ; Stop Dizzy being drawn
 
   ; Resize inventory box depending on bag size
@@ -440,20 +443,31 @@ INCLUDE "gfx.asm"
   LDA #hi(nothingatallmess):STA zptr5+1
   LDA #lo(nothingatallmess):STA zptr5
   JSR prtmessage
+
 .something
+  ; Check if carrying too much
+  LDA #hi(carryingtoomuchmess):STA zptr5+1
+  LDA #lo(carryingtoomuchmess):STA zptr5
+
+  LDA toomuchtohold:BNE gottoomuchpointer
 
   ; Display prompt
   LDA #hi(selectitemmess):STA zptr5+1
   LDA #lo(selectitemmess):STA zptr5
+.gottoomuchpointer
   JSR prtmessage
 
   ;;;;;;;;;;;;;;;;;;;;
-  JSR handoffandwait ; Wait for new key press
-  JSR resetuproom ; Draw the room again
+  JSR handoffandwait ; Wait for new key press  
   ;;;;;;;;;;;;;;;;;;;;
 
 .justexitinvent
-  LDA #&00:STA dontupdatedizzy ; Allow Dizzy to be drawn
+  JSR resetuproom ; Draw the room again
+
+  LDA #&00
+  STA tryputdownvar
+  STA dontupdatedizzy ; Allow Dizzy to be drawn
+  STA toomuchtohold
 
 .done
   RTS
