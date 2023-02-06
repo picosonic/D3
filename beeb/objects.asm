@@ -734,23 +734,14 @@ noofmoving = (endofmovingdata-movingdata)/movingsize
 
 ;; TEMPORARY - Placeholder empty routines
 .resetportswitch
-.resetpickupable
 .resetarmorog
 .resetdragon
-.resetcrocodile
 .resetlog
 .resethawk
 .resetmachines
 .resetlift
 .resetdozyfloat
-.resetrat
-.resettroll
-.resetdagger
 .resetdoor
-.resetminer
-.resetdaisy
-.resetswitch1
-.resetdaisy1
 
 .portswitchrou
 .pickupablerou
@@ -785,6 +776,16 @@ noofmoving = (endofmovingdata-movingdata)/movingsize
 
   RTS
 }
+
+resetpickupable	= printmoving 
+resetcrocodile = printmoving
+resetrat = printmoving
+resettroll = printmoving
+resetdagger = printmoving
+resetminer = printmoving
+resetdaisy = printmoving
+resetdaisy1 = printmoving
+resetswitch1 = printmoving
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;PORTCULLIS HERE
 .resetportcullis
