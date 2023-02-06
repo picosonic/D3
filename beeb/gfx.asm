@@ -537,12 +537,14 @@ PAL_DIZZY2 = $02
     JSR putcoinsinroom
 
     ; Draw any objects in this room (after coins so objects can hide coins)
-    JSR putobjectsinroom
+    JSR putobjectsinroom ; TODO - Remove
+    ; JSR resetroommoving
   endif
 
   if seecoins=1
     ; Draw any objects in this room
-    JSR putobjectsinroom
+    JSR putobjectsinroom ; TODO - Remove
+    ; JSR resetroommoving
 
     ; Draw any coins in this room
     JSR putcoinsinroom
@@ -840,6 +842,9 @@ PAL_DIZZY2 = $02
   RTS
 }
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; TODO - This function needs removing
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 .putobjectsinroom
 {
   LDA #lo(movingdata):STA zptr4
@@ -869,6 +874,7 @@ PAL_DIZZY2 = $02
 
   RTS
 }
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 .printroomname
 {
