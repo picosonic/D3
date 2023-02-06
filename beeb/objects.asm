@@ -744,7 +744,6 @@ noofmoving = (endofmovingdata-movingdata)/movingsize
 .resetdoor
 
 .portswitchrou
-.pickupablerou
 .armorogrou
 .dragonrou
 .crocodilerou
@@ -764,6 +763,32 @@ noofmoving = (endofmovingdata-movingdata)/movingsize
 .daisyrou1
   RTS
 ;;
+
+; zptr4 = current object
+.pickupablerou
+{
+  LDA pickup:BEQ done
+
+  JSR collidewithdizzy16
+  BEQ done
+
+  LDA #&00:STA pickup
+
+  LDY movefrm:LDA (zptr4), Y
+  CMP #SPR_SHOPKEEPER
+  ; TODO - inventoryrou ;;; shopkeeper
+  CMP #SPR_BAG
+  ; TODO - pickingupbag
+  CMP #SPR_MANURE
+  ; TODO - pickupmanure
+  CMP #SPR_DOZY
+  ; TODO - not pickingupbag
+  CMP #SPR_FRAMEHORIZ
+  ; TODO - talking to people
+
+.done
+  RTS
+}
 
 .printmoving
 {
