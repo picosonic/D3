@@ -377,7 +377,7 @@ INCLUDE "gfx.asm"
   ; Do collision detect
   JSR collidewithdizzy3:BEQ done
 
-  ; Jump to routing following prox
+  ; Jump to a routine immediately following proximity data
   LDA zptr6:CLC:ADC #&04:STA zptr6
   BCC samepage
   INC zptr6+1

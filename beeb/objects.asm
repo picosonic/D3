@@ -779,7 +779,7 @@ noofmoving = (endofmovingdata-movingdata)/movingsize
   LDY #movefrm:LDA (zptr4), Y:STA frmno
   LDY #movex:LDA (zptr4), Y:STA frmx
   LDY #movey:LDA (zptr4), Y:STA frmy
-  LDY #colour:LDA (zptr4), Y:AND %01000111:STA frmy
+  LDY #colour:LDA (zptr4), Y:AND %01000111:STA frmattri
 
   JSR frame
 
