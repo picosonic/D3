@@ -422,7 +422,7 @@ INCLUDE "gfx.asm"
   JSR prtmessage
 
   ; Change loop count depending on bag size
-  LDA bag:AND #&01
+  LDA bag:AND #SPR_BAG
   ASL A:CLC:ADC #&02
   STA distdownmenu1+1
 
