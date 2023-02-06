@@ -776,20 +776,50 @@ noofmoving = (endofmovingdata-movingdata)/movingsize
 
   LDY movefrm:LDA (zptr4), Y
   CMP #SPR_SHOPKEEPER
-  ; TODO - inventoryrou ;;; shopkeeper
+  BEQ done ; TODO - Remove
+  ; TODO - BEQ inventoryrou ;;; shopkeeper
+
   CMP #SPR_BAG
-  ; TODO - pickingupbag
+  BEQ done ; TODO - Remove
+  ; TODO - BEQ pickingupbag
+
   CMP #SPR_MANURE
-  ; TODO - pickupmanure
+  BEQ pickupmanure
+
   CMP #SPR_DOZY
-  ; TODO - not pickingupbag
+  BCC notpickingupbag
+
   CMP #SPR_FRAMEHORIZ
-  ; TODO - talking to people
+  ; TODO - BCC talkingtopeople
+
+.notpickingupbag
+.lookforslot
+.gotslot
+
+.nomovingback
+.backtoinvent
+.noslotleft
 
 .done
   RTS
+
+.pickingupbag
+  STA bag
+  LDA #&00:STA objectscarried+2
+  BEQ backtoinvent
+
+.pickupmanure
+  LDA manurehere+var1:BEQ yuck ; See if message already shown
+  ; TODO - JMP tryputtingdown1
+  BNE done ; TODO - Remove
+.yuck
+  LDA #&01:STA manurehere+var1 ; Note that attempt was made to pick it up
+
+  LDA #STR_pickupmanuremess:JSR findroomstr
+  JMP windowrou
 }
 
+; zptr4 = current object
 .printmoving
 {
   LDY #movefrm:LDA (zptr4), Y:STA frmno
