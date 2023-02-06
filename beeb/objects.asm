@@ -780,8 +780,7 @@ noofmoving = (endofmovingdata-movingdata)/movingsize
   ; TODO - BEQ inventoryrou ;;; shopkeeper
 
   CMP #SPR_BAG
-  BEQ done ; TODO - Remove
-  ; TODO - BEQ pickingupbag
+  BEQ pickingupbag
 
   CMP #SPR_MANURE
   BEQ pickupmanure
