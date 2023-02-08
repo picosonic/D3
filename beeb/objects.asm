@@ -733,7 +733,6 @@ noofmoving = (endofmovingdata-movingdata)/movingsize
   EQUW daisyrou1
 
 ;; TEMPORARY - Placeholder empty routines
-.resetportswitch
 .resetarmorog
 .resetdragon
 .resetlog
@@ -742,7 +741,6 @@ noofmoving = (endofmovingdata-movingdata)/movingsize
 .resetdozyfloat
 .resetdoor
 
-.portswitchrou
 .armorogrou
 .dragonrou
 .crocodilerou
@@ -866,6 +864,38 @@ resetswitch1 = printmoving
 
 .portcullisrou
 {
+  RTS
+}
+
+.portswitchrou
+{
+  ; If not trying to interact, end now
+  LDA pickup:BEQ done
+
+  ; Check for collision, if not end now
+  JSR collidewithdizzy16
+  BEQ done
+
+  ; Check if var1 is set, if so end now
+  LDY #var1:LDA (zptr4), Y:BNE done
+
+  ; Disable further interaction
+  LDA #&00:STA pickup
+
+  ; Set portcullis var1
+  LDA #&FE:STA porthere+var1 ; -2
+
+  ; Set portcullis animation delay
+  LDA #&02:STA porthere+delay
+
+  ; Flag as used
+  LDA #&01:LDY #var1:STA (zptr4), Y
+
+  ; Display switch message
+  LDA #STR_throwswitchmess:JSR findroomstr
+  JMP windowrou
+
+.done
   RTS
 }
 
@@ -1013,6 +1043,8 @@ dylantalking = duffmem
   ; Draw this machine
   JMP printmoving
 }
+
+resetportswitch = resetmachines
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;FILL BUCKET
 .proxmtbucket
