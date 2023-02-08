@@ -1134,7 +1134,7 @@ dylantalking = duffmem
 .samepage
 
   ; Get (width/4)
-  LDY #&00:LDA (zptr1), Y:STA cw
+  LDY #&00:LDA (zptr1), Y:LSR A:LSR A:STA cw
 
   ; Get height
   INY:LDA (zptr1), Y:STA ch
