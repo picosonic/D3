@@ -740,6 +740,7 @@ noofmoving = (endofmovingdata-movingdata)/movingsize
 .resetlift
 .resetdozyfloat
 .resetdoor
+  JMP printmoving ; At least draw it for now
 
 .armorogrou
 .dragonrou
