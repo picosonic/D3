@@ -902,7 +902,7 @@ resetswitch1 = printmoving
   LDA #&02:STA porthere+delay
 
   ; Flag as used
-  LDA #&01:LDY #var1:STA (zptr4), Y
+  LDY #var1:LDA #&01:STA (zptr4), Y
 
   ; Display switch message
   LDA #STR_throwswitchmess:JSR findroomstr
