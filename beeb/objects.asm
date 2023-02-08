@@ -33,7 +33,7 @@ dragon = 4
 crocodile = 5
 log = 6
 hawk = 7
-machines = 8 
+machines = 8
 lift = 9
 dozyfloat = 10
 rat = 11
@@ -64,7 +64,7 @@ roucount = 20
 ; THE GUARD HOUSE
 OBJ_HAWK = 0
 
- EQUB 49, hawk, 60, 80, SPR_HAWK0 
+ EQUB 49, hawk, 60, 80, SPR_HAWK0
  EQUW nothingheremess
  EQUB 0, 2, 0, 0, PAL_CYAN+PLOT_NULL
  ;EQUB 49, 60, 80, SPR_HAWK0
@@ -735,7 +735,6 @@ noofmoving = (endofmovingdata-movingdata)/movingsize
 ;; TEMPORARY - Placeholder empty routines
 .resetarmorog
 .resetdragon
-.resetlog
 .resethawk
 .resetlift
 .resetdozyfloat
@@ -745,7 +744,6 @@ noofmoving = (endofmovingdata-movingdata)/movingsize
 .armorogrou
 .dragonrou
 .crocodilerou
-.logrou
 .hawkrou
 .machinesrou
 .liftrou
@@ -843,7 +841,7 @@ noofmoving = (endofmovingdata-movingdata)/movingsize
   RTS
 }
 
-resetpickupable	= printmoving 
+resetpickupable	= printmoving
 resetcrocodile = printmoving
 resetrat = printmoving
 resettroll = printmoving
@@ -1020,6 +1018,33 @@ dylantalking = duffmem
   EQUB 53 ;;room
   EQUB 68,140 ;;;x,y
   EQUB 10,20 ;;;w,h
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;FLOATING LOG
+.logrou
+{
+  JSR rubprintmoving
+
+  ; fall through
+}
+
+.resetlog
+{
+  LDY #var1:LDA (zptr4), Y
+  CLC:ADC #&01:AND #&03
+  STA (zptr4), Y
+  BNE logup
+
+  LDA #&02
+.logup
+  STA ripple+2
+  LDA waterheight
+  EOR #&FF
+.ripple
+  CLC:ADC #&00
+  CLC:ADC #162
+  LDY #movey:STA (zptr4), Y
+
+  JMP printmoving
+}
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;KEYS
 .proxkey1
   EQUB 56 ;;room
