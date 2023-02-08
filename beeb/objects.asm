@@ -738,7 +738,6 @@ noofmoving = (endofmovingdata-movingdata)/movingsize
 .resetdragon
 .resetlog
 .resethawk
-.resetmachines
 .resetlift
 .resetdozyfloat
 .resetdoor
@@ -993,6 +992,28 @@ dylantalking = duffmem
   EQUB 56 ;;room
   EQUB 71,160 ;;;x,y
   EQUB 4,16 ;;;w,h
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;MACHINES
+
+.resetmachines
+{
+  ; Clear colour
+  LDY #colour:LDA (zptr4), Y
+  AND #%01111101
+  STA (zptr4), Y
+
+  ; Get machine state (0=off, 1=on)
+  LDY #var1:LDA (zptr4), Y
+  ASL A ; * 2
+
+  ; Merge with blanked bit 1 in colour
+  LDY #colour
+  ORA (zptr4), Y
+  STA (zptr4), Y
+
+  ; Draw this machine
+  JMP printmoving
+}
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;FILL BUCKET
 .proxmtbucket
   EQUB 60 ;;room
