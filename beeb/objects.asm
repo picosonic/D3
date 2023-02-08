@@ -686,7 +686,7 @@ OBJ_RAILING4 = 71
 
 noofmoving = (endofmovingdata-movingdata)/movingsize
 
-; Reset moving items state
+; Reset moving items state, to when entering room they are in
 .resetrous
   EQUW resetportcullis
   EQUW resetportswitch
@@ -709,7 +709,7 @@ noofmoving = (endofmovingdata-movingdata)/movingsize
   EQUW resetswitch1
   EQUW resetdaisy1
 
-; Moving items routines
+; Moving items routines, run when in same room
 .movingrous
   EQUW portcullisrou
   EQUW portswitchrou
@@ -1145,7 +1145,7 @@ resetportswitch = resetmachines
   CMP ztmp7:BNE done ; If different, return
 
   ; Reset counter, setting Z flag so that routine is run
-  LDA #&00:LDY #delaycounter:STA (zptr4), Y
+  LDY #delaycounter:LDA #&00:STA (zptr4), Y
 
 .done
 
