@@ -762,6 +762,20 @@ noofmoving = (endofmovingdata-movingdata)/movingsize
   RTS
 ;;
 
+.rubprintmoving
+{
+  ; Change to XOR plot
+  LDY #colour:LDA (zptr4), Y:PHA:AND #&E7:ORA #PLOT_XOR:STA (zptr4), Y
+
+  ; Erase object
+  JSR printmoving
+
+  ; Restore plot mode
+  LDY #colour:PLA:STA (zptr4), Y
+
+  RTS
+}
+
 ; zptr4 = current object
 .pickupablerou
 {
@@ -1024,7 +1038,6 @@ dylantalking = duffmem
   EQUB 71,160 ;;;x,y
   EQUB 4,16 ;;;w,h
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;MACHINES
-
 .resetmachines
 {
   ; Clear colour
@@ -1046,7 +1059,6 @@ dylantalking = duffmem
 }
 
 resetportswitch = resetmachines
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;FILL BUCKET
 .proxmtbucket
   EQUB 60 ;;room
@@ -1104,6 +1116,7 @@ resetportswitch = resetmachines
 
   LDY #rou:LDA (zptr4), Y ; Get routine id for this object
   CMP #pickupable:BEQ skipdelay
+
   ; If it's not pickupable, limit how often we run routine
   JSR delayrou
   BNE notinthisroom ; Check for delaycounter being zero, otherwise move on
