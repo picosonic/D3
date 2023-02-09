@@ -967,7 +967,7 @@ dylantalking = duffmem
 
   ; Advance zptr5 (since Y index gets reset)
   TYA:CLC:ADC zptr5:STA zptr5
-  BNE samepage
+  BCC samepage
   INC zptr5+1
 .samepage
   LDA #&01:BNE morechatter
