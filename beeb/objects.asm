@@ -1375,14 +1375,34 @@ turnonfullbucket = movingsize+room
 }
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;CROW BAR
 .proxcrowbar
+{
   EQUB 55 ;;room
   EQUB 46,144 ;;;x,y
   EQUB 8,16 ;;;w,h
+
+.proxcrowbarrou
+  ; Remove crowbar and well lid from room
+  LDA #OFFMAP
+  STA crowbarhere+room
+  STA welllidhere+room
+
+  LDA #STR_usecrowbarmess:JSR findroomstr
+  JMP windowrou
+}
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;PICK AXE
 .proxpickaxe
+{
   EQUB 41 ;;room
   EQUB 36,101 ;;;x,y
   EQUB 12,20 ;;;w,h
+
+.proxpickaxerou
+  ; Remove rock from room
+  LDA #OFFMAP:STA rockhere+room
+
+  LDA #STR_usepickaxemess:JSR findroomstr
+  JMP windowrou
+}
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;RUG TRICK
 .proxrug
   EQUB 94 ;;room
