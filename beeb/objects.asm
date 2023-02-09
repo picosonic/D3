@@ -1133,9 +1133,10 @@ dylantalking = duffmem
   ; Remove dropped key
   LDY #room:LDA #OFFMAP:STA (zptr4), Y
 
-  ; Set bottom bit of var1
-  LDY #var1:LDA (machineptr), Y:ORA #&01:STA (machineptr), Y
-  LDY #var1:LDA (liftptr), Y:ORA #&01:STA (liftptr), Y
+  ; Set bottom bit of var1, on machine and associated lift
+  LDY #var1
+  LDA (machineptr), Y:ORA #&01:STA (machineptr), Y
+  LDA (liftptr), Y:ORA #&01:STA (liftptr), Y
 
   ; Show message about turning machine on with key
   LDA #STR_keyinmachine
@@ -1207,10 +1208,21 @@ dylantalking = duffmem
 machinesrou = rethere
 resetportswitch = resetmachines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;FILL BUCKET
+turnonfullbucket = movingsize+room
+
 .proxmtbucket
+{
   EQUB 60 ;;room
   EQUB 46,144 ;;;x,y
   EQUB 4,16 ;;;w,h
+
+.proxmtbucketrou
+  LDY #room:LDA #&FF:STA (zptr4), Y
+  LDY #turnonfullbucket:LDA #60:STA (zptr4), Y
+
+  LDA #STR_fillbucketmess:JSR findroomstr
+  JMP windowrou
+}
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;WATER BEAN STALK
 .proxfullbucket
   EQUB 58 ;;room
