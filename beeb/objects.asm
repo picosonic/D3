@@ -100,7 +100,7 @@ OBJ_SHOPKEEPER = 4
 .shopkeeperhere
  EQUB OFFMAP,pickupable,68 ,136,SPR_SHOPKEEPER
  EQUW                pigmycowmess,shoptalk
- EQUB                   0 ,0 ,PAL_WHITE+ATTR_NOTSOLID
+ EQUB                   STR_thanksforthecowmess ,0 ,PAL_WHITE+ATTR_NOTSOLID
  ;EQUB OFFMAP,68,136,SPR_SHOPKEEPER
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -110,7 +110,7 @@ OBJ_SHOPKEEPER2 = 5
 .shopkeeperhere1
  EQUB OFFMAP,crowbar,68+4,136,SPR_SHOPKEEPER
  EQUW                pigmycowmess,shoptalk
- EQUB                0 ,0 ,PAL_WHITE+ATTR_NOTSOLID+ATTR_REVERSE
+ EQUB                STR_thanksforthecowmess ,0 ,PAL_WHITE+ATTR_NOTSOLID+ATTR_REVERSE
  ;EQUB OFFMAP,68+4,136,SPR_SHOPKEEPER
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -412,7 +412,7 @@ OBJ_DOZY = 40
 .dozyhere
  EQUB 45,pickupable,74 ,116,SPR_DOZY
  EQUW                dozyrou,dozytalking
- EQUB                   0 ,0 ,PAL_WHITE+ATTR_NOTSOLID
+ EQUB                   STR_dozytalking ,0 ,PAL_WHITE+ATTR_NOTSOLID
  ;EQUB 45,74 ,116,SPR_DOZY
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -489,7 +489,7 @@ OBJ_GRANDDIZZY = 49
 .doughere
  EQUB 88,pickupable,42 ,76,SPR_GRANDDIZZY
  EQUW                dougrou,dougtalking
- EQUB                   0 ,0 ,PAL_WHITE+ATTR_NOTSOLID
+ EQUB                   STR_dougtalking ,0 ,PAL_WHITE+ATTR_NOTSOLID
  ;EQUB 88,42,76,SPR_GRANDDIZZY
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -623,7 +623,7 @@ OBJ_DYLAN = 65
 .dylanhere
  EQUB 59,pickupable,72 ,147,SPR_DYLAN
  EQUW                dylanrou,dylantalking
- EQUB                   0 ,0 ,PAL_WHITE+ATTR_NOTSOLID
+ EQUB                   STR_dylantalking ,0 ,PAL_WHITE+ATTR_NOTSOLID
  ;EQUB 59,72,147,SPR_DYLAN
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -633,7 +633,7 @@ OBJ_DENZIL = 66
 .denzilhere
  EQUB 68,pickupable,80 ,155,SPR_DENZIL
  EQUW                denzilrou,denziltalking
- EQUB                   0 ,0 ,PAL_WHITE+ATTR_NOTSOLID
+ EQUB                   STR_denziltalking ,0 ,PAL_WHITE+ATTR_NOTSOLID
  ;EQUB 68,80,155,SPR_DENZIL
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -912,13 +912,20 @@ resetswitch1 = printmoving
 }
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; These are pointers to the room attribute of the object which appears after talking
+; to specific yolkfolk, it gets updated from 255 to the current room, to become visible.
+
+.duffmem ; Used when a person doesn't give you anything
+  EQUB 0
 
 shoptalk = beanhere+room
 dozytalking = sleepingpotionhere+room
 denziltalking = ropehere+room
 dougtalking = crowbarhere+room
-duffmem = 0
 dylantalking = duffmem
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Names of objects which can be picked up and shown in inventory
 
 .nothingheremess EQUB PRT_END ; Used to print nothing (e.g. empty inventory slot)
 .bagmess EQUB "EXIT:AND:DON;T:DROP",PRT_END
