@@ -1,3 +1,6 @@
+; Debug settings
+seecoins = 0
+
 ; OS defines
 INCLUDE "os.asm"
 INCLUDE "inkey.asm"
@@ -6,9 +9,6 @@ INCLUDE "internal.asm"
 ; Variable and constant defines
 INCLUDE "consts.asm"
 INCLUDE "vars.asm"
-
-; Debug settings
-seecoins = 0
 
 ORG &00
 CLEAR &00, &FF
