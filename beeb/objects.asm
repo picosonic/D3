@@ -955,7 +955,7 @@ dylantalking = duffmem
 .talkingtopeople
 {
   LDY #movefrm:LDA (zptr4), Y
-  CMP #SPR_DIZZY:BCC notyolkfolk
+  CMP #SPR_DOZY:BCC notyolkfolk
 
   ; Find out how many times we've spoken before
   SEC:SBC #SPR_DOZY:TAY
