@@ -1062,9 +1062,17 @@ dylantalking = duffmem
 ; Proximity locations, when dropping things, to know how to interact
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;APPLE
 .proxapple
+{
   EQUB 36 ;;room
   EQUB 78,152 ;;;x,y
   EQUB 4,16 ;;;w,h
+
+.proxapplerou
+  LDY #movex:LDA #&FF:STA (zptr4), Y
+
+  LDA #STR_trollgotapplemess
+  JMP chatter
+}
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;EGG IN NEST
 .proxegg
   EQUB 40 ;;room
