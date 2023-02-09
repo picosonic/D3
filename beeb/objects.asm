@@ -1018,6 +1018,7 @@ dylantalking = duffmem
 
   CMP #5
   BCC kickagain ; Kick again
+  CMP #6
   BCS done ; Do nothing after 6th kick
 
   LDA #OFFMAP:STA dozyhere+room
