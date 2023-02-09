@@ -1075,14 +1075,40 @@ dylantalking = duffmem
 }
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;EGG IN NEST
 .proxegg
+{
   EQUB 40 ;;room
   EQUB 54,150 ;;;x,y
   EQUB 4,20 ;;;w,h
+
+.proxeggrou
+  ; Make dragon happy
+  LDA #&FF:STA dragonhere1+var1
+
+  LDA #STR_puteggbackmess:JSR findroomstr
+  JMP windowrou
+}
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;ROCK
 .proxrock
+{
   EQUB 48 ;;room
   EQUB 72,80 ;;;x,y
   EQUB 10,30 ;;;w,h
+
+.proxrockrou
+  LDY #room:LDA proxrock:STA (zptr4), Y
+
+  ; Raise water
+  LDA waterheight
+  CLC:ADC #&06:STA waterheight
+
+  ; Place the rock in the water (from right to left) to displace water
+  EOR &FF:CLC:ADC #&76
+  LDY #movex:STA (zptr4), Y
+  LDY #movey:LDA #176:STA (zptr4), Y
+
+  LDA #STR_rockinwatermess:JSR findroomstr
+  JMP windowrou
+}
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;SLEEP
 .proxsleep
   EQUB 54 ;;room
