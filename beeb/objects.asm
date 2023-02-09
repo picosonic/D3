@@ -793,11 +793,10 @@ noofmoving = (endofmovingdata-movingdata)/movingsize
   CMP #SPR_MANURE
   BEQ pickupmanure
 
-  CMP #SPR_DOZY
-  BCC notpickingupbag
-
-  CMP #SPR_FRAMEHORIZ
-  ; TODO - BCC talkingtopeople
+  ; Check for talking to yolk folk
+  CMP #SPR_DOZY:BCC notpickingupbag
+  CMP #SPR_DIZZY:BCS notpickingupbag
+  JMP talkingtopeople
 
 .notpickingupbag
 .lookforslot
@@ -955,7 +954,43 @@ dylantalking = duffmem
 .windowmess EQUB "A:WINDOW:FRAME",PRT_END
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TALKING TO YOLKFOLK
+.talkingtopeople
+{
+  LDY #movefrm:LDA (zptr4), Y
+  CMP #SPR_DIZZY:BCC notyolkfolk
 
+  ; Find out how many times we've spoken before
+  SEC:SBC #SPR_DOZY:TAY
+  LDA talkbefore, Y
+  BEQ notyolkfolk1
+
+  ; clear bit 3 in talkbefore, and add 1
+  AND #&F7:CLC:ADC #&01
+  STA talkbefore, Y
+
+  ; jump to routine in object
+  LDY #oldmovex
+  LDA (zptr4), Y:STA jump+1:INY
+  LDA (zptr4), Y:STA jump+2
+.jump
+  JMP duffmem
+
+.notyolkfolk1
+  LDA #&01:STA talkbefore, Y
+
+.notyolkfolk
+  LDY #oldmovefrm:LDA (zptr4), Y:STA zptr5
+  INY:LDA (zptr4), Y:STA zptr5+1
+
+.talkingtopeople1
+  LDY #&00:LDA roomno:STA (zptr5), Y ; Make object appear in current room
+
+  ; Find associated chatter
+  LDY #delaycounter:LDA (zptr4), Y
+  JSR findroomstr
+
+  ; fall through
+}
 .chatter
 {
   LDA #&01:STA dontupdatedizzy ; Stop Dizzy being drawn
@@ -1128,7 +1163,7 @@ resetportswitch = resetmachines
 
 .proxdoormess
   ; Remove door from room
-  LDA #&FF:STA doorhere+room
+  LDA #OFFMAP:STA doorhere+room
 
   LDA #STR_usedoorknockermess:JSR findroomstr
   JMP windowrou
