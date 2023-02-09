@@ -1065,11 +1065,6 @@ dylantalking = duffmem
   EQUB 36 ;;room
   EQUB 78,152 ;;;x,y
   EQUB 4,16 ;;;w,h
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;PLANTING BEAN
-.proxbean
-  EQUB 58 ;;room
-  EQUB 71,160 ;;;x,y
-  EQUB 8,16 ;;;w,h
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;EGG IN NEST
 .proxegg
   EQUB 40 ;;room
@@ -1217,17 +1212,44 @@ turnonfullbucket = movingsize+room
   EQUB 4,16 ;;;w,h
 
 .proxmtbucketrou
-  LDY #room:LDA #&FF:STA (zptr4), Y
-  LDY #turnonfullbucket:LDA #60:STA (zptr4), Y
+  LDY #room:LDA #&FF:STA (zptr4), Y ; Hide empty bucket
+  LDY #turnonfullbucket:LDA #60:STA (zptr4), Y ; Show full bucket
 
   LDA #STR_fillbucketmess:JSR findroomstr
   JMP windowrou
 }
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;WATER BEAN STALK
 .proxfullbucket
+{
   EQUB 58 ;;room
   EQUB 71,160 ;;;x,y
   EQUB 8,16 ;;;w,h
+
+.proxfullbucketrou
+  LDY #room:LDA #&FF:STA (zptr4), Y ; Hide full bucket
+
+  ; Move Dizzy to the left
+  LDA x:SEC:SBC #10:STA x
+
+  ; Change manure state
+  LDA #2:STA manurehere+var1
+
+  LDA #STR_throwwateronbeanmess:JSR findroomstr
+  JMP windowrou
+}
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;PLANTING BEAN
+.proxbean
+{
+  EQUB 58 ;;room
+  EQUB 71,160 ;;;x,y
+  EQUB 8,16 ;;;w,h
+
+.proxbeanrou
+  LDY #room:LDA #&FF:STA (zptr4), Y ; Hide bean
+
+  LDA #STR_plantbeanmess:JSR findroomstr
+  JMP windowrou
+}
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;DOZY FLOATING
 .resetdozyfloat
 {
