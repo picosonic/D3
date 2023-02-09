@@ -737,7 +737,6 @@ noofmoving = (endofmovingdata-movingdata)/movingsize
 .resetdragon
 .resethawk
 .resetlift
-.resetdozyfloat
   JMP printmoving ; At least draw it for now
 
 .armorogrou
@@ -746,7 +745,6 @@ noofmoving = (endofmovingdata-movingdata)/movingsize
 .hawkrou
 .machinesrou
 .liftrou
-.dozyfloatrou
 .ratrou
 .trollrou
 .daggerrou
@@ -1013,12 +1011,28 @@ dylantalking = duffmem
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;DOZYROU
 .dozyrou
-  ; TODO - more to add
+{
+  ; Determine how many times we've spoken to dozy before
+  LDA dozyhere+movefrm:SEC:SBC #SPR_DOZY:TAY
+  LDA talkbefore, Y
+
+  CMP #5
+  BCC kickagain ; Kick again
+  BCS done ; Do nothing after 6th kick
+
   LDA #OFFMAP:STA dozyhere+room
   STA dozyfloathere+var1
 
   LDA #STR_pushdozymess:JSR findroomstr
   JMP windowrou
+
+.kickagain
+  LDA #STR_kickdozyagainmess:JSR findroomstr
+  JMP windowrou
+
+.done
+  RTS
+}
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;DOUG ROU
 .dougrou
@@ -1144,6 +1158,56 @@ resetportswitch = resetmachines
   EQUB 58 ;;room
   EQUB 71,160 ;;;x,y
   EQUB 8,16 ;;;w,h
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;DOZY FLOATING
+.resetdozyfloat
+{
+  LDY #var1:LDA (zptr4), Y
+  BEQ done
+
+  JMP printmoving
+
+.done
+  RTS
+}
+
+.dozyfloatrou
+{
+  LDA dozyfloathere+var1
+  BEQ done
+
+  JSR printmoving
+
+  LDA dozyfloathere+var1
+  SEC:SBC #&01
+  AND #&03
+  BNE stillfloatdozy
+
+  LDA dozyfloathere+movex
+  SEC:SBC #&01
+  STA (zptr4), Y
+
+  LDA #&04
+.stillfloatdozy
+  LDA dozyfloathere+var1
+  SEC:SBC #&01
+  CMP #&03
+  BNE okbob
+
+  LDA #&01
+.okbob
+  CLC:ADC #139 ; origy
+  STA dozyfloathere+movey
+  JSR printmoving
+
+  LDA dozyfloathere+movex
+  CMP #28
+  BCC done
+
+  LDA #&00:STA dozyfloathere+var1
+
+.done
+  RTS
+}
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;THROWING WATER OF FIRE
 .proxjug
   EQUB 36 ;;room
