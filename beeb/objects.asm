@@ -877,6 +877,7 @@ resetswitch1 = printmoving
 
 .portcullisrou
 {
+  ; TODO
   RTS
 }
 
@@ -953,11 +954,20 @@ dylantalking = duffmem
 .chatter
 {
   LDA #&01:STA dontupdatedizzy ; Stop Dizzy being drawn
+.morechatter
   JSR printandwait ; Print message and wait for user input to move on
 
   LDA (zptr5), Y ; If next character to print is not END then show next message
-  CMP #PRT_END:BNE chatter
+  CMP #PRT_END:BEQ done
 
+  ; Advance zptr5 (since Y index gets reset)
+  TYA:CLC:ADC zptr5:STA zptr5
+  BNE samepage
+  INC zptr5+1
+.samepage
+  LDA #&01:BNE morechatter
+
+.done
   JMP windowrou1 ; Draw room again and allow dizzy to be drawn
 }
 
