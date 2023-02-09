@@ -782,7 +782,7 @@ noofmoving = (endofmovingdata-movingdata)/movingsize
 
   LDA #&00:STA pickup
 
-  LDY movefrm:LDA (zptr4), Y
+  LDY #movefrm:LDA (zptr4), Y
   CMP #SPR_SHOPKEEPER
   BEQ done ; TODO - Remove
   ; TODO - BEQ inventoryrou ;;; shopkeeper
@@ -1119,7 +1119,7 @@ resetportswitch = resetmachines
   EQUB 34,160 ;;;x,y
   EQUB 4,16 ;;;w,h
 
-.^proxdoormess
+.proxdoormess
   ; Remove door from room
   LDA #&FF:STA doorhere+room
 
@@ -1255,14 +1255,14 @@ resetportswitch = resetmachines
 ;   w, h
 .collidewithdizzy16
 {
-  LDY movex:LDA (zptr4), Y:STA cx
-  LDY movey:LDA (zptr4), Y:STA cy
+  LDY #movex:LDA (zptr4), Y:STA cx
+  LDY #movey:LDA (zptr4), Y:STA cy
 
   ; Get offset to frame data
   LDA #hi(frametable):STA zptr2+1
   LDA #lo(frametable):STA zptr2
 
-  LDY movefrm:LDA (zptr4), Y
+  LDY #movefrm:LDA (zptr4), Y
   BPL nochange
   INC zptr2+1
 .nochange
