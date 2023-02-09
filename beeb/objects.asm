@@ -738,7 +738,6 @@ noofmoving = (endofmovingdata-movingdata)/movingsize
 .resethawk
 .resetlift
 .resetdozyfloat
-.resetdoor
   JMP printmoving ; At least draw it for now
 
 .armorogrou
@@ -751,7 +750,6 @@ noofmoving = (endofmovingdata-movingdata)/movingsize
 .ratrou
 .trollrou
 .daggerrou
-.doorrou
 .rethere
 .minerrou
 .daisyrou
@@ -1116,9 +1114,59 @@ resetportswitch = resetmachines
   EQUB 40,16 ;;;w,h
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;DOOR KNOCKER
 .proxdoor
+{
   EQUB 84 ;;room
   EQUB 34,160 ;;;x,y
   EQUB 4,16 ;;;w,h
+
+.^proxdoormess
+  ; Remove door from room
+  LDA #&FF:STA doorhere+room
+
+  LDA #STR_usedoorknockermess:JSR findroomstr
+  JMP windowrou
+}
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;DOOR
+.resetdoor
+{
+  ; Don't draw door if it's been opened
+  LDY #var1:LDA (zptr4), Y
+  BNE done
+  JMP printmoving
+
+.done
+  RTS
+}
+
+.doorrou
+{
+  LDA sequence:BNE done
+
+  ; Check proximity box for knock
+  LDA #hi(proxknox):STA zptr6+1
+  LDA #lo(proxknox):STA zptr6
+  JMP checkproximity1
+
+.done
+  RTS
+}
+
+.proxknox
+{
+  EQUB 84	;;room
+	EQUB 34,160	;;;x,y
+	EQUB 4,16	;;;w,h
+
+  LDA doorhere+oldmovex:BNE done
+
+  LDA #&01:STA doorhere+oldmovex
+
+  LDA #STR_knockandentermess:JSR findroomstr
+  JMP chatter
+
+.done
+  RTS
+}
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;CROW BAR
 .proxcrowbar
   EQUB 55 ;;room
