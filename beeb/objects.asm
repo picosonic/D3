@@ -1405,10 +1405,23 @@ turnonfullbucket = movingsize+room
 }
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;RUG TRICK
 .proxrug
+{
   EQUB 94 ;;room
   EQUB 34,152 ;;;x,y
   EQUB 4,16 ;;;w,h
 
+.proxrugrou
+  ; Remove rug from room
+  LDY #room:LDA #OFFMAP:STA (zptr4), Y
+
+  ; Show two pieces of carpet covering daggers
+  LDA proxrug
+  STA carpethere+room
+  STA carpethere1+room
+
+  LDA #STR_userugmess:JSR findroomstr
+  JMP windowrou
+}
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 .domoving
