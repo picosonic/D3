@@ -839,7 +839,7 @@ noofmoving = (endofmovingdata-movingdata)/movingsize
   RTS
 }
 
-resetpickupable	= printmoving
+resetpickupable = printmoving
 resetcrocodile = printmoving
 resetrat = printmoving
 resettroll = printmoving
@@ -1153,9 +1153,9 @@ resetportswitch = resetmachines
 
 .proxknox
 {
-  EQUB 84	;;room
-	EQUB 34,160	;;;x,y
-	EQUB 4,16	;;;w,h
+  EQUB 84 ;;room
+  EQUB 34,160 ;;;x,y
+  EQUB 4,16 ;;;w,h
 
   LDA doorhere+oldmovex:BNE done
 
