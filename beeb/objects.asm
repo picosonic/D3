@@ -262,6 +262,7 @@ OBJ_WHISKEYBOTTLE = 21
 ; KEEP OUT! DOZY'S HUT
 OBJ_LIFT = 22
 
+.lift1here
  EQUB 71,lift      ,52 ,48 ,SPR_LIFTTOP,56,112,   0   ,1  ,0 ,0 ,PAL_WHITE+PLOT_XOR
  ;EQUB 71 ,52,48 ,SPR_LIFTTOP
 
@@ -269,6 +270,7 @@ OBJ_LIFT = 22
 ; THE LIFT CONTROL HUT
 OBJ_MACHINE = 23
 
+.machine1here
  EQUB 56,machines  ,50 ,116,SPR_MACHINE ,0   ,0   ,0   ,32 ,0 ,0 ,PAL_CYAN+ATTR_NOTSOLID
  ;EQUB 56,50 ,116,SPR_MACHINE
 
@@ -285,6 +287,7 @@ OBJ_KEY = 24
 ; THE DRAGON'S LAIR
 OBJ_LIFT2 = 25
 
+.lift2here
  EQUB 40,lift      ,40 ,56 ,SPR_LIFTTOP,56,134,   0   ,1  ,0 ,0 ,PAL_WHITE+PLOT_XOR
  ;EQUB 40 ,40,56 ,SPR_LIFTTOP
 
@@ -292,6 +295,7 @@ OBJ_LIFT2 = 25
 ; THE LIFT CONTROL HUT
 OBJ_MACHINE2 = 26
 
+.machine2here
  EQUB 56,machines  ,72 ,116,SPR_MACHINE ,0   ,0   ,0   ,32 ,0 ,0 ,PAL_CYAN+ATTR_NOTSOLID
  ;EQUB 56,72 ,116,SPR_MACHINE
 
@@ -308,6 +312,7 @@ OBJ_KEY2 = 27
 ; LIFT TO THE ELDERS
 OBJ_LIFT3 = 28
 
+.lift3here
  EQUB 88,lift      ,58 ,48 ,SPR_LIFTTOP,56,136,   0   ,1  ,0 ,0 ,PAL_WHITE+PLOT_XOR
  ;EQUB 88 ,58,48 ,SPR_LIFTTOP
 
@@ -315,6 +320,7 @@ OBJ_LIFT3 = 28
 ; THE LIFT CONTROL HUT
 OBJ_MACHINE3 = 29
 
+.machine3here
  EQUB 56,machines  ,52 ,156,SPR_MACHINE ,0   ,0   ,0   ,32 ,0 ,0 ,PAL_CYAN+ATTR_NOTSOLID
  ;EQUB 56,52 ,156 ,SPR_MACHINE
 
@@ -331,6 +337,7 @@ OBJ_KEY3 = 30
 ; THE LIFT CONTROL HUT
 OBJ_LIFT4 = 31
 
+.lift4here
  EQUB 56,lift      ,60 ,104 ,SPR_LIFTTOP,104,140,   0   ,1  ,0 ,0 ,PAL_WHITE+PLOT_XOR
  ;EQUB 56 ,60,104 ,SPR_LIFTTOP
 
@@ -338,6 +345,7 @@ OBJ_LIFT4 = 31
 ; THE LIFT CONTROL HUT
 OBJ_MACHINE4 = 32
 
+.machine4here
  EQUB 56,machines  ,70 ,156,SPR_MACHINE ,0   ,0   ,0   ,32 ,0 ,0 ,PAL_CYAN+ATTR_NOTSOLID
  ;EQUB 56,70 ,156,SPR_MACHINE
 
@@ -743,7 +751,6 @@ noofmoving = (endofmovingdata-movingdata)/movingsize
 .dragonrou
 .crocodilerou
 .hawkrou
-.machinesrou
 .liftrou
 .ratrou
 .trollrou
@@ -1112,21 +1119,70 @@ dylantalking = duffmem
 }
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;KEYS
 .proxkey1
+{
   EQUB 56 ;;room
   EQUB 51,120 ;;;x,y
   EQUB 4,16 ;;;w,h
+
+  LDA #hi(machine1here):STA machineptr+1
+  LDA #lo(machine1here):STA machineptr
+  LDA #hi(lift1here):STA liftptr+1
+  LDA #lo(lift1here):STA liftptr
+
+.^proxkey1rou
+  ; Remove dropped key
+  LDY #room:LDA #OFFMAP:STA (zptr4), Y
+
+  ; Set bottom bit of var1
+  LDY #var1:LDA (machineptr), Y:ORA #&01:STA (machineptr), Y
+  LDY #var1:LDA (liftptr), Y:ORA #&01:STA (liftptr), Y
+
+  ; Show message about turning machine on with key
+  LDA #STR_keyinmachine
+  JSR findroomstr
+
+  JMP windowrou
+}
+
 .proxkey2
+{
   EQUB 56 ;;room
   EQUB 73,120 ;;;x,y
   EQUB 4,16 ;;;w,h
+
+  LDA #hi(machine2here):STA machineptr+1
+  LDA #lo(machine2here):STA machineptr
+  LDA #hi(lift2here):STA liftptr+1
+  LDA #lo(lift2here):STA liftptr
+
+  JMP proxkey1rou
+}
 .proxkey3
+{
   EQUB 56 ;;room
   EQUB 53,160 ;;;x,y
   EQUB 4,16 ;;;w,h
+
+  LDA #hi(machine3here):STA machineptr+1
+  LDA #lo(machine3here):STA machineptr
+  LDA #hi(lift3here):STA liftptr+1
+  LDA #lo(lift3here):STA liftptr
+
+  JMP proxkey1rou
+}
 .proxkey4
+{
   EQUB 56 ;;room
   EQUB 71,160 ;;;x,y
   EQUB 4,16 ;;;w,h
+
+  LDA #hi(machine4here):STA machineptr+1
+  LDA #lo(machine4here):STA machineptr
+  LDA #hi(lift4here):STA liftptr+1
+  LDA #lo(lift4here):STA liftptr
+
+  JMP proxkey1rou
+}
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;MACHINES
 .resetmachines
 {
@@ -1148,6 +1204,7 @@ dylantalking = duffmem
   JMP printmoving
 }
 
+machinesrou = rethere
 resetportswitch = resetmachines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;FILL BUCKET
 .proxmtbucket

@@ -30,6 +30,9 @@ GUARD ZP_ECONET_WORKSPACE
 .roomptr EQUW 0
 .nextroomptr EQUW 0
 
+.machineptr EQUW 0
+.liftptr EQUW 0
+
 ; Temporary variables
 .ztmp1 EQUB 0
 .ztmp2 EQUB 0
