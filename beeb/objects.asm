@@ -210,6 +210,7 @@ OBJ_SLEEPINGPOTION = 15
 ; THE SNAP HAPPY GATOR
 OBJ_CROCODILE = 16
 
+.crochere
  EQUB 53,crocodile ,70 ,152,SPR_CROCCLOSED,0   ,0   ,0   ,0  ,0 ,0 ,PAL_GREEN+PLOT_OR
  ;EQUB 53 ,70 ,152,SPR_CROCCLOSED
 
@@ -1111,14 +1112,34 @@ dylantalking = duffmem
 }
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;SLEEP
 .proxsleep
+{
   EQUB 54 ;;room
   EQUB 60,150 ;;;x,y
   EQUB 10,30 ;;;w,h
+
+.proxsleeprou
+  LDA #&FF
+  LDY #room:STA (zptr4), Y ; Remove sleeping potion from room
+  STA dragonhere+var1 ; Set dragon to be asleep
+
+  LDA #STR_dragonasleepmess:JSR findroomstr
+  JMP windowrou
+}
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;CROCODILE
 .proxcroc
+{
   EQUB 53 ;;room
   EQUB 68,140 ;;;x,y
   EQUB 10,20 ;;;w,h
+
+.proxcrocrou
+  LDA #&FF
+  LDY #room:STA (zptr4), Y ; Remove rope from room
+  STA crochere+var1 ; Set crocodile to be tied up
+
+  LDA #STR_croctiedmess:JSR findroomstr
+  JMP windowrou
+}
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;FLOATING LOG
 .logrou
 {
