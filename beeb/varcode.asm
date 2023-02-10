@@ -223,6 +223,7 @@
 }
 
 ; Find pointer to string[A] in room string table
+; Sets zptr5 to result
 .findroomstr
 {
   PHA
@@ -235,7 +236,7 @@
   LDA roomlen+1:BNE roomnotempty
 
   ; Check for room name being requested
-  PLA
+  PLA ; Recover string offset
   CMP #STR_roomname:BNE invalidstr
   LDA #hi(emptyroomname):STA zptr5+1
   LDA #lo(emptyroomname):STA zptr5
@@ -248,25 +249,26 @@
   JMP done
 
 .roomnotempty
+  ; Point to data for current room
   LDA roomno
   ASL A:TAY
   LDA roomtable, Y:STA zptr5
   LDA roomtable+1, Y:CLC:ADC #hi(ROMSBASE):STA zptr5+1
 
-  ; Copy pointer from zptr5 to zptr4
-  LDA zptr5:STA zptr4
-  LDA zptr5+1:STA zptr4+1
+  ; Copy pointer from zptr5 to zptr6
+  LDA zptr5:STA zptr6
+  LDA zptr5+1:STA zptr6+1
 
-  PLA ; Recover offset
+  PLA ; Recover string offset
   ASL A:TAY
-  LDA zptr5:CLC:ADC (zptr4), Y:STA zptr5 ; Increment lo part of pointer
+  LDA zptr5:CLC:ADC (zptr6), Y:STA zptr5 ; Increment lo part of pointer
   
   BCC samepage ; Check page for overflow
   INC zptr5+1
 
 .samepage
   INY
-  LDA zptr5+1:CLC:ADC (zptr4), Y:STA zptr5+1 ; Increment hi part of pointer
+  LDA zptr5+1:CLC:ADC (zptr6), Y:STA zptr5+1 ; Increment hi part of pointer
 
 .done
   RTS
