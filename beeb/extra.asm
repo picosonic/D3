@@ -91,7 +91,7 @@ INCLUDE "hearts.asm"
   STA shopkeepercount
 
   LDA #&01
-  ;STA ratcoll+1 ; TODO - waiting for rat routines
+  STA ratcoll+1
 
   LDY #&00:LDA #&00
 .scrubtalkbefore

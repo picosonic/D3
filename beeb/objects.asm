@@ -753,7 +753,6 @@ noofmoving = (endofmovingdata-movingdata)/movingsize
 .crocodilerou
 .hawkrou
 .liftrou
-.ratrou
 .trollrou
 .daggerrou
 .rethere
@@ -1357,14 +1356,43 @@ turnonfullbucket = movingsize+room
 }
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;THROWING WATER OF FIRE
 .proxjug
+{
   EQUB 36 ;;room
   EQUB 44,150 ;;;x,y
   EQUB 6,26 ;;;w,h
+
+.proxjugrou
+  LDY #room:LDA #OFFMAP
+  STA (zptr4), Y ; Remove jug from room
+  STA fireout ; Put fire out
+
+  LDA #STR_throwwateronfiremess:JSR findroomstr
+  JMP windowrou
+}
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;RAT
+.ratrou
+{
+.^ratcoll
+  CMP #01:BNE done
+
+.done
+  RTS
+}
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;LOAF AND RAT
 .proxloaf
+{
   EQUB 36 ;;room
   EQUB 46,64 ;;;x,y
   EQUB 40,16 ;;;w,h
+
+.proxloafrou
+  LDY #movex:LDA (zptr4), Y
+
+  CLC:ADC #&02
+  STA ratcoll+1
+
+  RTS
+}
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;DOOR KNOCKER
 .proxdoor
 {
