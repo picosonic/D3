@@ -594,7 +594,8 @@ PAL_DIZZY2 = $02
   JSR resetuproom ; Draw the room again
 
   LDA #&00:STA dontupdatedizzy ; Allow Dizzy to be drawn
-  JMP prtmessage
+
+  RTS
 }
 
 .printandwait
