@@ -16,20 +16,27 @@ ALIGN &100
 {
   SEI
 
-  LDY #&FF:STY SWR_ROOMDATA ; Mark as not found (yet)
-  INY ; Start at slot 0
+  LDA #&FF
+
+  LDY #&FF
+  STA SWR_PAGE, Y ; Mark as not found (yet)
+  DEY:STA SWR_PAGE, Y:INY
+
+  LDX #&00 ; Start at slot 0
 .findswr
-  STY ROMSEL
+  STX ROMSEL
   LDA swrcheck:EOR #&55:STA swrcheck
   CMP swrcheck:BNE noswryet
 
-  STY SWR_ROOMDATA:BEQ swrdone ; Found slot, so end search
+  TXA:STA SWR_PAGE, Y:DEY
+  CPY #&FD:BEQ swrdone ; Stop if we've found 2 SWR
+  
 .noswryet
-  INY:CPY #16:BNE findswr ; Keep looking until we get to slot 16
+  INX:CPX #16:BNE findswr ; Keep looking until we get to slot 16
 
   ; Re-select ROM (likely BASIC)
 .swrdone
-  LDY ROMSEL_CACHE:STY ROMSEL
+  LDX ROMSEL_CACHE:STX ROMSEL
 
   CLI
 
@@ -42,7 +49,8 @@ ALIGN &100
   SEI
 
   ; Select the SWRAM slot we found earlier
-  LDY SWR_ROOMDATA:STY ROMSEL
+  LDY #&00
+  LDA SWR_PAGE, Y:STA ROMSEL
 
   LDX #&00
 .swrcpyloop
@@ -60,6 +68,10 @@ ALIGN &100
 
   ; Re-select ROM (likely BASIC)
   LDY ROMSEL_CACHE:STY ROMSEL
+
+  ; Put back source/dest incase further copies are done
+  LDA #&40:STA swrcpyloop+2
+  LDA #hi(ROMSBASE):STA swrcpyloop+5
 
   CLI
 

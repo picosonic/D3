@@ -37,7 +37,7 @@
             "type": "shell",
             "args": [
                 "-c",
-                "beebjit -0 ${workspaceFolder}/dizzy3.ssd -autoboot -swram 4"
+                "beebjit -0 ${workspaceFolder}/dizzy3.ssd -autoboot -swram 4 -swram 5"
             ],
             "problemMatcher": [],
             "group": {

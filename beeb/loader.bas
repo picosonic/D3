@@ -13,12 +13,16 @@ VDU23,1,0;0;0;0;:REM Hide cursor
 VDU19,1,0;0;19,2,0;0;19,3,0;0;:REM Blank palette
 :
 swrpage=&11FF
-swrtest=&1500
-swrcopy=&1528
+swrtest=&1600
+swrcopy=&1634
 CALL swrtest
 IF ?swrpage=255 MODE7:PRINT"No sideways RAM detected":END
 *L.RMDATA
-CALL swrcopy
+?&1636=&FF:CALL swrcopy
+swrpage=swrpage-1
+IF ?swrpage=255 MODE7:PRINT"Only one sideways RAM detected, two or  more required":END
+*L.MELODY 4000
+?&1636=&FE:CALL swrcopy
 :
 REM Load loading screen
 */EXOSCR
