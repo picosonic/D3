@@ -152,9 +152,32 @@ then
 
   if [ ${bytesleft} -ge 0 ]
   then
-    echo "SWR is ${percent}% used - ( ${bytesleft} bytes left )"
+    echo "SWR A is ${percent}% used - ( ${bytesleft} bytes left )"
   else
-    echo "OH NO - SWR is ${percent}% used - it's gone ovey by "$((0-${bytesleft}))" bytes"
+    echo "OH NO - SWR A is ${percent}% used - it's gone ovey by "$((0-${bytesleft}))" bytes"
+    exit 1
+  fi
+
+  echo
+fi
+
+# Build moredata if required
+if refreshrequired XDATA os.asm consts.asm dizzyfrm.asm moredata.asm
+then
+  ${beebasm} -v -i moredata.asm
+
+  echo
+
+  swrsize=`stat -c %s "XDATA"`
+  maxsize=$((16*1024))
+  bytesleft=$((${maxsize}-${swrsize}))
+  percent=$((200*${swrsize}/${maxsize} % 2 + 100*${swrsize}/${maxsize}))
+
+  if [ ${bytesleft} -ge 0 ]
+  then
+    echo "SWR B is ${percent}% used - ( ${bytesleft} bytes left )"
+  else
+    echo "OH NO - SWR B is ${percent}% used - it's gone ovey by "$((0-${bytesleft}))" bytes"
     exit 1
   fi
 
@@ -176,7 +199,7 @@ then
 fi
 
 # Build main disk image if required
-if refreshrequired dizzy3.ssd os.asm inkey.asm internal.asm consts.asm vars.asm varcode.asm rooms.asm frametable.bin framedefs.bin dizzyfrm.asm input.asm rand.asm gfx.asm objects.asm extra.asm hearts.asm loadertok.bin dizzy3.asm
+if refreshrequired dizzy3.ssd os.asm inkey.asm internal.asm consts.asm vars.asm varcode.asm rooms.asm frametable.bin framedefs.bin dizzyfrm.asm input.asm rand.asm gfx.asm objects.asm extra.asm hearts.asm loadertok.bin dizzy3.asm XDATA RMDATA
 then
   ${beebasm} -v -i dizzy3.asm -do dizzy3.ssd -opt 3 -title 'DIZZY3'
 fi

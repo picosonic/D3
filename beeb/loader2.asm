@@ -49,7 +49,6 @@ ALIGN &100
   SEI
 
   ; Select the SWRAM slot we found earlier
-  LDY #&00
   LDA SWR_PAGE, Y:STA ROMSEL
 
   LDX #&00

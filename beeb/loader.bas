@@ -18,11 +18,11 @@ swrcopy=&1634
 CALL swrtest
 IF ?swrpage=255 MODE7:PRINT"No sideways RAM detected":END
 *L.RMDATA
-?&1636=&FF:CALL swrcopy
+Y%=&FF:CALL swrcopy
 swrpage=swrpage-1
 IF ?swrpage=255 MODE7:PRINT"Only one sideways RAM detected, two or  more required":END
 *L.MELODY 4000
-?&1636=&FE:CALL swrcopy
+Y%=&FE:CALL swrcopy
 :
 REM Load loading screen
 */EXOSCR
