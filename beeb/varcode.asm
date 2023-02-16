@@ -98,12 +98,16 @@
   JSR collidewithdizzy3
   BEQ notdrowned
 
+  if liquidkills=1
+
   LDA #STR_killedbyvolcano:STA deathmsg
   LDA roomno:CMP #77:BEQ yesfellinlava
   LDA #STR_killedbywater:STA deathmsg
 .yesfellinlava
-  LDA #01:STA killed
+  LDA #&01:STA killed
   ;JSR killdizzy1
+
+  endif
 
 .notdrowned
   DEX:BNE updatewaterlp
@@ -137,6 +141,8 @@
   INY
   JSR frame
 
+  if firekills=1
+
   ; Check for collision with flame
   JSR collidewithdizzy3
   BEQ notburnt
@@ -144,6 +150,8 @@
   LDA #STR_killedbyflame:STA deathmsg
   LDA #&01:STA killed
   ;JSR killdizzy1
+
+  endif
 
 .notburnt
 

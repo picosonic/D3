@@ -1,5 +1,7 @@
 ; Debug settings
 seecoins = 0
+liquidkills = 0
+firekills = 0
 
 ; OS defines
 INCLUDE "os.asm"
