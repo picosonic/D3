@@ -144,7 +144,6 @@ STR_killedbyportcullis = 3
 
 ; Room 53
 STR_croctiedmess = 2
-STR_croceatenmess = 3
 
 ; Room 54
 STR_dragonasleepmess = 2
@@ -199,7 +198,8 @@ STR_killedbyliftmess = 3
 STR_killedbyflame = 4
 STR_killedbywater = 5
 STR_killedbydaggersmess = 6
-STR_obstructingliftmess = 7
-STR_dropwhiskeymess = 8
-STR_holdingholemess = 9
-STR_youfoundcoinmess = 10
+STR_croceatenmess = 7
+STR_obstructingliftmess = 8
+STR_dropwhiskeymess = 9
+STR_holdingholemess = 10
+STR_youfoundcoinmess = 11

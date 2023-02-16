@@ -750,7 +750,6 @@ noofmoving = (endofmovingdata-movingdata)/movingsize
 
 .armorogrou
 .dragonrou
-.crocodilerou
 .hawkrou
 .liftrou
 .trollrou
@@ -1125,6 +1124,90 @@ dylantalking = duffmem
   JMP windowrou
 }
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;CROCODILE
+.crocodilerou
+{
+  ; Only process if Dizzy is not dead
+  LDA killed:BEQ cont
+  RTS
+.cont
+
+  ; Advance delay counter to animate every 8th frame
+  LDY #delaycounter:LDA (zptr4), Y
+  CLC:ADC #&01:AND #&07:STA (zptr4), Y
+  BNE justcroccoll
+
+  ; Check if Dizzy is positioned on right of croc
+  LDA #74:STA cx:LDA #80:STA cy
+  LDA #20:STA cw:LDA #100:STA ch
+  JSR collidewithdizzy3:STA ztmp7 ; cache result
+
+  ; Start with default colour / plot
+  LDA #(PAL_GREEN+PLOT_OR):STA ztmp8
+
+  ; Don't flip if croc is tied
+  LDY #var1:LDA (zptr4), Y
+  BMI nottied
+
+  ; Flip croc sprite horizontally when on right of it
+  LDA ztmp7:BEQ notflipped
+  LDA ztmp8:ORA #ATTR_REVERSE:STA ztmp8
+.notflipped
+
+.nottied
+  JSR rubprintmoving ; Remove previously drawn croc
+
+  ; Set new colour / plot
+  LDY #colour:LDA ztmp8:STA (zptr4), Y
+
+  ; See if crocodile is tied up
+  LDY #var1:LDA (zptr4), Y:CMP #&FF
+  BEQ hestied
+
+  ; Advance var1
+  CLC:ADC #&01:AND #&07
+  STA (zptr4), Y
+
+.hestied
+  ; Start with mouth closed
+  LDY #movefrm:LDA #SPR_CROCCLOSED:STA (zptr4), Y
+
+  ; Determine if we need to open mouth
+  LDY #var1:LDA (zptr4), Y
+  CMP #240:BCS doprintmoving
+  CMP #3:BCC doprintmoving
+  AND #&01:BEQ doprintmoving
+
+  ; Open crocodile's mouth
+  LDY #movefrm:LDA #SPR_CROCOPEN:STA (zptr4), Y
+
+  JSR printmoving
+
+.justcroccoll
+  LDY #movefrm:LDA (zptr4), Y:AND #&01:BNE done ; If mouth shut - skip death check
+
+  ; Check for collision (proximitycollide)
+  ;  Is Dizzy on top of crocodile with mouth open?
+  LDA #70:STA cx:LDA #140:STA cy
+  LDA #6:STA cw:LDA #10:STA ch
+  JSR collidewithdizzy3:BEQ done
+
+  ; Dizzy got eaten by crocodile
+
+  LDA #7:STA sequence
+  ; LDA #&00:STA left:STA right ; Clear keystate for left/right
+  LDA #(69-32):STA x:LDA #160:STA y ; Set X, Y position for respawn
+.^CROCDEATH
+  LDA #STR_croceatenmess:STA deathmsg ; Set death message to show
+  LDA #&01:STA killed ; Set Dizzy as killed
+  ;JSR killdizzy
+
+.done
+  RTS
+
+.doprintmoving
+  JMP printmoving
+}
+
 .proxcroc
 {
   EQUB 53 ;;room

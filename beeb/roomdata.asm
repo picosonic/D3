@@ -638,7 +638,6 @@ INCBIN "rooms/room52.bin"
 EQUW roomdata-room53 ; 0
 EQUW roomname-room53 ; 1
 EQUW croctiedmess-room53 ; 2
-EQUW croceatenmess-room53 ; 3
 
 .roomname
 EQUB "THE:SNAP:HAPPY:GATOR", PRT_END
@@ -648,11 +647,6 @@ EQUB PRT_PEN+7,PRT_XY+2,48,PRT_DRAWBOX,19,5,PRT_PEN+3
 EQUB PRT_XY+11,72,"YOU:NIMBLY:TIE"
 EQUB PRT_XY+10,80,"THE:ROPE:AROUND"
 EQUB PRT_XY+8,88, "THE:GATOR;S:SNOUT",PRT_END
-
-.croceatenmess
-EQUB PRT_XY+19,88,"THE:GATOR:HAS"
-EQUB PRT_XY+19,100,"YOU:FOR:LUNCH"
-EQUB PRT_END
 
 .roomdata
 INCBIN "rooms/room53.bin"
@@ -1387,10 +1381,11 @@ EQUW killedbyliftmess-room101 ; 3
 EQUW killedbyflame-room101 ; 4
 EQUW killedbywater-room101 ; 5
 EQUW killedbydaggersmess-room101 ; 6
-EQUW obstructingliftmess-room101 ; 7
-EQUW dropwhiskeymess-room101 ; 8
-EQUW holdingholemess-room101 ; 9
-EQUW youfoundcoinmess-room101 ; 10
+EQUW croceatenmess-room101 ; 7
+EQUW obstructingliftmess-room101 ; 8
+EQUW dropwhiskeymess-room101 ; 9
+EQUW holdingholemess-room101 ; 10
+EQUW youfoundcoinmess-room101 ; 11
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -1422,6 +1417,11 @@ EQUB PRT_END
 .killedbydaggersmess
 EQUB PRT_XY+14,88, "YOU;RE:SKEWERED:BY"
 EQUB PRT_XY+15,100,"THE:SHARP:DAGGERS"
+EQUB PRT_END
+
+.croceatenmess
+EQUB PRT_XY+19,88,"THE:GATOR:HAS"
+EQUB PRT_XY+19,100,"YOU:FOR:LUNCH"
 EQUB PRT_END
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;Generic messages
