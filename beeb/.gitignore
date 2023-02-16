@@ -10,6 +10,8 @@ SPEECH
 MELODY
 RMDATA
 RMTABLE
+XDATA
+XTABLE
 loader.ssd
 loadertok.bin
 

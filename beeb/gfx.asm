@@ -161,6 +161,8 @@ PAL_DIZZY2 = $02
   TXA:PHA
   TYA:PHA
 
+  PAGE_MOREDATA
+
   ; Get pointer to frame data
   LDA #hi(dizzytable):STA zptr2+1
   LDA #lo(dizzytable):STA zptr2
@@ -174,7 +176,7 @@ PAL_DIZZY2 = $02
 
   ; Get high byte of pointer
   INY:LDA (zptr2), Y
-  STA zptr1+1
+  CLC:ADC #hi(ROMSBASE):STA zptr1+1
 
   ; Set (width/4)
   LDA #DIZZY_WIDTH/4:STA frmwidth

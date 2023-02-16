@@ -66,6 +66,8 @@ HEARTSROOM = 3
 STARTROOM = 36
 ALLOTMENTROOM = 58
 
+DIZZY_WIDTH = (3*8)
+
 ; External sprite id list
 INCLUDE "sprites.asm"
 

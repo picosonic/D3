@@ -21,7 +21,7 @@ IF ?swrpage=255 MODE7:PRINT"No sideways RAM detected":END
 Y%=&FF:CALL swrcopy
 swrpage=swrpage-1
 IF ?swrpage=255 MODE7:PRINT"Only one sideways RAM detected, two or  more required":END
-*L.MELODY 4000
+*L.XDATA
 Y%=&FE:CALL swrcopy
 :
 REM Load loading screen

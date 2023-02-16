@@ -1,11 +1,4 @@
-DIZZY_WIDTH = (3*8)
-
-.dizzytable
-EQUW frame00, frame01, frame02, frame03, frame04, frame05, frame06, frame07, frame08
-EQUW frame09, frame10, frame11, frame12, frame13, frame14, frame15, frame16, frame17
-EQUW frame18, frame19, frame20, frame21, frame22, frame23, frame24, frame25, frame26
-EQUW frame27, frame28, frame29, frame30, frame31, frame32, frame33, frame34, frame35
-EQUW frame36, frame37, frame38
+.dizzyframe_start
 
 .frame00
 EQUB 21,03
@@ -839,3 +832,17 @@ EQUB %00000000,%00011111,%10000000
 EQUB %00000000,%00001111,%00000000
 EQUB %00000000,%00001110,%00000000
 EQUB %00000000,%00000000,%00000000
+
+.dizzyframe_end
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+.dizzytable_start
+{
+  EQUW frame00, frame01, frame02, frame03, frame04, frame05, frame06, frame07, frame08
+  EQUW frame09, frame10, frame11, frame12, frame13, frame14, frame15, frame16, frame17
+  EQUW frame18, frame19, frame20, frame21, frame22, frame23, frame24, frame25, frame26
+  EQUW frame27, frame28, frame29, frame30, frame31, frame32, frame33, frame34, frame35
+  EQUW frame36, frame37, frame38
+}
+.dizzytable_end

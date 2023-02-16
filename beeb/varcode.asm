@@ -228,6 +228,8 @@
 {
   PHA
 
+  PAGE_ROOMDATA
+
   ; Check for strings room
   LDA roomno:CMP #ROOM_STRINGS:BEQ roomnotempty
 
@@ -295,6 +297,8 @@
   ; as the previous then bit 7 of the X coord is set
 
   STA roomno ; Backup room number
+
+  PAGE_ROOMDATA
 
   LDA #&01:STA dontupdatedizzy ; Stop Dizzy being drawn
 
@@ -376,9 +380,6 @@
   LDX #lo(framepiccmd)
   LDY #hi(framepiccmd)
   JSR OSCLI
-
-  ; Page in roomdata sideways RAM
-  PAGE_ROOMDATA
 
   ; Re-draw the room
   LDA #52:JSR roomsetup
