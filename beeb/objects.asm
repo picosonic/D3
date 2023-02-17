@@ -788,8 +788,10 @@ noofmoving = (endofmovingdata-movingdata)/movingsize
 
   LDY #movefrm:LDA (zptr4), Y
   CMP #SPR_SHOPKEEPER
-  BEQ done ; TODO - Remove
-  ; TODO - BEQ inventoryrou ;;; shopkeeper
+  BNE notshopkeeper
+  JMP inventoryrou ;;; shopkeeper
+
+.notshopkeeper
 
   CMP #SPR_BAG
   BEQ pickingupbag
