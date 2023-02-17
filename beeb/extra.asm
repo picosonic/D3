@@ -227,7 +227,7 @@ INCLUDE "hearts.asm"
   STA objectscarried+3
   STA objectscarried+4
 
-  LDA #OBJ_BAG:STA objectscarried+2 ; Bag
+  LDA #OBJ_BAG:STA objectscarried+2 ; Bag (used as EOF)
   LDA #OBJ_APPLE:STA objectscarried ; Apple
 
   RTS

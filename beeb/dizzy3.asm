@@ -315,10 +315,7 @@ INCLUDE "gfx.asm"
 ; A = object (output)
 .whatinslot
 {
-  LDA #hi(objectscarried):STA zptr6+1
-  LDA #lo(objectscarried):STA zptr6
-
-  LDA (zptr6), Y
+  LDA objectscarried, Y
 
   RTS
 }
@@ -412,7 +409,7 @@ INCLUDE "gfx.asm"
 
 .tryputtingdown1
   LDA #&01:STA tryputdownvar
-.inventoryrou
+.^inventoryrou
   LDA #&01:STA dontupdatedizzy ; Stop Dizzy being drawn
 
   ; Resize inventory box depending on bag size
@@ -425,7 +422,7 @@ INCLUDE "gfx.asm"
   JSR prtmessage
 
   ; Change loop count depending on bag size
-  LDA bag:AND #SPR_BAG
+  LDA bag:AND #OBJ_BAG
   ASL A:CLC:ADC #&02
   STA distdownmenu1+1
 

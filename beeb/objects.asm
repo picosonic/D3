@@ -803,12 +803,34 @@ noofmoving = (endofmovingdata-movingdata)/movingsize
   JMP talkingtopeople
 
 .notpickingupbag
+  LDY #&00
 .lookforslot
+  LDA objectscarried, Y
+  CMP #OBJ_BAG:BEQ noslotsleft ;;; end of carry list
+  CMP #&00:BEQ gotslot ; found an empty slot
+  INY:CLC:BCC lookforslot ; try next slot, this one is occupied
+
 .gotslot
+  CPY #&00:BEQ nomovingback ; if this is the first slot (empty bag), don't re-organise bag
+
+.gotslotlp
+  DEY:LDA objectscarried, Y ; Load object in previous slot
+  INY:STA objectscarried, Y ; Store object in current slot
+  CPY #&01:BEQ defragdone ; We've made a space at front of bag
+  DEY
+  CPY #&00:BNE gotslotlp
+.defragdone
 
 .nomovingback
+  LDA slotno ; put picked up item at front of list
+  STA objectscarried
+
 .backtoinvent
-.noslotleft
+  LDY #room:LDA #OFFMAP:STA (zptr4), Y ; Remove picked up object from room
+  JMP inventoryrou
+
+.noslotsleft
+  ; TODO - when inventory is full, cycle it
 
 .done
   RTS
