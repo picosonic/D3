@@ -776,6 +776,52 @@ noofmoving = (endofmovingdata-movingdata)/movingsize
   RTS
 }
 
+; OUT : zptr4 points to movindata[objecttodrop]
+.gettomovingdata
+{
+  ; Point to start of objects
+  LDA #lo(movingdata):STA zptr4
+  LDA #hi(movingdata):STA zptr4+1
+
+  ; Iterate to correct one
+  LDX #&00
+.objectlp
+  CPX objecttodrop:BEQ foundobject ; Is this the one?
+
+  ; Advance to next object
+  LDA zptr4:CLC:ADC #movingsize:STA zptr4
+  BCC samepage
+  INC zptr4+1
+.samepage
+
+  INX:CPX #noofmoving:BNE objectlp ; Loop until found or EOF
+
+.foundobject
+  RTS
+}
+
+; IN : objecttodrop = index of object to drop
+.dropobject
+{
+  ; Point to correct object
+  JSR gettomovingdata
+
+  ; Store current room against object
+  LDY #room:LDA roomno:STA (zptr4), Y
+
+  ; Store Dizzy X position against object
+  ;LDA x:AND %11111110:CLC:ADC #34
+  LDA dizzyx ; TODO - REMOVE
+  LDY #movex:STA (zptr4), Y
+
+  ; Store Dizzy Y position against object
+  ;LDA y:AND %11111000:SEC:SBC #8
+  LDA dizzyy ; TODO - REMOVE
+  LDY #movey:STA (zptr4), Y
+
+  RTS
+}
+
 ; zptr4 = current object
 .pickupablerou
 {
@@ -832,7 +878,15 @@ noofmoving = (endofmovingdata-movingdata)/movingsize
   JMP inventoryrou
 
 .noslotsleft
-  ; TODO - when inventory is full, cycle it
+  ; When inventory is full, cycle it
+  ; Drop the item picked up least recently
+  DEY:LDA objectscarried, Y:STA objecttodrop
+  TYA:PHA:LDA zptr4:PHA:LDA zptr4+1:PHA
+  JSR dropobject
+  PLA:STA zptr4+1:PLA:STA zptr4:PLA:TAY
+
+  LDA #&01:STA toomuchtohold
+  BNE gotslot ; Shuffle everything in bag to make empty slot first
 
 .done
   RTS
@@ -1613,7 +1667,7 @@ turnonfullbucket = movingsize+room
 
   LDX #&00
 .domovinglp
-  STX slotno ; Cache object slot incase it gets picked up
+  STX slotno ; Cache object slot incase it gets overwritten
 
   ; Check we are in the right room for this object
   LDY #room:LDA (zptr4), Y:CMP roomno:BNE notinthisroom
@@ -1629,6 +1683,8 @@ turnonfullbucket = movingsize+room
   LDA #lo(movingrous):STA zptr5
   LDA #hi(movingrous):STA zptr5+1
   JSR jumptoroutine
+
+  LDX slotno ; Restore object slot
 
 .notinthisroom
 
