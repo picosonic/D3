@@ -143,7 +143,7 @@ INCLUDE "gfx.asm"
   JSR updateflames
 
   ; JSR checkholdinghole
-  ; JSR checkifdrunk
+  JSR checkifdrunk
   ; JSR shopkeeperrou
 
 .wantaquickkill

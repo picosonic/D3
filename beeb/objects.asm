@@ -1417,6 +1417,19 @@ dylantalking = duffmem
 
 machinesrou = rethere
 resetportswitch = resetmachines
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;DRUNK
+.checkifdrunk
+{
+  ; Check if Dizzy is drunk
+  LDA drunk:BEQ done
+
+  ; Yes, he's drunk, so decrement drunkeness
+  SEC:SBC #&01
+  STA drunk
+
+.done
+  RTS
+}
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;FILL BUCKET
 turnonfullbucket = movingsize+room
 
@@ -1427,7 +1440,7 @@ turnonfullbucket = movingsize+room
   EQUB 4,16 ;;;w,h
 
 .proxmtbucketrou
-  LDY #room:LDA #&FF:STA (zptr4), Y ; Hide empty bucket
+  LDY #room:LDA #OFFMAP:STA (zptr4), Y ; Hide empty bucket
   LDY #turnonfullbucket:LDA #60:STA (zptr4), Y ; Show full bucket
 
   LDA #STR_fillbucketmess:JSR findroomstr
@@ -1441,7 +1454,7 @@ turnonfullbucket = movingsize+room
   EQUB 8,16 ;;;w,h
 
 .proxfullbucketrou
-  LDY #room:LDA #&FF:STA (zptr4), Y ; Hide full bucket
+  LDY #room:LDA #OFFMAP:STA (zptr4), Y ; Hide full bucket
 
   ; Move Dizzy to the left
   LDA x:SEC:SBC #10:STA x

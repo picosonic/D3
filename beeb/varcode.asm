@@ -148,7 +148,7 @@
   BEQ notburnt
 
   LDA #STR_killedbyflame:STA deathmsg
-  LDA #&01:STA killed
+  LDA #&01:STA killed ; TODO - remove
   ;JSR killdizzy1
 
   endif
