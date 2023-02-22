@@ -1427,6 +1427,26 @@ resetportswitch = resetmachines
   SEC:SBC #&01
   STA drunk
 
+  ; Check if divisible by 64 (frames?)
+  AND #%00111111:BNE done
+
+  ; Check which animation sequence we are currently running
+  LDA sequence
+  CMP #&03 ; Are we walking left/right or still? -> Fall over
+  BCC fallover
+
+  INC drunk
+  RTS
+
+.fallover
+  JSR random:AND #&01 ; 50/50 chance for direction to go in
+  PHA
+  LDA #&00:STA dy
+  LDA #&01:STA animation
+  PLA:PHA ; TODO - :STA right
+  EOR #&01 ; TODO - :STA left
+  PLA:CLC:ADC #&04:STA sequence ; Jump/tumble left or right
+
 .done
   RTS
 }
