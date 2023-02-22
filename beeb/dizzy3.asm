@@ -338,6 +338,11 @@ INCLUDE "gfx.asm"
   LDA #hi(movingdata+oldmovex):STA zptr4+1
   LDA #lo(movingdata+oldmovex):STA zptr4
 
+  ; If it's the bag (EOF), position further down
+  CPX #OBJ_BAG:BNE notbag
+  LDA messy:CLC:ADC #&04:STA messy
+.notbag
+
 .findslot
   ; Advance to next object
   LDA zptr4:CLC:ADC #movingsize:STA zptr4
@@ -390,17 +395,22 @@ INCLUDE "gfx.asm"
 }
 
 .proxpicture
+{
   EQUB 52      ;; room
   EQUB 62, 104 ;; x, y
   EQUB 5, 16   ;; w, h
+
 .proxpicturerou
   PLA:PLA ; Prevent inventory appearing
   JMP dotreasurepic
+}
 
 .tryputtingdown
 {
   ; Do nothing if we're not allowed to pickup
-  LDA pickup:BEQ done
+  LDA pickup:BNE ready
+  RTS
+.ready
 
   ; Check proximity box for painting
   LDA #hi(proxpicture):STA zptr6+1
@@ -435,6 +445,8 @@ INCLUDE "gfx.asm"
 .distdownmenu1
   CPY #1 ; 2+bag*2
   BNE printwhatcarrying
+
+  JSR printcarryingline ; TODO - temporary to show "EXIT AND DON'T DROP"
 
   ; If first item is empty, then nothing being carried
   LDA objectscarried
