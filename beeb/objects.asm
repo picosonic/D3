@@ -1445,7 +1445,7 @@ resetportswitch = resetmachines
   LDA #&01:STA animation
   PLA:PHA ; TODO - :STA right
   EOR #&01 ; TODO - :STA left
-  PLA:CLC:ADC #&04:STA sequence ; Jump/tumble left or right
+  PLA:CLC:ADC #&04:STA sequence ; Tumble left or right
 
 .done
   RTS
