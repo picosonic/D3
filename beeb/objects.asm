@@ -933,30 +933,75 @@ resetswitch1 = printmoving
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;PORTCULLIS HERE
 .resetportcullis
 {
-  LDY #var1:LDA (zptr4), Y
+  LDA porthere+var1
   BNE resetrope1
+
 .resetrope
-  LDA #&00:STA (zptr4), Y
-  LDY #oldmovey:LDA (zptr4), Y
-  LDY #movey:STA (zptr4), Y
+  LDA #&00:STA porthere+var1
+  LDA porthere+oldmovey:STA porthere+movey
+
 .resetrope1
   LDA #96:STA ztmp7 ; portcullis.origy
-  LDY #movey:LDA (zptr4), Y
+  LDA porthere+movey:PHA
   DEC ztmp7:DEC ztmp7
-  LDA ztmp7:STA (zptr4), Y
+  LDA ztmp7:STA porthere+movey
+  PLA
+  
 .drawropedownlp
+  PHA
   INC ztmp7:INC ztmp7
-  LDA ztmp7:STA (zptr4), Y
+  LDA ztmp7:STA porthere+movey
   JSR printmoving
-  LDY #movey:LDA (zptr4), Y
-  CMP ztmp7
+  PLA
+  CMP porthere+movey
   BNE drawropedownlp
+
+  RTS
+}
+
+; Negate object.var1
+;
+; IN object pointer in zptr4
+.negvar1
+{
+  LDY #var1
+
+  LDA (zptr4), Y
+  EOR #&FF:CLC:ADC #&01
+  STA (zptr4), Y
+
   RTS
 }
 
 .portcullisrou
 {
-  ; TODO
+  LDY #var1:LDA (zptr4), Y:BEQ done
+
+  LDY #movey:CLC:ADC (zptr4), Y:STA (zptr4), Y
+  LDY #oldmovex:CMP (zptr4), Y
+  BEQ turnportcullisplusdelay
+
+  LDY #oldmovey:CMP (zptr4), Y
+  BNE notturnportcullis
+
+  LDY #delay:LDA #&04:STA (zptr4), Y
+
+.turnportcullis
+  JSR negvar1
+.notturnportcullis
+  JSR printmoving
+  JSR collidewithdizzy16
+  BEQ done
+
+  LDA #STR_killedbyportcullis:STA deathmsg ; Set death message to show
+  LDA #&01:STA killed ; Set Dizzy as killed
+  BNE done
+
+.turnportcullisplusdelay
+  LDY #delay:LDA #&00:STA (zptr4), Y
+  BEQ turnportcullis
+
+.done
   RTS
 }
 
@@ -1121,19 +1166,22 @@ dylantalking = duffmem
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;DOUG ROU
 .dougrou
+{
   LDA #STR_goonmysonmess:JSR findroomstr
   JMP windowrou
-
+}
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;DYLAN ROU
 .dylanrou
+{
   LDA #STR_trancemess:JSR findroomstr
   JMP windowrou
-
+}
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;DENZIL ROU
 .denzilrou
+{
   LDA #STR_stereoess:JSR findroomstr
   JMP windowrou
-
+}
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ; Proximity locations, when dropping things, to know how to interact

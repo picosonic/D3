@@ -588,7 +588,6 @@ INCBIN "rooms/room50.bin"
 EQUW roomdata-room51 ; 0
 EQUW roomname-room51 ; 1
 EQUW throwswitchmess-room51 ; 2
-EQUW killedbyportcullis-room51 ; 3
 
 .roomname
 EQUB "MOAT:AND:PORTCULLIS:", PRT_END
@@ -598,12 +597,6 @@ EQUB PRT_PEN+7,PRT_XY+2,48,PRT_DRAWBOX,15,5,PRT_PEN+3
 EQUB PRT_XY+8,72,"YOU:THROW:THE"
 EQUB PRT_XY+8,80,"LEVER:TO:;ON;"
 EQUB PRT_XY+8,88,"BUT:IT:BREAKS",PRT_END
-
-.killedbyportcullis
-EQUB PRT_XY+16,88,"YOU:WERE:STABBED"
-EQUB PRT_XY+16,96,"BY:THE:SPIKES:OF"
-EQUB PRT_XY+18,104,"THE:PORTCULLIS"
-EQUB PRT_END
 
 .roomdata
 INCBIN "rooms/room51.bin"
@@ -1382,10 +1375,11 @@ EQUW killedbyflame-room101 ; 4
 EQUW killedbywater-room101 ; 5
 EQUW killedbydaggersmess-room101 ; 6
 EQUW croceatenmess-room101 ; 7
-EQUW obstructingliftmess-room101 ; 8
-EQUW dropwhiskeymess-room101 ; 9
-EQUW holdingholemess-room101 ; 10
-EQUW youfoundcoinmess-room101 ; 11
+EQUW killedbyportcullis-room101 ; 8
+EQUW obstructingliftmess-room101 ; 9
+EQUW dropwhiskeymess-room101 ; 10
+EQUW holdingholemess-room101 ; 11
+EQUW youfoundcoinmess-room101 ; 12
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -1422,6 +1416,12 @@ EQUB PRT_END
 .croceatenmess
 EQUB PRT_XY+19,88,"THE:GATOR:HAS"
 EQUB PRT_XY+19,100,"YOU:FOR:LUNCH"
+EQUB PRT_END
+
+.killedbyportcullis
+EQUB PRT_XY+16,88,"YOU:WERE:STABBED"
+EQUB PRT_XY+16,96,"BY:THE:SPIKES:OF"
+EQUB PRT_XY+18,104,"THE:PORTCULLIS"
 EQUB PRT_END
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;Generic messages
