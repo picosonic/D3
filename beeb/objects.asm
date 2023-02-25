@@ -90,6 +90,7 @@ OBJ_PORTCULLIS = 2
 ; MOAT AND PORTCULLIS
 OBJ_SWITCH = 3
 
+.portswitchhere
  EQUB 51,portswitch,66 ,78 ,SPR_SWITCH,0   ,0   ,0   ,0  ,0 ,0 ,PAL_CYAN+ATTR_NOTSOLID
  ;EQUB 51 ,66 ,78 ,SPR_SWITCH
 
@@ -941,16 +942,14 @@ resetswitch1 = printmoving
   LDA porthere+oldmovey:STA porthere+movey
 
 .resetrope1
-  LDA #96:STA ztmp7 ; portcullis.origy
-  LDA porthere+movey:PHA
-  DEC ztmp7:DEC ztmp7
-  LDA ztmp7:STA porthere+movey
-  PLA
+  LDA porthere+movey:PHA ; Cache current
+  LDA #96-2:STA porthere+movey ; portcullis.origy-2
+  PLA ; Restore previous
   
 .drawropedownlp
   PHA
-  INC ztmp7:INC ztmp7
-  LDA ztmp7:STA porthere+movey
+  INC porthere+movey
+  INC porthere+movey
   JSR printmoving
   PLA
   CMP porthere+movey
@@ -975,16 +974,17 @@ resetswitch1 = printmoving
 
 .portcullisrou
 {
-  LDY #var1:LDA (zptr4), Y:BEQ done
+  LDA porthere+var1:BEQ done
 
-  LDY #movey:CLC:ADC (zptr4), Y:STA (zptr4), Y
-  LDY #oldmovex:CMP (zptr4), Y
+  CLC:ADC porthere+movey:STA porthere+movey
+  CMP porthere+oldmovex
   BEQ turnportcullisplusdelay
 
-  LDY #oldmovey:CMP (zptr4), Y
+  CMP porthere+oldmovey
   BNE notturnportcullis
 
-  LDY #delay:LDA #&04:STA (zptr4), Y
+  ; Raising portcullis delay
+  LDA #&04:STA porthere+delay
 
 .turnportcullis
   JSR negvar1
@@ -998,8 +998,9 @@ resetswitch1 = printmoving
   BNE done
 
 .turnportcullisplusdelay
-  LDY #delay:LDA #&00:STA (zptr4), Y
-  BEQ turnportcullis
+  ; Lowering portcullis delay
+  LDA #&01:STA porthere+delay
+  BNE turnportcullis
 
 .done
   RTS
@@ -1014,8 +1015,8 @@ resetswitch1 = printmoving
   JSR collidewithdizzy16
   BEQ done
 
-  ; Check if var1 is set, if so end now
-  LDY #var1:LDA (zptr4), Y:BNE done
+  ; Check if var1 is set (already switched), if so end now
+  LDA portswitchhere+var1:BNE done
 
   ; Disable further interaction
   LDA #&00:STA pickup
@@ -1024,10 +1025,10 @@ resetswitch1 = printmoving
   LDA #&FE:STA porthere+var1 ; -2
 
   ; Set portcullis animation delay
-  LDA #&02:STA porthere+delay
+  LDA #&06:STA porthere+delay
 
-  ; Flag as used
-  LDY #var1:LDA #&01:STA (zptr4), Y
+  ; Flag switch as used
+  LDA #&01:STA portswitchhere+var1
 
   ; Display switch message
   LDA #STR_throwswitchmess:JSR findroomstr
