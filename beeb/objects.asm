@@ -966,7 +966,7 @@ resetswitch1 = printmoving
   LDY #var1
 
   LDA (zptr4), Y
-  EOR #&FF:CLC:ADC #&01
+  NEGATEACC
   STA (zptr4), Y
 
   RTS
@@ -1228,7 +1228,8 @@ dylantalking = duffmem
   CLC:ADC #&06:STA waterheight
 
   ; Place the rock in the water (from right to left) to displace water
-  EOR &FF:CLC:ADC #&76
+  NEGATEACC
+  ADC #&76
   LDY #movex:STA (zptr4), Y
   LDY #movey:LDA #176:STA (zptr4), Y
 
