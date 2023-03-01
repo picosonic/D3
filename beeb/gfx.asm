@@ -880,7 +880,7 @@ PAL_DIZZY2 = $02
   EQUB 0
 .^messy
   EQUB 0
-.messpen
+.^messpen
   EQUB 0
 .messplot
   EQUB 0
