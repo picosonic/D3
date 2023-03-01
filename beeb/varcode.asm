@@ -185,7 +185,7 @@
   LDA roomno:CMP #48:BNE normalwater
 
   LDA waterheight
-  EOR #&FF:CLC:ADC #1+168
+  EOR #&FF:CLC:ADC #1+168 ; Negate then add 168
   STA frmy
 
   LDA #3:STA ztmp7

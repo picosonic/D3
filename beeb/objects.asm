@@ -1369,7 +1369,7 @@ dylantalking = duffmem
 .logup
   STA ripple+2
   LDA waterheight
-  EOR #&FF
+  NEGATEACC
 .ripple
   CLC:ADC #&00
   CLC:ADC #162
