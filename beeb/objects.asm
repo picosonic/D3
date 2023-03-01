@@ -899,8 +899,7 @@ noofmoving = (endofmovingdata-movingdata)/movingsize
 
 .pickupmanure
   LDA manurehere+var1:BEQ yuck ; See if message already shown
-  ; TODO - JMP tryputtingdown1
-  BNE done ; TODO - Remove
+  JMP tryputtingdown1
 .yuck
   LDA #&01:STA manurehere+var1 ; Note that attempt was made to pick it up
 

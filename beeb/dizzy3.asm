@@ -417,7 +417,7 @@ INCLUDE "gfx.asm"
   LDA #lo(proxpicture):STA zptr6
   JSR checkproximity1
 
-.tryputtingdown1
+.^tryputtingdown1
   LDA #&01:STA tryputdownvar
 .^inventoryrou
   LDA #&01:STA dontupdatedizzy ; Stop Dizzy being drawn
