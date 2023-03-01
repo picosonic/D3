@@ -1,0 +1,11 @@
+Write BASIC, tokenise it to binary
+
+Append EOF token pair
+
+  0x0d 0xff
+
+Leave a gap if required (for BASIC scratch space)
+
+Make a note of the offset from load address to code/data
+
+Append code/data
