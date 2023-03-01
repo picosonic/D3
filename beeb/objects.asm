@@ -1229,7 +1229,7 @@ dylantalking = duffmem
 
   ; Place the rock in the water (from right to left) to displace water
   NEGATEACC
-  ADC #&76
+  ADC #76
   LDY #movex:STA (zptr4), Y
   LDY #movey:LDA #176:STA (zptr4), Y
 
