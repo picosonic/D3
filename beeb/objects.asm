@@ -8,8 +8,8 @@ movey = 3 ; Current Y position
 movefrm = 4 ; Current sprite/frame id
 oldmovex = 5
 oldmovey = 6
-oldmovefrm = 7
-delay = 8 ; If non-zero, is the number of steps to delay for
+oldmovefrm = 7 ; / proximity low
+delay = 8 ; If non-zero, is the number of steps to delay for / proximity high
 delaycounter = 9 ; Counts from 0 to delay, then resets to 0
 var1 = 10
 colour = 11 ; Colour for whole object when drawn
@@ -777,6 +777,7 @@ noofmoving = (endofmovingdata-movingdata)/movingsize
   RTS
 }
 
+; IN : objecttodrop
 ; OUT : zptr4 points to movindata[objecttodrop]
 .gettomovingdata
 {

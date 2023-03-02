@@ -198,8 +198,8 @@ GUARD ENVELOPE_DEFS
 .usepickup EQUB 0
 .pickup EQUB 0 ; Flag to say if we can pickup/drop objects
 .toomuchtohold EQUB 0
-.objecttodrop EQUB 0
-.cyclecolour EQUB 0
+.objecttodrop EQUB 0 ; The id of object to be dropped
+.cyclecolour EQUB 0 ; Used when colouring selected inventory item, 0..7
 .tryputdownvar EQUB 0
 .obstructinglift EQUB 0
 .drunk EQUB 0

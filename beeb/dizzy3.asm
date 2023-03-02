@@ -137,7 +137,7 @@ INCLUDE "gfx.asm"
 
 .afterdomoving
   JSR pickupcoins
-  JSR tryputtingdown
+  JSR tryputtingdown ; Put object down / Inventory
 
   JSR updatewater
   JSR updateflames
@@ -313,25 +313,25 @@ INCLUDE "gfx.asm"
 
 ; Y = slot (input)
 ; A = object (output)
-.whatinslot
-{
+MACRO WHATINSLOT
   LDA objectscarried, Y
-
-  RTS
-}
+ENDMACRO
 
 ; Y = number down menu list
 .printcarryingline
 {
   ; Position cursor
   TYA:ASL A:ASL A:ASL A ; YPOS = (8*Y)+80
-  CLC:ADC #88:STA messy
+  CLC:ADC #80
+  LDX bag:BNE baginvent:ADC #8 ; Small bag needs text pushing down a bit more
+.baginvent
+  STA messy
   LDA #12:STA messx ; XPOS = 12
 
   ; See what's in slot inventory[y]
   LDA #hi(nothingheremess):STA zptr5+1
   LDA #lo(nothingheremess):STA zptr5
-  JSR whatinslot:TAX
+  WHATINSLOT:TAX
   BEQ justprint
 
   ; It's not empty, so look up object name
@@ -358,6 +358,25 @@ INCLUDE "gfx.asm"
 
 .justprint
   JMP prtmessage
+}
+
+; zptr4 = object
+.checkproximity
+{
+  ; Check for null object pointer (set by whiskey)
+  LDA zptr4:ORA zptr4+1:BNE notnull
+.done
+  RTS
+.notnull
+
+  ; Load proximity for object
+  LDY #oldmovefrm:LDA (zptr4), Y:STA zptr6
+  LDY #delay:LDA (zptr4), Y:STA zptr6+1
+
+  ; Check for null proximity pointer
+  ORA zptr6:BEQ done
+
+  ; Fall through
 }
 
 ; zptr6 = proximitydata
@@ -432,21 +451,20 @@ INCLUDE "gfx.asm"
   JSR prtmessage
 
   ; Change loop count depending on bag size
-  LDA bag:AND #OBJ_BAG
+  LDA bag:AND #&01
   ASL A:CLC:ADC #&02
+  STA distdownmenu+1
   STA distdownmenu1+1
 
   LDY #&00
 .printwhatcarrying
-  TYA:PHA
-  JSR printcarryingline
-  PLA:TAY
+  TYA:PHA:JSR printcarryingline:PLA:TAY
   INY
 .distdownmenu1
   CPY #1 ; 2+bag*2
-  BNE printwhatcarrying
+  BCC printwhatcarrying
 
-  JSR printcarryingline ; TODO - temporary to show "EXIT AND DON'T DROP"
+  ;JSR printcarryingline ; TODO - temporary to show "EXIT AND DON'T DROP"
 
   ; If first item is empty, then nothing being carried
   LDA objectscarried
@@ -469,9 +487,85 @@ INCLUDE "gfx.asm"
 .gottoomuchpointer
   JSR prtmessage
 
-  ;;;;;;;;;;;;;;;;;;;;
-  JSR handoffandwait ; Wait for new key press  
-  ;;;;;;;;;;;;;;;;;;;;
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+  ; Allow navigating up/down inventory to choose what to drop
+  LDY #&00 ; Start with first line highlighted (when not picking up)
+
+  LDA tryputdownvar:CMP #&01:BEQ notempty
+  LDY distdownmenu+1 ; Select last item when picking up
+.notempty
+
+.chooseobjecttodrop
+  STY objecttodrop ; cache selection
+.flywait
+  TYA:PHA:JSR waitvsync:PLA:TAY
+
+  ; Change colour of highlighted item
+  INC cyclecolour:LDA cyclecolour:AND #&07:STA cyclecolour
+  STA messpen
+  BNE notblack:INC messpen:INC messpen ; Don't draw black text on black background
+.notblack
+  TYA:PHA:JSR printcarryingline:PLA:TAY
+
+  ; See if ENTER has been pressed
+  LDA keys:AND #PAD_FIRE:BNE tryingtodrop
+
+  ; See if inventory is empty
+  LDA objectscarried:BEQ notdownmenu
+
+.notchingdown
+  CPY #&00:BEQ notupmenu
+
+  ; See if UP pressed
+  LDA keys:AND #PAD_UP:BEQ notupmenu
+; yesupmenu
+  DEY
+.notupmenu
+
+.distdownmenu
+  CPY #1 ; 2+bag*2
+  BEQ notdownmenu
+
+  ; See if DOWN pressed
+  LDA keys:AND #PAD_DOWN:BEQ notdownmenu
+; yesdownmenu
+  INY
+.notdownmenu
+  CPY objecttodrop:BEQ chooseobjecttodrop ; If selection hasn't changed, go round again
+
+  ; Selection changed, so draw previous item without highlight
+  LDA #PAL_RED:STA messpen
+  TYA:PHA:LDY objecttodrop:JSR printcarryingline:PLA:TAY
+  JMP chooseobjecttodrop ; go round again
+
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+  ; Something has been chosen
+.tryingtodrop
+  LDA objectscarried, Y:STA objecttodrop ; Record selected item
+  JSR gettomovingdata ; Point to it
+
+  ; See if it's the whiskey
+  LDA objecttodrop:CMP #OBJ_WHISKEYBOTTLE:BNE notwhiskey
+  TYA:PHA:JSR droppingwhiskey:PLA:TAY
+.notwhiskey
+  ; If BAG (EOF) selected, then just exit
+  LDA objecttodrop:CMP #OBJ_BAG:BEQ justexitinvent
+
+  ; Shuffle down anything from next slot onwards
+.sufflelp
+  INY
+  LDA objectscarried, Y:CMP #OBJ_BAG:BEQ justexitinvent1 ; Is this the bag?
+  STA objectscarried-1, Y ; Store it in previous slot
+  JMP sufflelp
+
+.justexitinvent1
+  LDA #&00:STA objectscarried-1, Y ; Empty inventory slot
+  JSR dropobject
+
+  ;CHECK DROPPING OBJECT BY TRIGGER
+  JSR checkproximity ; zptr4 is set up by dropobject()
 
 .justexitinvent
   JSR resetuproom ; Draw the room again
@@ -480,6 +574,35 @@ INCLUDE "gfx.asm"
   STA tryputdownvar
   STA dontupdatedizzy ; Allow Dizzy to be drawn
   STA toomuchtohold
+
+.done
+  RTS
+}
+
+; Make Dizzy drunk
+.droppingwhiskey
+{
+  ; Check if drank already
+  LDY #var1:LDA (zptr4), Y:BNE done
+  LDA #&01:STA (zptr4), Y ; Set as drank
+
+  ; Change name of object to "AN EMPTY BOTTLE"
+  LDY #oldmovex:LDA #lo(emptybottlemess):STA (zptr4), Y
+  LDY #oldmovey:LDA #hi(emptybottlemess):STA (zptr4), Y
+
+  ; Set Dizzy as drunk
+  LDA #&FF:STA drunk
+
+  ; Report that Dizzy is now drunk
+  LDA roomno:PHA:LDA #ROOM_STRINGS:STA roomno
+  LDA #STR_dropwhiskeymess:JSR findroomstr
+  PLA:STA roomno
+  JSR prtmessage
+
+  LDA #&FF:STA pickup
+
+  ; Wait for no keypress, then keypress
+  JMP handoffandwait
 
 .done
   RTS
