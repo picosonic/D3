@@ -1194,6 +1194,7 @@ dylantalking = duffmem
   EQUB 4,16 ;;;w,h
 
 .proxapplerou
+  ; Make apple disappear
   LDY #movex:LDA #&FF:STA (zptr4), Y
 
   LDA #STR_trollgotapplemess:JSR findroomstr
@@ -1399,8 +1400,7 @@ dylantalking = duffmem
   LDA (liftptr), Y:ORA #&01:STA (liftptr), Y
 
   ; Show message about turning machine on with key
-  LDA #STR_keyinmachine
-  JSR findroomstr
+  LDA #STR_keyinmachine:JSR findroomstr
 
   JMP windowrou
 }
@@ -1632,8 +1632,8 @@ turnonfullbucket = movingsize+room
 .proxloafrou
   LDY #movex:LDA (zptr4), Y
 
-  CLC:ADC #&02
-  STA ratcoll+1
+  ; Store loaf position for rat to test against
+  CLC:ADC #&02:STA ratcoll+1
 
   RTS
 }
