@@ -1196,7 +1196,7 @@ dylantalking = duffmem
 .proxapplerou
   LDY #movex:LDA #&FF:STA (zptr4), Y
 
-  LDA #STR_trollgotapplemess
+  LDA #STR_trollgotapplemess:JSR findroomstr
   JMP chatter
 }
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;EGG IN NEST
