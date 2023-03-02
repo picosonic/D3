@@ -1500,6 +1500,34 @@ resetportswitch = resetmachines
 .done
   RTS
 }
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;BLACK HOLE
+.checkholdinghole
+{
+  ; See if it's the first item in inventory
+  LDA objectscarried:CMP #OBJ_BLACKHOLE:BEQ found
+.done
+  RTS
+.found
+
+  ; Drop everything
+  LDY #&00
+.droplp
+  LDA objectscarried, Y:CMP #OBJ_BAG:BEQ enddrop
+
+  STA objecttodrop
+
+  TYA:PHA:JSR dropobject:PLA:TAY
+
+  LDA #&00:STA objectscarried, Y
+  INY:JMP droplp
+.enddrop
+
+  LDA roomno:PHA:LDA #ROOM_STRINGS:STA roomno
+  LDA #STR_holdingholemess:JSR findroomstr
+  PLA:STA roomno
+
+  JMP windowrou
+}
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;FILL BUCKET
 turnonfullbucket = movingsize+room
 

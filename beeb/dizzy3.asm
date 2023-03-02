@@ -143,7 +143,7 @@ INCLUDE "gfx.asm"
   JSR updatewater
   JSR updateflames
 
-  ; JSR checkholdinghole
+  JSR checkholdinghole
   JSR checkifdrunk
   ; JSR shopkeeperrou
 
