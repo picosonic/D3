@@ -99,6 +99,7 @@ INCLUDE "gfx.asm"
   LDA #STARTROOM:STA startroom ; THE CASTLE'S DUNGEON
 
   LDA #&00:STA completedgame
+  STA objcollide
 
 .^nextlife
   JSR subfromlives
@@ -565,6 +566,7 @@ ENDMACRO
   JSR dropobject
 
   ;CHECK DROPPING OBJECT BY TRIGGER
+  LDA #&01:STA objcollide
   JSR checkproximity ; zptr4 is set up by dropobject()
 
 .justexitinvent
@@ -665,7 +667,10 @@ ENDMACRO
 ; return a = 0 when no collision
 .collidewithdizzy3
 {
+  LDA objcollide:BNE allowprox
   LDA dontupdatedizzy:BNE skipthis
+.allowprox
+  LDA #&00:STA objcollide
   LDA killed:BNE skipthis
 
   LDA dizzyx:CLC:ADC #eggwidth ; calculate right diz

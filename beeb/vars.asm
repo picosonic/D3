@@ -215,6 +215,7 @@ GUARD ENVELOPE_DEFS
 .deadmess EQUB 0
 .implode EQUB 0
 .startroom EQUB 0 ; Starting room id
+.objcollide EQUB 0 ; Allow proximity collision detection to work
 
 ; Collision box
 .cx EQUB 0
