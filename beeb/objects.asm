@@ -66,7 +66,7 @@ OBJ_HAWK = 0
 
  EQUB 49, hawk, 60, 80, SPR_HAWK0
  EQUW nothingheremess
- EQUB 0, 2, 0, 0, PAL_CYAN+PLOT_NULL
+ EQUB 0, 2, 0, 0, PAL_CYAN+PLOT_XOR
  ;EQUB 49, 60, 80, SPR_HAWK0
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -745,13 +745,11 @@ noofmoving = (endofmovingdata-movingdata)/movingsize
 ;; TEMPORARY - Placeholder empty routines
 .resetarmorog
 .resetdragon
-.resethawk
 .resetlift
   JMP printmoving ; At least draw it for now
 
 .armorogrou
 .dragonrou
-.hawkrou
 .liftrou
 .trollrou
 .daggerrou
@@ -1377,6 +1375,71 @@ dylantalking = duffmem
   LDY #movey:STA (zptr4), Y
 
   JMP printmoving
+}
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;HAWK
+.resethawk
+{
+  LDY #movey:LDA #52:STA (zptr4), Y ; Place hawk in sky
+  LDY #var1:LDA #&00:STA (zptr4), Y ; Set to flying state (not diving)
+
+  JMP joinresthawk
+}
+
+.hawkrou
+{
+  JSR printmoving
+
+  LDY #var1:LDA (zptr4), Y
+  AND #&01:BNE hawkdiving
+
+.^joinresthawk
+  LDY #oldmovefrm:LDA (zptr4), Y
+  AND #&03:BNE hawkupdown
+
+  LDA #&02
+.hawkupdown
+  CLC:ADC #96
+  LDY #movefrm:STA (zptr4), Y
+
+  LDY #oldmovefrm:LDA (zptr4), Y
+  CLC:ADC #&01
+  AND #127
+  STA (zptr4), Y
+
+  LSR A
+  CMP #32
+  BCC okhawkx
+
+  SEC:SBC #32
+  NEGATEACC
+  CLC:ADC #32
+
+.okhawkx
+  CLC:ADC #40
+  LDY #movex:STA (zptr4), Y
+  CMP #50
+  BCC nextx
+  JMP printmoving
+.nextx
+  CMP #64
+  BCS nextx2
+  JMP printmoving
+.nextx2
+
+  CLC:ADC #&02:STA cx
+  LDA #52:STA cy
+  LDA #4:STA cw
+  LDA #120:STA ch
+  JSR collidewithdizzy3:BEQ nocollide
+
+  LDY #var1:LDA #&01:STA (zptr4), Y
+  LDY #movefrm:LDA #SPR_HAWK0:STA (zptr4), Y
+
+.nocollide
+  JMP printmoving
+
+.hawkdiving
+  RTS ; TODO - remove
 }
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;KEYS
 .proxkey1
