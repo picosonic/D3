@@ -13,6 +13,15 @@ img2beeb="./img2beeb"
 exo="./exomizer"
 beebasm="beebasm"
 
+# Tool options
+verbose="-v"
+
+# When run from VSC, remove verbose as it can cause summary to be lost
+if [ "${workdir}" != "" ]
+then
+  verbose=""
+fi
+
 ##############################################################
 
 function refreshrequired()
@@ -123,25 +132,25 @@ fi
 # Build exomiser'd loader screen loader if required
 if refreshrequired EXOSCR os.asm consts.asm exomizer310decruncher.h.asm exomizer310decruncher.asm XSCR exoloader.asm
 then
-  ${beebasm} -v -i exoloader.asm
+  ${beebasm} ${verbose} -i exoloader.asm
 fi
 
 # Build melody if required
 if refreshrequired MELODY os.asm consts.asm internal.asm inkey.asm input.asm M02C1.bin M02C2.bin melody.asm
 then
-  ${beebasm} -v -i melody.asm
+  ${beebasm} ${verbose} -i melody.asm
 fi
 
 # Build speech if required
 if refreshrequired SPEECH os.asm consts.asm speech.bin speech.asm
 then
-  ${beebasm} -v -i speech.asm
+  ${beebasm} ${verbose} -i speech.asm
 fi
 
 # Build roomdata if required
 if refreshrequired RMDATA os.asm consts.asm rooms/room*.bin roomdata.asm
 then
-  ${beebasm} -v -i roomdata.asm
+  ${beebasm} ${verbose} -i roomdata.asm
 
   echo
 
@@ -164,7 +173,7 @@ fi
 # Build moredata if required
 if refreshrequired XDATA os.asm consts.asm dizzyfrm.asm moredata.asm
 then
-  ${beebasm} -v -i moredata.asm
+  ${beebasm} ${verbose} -i moredata.asm
 
   echo
 
@@ -188,7 +197,7 @@ fi
 if refreshrequired loadertok.bin loader.bas loader2.asm loader.asm
 then
   # Tokenise the BASIC
-  ${beebasm} -v -i loader.asm -do loader.ssd 2>/dev/null
+  ${beebasm} ${verbose} -i loader.asm -do loader.ssd 2>/dev/null
 
   # Determine how big the tokenised BASIC file is from DFS catalogue
   baslen=`dd if=loader.ssd bs=1 count=2 skip=268 2>/dev/null | hexdump -C | head -1 | awk '{ print $3$2 }'`
@@ -201,5 +210,5 @@ fi
 # Build main disk image if required
 if refreshrequired dizzy3.ssd os.asm inkey.asm internal.asm consts.asm vars.asm varcode.asm rooms.asm frametable.bin framedefs.bin dizzyfrm.asm input.asm rand.asm gfx.asm objects.asm extra.asm hearts.asm loadertok.bin dizzy3.asm XDATA RMDATA
 then
-  ${beebasm} -v -i dizzy3.asm -do dizzy3.ssd -opt 3 -title 'DIZZY3'
+  ${beebasm} ${verbose} -i dizzy3.asm -do dizzy3.ssd -opt 3 -title 'DIZZY3'
 fi
