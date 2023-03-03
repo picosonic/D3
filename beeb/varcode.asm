@@ -272,7 +272,7 @@
   PLA ; Recover string offset
   ASL A:TAY
   LDA zptr5:CLC:ADC (zptr6), Y:STA zptr5 ; Increment lo part of pointer
-  
+ 
   BCC samepage ; Check page for overflow
   INC zptr5+1
 

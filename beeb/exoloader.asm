@@ -12,7 +12,7 @@ INCLUDE "exomizer310decruncher.h.asm"
 ORG EXO_LOAD_ADDR
 
 .start
-{ 
+{
   ; Set displayed chars per horizontal line (64) to match Spectrum (256 pixels)
   LDA #&01:STA CRTC00
   LDA #&40:STA CRTC01

@@ -86,7 +86,7 @@ INCLUDE "hearts.asm"
   STA waterheight
   STA fireout
   STA ratcount
-  
+
   LDA #&FF
   STA shopkeepercount
 

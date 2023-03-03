@@ -15,7 +15,7 @@
   LDX #&0F:LDA #&00
 .zaproms
   STA &2A1,X:DEX:BPL zaproms
- 
+
   ; Clear zero page
   LDX #ZP_ECONET_WORKSPACE-1
 .clearzp

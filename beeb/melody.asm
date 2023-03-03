@@ -176,7 +176,7 @@ ORG EXO_LOAD_ADDR
   BMI update_melody
 
   ; Flag current melody as initialised
-  ORA #&80:STA sound_music  
+  ORA #&80:STA sound_music
 
   ; Init sound parameters
   LDA #&00
@@ -239,7 +239,7 @@ ORG EXO_LOAD_ADDR
   ; Check for control byte
   LDA sound_temp:BMI control_byte
 
-  ; Set current note timeout from current channel note length 
+  ; Set current note timeout from current channel note length
   LDA sound_notelen, X
   STA sound_note_timeout, X
 

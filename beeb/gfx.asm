@@ -298,7 +298,7 @@ PAL_DIZZY2 = $02
   LSR A:LSR A ; Divide Y by 4
   AND #&FE
   STA yjump+2 ; Store result as operand for ADC below
-  LDA zptr3+1 
+  LDA zptr3+1
 .yjump
   CLC:ADC #&00
   STA zptr3+1:STA zptr2+1
@@ -324,7 +324,7 @@ PAL_DIZZY2 = $02
   DEX
   BNE xloop
   DEC zptr3+1:DEC zptr2+1
-.nox 
+.nox
 
   ; Test for negative frmx value (i.e. crop LHS of frame when drawn)
   ;   frmx of 32 means 0 in screen coordinates, so anything less is negative
@@ -515,7 +515,7 @@ PAL_DIZZY2 = $02
   JSR frame
 
   TYA:PHA
-  
+
   ; Check for water
   LDA frmno
   CMP #SPR_WATER:BNE checkflame
@@ -700,7 +700,7 @@ PAL_DIZZY2 = $02
   LDA (zptr5), Y:STA messy:INY
   JMP prtmessage1
 
-  ; Change pen 
+  ; Change pen
 .changepen
   AND #&07:STA messpen
   JMP prtmessage1
@@ -728,9 +728,9 @@ PAL_DIZZY2 = $02
   LDY #&00      ; offset
 
   ; Print message from new location
-	JSR prtmessage1
+  JSR prtmessage1
 
-	; Continue from where we were (after gosub)
+  ; Continue from where we were (after gosub)
   PLA:TAY:INY:INY  ; offset
   PLA:STA zptr5+1  ; hi byte
   PLA:STA zptr5    ; lo byte
@@ -767,7 +767,7 @@ PAL_DIZZY2 = $02
   ;   41          41
   ;42 46 40 40 40 46 43
   ;   45          45
-  
+ 
   LDA #10:STA usepickup
 
   LDA (zptr5), Y:CLC:ADC #&02:STA ztmp5:STA messwidth:INC messwidth:INC messwidth:INY

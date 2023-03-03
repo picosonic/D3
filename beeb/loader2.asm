@@ -30,7 +30,7 @@ ALIGN &100
 
   TXA:STA SWR_PAGE, Y:DEY
   CPY #&FD:BEQ swrdone ; Stop if we've found 2 SWR
-  
+ 
 .noswryet
   INX:CPX #16:BNE findswr ; Keep looking until we get to slot 16
 

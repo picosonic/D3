@@ -945,7 +945,7 @@ resetswitch1 = printmoving
   LDA porthere+movey:PHA ; Cache current
   LDA #96-2:STA porthere+movey ; portcullis.origy-2
   PLA ; Restore previous
-  
+
 .drawropedownlp
   PHA
   INC porthere+movey

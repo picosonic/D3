@@ -113,7 +113,7 @@ INCLUDE "gfx.asm"
   STA dontupdatedizzy ; Allow Dizzy to be drawn
 
   ; Fall through into main game loop
-}  
+}
 
 .maingamelp
 {
@@ -237,7 +237,7 @@ INCLUDE "gfx.asm"
   LDA oldy:STA frmy
   LDA #PAL_WHITE:STA frmattri
   JSR drawdizzy
-  
+
 ;  LDA killed:BEQ notdeadyet
 ;
 ;  LDA sequence:CMP #6:BEQ cantstop
@@ -634,7 +634,7 @@ ENDMACRO
   ; A coin was picked up
   LDA roomno:ORA #&80:STA cointable+2, Y
   TXA:PHA:JSR addtocoins:PLA:TAX
-  
+
   ; Prevent inventory showing and show coin message instead
   LDA #&00:STA pickup
 
