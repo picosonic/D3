@@ -1392,7 +1392,7 @@ dylantalking = duffmem
 
   ; Check first if hawk is diving for Dizzy
   LDY #var1:LDA (zptr4), Y
-  AND #&01:BNE hawkdiving
+  BNE hawkdiving
 
 .^joinresthawk
   ; Advance animation frame
@@ -1424,13 +1424,13 @@ dylantalking = duffmem
 
   ; If hawk above left cloud, it can't see Dizzy
   CMP #50
-  BCC nextx
+  BCS nextx
   JMP printmoving
 
 .nextx
   ; If hawk is above right cloud, it can't see Dizzy
   CMP #64
-  BCS nextx2
+  BCC nextx2
   JMP printmoving
 .nextx2
 
