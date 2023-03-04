@@ -1387,18 +1387,21 @@ dylantalking = duffmem
 
 .hawkrou
 {
+  ; Erase hawk
   JSR printmoving
 
+  ; Check first if hawk is diving for Dizzy
   LDY #var1:LDA (zptr4), Y
   AND #&01:BNE hawkdiving
 
 .^joinresthawk
+  ; Advance animation frame
   LDY #oldmovefrm:LDA (zptr4), Y
   AND #&03:BNE hawkupdown
 
   LDA #&02
 .hawkupdown
-  CLC:ADC #96
+  CLC:ADC #SPR_HAWK0-1
   LDY #movefrm:STA (zptr4), Y
 
   LDY #oldmovefrm:LDA (zptr4), Y
@@ -1410,35 +1413,63 @@ dylantalking = duffmem
   CMP #32
   BCC okhawkx
 
+  ;Flip direction of horizontal travel
   SEC:SBC #32
   NEGATEACC
   CLC:ADC #32
 
 .okhawkx
   CLC:ADC #40
-  LDY #movex:STA (zptr4), Y
+  LDY #movex:STA (zptr4), Y ; Set new X position
+
+  ; If hawk above left cloud, it can't see Dizzy
   CMP #50
   BCC nextx
   JMP printmoving
+
 .nextx
+  ; If hawk is above right cloud, it can't see Dizzy
   CMP #64
   BCS nextx2
   JMP printmoving
 .nextx2
 
+  ; Check if Dizzy can be "seen" in narrow strip below hawk
   CLC:ADC #&02:STA cx
   LDA #52:STA cy
   LDA #4:STA cw
   LDA #120:STA ch
   JSR collidewithdizzy3:BEQ nocollide
 
-  LDY #var1:LDA #&01:STA (zptr4), Y
-  LDY #movefrm:LDA #SPR_HAWK0:STA (zptr4), Y
+  ; Hawk has seen Dizzy
+  LDY #var1:LDA #&01:STA (zptr4), Y ; Start dive
+  LDY #movefrm:LDA #SPR_HAWK0:STA (zptr4), Y ; Set sprite
 
 .nocollide
+  ; End by drawing hawk in new position/frame
   JMP printmoving
 
+  ; Hawk is diving for Dizzy
 .hawkdiving
+  LDA dizzyx
+  CLC:ADC #(32/4)
+  LDY #movex:STA (zptr4), Y
+
+  LDY #movey:LDA (zptr4), Y
+  CLC:ADC #8
+  STA (zptr4), Y
+
+  JSR printmoving
+
+  ; Check for collision with Dizzy
+  JSR collidewithdizzy16
+  BEQ done
+
+  ; Collision occured
+  LDA #STR_killedbyhawk:STA deathmsg ; Set death message to show
+  LDA #&01:STA killed ; Set Dizzy as killed
+
+.done
   RTS ; TODO - remove
 }
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;KEYS
