@@ -1452,7 +1452,6 @@ dylantalking = duffmem
   ; Hawk is diving for Dizzy
 .hawkdiving
   LDA dizzyx
-  CLC:ADC #(32/4)
   LDY #movex:STA (zptr4), Y
 
   LDY #movey:LDA (zptr4), Y
