@@ -540,16 +540,9 @@ INCBIN "rooms/room48.bin"
 {
 EQUW roomdata-room49 ; 0
 EQUW roomname-room49 ; 1
-EQUW killedbyhawk-room49 ; 2
 
 .roomname
 EQUB "::THE:GUARD:HOUSE:::", PRT_END
-
-.killedbyhawk
-EQUB PRT_XY+18,88,"THE:DIZZY:HAWK"
-EQUB PRT_XY+21,96,"SWOOPS:DOWN"
-EQUB PRT_XY+19,104,"AND:KILLS:YOU"
-EQUB PRT_END
 
 .roomdata
 INCBIN "rooms/room49.bin"
@@ -1374,12 +1367,13 @@ EQUW killedbyliftmess-room101 ; 3
 EQUW killedbyflame-room101 ; 4
 EQUW killedbywater-room101 ; 5
 EQUW killedbydaggersmess-room101 ; 6
-EQUW croceatenmess-room101 ; 7
-EQUW killedbyportcullis-room101 ; 8
-EQUW obstructingliftmess-room101 ; 9
-EQUW dropwhiskeymess-room101 ; 10
-EQUW holdingholemess-room101 ; 11
-EQUW youfoundcoinmess-room101 ; 12
+EQUW killedbyhawk-room101 ; 7
+EQUW croceatenmess-room101 ; 8
+EQUW killedbyportcullis-room101 ; 9
+EQUW obstructingliftmess-room101 ; 10
+EQUW dropwhiskeymess-room101 ; 11
+EQUW holdingholemess-room101 ; 12
+EQUW youfoundcoinmess-room101 ; 13
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -1422,6 +1416,12 @@ EQUB PRT_END
 EQUB PRT_XY+16,88,"YOU:WERE:STABBED"
 EQUB PRT_XY+16,96,"BY:THE:SPIKES:OF"
 EQUB PRT_XY+18,104,"THE:PORTCULLIS"
+EQUB PRT_END
+
+.killedbyhawk
+EQUB PRT_XY+18,88,"THE:DIZZY:HAWK"
+EQUB PRT_XY+21,96,"SWOOPS:DOWN"
+EQUB PRT_XY+19,104,"AND:KILLS:YOU"
 EQUB PRT_END
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;Generic messages

@@ -132,9 +132,6 @@ STR_pushdozymess = 4
 ; Room 48
 STR_rockinwatermess = 2
 
-; Room 49
-STR_killedbyhawk = 2
-
 ; Room 50
 STR_fedarmorog = 2
 STR_armorogkilledmess = 3
@@ -201,9 +198,10 @@ STR_killedbyliftmess = 3
 STR_killedbyflame = 4
 STR_killedbywater = 5
 STR_killedbydaggersmess = 6
-STR_croceatenmess = 7
-STR_killedbyportcullis = 8
-STR_obstructingliftmess = 9
-STR_dropwhiskeymess = 10
-STR_holdingholemess = 11
-STR_youfoundcoinmess = 12
+STR_killedbyhawk = 7
+STR_croceatenmess = 8
+STR_killedbyportcullis = 9
+STR_obstructingliftmess = 10
+STR_dropwhiskeymess = 11
+STR_holdingholemess = 12
+STR_youfoundcoinmess = 13
