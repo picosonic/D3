@@ -66,7 +66,7 @@ OBJ_HAWK = 0
 
  EQUB 49, hawk, 60, 80, SPR_HAWK0
  EQUW nothingheremess
- EQUB 0, 2, 0, 0, PAL_CYAN+PLOT_XOR
+ EQUB 0, 2, 0, 0, PAL_CYAN+PLOT_OR
  ;EQUB 49, 60, 80, SPR_HAWK0
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1388,7 +1388,7 @@ dylantalking = duffmem
 .hawkrou
 {
   ; Erase hawk
-  JSR printmoving
+  JSR rubprintmoving
 
   ; Check first if hawk is diving for Dizzy
   LDY #var1:LDA (zptr4), Y
@@ -1425,13 +1425,13 @@ dylantalking = duffmem
   ; If hawk above left cloud, it can't see Dizzy
   CMP #50
   BCS nextx
-  JMP printmoving
+  JMP printmoving ; Draw hawk above left cloud
 
 .nextx
   ; If hawk is above right cloud, it can't see Dizzy
   CMP #64
   BCC nextx2
-  JMP printmoving
+  JMP printmoving ; Draw hawk above right cloud
 .nextx2
 
   ; Check if Dizzy can be "seen" in narrow strip below hawk
@@ -1447,7 +1447,7 @@ dylantalking = duffmem
 
 .nocollide
   ; End by drawing hawk in new position/frame
-  JMP printmoving
+  JMP printmoving ; Draw hawk between clouds
 
   ; Hawk is diving for Dizzy
 .hawkdiving
@@ -1458,7 +1458,7 @@ dylantalking = duffmem
   CLC:ADC #8
   STA (zptr4), Y
 
-  JSR printmoving
+  JSR printmoving ; Draw hawk diving
 
   ; Check for collision with Dizzy
   JSR collidewithdizzy16
