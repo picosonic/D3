@@ -1737,8 +1737,70 @@ turnonfullbucket = movingsize+room
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;RAT
 .ratrou
 {
+  LDY #movex:LDA (zptr4), Y:BPL keepgoing
+  RTS
+.keepgoing
+
+  ; Rub out previous
+  JSR printmoving
+
+  ;
+  LDY #oldmovefrm:LDA (zptr4), Y
+  SEC:SBC #&01:STA (zptr4), Y
+  BEQ ratnewdir
+
+  ;
+  LDY #var1:LDA (zptr4), Y
+  LDY #movex:CLC:ADC (zptr4), Y
+  STA (zptr4), Y:PHA
+  LDA ratcount:AND #&01:BEQ notlefthandcheckrat
+  PLA:PHA
+  LDY #oldmovey:CMP (zptr4), Y:BNE notlefthandcheckrat
+  JSR ratnewdir
+
+.notlefthandcheckrat
+  PLA
+  LDY #oldmovex:CMP (zptr4), Y:BNE notrighthandcheckrat
+
+  JSR ratnewdir
+  LDA #&01:STA ratcount
+
+.notrighthandcheckrat
+  JSR printmoving
+
+  ; Check for collision with Dizzy
+  JSR collidewithdizzy16
+  BEQ ratnotgotyou
+
+  LDA #STR_ratgotyoumess:STA deathmsg ; Set death message to show
+  LDA #&01:STA killed ; Set Dizzy as killed
+  BNE done
+
+.ratnotgotyou
+  LDY #movex:STA (zptr4), Y
+
+  ; Check for collision with loaf
 .^ratcoll
   CMP #01:BNE done
+  LDA #255:STA loafhere+room
+  LDA #2:STA ratcount
+  LDY #colour:LDA (zptr4), Y:BMI ratcollok
+  JSR ratnewdir
+
+.ratcollok
+  LDY #oldmovefrm:LDA #255:STA (zptr4), Y
+  LDA #STR_thanksforloafmess:JSR findroomstr
+  JMP windowrou
+
+.ratnewdir
+  JSR random
+  AND #15
+  CLC:ADC #16
+  LDY #oldmovefrm:STA (zptr4), Y
+  LDY #colour:LDA (zptr4), Y
+  EOR #128
+  STA (zptr4), Y
+  JMP negvar1
 
 .done
   RTS

@@ -115,7 +115,6 @@ STR_throwwateronfiremess = 3
 STR_getbackintheremess = 4
 STR_goawaymess = 5
 STR_thanksforloafmess = 6
-STR_ratgotyoumess = 7
 
 ; Room 40
 STR_puteggbackmess = 2
@@ -201,7 +200,8 @@ STR_killedbydaggersmess = 6
 STR_killedbyhawk = 7
 STR_croceatenmess = 8
 STR_killedbyportcullis = 9
-STR_obstructingliftmess = 10
-STR_dropwhiskeymess = 11
-STR_holdingholemess = 12
-STR_youfoundcoinmess = 13
+STR_ratgotyoumess = 10
+STR_obstructingliftmess = 11
+STR_dropwhiskeymess = 12
+STR_holdingholemess = 13
+STR_youfoundcoinmess = 14

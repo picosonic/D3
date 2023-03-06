@@ -273,7 +273,6 @@ EQUW throwwateronfiremess-room36 ; 3
 EQUW getbackintheremess-room36 ; 4
 EQUW goawaymess-room36 ; 5
 EQUW thanksforloafmess-room36 ; 6
-EQUW ratgotyoumess-room36 ; 7
 
 .roomname
 EQUB "THE:CASTLE;S:DUNGEON", PRT_END
@@ -323,12 +322,6 @@ EQUB PRT_PEN+7,PRT_XY+2,48,PRT_DRAWBOX,18,5,PRT_PEN+3
 EQUB PRT_XY+8,72, "THE:RAVENOUS:RAT"
 EQUB PRT_XY+11,80,"EATS:THE:LOAF"
 EQUB PRT_XY+11,88,"AND:RUNS:AWAY",PRT_END
-
-.ratgotyoumess
-EQUB PRT_XY+20,88,"THE:RAT:GOES"
-EQUB PRT_XY+20,96,"STRAIGHT:FOR"
-EQUB PRT_XY+23,104,"YOUR:NECK"
-EQUB PRT_END
 
 .roomdata
 INCBIN "rooms/room36.bin"
@@ -1370,10 +1363,11 @@ EQUW killedbydaggersmess-room101 ; 6
 EQUW killedbyhawk-room101 ; 7
 EQUW croceatenmess-room101 ; 8
 EQUW killedbyportcullis-room101 ; 9
-EQUW obstructingliftmess-room101 ; 10
-EQUW dropwhiskeymess-room101 ; 11
-EQUW holdingholemess-room101 ; 12
-EQUW youfoundcoinmess-room101 ; 13
+EQUW ratgotyoumess-room101 ; 10
+EQUW obstructingliftmess-room101 ; 11
+EQUW dropwhiskeymess-room101 ; 12
+EQUW holdingholemess-room101 ; 13
+EQUW youfoundcoinmess-room101 ; 14
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -1422,6 +1416,12 @@ EQUB PRT_END
 EQUB PRT_XY+18,88,"THE:DIZZY:HAWK"
 EQUB PRT_XY+21,96,"SWOOPS:DOWN"
 EQUB PRT_XY+19,104,"AND:KILLS:YOU"
+EQUB PRT_END
+
+.ratgotyoumess
+EQUB PRT_XY+20,88,"THE:RAT:GOES"
+EQUB PRT_XY+20,96,"STRAIGHT:FOR"
+EQUB PRT_XY+23,104,"YOUR:NECK"
 EQUB PRT_END
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;Generic messages
