@@ -1382,7 +1382,8 @@ dylantalking = duffmem
   LDY #movey:LDA #52:STA (zptr4), Y ; Place hawk in sky
   LDY #var1:LDA #&00:STA (zptr4), Y ; Set to flying state (not diving)
 
-  JMP joinresthawk
+  ; Draw in initial position
+  JSR printmoving
 }
 
 .hawkrou
