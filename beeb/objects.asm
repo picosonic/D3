@@ -457,7 +457,7 @@ OBJ_BREAD = 43
 OBJ_RAT = 44
 
 .rathere
- EQUB 36,rat       ,96 ,73 ,SPR_RAT,44,80 ,   60   ,2  ,0 ,255 ,PAL_CYAN+PLOT_NULL
+ EQUB 36,rat       ,96 ,73 ,SPR_RAT,44,80 ,   60   ,2  ,0 ,255 ,PAL_CYAN
  ;EQUB 36,96,73 ,SPR_RAT
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1738,24 +1738,27 @@ turnonfullbucket = movingsize+room
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;RAT
 .ratrou
 {
+  ; If rat is in lair, do nothing
   LDY #movex:LDA (zptr4), Y:BPL keepgoing
   RTS
+
 .keepgoing
-
   ; Rub out previous
-  JSR printmoving
+  JSR rubprintmoving
 
-  ;
+  ;  Decrement a counter
   LDY #oldmovefrm:LDA (zptr4), Y
   SEC:SBC #&01:STA (zptr4), Y
-  BEQ ratnewdir
+  BNE keepgoing2
+  JSR ratnewdir
+.keepgoing2
 
   ;
   LDY #var1:LDA (zptr4), Y
   LDY #movex:CLC:ADC (zptr4), Y
-  STA (zptr4), Y:PHA
+  STA (zptr4), Y:PHA ; cache movex
   LDA ratcount:AND #&01:BEQ notlefthandcheckrat
-  PLA:PHA
+  PLA:PHA ; re-cache movex
   LDY #oldmovey:CMP (zptr4), Y:BNE notlefthandcheckrat
   JSR ratnewdir
 
@@ -1778,21 +1781,21 @@ turnonfullbucket = movingsize+room
   BNE done
 
 .ratnotgotyou
-  LDY #movex:STA (zptr4), Y
+  LDY #movex:LDA (zptr4), Y
 
   ; Check for collision with loaf
 .^ratcoll
   CMP #01:BNE done
-  LDA #255:STA loafhere+room
+  LDA #OFFMAP:STA loafhere+room ; Set loaf off-screen
   LDA #2:STA ratcount
   LDY #colour:LDA (zptr4), Y:BMI ratcollok
   JSR ratnewdir
-
 .ratcollok
   LDY #oldmovefrm:LDA #255:STA (zptr4), Y
   LDA #STR_thanksforloafmess:JSR findroomstr
   JMP windowrou
 
+  ; Choose a new direction (left/right) "randomly"
 .ratnewdir
   JSR random
   AND #15
