@@ -90,6 +90,13 @@ PAD_DOWN   = &10
 PAD_UP     = &20
 PAD_DEBUG  = &40
 
+; Armorog state machine
+ARMOROG_SLEEPING = 0
+ARMOROG_COUNTDOWN = 1
+ARMOROG_RUNNING = 2
+ARMOROG_GUARDING = 3
+ARMOROG_HAPPY = 4
+
 ; String offsets
 STR_roomname = 1
 

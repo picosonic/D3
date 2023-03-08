@@ -743,12 +743,10 @@ noofmoving = (endofmovingdata-movingdata)/movingsize
   EQUW daisyrou1
 
 ;; TEMPORARY - Placeholder empty routines
-.resetarmorog
 .resetdragon
 .resetlift
   JMP printmoving ; At least draw it for now
 
-.armorogrou
 .dragonrou
 .liftrou
 .trollrou
@@ -1822,6 +1820,116 @@ turnonfullbucket = movingsize+room
   ; Store loaf position for rat to test against
   CLC:ADC #&02:STA ratcoll+1
 
+  RTS
+}
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;ARMOROG
+.resetarmorog
+{
+  ; If "happy", don't reset everything
+  LDA armoroghere+var1
+  CMP #4:BEQ done
+
+.^armorogreguard
+  ; Equivalent to reseteach()
+  LDA #54:STA armoroghere+movex
+  LDA #156:STA armoroghere+movey
+  LDA #SPR_GRUNT0:STA armoroghere+movefrm
+  LDA #&00
+  STA armoroghere+var1
+  STA armoroghere+delaycounter
+
+  ; Clear h-flip
+  LDA armoroghere+colour
+	AND #&7F:STA armoroghere+colour
+
+.done
+  JMP printmoving
+}
+
+.armorogrou
+{
+  ; Check for collision with Dizzy
+  JSR collidewithdizzy16
+  BEQ armnotkilldizzy
+
+  ; TODO - Kill Dizzy
+  RTS ; TODO - remove
+
+.armnotkilldizzy
+  ; State machine
+  LDA armoroghere+var1:BEQ armasleep ; Default state
+  CMP #ARMOROG_COUNTDOWN:BEQ armcountdown
+  CMP #ARMOROG_RUNNING:BEQ armrunning
+  CMP #ARMOROG_GUARDING:BEQ armguarding
+.armhappy
+.armguarding
+  RTS
+
+.armasleep
+  ; Wake Armorog, to charge if Dizzy is in front of den
+  LDA #64:STA cx:LDA #125:STA cy
+  LDA #12:STA cw:LDA #40:STA ch
+  JSR collidewithdizzy3:BEQ armguarding
+
+  ; Start countdown to charge
+  LDA #ARMOROG_COUNTDOWN:STA armoroghere+var1
+  JSR rubprintmoving
+
+  ; Indicate change of awareness
+  LDA #155:STA armoroghere+movey
+  LDA #SPR_GRUNT1:STA armoroghere+movefrm
+  JSR printmoving
+  LDA #20:STA armoroghere+oldmovex ; Set countdown value
+
+  ; Count down to charge
+.armcountdown
+  DEC armoroghere+oldmovex
+  BNE done
+  LDA #ARMOROG_RUNNING:STA armoroghere+var1
+
+  ; Running towards den
+.armrunning
+  JSR rubprintmoving
+  INC armoroghere+movex ; Move right a bit
+
+  ; Alternate between sprites for animation
+  LDA armoroghere+movefrm:EOR #&01:STA armoroghere+movefrm
+
+  ; If Dizzy is on the ground, charge
+  LDA dizzyy:CMP #150:BCS intoden
+
+  ; See if the bone is in the den, if so charge
+  LDA bonehere+room:CMP armoroghere+room:BNE guardarm
+  LDA bonehere+movex:CMP #80:BCC guardarm
+  LDA bonehere+movey:CMP #140:BCC guardarm
+
+.intoden
+  LDA armoroghere+movex:CMP #78:BEQ not78
+  JMP printmoving
+.not78
+  ; h-flip
+  LDA armoroghere+colour:ORA #&80:STA armoroghere+colour
+  LDA #156:STA armoroghere+movey
+  LDA #ARMOROG_HAPPY:STA armoroghere+var1
+  JSR printmoving
+
+  ; If dizzy is dead, reset armorog
+  LDA killed:BEQ notdead
+  JMP armorogreguard
+.notdead
+
+  ; Remove bone from room
+  LDA #OFFMAP:STA bonehere+room
+  LDA #STR_fedarmorog:JSR findroomstr
+  JMP windowrou
+
+.guardarm
+  JSR printmoving
+  LDA armoroghere+movex
+  CMP #62:BCS done
+  LDA #ARMOROG_GUARDING:STA armoroghere+var1
+
+.done
   RTS
 }
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;DOOR KNOCKER
