@@ -1546,12 +1546,14 @@ dylantalking = duffmem
 
   ; Get machine state (0=off, 1=on)
   LDY #var1:LDA (zptr4), Y
-  ASL A ; * 2
+  BEQ justdraw
 
-  ; Merge with blanked bit 1 in colour
+  ; Merge with blanked bit 1 in colour and h-flip
   LDY #colour
-  ORA (zptr4), Y
+  LDA #&82:ORA (zptr4), Y
   STA (zptr4), Y
+
+.justdraw
 
   ; Draw this machine
   JMP printmoving
@@ -1827,7 +1829,7 @@ turnonfullbucket = movingsize+room
 {
   ; If "happy", don't reset everything
   LDA armoroghere+var1
-  CMP #4:BEQ done
+  CMP #ARMOROG_HAPPY:BEQ done
 
 .^armorogreguard
   ; Equivalent to reseteach()
