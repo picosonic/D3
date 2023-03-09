@@ -1854,8 +1854,11 @@ turnonfullbucket = movingsize+room
   JSR collidewithdizzy16
   BEQ armnotkilldizzy
 
-  ; TODO - Kill Dizzy
-  RTS ; TODO - remove
+  ; TODO - LDA #&00:STA left:STA right
+
+  LDA #STR_armorogkilledmess:STA deathmsg ; Set death message to show
+  LDA #&01:STA killed ; Set Dizzy as killed
+  RTS
 
 .armnotkilldizzy
   ; State machine

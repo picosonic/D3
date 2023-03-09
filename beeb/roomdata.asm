@@ -548,7 +548,6 @@ INCBIN "rooms/room49.bin"
 EQUW roomdata-room50 ; 0
 EQUW roomname-room50 ; 1
 EQUW fedarmorog-room50 ; 2
-EQUW armorogkilledmess-room50 ; 3
 
 .roomname
 EQUB ":::ARMOROG;S:DEN::::", PRT_END
@@ -557,11 +556,6 @@ EQUB ":::ARMOROG;S:DEN::::", PRT_END
 EQUB PRT_PEN+7,PRT_XY+2,48,PRT_DRAWBOX,18,4,PRT_PEN+3
 EQUB PRT_XY+8,72,"THAT:BONE:SHOULD"
 EQUB PRT_XY+10,80,"KEEP:HIM:BUSY@",PRT_END
-
-.armorogkilledmess
-EQUB PRT_XY+18,88,"ARMOROG:CAUGHT"
-EQUB PRT_XY+17,100,"YOU:TRESPASSING"
-EQUB PRT_END
 
 .roomdata
 INCBIN "rooms/room50.bin"
@@ -1364,10 +1358,11 @@ EQUW killedbyhawk-room101 ; 7
 EQUW croceatenmess-room101 ; 8
 EQUW killedbyportcullis-room101 ; 9
 EQUW ratgotyoumess-room101 ; 10
-EQUW obstructingliftmess-room101 ; 11
-EQUW dropwhiskeymess-room101 ; 12
-EQUW holdingholemess-room101 ; 13
-EQUW youfoundcoinmess-room101 ; 14
+EQUW armorogkilledmess-room101 ; 11
+EQUW obstructingliftmess-room101 ; 12
+EQUW dropwhiskeymess-room101 ; 13
+EQUW holdingholemess-room101 ; 14
+EQUW youfoundcoinmess-room101 ; 15
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -1422,6 +1417,11 @@ EQUB PRT_END
 EQUB PRT_XY+20,88,"THE:RAT:GOES"
 EQUB PRT_XY+20,96,"STRAIGHT:FOR"
 EQUB PRT_XY+23,104,"YOUR:NECK"
+EQUB PRT_END
+
+.armorogkilledmess
+EQUB PRT_XY+18,88,"ARMOROG:CAUGHT"
+EQUB PRT_XY+17,100,"YOU:TRESPASSING"
 EQUB PRT_END
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;Generic messages

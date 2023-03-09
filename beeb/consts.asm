@@ -140,7 +140,6 @@ STR_rockinwatermess = 2
 
 ; Room 50
 STR_fedarmorog = 2
-STR_armorogkilledmess = 3
 
 ; Room 51
 STR_throwswitchmess = 2
@@ -208,7 +207,8 @@ STR_killedbyhawk = 7
 STR_croceatenmess = 8
 STR_killedbyportcullis = 9
 STR_ratgotyoumess = 10
-STR_obstructingliftmess = 11
-STR_dropwhiskeymess = 12
-STR_holdingholemess = 13
-STR_youfoundcoinmess = 14
+STR_armorogkilledmess = 11
+STR_obstructingliftmess = 12
+STR_dropwhiskeymess = 13
+STR_holdingholemess = 14
+STR_youfoundcoinmess = 15
