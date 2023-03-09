@@ -743,11 +743,9 @@ noofmoving = (endofmovingdata-movingdata)/movingsize
   EQUW daisyrou1
 
 ;; TEMPORARY - Placeholder empty routines
-.resetdragon
 .resetlift
   JMP printmoving ; At least draw it for now
 
-.dragonrou
 .liftrou
 .trollrou
 .daggerrou
@@ -1622,6 +1620,61 @@ resetportswitch = resetmachines
 
   JMP windowrou
 }
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;DRAGON
+.resetdragon
+{
+  LDA #&00:STA breathingfire
+
+  JMP printneck
+}
+
+.dragonrou
+{
+.^printneck
+  LDA #SPR_DRAGONNECK:LDY #movefrm:STA (zptr4), Y
+  JSR waitvsync
+  LDA #1:STA ztmp8
+.dragonneck
+  JSR findnecky
+  NEGATEACC
+  CLC:ADC #152 ; origy (both dragons are at the same Y position)
+  LDY #movey:STA (zptr4), Y
+  LDA ztmp8
+  NEGATEACC
+  CLC:ADC #77
+  LDY #movex:STA (zptr4), Y
+  JSR printmoving
+  INC ztmp8
+
+  LDA ztmp8
+  CMP #&07
+  BNE dragonneck
+
+.printdragonhead
+  LDY #oldmovex:LDA (zptr4), Y
+  NEGATEACC
+  CLC:ADC #152 ; origy (both dragons are at the same Y position)
+  LDY #movey:STA (zptr4), Y
+  LDY #movex:LDA #68:STA (zptr4), Y
+
+  ; Open mouth if breathing fire
+  LDA breathingfire
+  SEC:SBC #&01
+  CMP #16
+  LDA #SPR_DRAGONHEADCLOSED
+  ADC #&00 ; Add the carry on if set (i.e. >16)
+  LDY #movefrm:STA (zptr4), Y
+
+  JMP printmoving
+
+.findnecky
+  LDA ztmp8:BEQ done
+
+.findnecklp
+
+.done
+  RTS
+}
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;FILL BUCKET
 turnonfullbucket = movingsize+room
 
@@ -1894,6 +1947,7 @@ turnonfullbucket = movingsize+room
 
   ; Running towards den
 .armrunning
+  JSR waitvsync
   JSR rubprintmoving
   INC armoroghere+movex ; Move right a bit
 
@@ -1912,10 +1966,10 @@ turnonfullbucket = movingsize+room
   LDA armoroghere+movex:CMP #78:BEQ not78
   JMP printmoving
 .not78
-  ; h-flip
-  LDA armoroghere+colour:ORA #&80:STA armoroghere+colour
+  ; LDA #78:STA armoroghere+movex ; Stop armorog going offscreen (not in original)
+  LDA armoroghere+colour:ORA #&80:STA armoroghere+colour ; h-flip
   LDA #156:STA armoroghere+movey
-  LDA #ARMOROG_HAPPY:STA armoroghere+var1
+  LDA #ARMOROG_HAPPY:STA armoroghere+var1 ; Set to state to happy
   JSR printmoving
 
   ; If dizzy is dead, reset armorog
@@ -1932,7 +1986,7 @@ turnonfullbucket = movingsize+room
   JSR printmoving
   LDA armoroghere+movex
   CMP #62:BCS done
-  LDA #ARMOROG_GUARDING:STA armoroghere+var1
+  LDA #ARMOROG_GUARDING:STA armoroghere+var1 ; Set state to guarding
 
 .done
   RTS
