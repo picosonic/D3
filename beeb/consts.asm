@@ -125,7 +125,6 @@ STR_thanksforloafmess = 6
 
 ; Room 40
 STR_puteggbackmess = 2
-STR_dragonkilledmess = 3
 
 ; Room 41
 STR_usepickaxemess = 2
@@ -208,7 +207,8 @@ STR_croceatenmess = 8
 STR_killedbyportcullis = 9
 STR_ratgotyoumess = 10
 STR_armorogkilledmess = 11
-STR_obstructingliftmess = 12
-STR_dropwhiskeymess = 13
-STR_holdingholemess = 14
-STR_youfoundcoinmess = 15
+STR_dragonkilledmess = 12
+STR_obstructingliftmess = 13
+STR_dropwhiskeymess = 14
+STR_holdingholemess = 15
+STR_youfoundcoinmess = 16

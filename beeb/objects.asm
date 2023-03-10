@@ -1621,6 +1621,26 @@ resetportswitch = resetmachines
   JMP windowrou
 }
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;DRAGON
+.trytostartbreathing
+{
+  ; Check if this the fire-breathing dragon
+  LDA roomno:CMP #54:BEQ justrandomfire
+
+  ; This is the dragon in the mine, so see check where golden egg is
+  LDA goldenegghere1+room:CMP #OFFMAP:BNE done
+  BEQ startbreath
+
+.justrandomfire
+  JSR random:CMP #5:BCC done
+
+.startbreath
+  LDA #1:STA breathingfire
+  JMP alreadybreathing
+
+.done
+  RTS
+}
+
 .resetdragon
 {
   LDA #&00:STA breathingfire
@@ -1630,6 +1650,45 @@ resetportswitch = resetmachines
 
 .dragonrou
 {
+  LDY #var1:LDA (zptr4), Y:BPL moveneckupanddown
+
+  LDY #oldmovex:LDA (zptr4), Y:CMP #&F8:BNE keepgoing ; -8
+  RTS
+.keepgoing
+  SEC:SBC #&01
+  STA (zptr4), Y
+  JMP resetdragon
+
+.moveneckupanddown
+  LDA breathingfire:BNE alreadybreathing
+
+  JSR trytostartbreathing
+
+.notbreathing
+  LDY #delaycounter:LDA (zptr4), Y
+  CLC:ADC #&01
+  AND #31
+  STA (zptr4), Y
+  CMP #16:BCS okheadswing
+
+  NEGATEACC
+  CLC:ADC #32
+
+.okheadswing
+  LDY #oldmovex:STA (zptr4), Y
+
+.^alreadybreathing
+  ;;; LDY #var:LDA (zptr4), Y:ORA &80:STA (zptr4), Y ; when sending dragon to sleep
+.restdragon
+  JSR collidewithdizzy16:BEQ notdragvdizz
+
+  LDA #STR_dragonkilledmess:STA deathmsg ; Set death message to show
+  LDA #&01:STA killed ; Set Dizzy as killed
+  ; TODO - JSR killdizzy
+
+.notdragvdizz
+  ; TODO - LDA breathingfire:BNE dragonfire
+
 .^printneck
   LDA #SPR_DRAGONNECK:LDY #movefrm:STA (zptr4), Y
   JSR waitvsync
@@ -1669,10 +1728,36 @@ resetportswitch = resetmachines
 
 .findnecky
   LDA ztmp8:BEQ done
+  LDY #oldmovex:LDA (zptr4), Y
+  STA ztmp7
 
+  LDA #&00
 .findnecklp
+  CLC:ADC ztmp7
+  DEC ztmp8:BNE findnecklp
+
+  LDA #3:STA ztmp8
+  JSR divide
 
 .done
+  RTS
+}
+
+.divide
+{
+  BMI negdivide
+
+.dividelp
+  LSR A
+  SEC:SBC #&01:BNE dividelp
+  RTS
+
+.negdivide
+  NEGATEACC
+.divideneglp
+  SEC:SBC #&01:BNE divideneglp
+  NEGATEACC
+
   RTS
 }
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;FILL BUCKET

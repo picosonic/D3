@@ -353,7 +353,6 @@ INCBIN "rooms/room39.bin"
 EQUW roomdata-room40 ; 0
 EQUW roomname-room40 ; 1
 EQUW puteggbackmess-room40 ; 2
-EQUW dragonkilledmess-room40 ; 3
 
 .roomname
 EQUB ":THE:DRAGON;S:LAIR::", PRT_END
@@ -364,12 +363,6 @@ EQUB PRT_XY+11,72,"YOU:PUT:THE:EGG"
 EQUB PRT_XY+8,80, "BACK:INTO:THE:NEST"
 EQUB PRT_XY+12,88,"AND:THE:DRAGON"
 EQUB PRT_XY+8,96, "ALLOWS:YOU:TO:PASS",PRT_END
-
-.dragonkilledmess
-EQUB PRT_XY+16,88, "THE:DRAGON:BITES"
-EQUB PRT_XY+16,96, "YOU:AND:YOU:KEEL"
-EQUB PRT_XY+20,104,"OVER:AND:DIE"
-EQUB PRT_END
 
 .roomdata
 INCBIN "rooms/room40.bin"
@@ -1359,10 +1352,11 @@ EQUW croceatenmess-room101 ; 8
 EQUW killedbyportcullis-room101 ; 9
 EQUW ratgotyoumess-room101 ; 10
 EQUW armorogkilledmess-room101 ; 11
-EQUW obstructingliftmess-room101 ; 12
-EQUW dropwhiskeymess-room101 ; 13
-EQUW holdingholemess-room101 ; 14
-EQUW youfoundcoinmess-room101 ; 15
+EQUW dragonkilledmess-room101 ; 12
+EQUW obstructingliftmess-room101 ; 13
+EQUW dropwhiskeymess-room101 ; 14
+EQUW holdingholemess-room101 ; 15
+EQUW youfoundcoinmess-room101 ; 16
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -1422,6 +1416,12 @@ EQUB PRT_END
 .armorogkilledmess
 EQUB PRT_XY+18,88,"ARMOROG:CAUGHT"
 EQUB PRT_XY+17,100,"YOU:TRESPASSING"
+EQUB PRT_END
+
+.dragonkilledmess
+EQUB PRT_XY+16,88, "THE:DRAGON:BITES"
+EQUB PRT_XY+16,96, "YOU:AND:YOU:KEEL"
+EQUB PRT_XY+20,104,"OVER:AND:DIE"
 EQUB PRT_END
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;Generic messages
