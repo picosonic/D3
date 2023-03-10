@@ -1650,13 +1650,14 @@ resetportswitch = resetmachines
 
 .dragonrou
 {
+  ; Check if dragon is asleep
   LDY #var1:LDA (zptr4), Y:BPL moveneckupanddown
 
   LDY #oldmovex:LDA (zptr4), Y:CMP #&F8:BNE keepgoing ; -8
   RTS
 .keepgoing
   SEC:SBC #&01
-  STA (zptr4), Y
+  STA (zptr4), Y ; update oldmovex
   JMP resetdragon
 
 .moveneckupanddown
@@ -1668,17 +1669,17 @@ resetportswitch = resetmachines
   LDY #delaycounter:LDA (zptr4), Y
   CLC:ADC #&01
   AND #31
-  STA (zptr4), Y
+  STA (zptr4), Y ; update delaycounter
   CMP #16:BCS okheadswing
 
   NEGATEACC
   CLC:ADC #32
 
 .okheadswing
-  LDY #oldmovex:STA (zptr4), Y
+  LDY #oldmovex:STA (zptr4), Y ; update oldmovex
 
 .^alreadybreathing
-  ;;; LDY #var:LDA (zptr4), Y:ORA &80:STA (zptr4), Y ; when sending dragon to sleep
+  ;;; LDY #var1:LDA (zptr4), Y:ORA &80:STA (zptr4), Y ; when sending dragon to sleep
 .restdragon
   JSR collidewithdizzy16:BEQ notdragvdizz
 
@@ -1687,34 +1688,40 @@ resetportswitch = resetmachines
   ; TODO - JSR killdizzy
 
 .notdragvdizz
-  ; TODO - LDA breathingfire:BNE dragonfire
+  LDA breathingfire:BEQ keepgoing2
+  JMP dragonfire
+.keepgoing2
 
 .^printneck
   LDA #SPR_DRAGONNECK:LDY #movefrm:STA (zptr4), Y
+
   JSR waitvsync
+
   LDA #1:STA ztmp8
 .dragonneck
-  JSR findnecky
+  JSR findnecky ; Find Y position for this next piece
+
   NEGATEACC
   CLC:ADC #152 ; origy (both dragons are at the same Y position)
-  LDY #movey:STA (zptr4), Y
+  LDY #movey:STA (zptr4), Y ; Set neck Y position
+
   LDA ztmp8
   NEGATEACC
   CLC:ADC #77
-  LDY #movex:STA (zptr4), Y
-  JSR printmoving
-  INC ztmp8
+  LDY #movex:STA (zptr4), Y ; Set neck X position
 
-  LDA ztmp8
-  CMP #&07
-  BNE dragonneck
+  JSR printmoving ; Draw neck piece
+
+  INC ztmp8 ; Advance to next neck piece (1..6)
+  LDA ztmp8:CMP #&07:BNE dragonneck ; Loop for each next piece
 
 .printdragonhead
   LDY #oldmovex:LDA (zptr4), Y
   NEGATEACC
   CLC:ADC #152 ; origy (both dragons are at the same Y position)
-  LDY #movey:STA (zptr4), Y
-  LDY #movex:LDA #68:STA (zptr4), Y
+  LDY #movey:STA (zptr4), Y ; Set head Y position
+
+  LDY #movex:LDA #68:STA (zptr4), Y ; Set head X position
 
   ; Open mouth if breathing fire
   LDA breathingfire
@@ -1722,49 +1729,69 @@ resetportswitch = resetmachines
   CMP #16
   LDA #SPR_DRAGONHEADCLOSED
   ADC #&00 ; Add the carry on if set (i.e. >16)
-  LDY #movefrm:STA (zptr4), Y
+  LDY #movefrm:STA (zptr4), Y ; Set head frame
 
-  JMP printmoving
+  JMP printmoving ; Draw head
 }
 
 ; ztmp7 = c reg
-; ztmp8 = b reg
+; ztmp8 = b reg (neck piece 1..6)
 .findnecky
 {
-  LDA ztmp8:BEQ done
+  LDA ztmp8:BEQ done ; Don't think it ever will be 0 though
 
-  PHA ; cache ztmp8
+  PHA ; cache b_reg (ztmp8)
+  LDA ztmp7:PHA ; cache c_reg (ztmp7)
   LDY #oldmovex:LDA (zptr4), Y
   STA ztmp7
 
+  ; Multiply b_reg by c_reg
   LDA #&00
 .findnecklp
   CLC:ADC ztmp7
   DEC ztmp8:BNE findnecklp
 
-  LDA #3:STA ztmp8
+  PHA ; Cache result
+  LDA #3:STA ztmp8 ; b_reg = 3
+  PLA ; Restore result
+
   JSR divide
-  PLA:STA ztmp8 ; restore ztmp8
+
+  STA result+1 ; Cache divide result
+  PLA:STA ztmp7 ; restore c_reg (ztmp7)
+  PLA:STA ztmp8 ; restore b_reg (ztmp8)
+
+.result
+  LDA #&00 ; Restore divide result to return to callee
 
 .done
   RTS
 }
 
+; Divide A by 16 ( >> 4 times)
 .divide
 {
+  ; Check for negative input
   BMI negdivide
 
+  ; Do positive divide
 .dividelp
   LSR A
-  SEC:SBC #&01:BNE dividelp
+  DEC ztmp8:BNE dividelp
   RTS
 
+  ; Do negative divide
 .negdivide
-  NEGATEACC
+  NEGATEACC ; Change -ve to +ve
 .divideneglp
-  SEC:SBC #&01:BNE divideneglp
-  NEGATEACC
+  LSR A
+  DEC ztmp8:BNE divideneglp
+  NEGATEACC ; Change +ve back to -ve
+  RTS
+}
 
+.dragonfire
+{
   RTS
 }
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;FILL BUCKET
