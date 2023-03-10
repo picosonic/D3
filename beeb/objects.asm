@@ -1725,9 +1725,15 @@ resetportswitch = resetmachines
   LDY #movefrm:STA (zptr4), Y
 
   JMP printmoving
+}
 
+; ztmp7 = c reg
+; ztmp8 = b reg
 .findnecky
+{
   LDA ztmp8:BEQ done
+
+  PHA ; cache ztmp8
   LDY #oldmovex:LDA (zptr4), Y
   STA ztmp7
 
@@ -1738,6 +1744,7 @@ resetportswitch = resetmachines
 
   LDA #3:STA ztmp8
   JSR divide
+  PLA:STA ztmp8 ; restore ztmp8
 
 .done
   RTS
