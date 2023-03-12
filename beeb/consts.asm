@@ -151,7 +151,6 @@ STR_croctiedmess = 2
 
 ; Room 54
 STR_dragonasleepmess = 2
-STR_dragonflameskilledmess = 3
 
 ; Room 55
 STR_usecrowbarmess = 2
@@ -208,7 +207,8 @@ STR_killedbyportcullis = 9
 STR_ratgotyoumess = 10
 STR_armorogkilledmess = 11
 STR_dragonkilledmess = 12
-STR_obstructingliftmess = 13
-STR_dropwhiskeymess = 14
-STR_holdingholemess = 15
-STR_youfoundcoinmess = 16
+STR_dragonflameskilledmess = 13
+STR_obstructingliftmess = 14
+STR_dropwhiskeymess = 15
+STR_holdingholemess = 16
+STR_youfoundcoinmess = 17

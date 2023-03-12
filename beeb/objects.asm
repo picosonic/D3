@@ -1699,7 +1699,7 @@ resetportswitch = resetmachines
 
   LDA #1:STA ztmp8
 .dragonneck
-  JSR findnecky ; Find Y position for this next piece
+  JSR findnecky ; Find Y position for this neck piece
 
   NEGATEACC
   CLC:ADC #152 ; origy (both dragons are at the same Y position)
@@ -1715,7 +1715,7 @@ resetportswitch = resetmachines
   INC ztmp8 ; Advance to next neck piece (1..6)
   LDA ztmp8:CMP #&07:BNE dragonneck ; Loop for each next piece
 
-.printdragonhead
+.^printdragonhead
   LDY #oldmovex:LDA (zptr4), Y
   NEGATEACC
   CLC:ADC #152 ; origy (both dragons are at the same Y position)
@@ -1745,7 +1745,7 @@ resetportswitch = resetmachines
   LDY #oldmovex:LDA (zptr4), Y
   STA ztmp7
 
-  ; Multiply b_reg by c_reg
+  ; Multiply b_reg by c_reg, result in a
   LDA #&00
 .findnecklp
   CLC:ADC ztmp7
@@ -1792,6 +1792,93 @@ resetportswitch = resetmachines
 
 .dragonfire
 {
+  ;;uses (breathingfire)
+  LDA #&06
+.dragonfirelp
+  STA dragonflame
+
+  LDA #7+64:STA ztmp7 ; c_reg = 7+64
+  LDA breathingfire
+  JSR printdragonflame
+
+  LDA breathingfire ;;flips between yellow and red
+  AND #&01:STA three+2
+  ASL A
+.three
+  CLC:ADC #&00:ADC #2+64
+  STA ztmp7
+
+  LDA breathingfire
+  CLC:ADC #&01
+  JSR printdragonflame
+
+  LDA dragonflame
+  AND #&01
+  BNE keepgoing
+  JSR waitvsync
+.keepgoing
+
+  LDA dragonflame
+  SEC:SBC #&01:BEQ keepgoing2
+  JMP dragonfirelp
+.keepgoing2
+
+  LDA breathingfire
+  CLC:ADC #&01
+  CMP #48:BCS juststoreit
+
+  LDA #&00
+.juststoreit
+  STA breathingfire
+  JMP printdragonhead
+
+.printdragonflame
+  STA ztmp8
+
+  LDA roomno
+  LDX #50
+  CMP #40 ; Is this the dragon in the mine?
+  BNE gotfirelim
+  LDX #40
+
+.gotfirelim
+  LDA dragonflame
+  ASL A ; *2
+  SEC:SBC #&00
+  CLC:ADC #68  ;;;position of 1st flame
+  STA hcomp+1 ; Cache for compare
+
+.hcomp
+  ;;;flame run out position
+  CPX #&00:BCS done
+
+  CMP #68:BCC done
+
+  STA frmx
+
+  LDA #&01:STA ztmp8 ; b_reg = 1
+
+  LDY #movey:LDA (zptr4), Y
+  CLC:ADC #&08
+
+  STA frmy
+  LDA #SPR_DRAGONFIRE:STA frmno
+
+  JSR frame
+
+  ; Set flame frame size for collision
+  LDA #4:STA cw
+  LDA #8:STA ch
+
+  ; Check for collision with flame
+  JSR collidewithdizzy3
+  BEQ done
+
+  LDA #STR_dragonflameskilledmess:STA deathmsg
+  LDA #&01:STA killed ; Set Dizzy as killed
+  ; TODO - JSR killdizzy1
+
+.done
   RTS
 }
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;FILL BUCKET

@@ -625,7 +625,6 @@ INCBIN "rooms/room53.bin"
 EQUW roomdata-room54 ; 0
 EQUW roomname-room54 ; 1
 EQUW dragonasleepmess-room54 ; 2
-EQUW dragonflameskilledmess-room54 ; 3
 
 .roomname
 EQUB "THE:WIDE=EYED:DRAGON", PRT_END
@@ -636,12 +635,6 @@ EQUB PRT_XY+8,72,"YOU:SMASH:THE:FLASK"
 EQUB PRT_XY+10,80,"OF:POTION:AND:THE"
 EQUB PRT_XY+9,88,"DRAGON:INHALES:THE"
 EQUB PRT_XY+8,96,"INTOXICATING:VAPOUR",PRT_END
-
-.dragonflameskilledmess
-EQUB PRT_XY+17,88, "YOU:ARE:ROASTED"
-EQUB PRT_XY+17,96, "BY:THE:DRAGON;S"
-EQUB PRT_XY+20,104,"FIERY:BREATH"
-EQUB PRT_END
 
 .roomdata
 INCBIN "rooms/room54.bin"
@@ -1353,10 +1346,11 @@ EQUW killedbyportcullis-room101 ; 9
 EQUW ratgotyoumess-room101 ; 10
 EQUW armorogkilledmess-room101 ; 11
 EQUW dragonkilledmess-room101 ; 12
-EQUW obstructingliftmess-room101 ; 13
-EQUW dropwhiskeymess-room101 ; 14
-EQUW holdingholemess-room101 ; 15
-EQUW youfoundcoinmess-room101 ; 16
+EQUW dragonflameskilledmess-room101 ; 13
+EQUW obstructingliftmess-room101 ; 14
+EQUW dropwhiskeymess-room101 ; 15
+EQUW holdingholemess-room101 ; 16
+EQUW youfoundcoinmess-room101 ; 17
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -1422,6 +1416,12 @@ EQUB PRT_END
 EQUB PRT_XY+16,88, "THE:DRAGON:BITES"
 EQUB PRT_XY+16,96, "YOU:AND:YOU:KEEL"
 EQUB PRT_XY+20,104,"OVER:AND:DIE"
+EQUB PRT_END
+
+.dragonflameskilledmess
+EQUB PRT_XY+17,88, "YOU:ARE:ROASTED"
+EQUB PRT_XY+17,96, "BY:THE:DRAGON;S"
+EQUB PRT_XY+20,104,"FIERY:BREATH"
 EQUB PRT_END
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;Generic messages
