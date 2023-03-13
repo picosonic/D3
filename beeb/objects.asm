@@ -742,11 +742,6 @@ noofmoving = (endofmovingdata-movingdata)/movingsize
   EQUW switchrou1
   EQUW daisyrou1
 
-;; TEMPORARY - Placeholder empty routines
-.resetlift
-  JMP printmoving ; At least draw it for now
-
-.liftrou
 .trollrou
 .daggerrou
 .rethere
@@ -1858,7 +1853,7 @@ resetportswitch = resetmachines
 
   LDA breathingfire
   CLC:ADC #&01
-  CMP #48:BCS juststoreit
+  CMP #48:BCC juststoreit
 
   LDA #&00
 .juststoreit
@@ -1961,6 +1956,31 @@ turnonfullbucket = movingsize+room
 
   LDA #STR_plantbeanmess:JSR findroomstr
   JMP windowrou
+}
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;LIFT
+.resetlift
+{
+  LDY #movey:LDA (zptr4), Y
+  LDY #oldmovex:CMP (zptr4), Y
+  BCS notfirstlift
+
+  LDA (zptr4), Y
+  LDY #movey:STA (zptr4), Y
+
+.notfirstlift
+  ; TODO - add code
+
+.drawdownlp
+  ; TODO - add code
+  JSR printmoving
+  ; TODO - add code
+
+  RTS ; TODO should be plotattris
+}
+
+.liftrou
+{
+  RTS
 }
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;DOZY FLOATING
 .resetdozyfloat
