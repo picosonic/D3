@@ -752,7 +752,6 @@ noofmoving = (endofmovingdata-movingdata)/movingsize
 .rethere
 .minerrou
 .daisyrou
-.switchrou1
 .daisyrou1
   RTS
 ;;
@@ -1027,6 +1026,40 @@ resetswitch1 = printmoving
   ; Display switch message
   LDA #STR_throwswitchmess:JSR findroomstr
   JMP windowrou
+
+.done
+  RTS
+}
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;BRING DAISY LIFT DOWN
+
+.switchrou1
+{
+  ; Turn Daisy's lift off by default
+  LDA #&00:STA daisylifthere+var1
+
+  ; See how far down Daisy's lift is
+  LDA daisylifthere+movey
+  CMP #100
+  BCC done
+
+  ; Draw the switch - not sure that this is needed?
+  JSR printmoving
+
+  ; If collided with Dizzy set var=1 else var1=0
+  JSR collidewithdizzy16:BEQ keepgoing
+  LDA #&01
+.keepgoing
+  LDY #var1:STA (zptr4), Y
+
+  ; Update the colour/redraw based on on/off state of var1
+  JSR resetmachines
+
+  ; If switch is off, finish here
+  LDY #var1:LDA (zptr4), Y:AND #&01:BEQ done
+
+  ; Turn on Daisy's lift
+  LDA #&01:STA daisylifthere+var1
 
 .done
   RTS
