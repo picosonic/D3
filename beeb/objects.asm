@@ -1631,7 +1631,7 @@ resetportswitch = resetmachines
   BEQ startbreath
 
 .justrandomfire
-  JSR random:CMP #5:BCC done
+  JSR random:CMP #5:BCS done
 
 .startbreath
   LDA #1:STA breathingfire
@@ -1670,7 +1670,7 @@ resetportswitch = resetmachines
   CLC:ADC #&01
   AND #31
   STA (zptr4), Y ; update delaycounter
-  CMP #16:BCS okheadswing
+  CMP #16:BCC okheadswing
 
   NEGATEACC
   CLC:ADC #32
@@ -1695,7 +1695,7 @@ resetportswitch = resetmachines
 .^printneck
   LDA #SPR_DRAGONNECK:LDY #movefrm:STA (zptr4), Y
 
-  JSR waitvsync
+  ;JSR waitvsync
 
   LDA #1:STA ztmp8
 .dragonneck
@@ -1815,7 +1815,7 @@ resetportswitch = resetmachines
   LDA dragonflame
   AND #&01
   BNE keepgoing
-  JSR waitvsync
+  ;JSR waitvsync
 .keepgoing
 
   LDA dragonflame
@@ -1850,9 +1850,9 @@ resetportswitch = resetmachines
 
 .hcomp
   ;;;flame run out position
-  CPX #&00:BCS done
+  CPX #&00:BCC done
 
-  CMP #68:BCC done
+  CMP #68:BCS done
 
   STA frmx
 
@@ -2153,7 +2153,7 @@ turnonfullbucket = movingsize+room
 
   ; Running towards den
 .armrunning
-  JSR waitvsync
+  ;JSR waitvsync
   JSR rubprintmoving
   INC armoroghere+movex ; Move right a bit
 
