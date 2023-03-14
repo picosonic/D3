@@ -265,7 +265,7 @@ OBJ_WHISKEYBOTTLE = 21
 OBJ_LIFT = 22
 
 .lift1here
- EQUB 71,lift      ,52 ,48 ,SPR_LIFTTOP,56,112,   0   ,1  ,0 ,0 ,PAL_WHITE+PLOT_XOR
+ EQUB 71,lift      ,52 ,48 ,SPR_LIFTTOP,56,112,  48   ,1  ,0 ,0 ,PAL_WHITE+PLOT_XOR
  ;EQUB 71 ,52,48 ,SPR_LIFTTOP
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -290,7 +290,7 @@ OBJ_KEY = 24
 OBJ_LIFT2 = 25
 
 .lift2here
- EQUB 40,lift      ,40 ,56 ,SPR_LIFTTOP,56,134,   0   ,1  ,0 ,0 ,PAL_WHITE+PLOT_XOR
+ EQUB 40,lift      ,40 ,56 ,SPR_LIFTTOP,56,134,  56   ,1  ,0 ,0 ,PAL_WHITE+PLOT_XOR
  ;EQUB 40 ,40,56 ,SPR_LIFTTOP
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -315,7 +315,7 @@ OBJ_KEY2 = 27
 OBJ_LIFT3 = 28
 
 .lift3here
- EQUB 88,lift      ,58 ,48 ,SPR_LIFTTOP,56,136,   0   ,1  ,0 ,0 ,PAL_WHITE+PLOT_XOR
+ EQUB 88,lift      ,58 ,48 ,SPR_LIFTTOP,56,136,  48   ,1  ,0 ,0 ,PAL_WHITE+PLOT_XOR
  ;EQUB 88 ,58,48 ,SPR_LIFTTOP
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -340,7 +340,7 @@ OBJ_KEY3 = 30
 OBJ_LIFT4 = 31
 
 .lift4here
- EQUB 56,lift      ,60 ,104 ,SPR_LIFTTOP,104,140,   0   ,1  ,0 ,0 ,PAL_WHITE+PLOT_XOR
+ EQUB 56,lift      ,60 ,104 ,SPR_LIFTTOP,104,140,  104  ,1  ,0 ,0 ,PAL_WHITE+PLOT_XOR
  ;EQUB 56 ,60,104 ,SPR_LIFTTOP
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -608,7 +608,7 @@ OBJ_CARPET2 = 61
 OBJ_LIFT5 = 62
 
 .daisylifthere
- EQUB 94,lift     ,74 ,48,SPR_LIFTTOP,56,120,   0   ,2  ,0 ,0  ,PAL_WHITE
+ EQUB 94,lift     ,74 ,48,SPR_LIFTTOP,56,120,  48   ,2  ,0 ,0  ,PAL_WHITE
  ;EQUB 94 ,74,48,SPR_LIFTTOP
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -616,7 +616,7 @@ OBJ_LIFT5 = 62
 OBJ_DAISY = 63
 
 .daisyhere
- EQUB 94,daisy   ,75 ,80,SPR_DAISY,0  ,0  ,0   ,2   ,  0 ,0 ,PAL_WHITE+ATTR_NOTSOLID+PLOT_NULL
+ EQUB 94,daisy   ,75 ,80,SPR_DAISY,0  ,0  ,0   ,2   ,  0 ,0 ,PAL_WHITE+ATTR_NOTSOLID
  ;EQUB 94,75,80,SPR_DAISY
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1958,6 +1958,26 @@ turnonfullbucket = movingsize+room
   JMP windowrou
 }
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;LIFT
+; IN roomno
+; OUT A = origy
+.liftorigy
+{
+  LDA roomno
+
+  CMP #40:BNE keepgoing ; dragon's lair - LIFT 2
+  LDA #56:BNE done
+.keepgoing
+
+  CMP #56:BNE keepgoing2 ; lift control room - LIFT 4
+  LDA #104:BNE done
+.keepgoing2
+
+  LDA #48 ; key1 / key3 / cloudcastle
+
+.done
+  RTS
+}
+
 .resetlift
 {
   LDY #movey:LDA (zptr4), Y
@@ -1968,18 +1988,132 @@ turnonfullbucket = movingsize+room
   LDY #movey:STA (zptr4), Y
 
 .notfirstlift
-  ; TODO - add code
+  ; Load origy for this lift into b_reg
+  JSR liftorigy:STA ztmp8
+  LDY #movey:LDA (zptr4), Y
+  DEC ztmp8
+  PHA
+  LDA ztmp8:STA (zptr4), Y
+  PLA
 
 .drawdownlp
-  ; TODO - add code
+  PHA
+  LDY #movey:LDA (zptr4), Y:CLC:ADC #&01:STA (zptr4), Y
   JSR printmoving
-  ; TODO - add code
+  PLA
+  LDY #movey:CMP (zptr4), Y:BNE drawdownlp
+  JSR rublift
 
-  RTS ; TODO should be plotattris
+  LDY #oldmovex:LDA (zptr4), Y:STA frmy
+  STA ztmp8
+
+  LDY #oldmovey:LDA (zptr4), Y
+  SEC:SBC ztmp8
+  CLC:ADC #42
+  STA frmheight
+
+  LDA #&00:STA frmplot
+  LDA #&07:STA frmattri
+
+  RTS ; TODO should be JMP plotattris
 }
 
 .liftrou
 {
+  ; Do nothing if lift is not enabled
+  LDY #var1:LDA (zptr4), Y:BNE keepgoing
+  RTS
+.keepgoing
+
+  ; See if colliding with Dizzy (proximitycollide)
+  ; if so, stop the lift, otherwise move it
+  LDY #movex:LDA (zptr4), Y:STA cx
+  LDA #movey:LDA (zptr4), Y:SEC:SBC #&02:STA cy
+  LDA #8:STA cw
+  LDA #48:STA ch
+  JSR collidewithdizzy3:BEQ movelift
+
+  ; See if Dizzy colliding with top of lift (proximitycollide)
+  LDA #2:STA ch
+  JSR collidewithdizzy3:BEQ keepgoing2
+  JMP killedbycogs
+.keepgoing2
+
+  LDA dizzyx
+  LDY #movex:SEC:SBC (zptr4), Y
+  CLC:ADC #32
+  CMP #3:BCS stopthelift
+
+  LDA sequence:BEQ movelift
+
+.stopthelift
+  LDY #oldmovefrm:LDA #2:STA (zptr4), Y
+
+  LDA obstructinglift
+  CLC:ADC #&01:AND #63
+  STA obstructinglift
+  BNE keepgoing3
+
+  LDA roomno:PHA:LDA #ROOM_STRINGS:STA roomno
+  LDA #STR_obstructingliftmess:JSR findroomstr
+  PLA:STA roomno
+  JSR windowrou
+.keepgoing3
+  JMP roundmovelift
+
+.movelift
+  LDA #&00:STA obstructinglift
+
+.roundmovelift
+  LDY #oldmovefrm:LDA (zptr4), Y:BEQ justmovelift
+  SEC:SBC #&01
+  STA (zptr4), Y
+  BNE done
+
+.justmovelift
+  LDY #var1:LDA (zptr4), Y:BEQ done
+  JSR rublift
+
+  LDY #var1:LDA (zptr4), Y
+  LDY #movey:CLC:ADC (zptr4), Y:STA (zptr4), Y
+
+  LDY #oldmovex:CMP (zptr4), Y:BEQ turnlift
+  LDY #oldmovey:CMP (zptr4), Y:BNE notturnlift
+
+.turnlift
+  JSR negvar1
+  LDY #oldmovefrm:LDA #50:STA (zptr4), Y
+
+.notturnlift
+.printlift
+  JSR printmoving
+
+.^rublift
+  LDY #movey:LDA (zptr4), Y:PHA ; Cache movey
+
+  CLC:ADC #40
+  STA (zptr4), Y
+
+  ; Set lift bottom
+  LDY #movefrm:LDA #SPR_LIFTBOTTOM:STA (zptr4), Y
+
+  LDY #colour:LDA (zptr4), Y:ORA #8:STA (zptr4), Y:PHA
+  JSR printmoving
+  PLA:AND #&F7:LDY #colour:STA (zptr4), Y
+  
+  PLA:LDY #movey:STA (zptr4), Y ; Restore movey
+
+  ; Set back to lift top
+  LDY #movefrm:LDA #SPR_LIFTTOP:STA (zptr4), Y
+
+  RTS
+
+.killedbycogs
+  LDA #STR_killedbyliftmess:STA deathmsg
+  LDA #&01:STA killed ; TODO - remove
+  ;JMP killdizzy1
+
+.done
   RTS
 }
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;DOZY FLOATING
