@@ -87,17 +87,20 @@ INCLUDE "hearts.asm"
   STA fireout
   STA ratcount
 
-  LDA #&FF
-  STA shopkeepercount
-
-  LDA #&01
-  STA ratcoll+1
-
   LDY #&00:LDA #&00
 .scrubtalkbefore
   STA talkbefore, Y
   INY
   CPY #&05:BNE scrubtalkbefore
+
+  RTS
+
+.^resetmoving1
+  LDA #&FF
+  STA shopkeepercount
+
+  LDA #&01
+  STA ratcoll+1
 
   RTS
 

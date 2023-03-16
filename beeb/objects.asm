@@ -1132,7 +1132,7 @@ dylantalking = duffmem
   LDY #oldmovefrm:LDA (zptr4), Y:STA zptr5
   INY:LDA (zptr4), Y:STA zptr5+1
 
-.talkingtopeople1
+.^talkingtopeople1
   LDY #&00:LDA roomno:STA (zptr5), Y ; Make object appear in current room
 
   ; Find associated chatter
@@ -1956,6 +1956,74 @@ turnonfullbucket = movingsize+room
 
   LDA #STR_plantbeanmess:JSR findroomstr
   JMP windowrou
+}
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;SHOP KEEPER
+.shopkeeperrou
+{
+  ; See if we are in room 22 (market square)
+  LDA roomno:CMP #22:BNE done
+
+  ; If we're at 0 do nothing
+  LDA shopkeepercount:BEQ done
+
+  ; Decrement counter
+  SEC:SBC #&01:STA shopkeepercount:BNE done
+
+  ; Make shop keeper appear in room 22 (market square)
+  LDA #22
+  STA shopkeeperhere+room
+  STA shopkeeperhere1+room
+
+  LDA #STR_shopkeeperappearsmess:JSR findroomstr
+  JMP windowrou
+
+.done
+  RTS
+}
+
+.proxshopkeeper
+{
+  EQUB 22 ;;room
+  EQUB 66,160 ;;;x,y
+  EQUB 8,16 ;;;w,h
+
+.proxshopkeeperrou
+  ; Do nothing if shop keeper isn't showing
+  LDA shopkeepercount:BNE done
+
+  ; Check if item dropped is cow
+  LDY #movefrm:LDA (zptr4), Y
+  CMP #SPR_COW:BNE notcow
+
+  ; It is the cow so remove from room
+  LDY #room:LDA #OFFMAP:STA (zptr4), Y
+
+  ; Point to bean to make it appear
+  LDA #hi(beanhere):STA zptr5+1
+  LDA #lo(beanhere):STA zptr5
+
+  ; Show chatter
+  LDA #hi(shopkeeperhere):STA zptr4+1
+  LDA #lo(shopkeeperhere):STA zptr4
+
+  JMP talkingtopeople1
+
+.notcow
+  LDA shopkeeperhere+delaycounter
+  CLC:ADC #&01:AND #3
+  STA shopkeeperhere+delaycounter
+
+  BEQ stopjunk
+
+  LDA #STR_givingjunkmess:JSR findroomstr
+  JMP windowrou
+
+.stopjunk
+  LDA #STR_stopgivingjunkmess:JSR findroomstr
+  JMP windowrou
+
+.done
+  RTS
 }
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;LIFT
 ; IN roomno

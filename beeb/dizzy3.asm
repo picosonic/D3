@@ -84,6 +84,8 @@ INCLUDE "gfx.asm"
 .movingdone
   LDA #&00:STA checkmoving+1
 
+  JSR resetmoving1
+
   ; Reset coin positions
   JSR resetcoins
 
@@ -143,7 +145,7 @@ INCLUDE "gfx.asm"
 
   JSR checkholdinghole
   JSR checkifdrunk
-  ; JSR shopkeeperrou
+  JSR shopkeeperrou
 
 .wantaquickkill
 
@@ -566,6 +568,13 @@ ENDMACRO
   ;CHECK DROPPING OBJECT BY TRIGGER
   LDA #&01:STA objcollide
   JSR checkproximity ; zptr4 is set up by dropobject()
+
+  ; Check proximity box for shopkeeper
+  LDA zptr4:ORA zptr4+1:BEQ done
+  LDA #&01:STA objcollide
+  LDA #hi(proxshopkeeper):STA zptr6+1
+  LDA #lo(proxshopkeeper):STA zptr6
+  JSR checkproximity1
 
 .justexitinvent
   JSR resetuproom ; Draw the room again
