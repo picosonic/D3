@@ -2009,6 +2009,10 @@ turnonfullbucket = movingsize+room
   JMP talkingtopeople1
 
 .notcow
+  ; Chuck it on the crate - TODO remove (not in original)
+  LDY #movex:LDA #62:STA (zptr4), Y
+  LDY #movey:LDA #144:STA (zptr4), Y
+
   LDA shopkeeperhere+delaycounter
   CLC:ADC #&01:AND #3
   STA shopkeeperhere+delaycounter
