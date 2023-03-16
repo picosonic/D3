@@ -39,8 +39,6 @@ INCLUDE "rooms.asm"
 ; Level tiles, object sprites, font
 .frametable
 INCBIN "frametable.bin"
-.framedefs
-INCBIN "framedefs.bin"
 
 ; Dizzy sprite offsets
 .dizzytable

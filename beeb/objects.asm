@@ -2581,20 +2581,26 @@ turnonfullbucket = movingsize+room
   LDA #&00:STA cw:STA ch ; NULL frame
   RTS
 .notempty
-  CLC:ADC #hi(framedefs):STA zptr1+1
+  CLC:ADC #hi(ROMSBASE):STA zptr1+1
 
   ; Get low byte of offset
   DEY:LDA (zptr2), Y
-  CLC:ADC #lo(framedefs):STA zptr1
+  CLC:ADC #lo(ROMSBASE):STA zptr1
   BCC samepage
   INC zptr1+1
 .samepage
+
+  ; Page in sprites to get width/height
+  PAGE_MOREDATA
 
   ; Get (width/4)
   LDY #&00:LDA (zptr1), Y:LSR A:LSR A:STA cw
 
   ; Get height
   INY:LDA (zptr1), Y:STA ch
+
+  ; Page room data back in
+  PAGE_ROOMDATA
 
   JMP collidewithdizzy3
 }

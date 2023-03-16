@@ -210,6 +210,9 @@ PAL_DIZZY2 = $02
   LDA #hi(frametable):STA zptr2+1
   LDA #lo(frametable):STA zptr2
 
+  ; Make sure sprites are paged in
+  PAGE_MOREDATA
+
   LDA frmno
   BPL nochange
   INC zptr2+1
@@ -219,11 +222,11 @@ PAL_DIZZY2 = $02
   ; Get high byte of offset
   INY:LDA (zptr2), Y
   CMP #&FF:BEQ jdone ; Don't draw NULL frames
-  CLC:ADC #hi(framedefs):STA zptr1+1
+  CLC:ADC #hi(ROMSBASE):STA zptr1+1
 
   ; Get low byte of offset
   DEY:LDA (zptr2), Y
-  CLC:ADC #lo(framedefs):STA zptr1
+  CLC:ADC #lo(ROMSBASE):STA zptr1
   BCC samepage
   INC zptr1+1
 .samepage
@@ -419,6 +422,9 @@ PAL_DIZZY2 = $02
   JMP loop
 
 .done
+  ; Page room data back in after drawing sprite
+  PAGE_ROOMDATA
+
   ; Restore registers
   PLA:TAY
   PLA:TAX
