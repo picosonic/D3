@@ -120,14 +120,14 @@ STR_letsfaceitmess = 12
 STR_trollgotapplemess = 2
 STR_throwwateronfiremess = 3
 STR_getbackintheremess = 4
-STR_goawaymess = 5
-STR_thanksforloafmess = 6
+STR_thanksforloafmess = 5
 
 ; Room 40
 STR_puteggbackmess = 2
 
 ; Room 41
 STR_usepickaxemess = 2
+STR_goawaymess = 3
 
 ; Room 45
 STR_dozytalking = 2

@@ -559,6 +559,7 @@ OBJ_STONE2 = 55
 ; THE DESERTED MINES
 OBJ_TROLL2 = 56
 
+.minerhere
  EQUB 41,miner     ,96 ,120,SPR_TROLL ,44,80 ,   0   ,0  ,0 ,0 ,PAL_GREEN+ATTR_NOTSOLID
  ;EQUB 41,96,120 ,SPR_TROLL
 
@@ -744,7 +745,6 @@ noofmoving = (endofmovingdata-movingdata)/movingsize
 
 .daggerrou
 .rethere
-.minerrou
 .daisyrou
 .daisyrou1
   RTS
@@ -2364,13 +2364,13 @@ turnonfullbucket = movingsize+room
   LDA #dizzyx:SEC:SBC #20:STA dizzyx ; TODO - remove
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-  LDA #4:STA sequence ; Jump/tumble left
-  LDA #1:STA animation
+  ; TODO - put back in when moving correctly
+  ;LDA #4:STA sequence ; Jump/tumble left
+  ;LDA #1:STA animation
 
   ; Set up for message when in dungeon
   LDA #STR_getbackintheremess:JSR findroomstr
-  LDA roomno
-  CMP #36:BEQ showmessage
+  LDA roomno:CMP #36:BEQ showmessage
 
   ; See if the miner has already given the message
   LDY #var1:LDA (zptr4), Y:BNE done
@@ -2581,6 +2581,33 @@ turnonfullbucket = movingsize+room
 
   LDA #STR_usepickaxemess:JSR findroomstr
   JMP windowrou
+}
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;MINER
+.minerrou
+{
+  ; Check proximity box for miner
+  LDA #hi(proxminer):STA zptr6+1
+  LDA #lo(proxminer):STA zptr6
+
+  JMP checkproximity1
+}
+
+.proxminer
+{
+  EQUB 41      ;; room
+  EQUB 90, 120 ;; x, y
+  EQUB 2, 32   ;; w, h
+
+.proxminerou
+  LDY #movex:LDA #90:STA (zptr4), Y
+  LDA #OFFMAP:STA trollhere+room
+
+  JSR proxtrollrou
+
+  ; Set message viewed
+  LDA #1:STA minerhere+var1
+
+  RTS
 }
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;RUG TRICK
 .proxrug
