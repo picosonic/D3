@@ -2,8 +2,15 @@
 
 numhearts = 16
 
-.heartdemo
+.theheartdemo
 {
+  LDA #&01:STA dontupdatedizzy
+
+  ;;;got to daisy  ;;heart demo
+  LDA #HEARTSROOM:STA roomno
+  JSR roomsetup
+
+.heartdemo
   JSR resethearts
 
   LDA #0

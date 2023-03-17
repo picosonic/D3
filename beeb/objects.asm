@@ -745,7 +745,6 @@ noofmoving = (endofmovingdata-movingdata)/movingsize
 
 .daggerrou
 .rethere
-.daisyrou
 .daisyrou1
   RTS
 ;;
@@ -2627,6 +2626,59 @@ turnonfullbucket = movingsize+room
 
   LDA #STR_userugmess:JSR findroomstr
   JMP windowrou
+}
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;DAISY ROUTINE
+.daisyrou
+{
+  ; Check for collision with Dizzy
+  JSR collidewithdizzy16
+  BEQ justinlift
+
+  ; Check Dizzy is standing, not moving
+  LDA sequence:BNE done
+
+.test
+  ; Stop Dizzy being drawn
+  LDA #1:STA dontupdatedizzy
+
+  ; Show message about finding Daisy
+  LDA #STR_gottodaisymess:JSR findroomstr
+  JSR prtmessage:JSR handoffandwait
+
+  ; Show love hearts
+  JSR theheartdemo
+
+  ; Get back to cloud prison
+  LDA #94:STA roomno
+
+  ; Remove Daisy from prison
+  LDA #OFFMAP:STA daisyhere+room
+
+  ; Place Daisy in treehouse village
+  LDA #73:STA daisy1here+room
+
+  ; Let Dizzy know that Daisy has gone
+  LDA #STR_daisyrunsmess:JSR findroomstr
+  JMP windowrou
+
+.done
+  RTS
+}
+
+.justinlift
+{
+  ; Place Daisy Y position so she appears on lift
+  JSR rubprintmoving
+
+  LDA daisylifthere+movey
+  CLC:ADC #21
+  LDY #movey:STA (zptr4), Y
+
+.^anidaisy
+  ; Animate Daisy using alternating h-flip
+  LDY #colour:LDA (zptr4), Y
+  EOR #ATTR_REVERSE:STA (zptr4), Y
+  JMP printmoving
 }
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

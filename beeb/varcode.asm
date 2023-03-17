@@ -347,8 +347,6 @@
   ; Show room in game palette
   LDA #PAL_GAME:JSR setpal
 
-  JSR checkhearts ; TODO - this is temporary to test
-
   LDA #&00:STA dontupdatedizzy ; Allow Dizzy to be drawn
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -426,17 +424,6 @@
 
   LDA #FIREROOM:STA roomno:JSR drawfullroom ; Draw fire
   LDA #STARTROOM:STA roomno ; Reset current room to be dungeon
-
-.done
-  RTS
-}
-
-.checkhearts
-{
-  LDA roomno:CMP #HEARTSROOM:BNE done ; Make sure we are in the right room
-
-  ; Jump to hearts demo
-  JSR heartdemo
 
 .done
   RTS
