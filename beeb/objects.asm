@@ -742,7 +742,6 @@ noofmoving = (endofmovingdata-movingdata)/movingsize
   EQUW switchrou1
   EQUW daisyrou1
 
-.trollrou
 .daggerrou
 .rethere
 .minerrou
@@ -812,6 +811,7 @@ noofmoving = (endofmovingdata-movingdata)/movingsize
   RTS
 }
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;PICKUPABLE
 ; zptr4 = current object
 .pickupablerou
 {
@@ -2340,6 +2340,47 @@ turnonfullbucket = movingsize+room
   ; Store loaf position for rat to test against
   CLC:ADC #&02:STA ratcoll+1
 
+  RTS
+}
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TROLL
+.trollrou
+{
+  ; Check proximity box for troll
+  LDA #hi(proxtroll):STA zptr6+1
+  LDA #lo(proxtroll):STA zptr6
+
+  JMP checkproximity1
+}
+
+.proxtroll
+{
+	EQUB 36      ;; room
+	EQUB 82, 136 ;; x, y
+	EQUB 8, 32   ;; w, h
+
+  ; When Dizzy collides with troll he gets thrown back into room
+.^proxtrollrou
+  ; TODO - set throw vector correctly
+  LDA #dizzyx:SEC:SBC #20:STA dizzyx ; TODO - remove
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+  LDA #4:STA sequence ; Jump/tumble left
+  LDA #1:STA animation
+
+  ; Set up for message when in dungeon
+  LDA #STR_getbackintheremess:JSR findroomstr
+  LDA roomno
+  CMP #36:BEQ showmessage
+
+  ; See if the miner has already given the message
+  LDY #var1:LDA (zptr4), Y:BNE done
+
+  ; Set up for message when in mine
+  LDA #STR_goawaymess:JSR findroomstr
+.showmessage
+  JMP windowrou
+
+.done
   RTS
 }
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;ARMOROG

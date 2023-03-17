@@ -414,6 +414,7 @@ ENDMACRO
   RTS
 }
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;LOOKING AT PICTURE
 .proxpicture
 {
   EQUB 52      ;; room
