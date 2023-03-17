@@ -745,7 +745,6 @@ noofmoving = (endofmovingdata-movingdata)/movingsize
 
 .daggerrou
 .rethere
-.daisyrou1
   RTS
 ;;
 
@@ -2679,6 +2678,38 @@ turnonfullbucket = movingsize+room
   LDY #colour:LDA (zptr4), Y
   EOR #ATTR_REVERSE:STA (zptr4), Y
   JMP printmoving
+}
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;DAISY WITH COINS
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;DAISY ROUTINE
+.daisyrou1
+{
+  JSR collidewithdizzy16
+  BNE doendmessages ; Collision
+
+  JSR rubprintmoving
+  JMP anidaisy
+
+.doendmessages
+  ; Check Dizzy is standing, not moving
+  LDA sequence:BNE done
+
+  LDA #10:STA x
+
+  ; Check how many coins Dizzy has found
+  LDA coins:CMP #30:BEQ completedit
+  LDA #STR_notgotallcoins:JSR findroomstr
+  JMP chatter
+
+.completedit
+  ; Mark game as completed
+  LDA #&01:STA completedgame
+  LDA #STR_gotallcoins:JSR findroomstr
+  JSR chatter
+
+  JMP theheartdemo
+
+.done
+  RTS
 }
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
