@@ -743,7 +743,6 @@ noofmoving = (endofmovingdata-movingdata)/movingsize
   EQUW switchrou1
   EQUW daisyrou1
 
-.daggerrou
 .rethere
   RTS
 ;;
@@ -1219,6 +1218,30 @@ dylantalking = duffmem
 
   LDA #STR_trollgotapplemess:JSR findroomstr
   JMP chatter
+}
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;DAGGERS
+.daggerrou
+{
+  ; Check for collision with Dizzy
+  JSR collidewithdizzy16
+  BEQ done
+
+  LDA roomno
+  CMP #94 ; Are we in the cloud prison
+  BEQ roomdagok
+
+  ; We are down the dagger pit in room (castle room 69)
+  ; So put Dizzy out of the pit
+  LDA #84:STA startroom
+  LDA #56:STA startx
+  LDA #176:STA starty
+
+.roomdagok
+  LDA #STR_killedbydaggersmess:STA deathmsg ; Set death message to show
+  LDA #&01:STA killed ; Set Dizzy as killed
+
+.done
+  RTS
 }
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;EGG IN NEST
 .proxegg
