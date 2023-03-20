@@ -833,8 +833,8 @@ noofmoving = (endofmovingdata-movingdata)/movingsize
   BEQ pickupmanure
 
   ; Check for talking to yolk folk
-  CMP #SPR_DOZY:BCC notpickingupbag
-  CMP #SPR_DIZZY:BCS notpickingupbag
+  CMP #SPR_DOZY:BCC notpickingupbag  ;  < Dozy
+  CMP #SPR_DIZZY:BCS notpickingupbag ; >= Dizzy
   JMP talkingtopeople
 
 .notpickingupbag
@@ -963,7 +963,7 @@ dylantalking = duffmem
 .talkingtopeople
 {
   LDY #movefrm:LDA (zptr4), Y
-  CMP #SPR_DOZY:BCC notyolkfolk
+  CMP #SPR_DIZZY:BCS notyolkfolk ; >= Dizzy
 
   ; Find out how many times we've spoken before
   SEC:SBC #SPR_DOZY:TAY
@@ -1024,10 +1024,11 @@ dylantalking = duffmem
   LDA dozyhere+movefrm:SEC:SBC #SPR_DOZY:TAY
   LDA talkbefore, Y
 
-  CMP #5
+  CMP #5        ; < 5
   BCC kickagain ; Kick again
-  CMP #6
-  BCS done ; Do nothing after 6th kick
+
+  CMP #6        ; >= 6
+  BCS done      ; Do nothing after 6th kick
 
   LDA #OFFMAP:STA dozyhere+room
   STA dozyfloathere+var1
@@ -1169,7 +1170,7 @@ dylantalking = duffmem
 .guardarm
   JSR printmoving
   LDA armoroghere+movex
-  CMP #62:BCS done
+  CMP #62:BCC done
   LDA #ARMOROG_GUARDING:STA armoroghere+var1 ; Set state to guarding
 
 .done
@@ -1187,7 +1188,7 @@ dylantalking = duffmem
   ; Drop everything
   LDY #&00
 .droplp
-  LDA objectscarried, Y:CMP #OBJ_BAG:BEQ enddrop
+  LDA objectscarried, Y:CMP #OBJ_BAG+1:BCC enddrop
 
   STA objecttodrop
 
@@ -1830,7 +1831,7 @@ resetportswitch = resetmachines
 
   ; Check which animation sequence we are currently running
   LDA sequence
-  CMP #&03 ; Are we walking left/right or still? -> Fall over
+  CMP #&02 ; Are we walking left or still? -> Fall over
   BCC fallover
 
   INC drunk
@@ -2276,7 +2277,7 @@ turnonfullbucket = movingsize+room
 
   LDA dozyfloathere+movex
   CMP #28
-  BCC done
+  BCS done
 
   LDA #&00:STA dozyfloathere+var1
 
@@ -2705,7 +2706,7 @@ turnonfullbucket = movingsize+room
   ; See how far down Daisy's lift is
   LDA daisylifthere+movey
   CMP #100
-  BCC done
+  BCS done
 
   ; Draw the switch - not sure that this is needed?
   JSR printmoving
@@ -2785,7 +2786,7 @@ turnonfullbucket = movingsize+room
   CLC:ADC #&01:STA (zptr4), Y
 
   ; Compare delaycounter to delay
-  CMP ztmp7:BNE done ; If different, return
+  CMP ztmp7:BCC done ; If < return
 
   ; Reset counter, setting Z flag so that routine is run
   LDY #delaycounter:LDA #&00:STA (zptr4), Y

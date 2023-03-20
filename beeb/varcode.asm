@@ -450,7 +450,7 @@
   LDA newroomno:CMP #STARTROOM
   BNE standforwardframe
 
-  LDA y:CMP #100:BCS standforwardframe
+  LDA y:CMP #100:BCC standforwardframe
 
   LDX #25
 
