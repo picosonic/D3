@@ -25,26 +25,26 @@ movingsize = 12
 OFFMAP = 255
 
 ; Routine index values
-portcullis = 0
-portswitch = 1
-pickupable = 2 ; An object which can be picked up
-armorog = 3
-dragon = 4
-crocodile = 5
-log = 6
-hawk = 7
-machines = 8
-lift = 9
-dozyfloat = 10
-rat = 11
-troll = 12
-dagger = 13
-door  = 14
-crowbar = 15
-miner = 16
-daisy = 17
-switch1 = 18
-daisy1 = 19
+portcullis =  0 ; Raising/lowering animation, with death
+portswitch =  1 ; Starting portcullis
+pickupable =  2 ; An object which can be picked up
+armorog    =  3 ; Alertness trigger, charging, sleeping, eating bone
+dragon     =  4 ; Head raise/lower animation, breathing flame, calmed by sleeping potion or egg
+crocodile  =  5 ; Snapping animation, plus being tied by rope
+log        =  6 ; Floating log, height dependant on water raised by stones
+hawk       =  7 ; Patrolling and diving
+machines   =  8 ; Unlock by key to start associated lift
+lift       =  9 ; Lift mechanism
+dozyfloat  = 10 ; Dozy float animation when pushed into water
+rat        = 11 ; Random patrolling and eating loaf
+troll      = 12 ; Troll when in dungeon
+dagger     = 13 ; In prison and castle pit
+door       = 14 ; In castle to west tower
+crowbar    = 15 ; Does nothing - used on shopkeeper / well lid / large rock in mine / carpet in prison
+miner      = 16 ; Troll when in mine
+daisy      = 17 ; Daisy in prison
+switch1    = 18 ; Daisy prison lift switch
+daisy1     = 19 ; Daisy at hut
 
 ; The number of routines defined
 roucount = 20
@@ -916,147 +916,6 @@ resetdaisy = printmoving
 resetdaisy1 = printmoving
 resetswitch1 = printmoving
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;PORTCULLIS HERE
-.resetportcullis
-{
-  LDA porthere+var1
-  BNE resetrope1
-
-.resetrope
-  LDA #&00:STA porthere+var1
-  LDA porthere+oldmovey:STA porthere+movey
-
-.resetrope1
-  LDA porthere+movey:PHA ; Cache current
-  LDA #96-2:STA porthere+movey ; portcullis.origy-2
-  PLA ; Restore previous
-
-.drawropedownlp
-  PHA
-  INC porthere+movey
-  INC porthere+movey
-  JSR printmoving
-  PLA
-  CMP porthere+movey
-  BNE drawropedownlp
-
-  RTS
-}
-
-; Negate object.var1
-;
-; IN object pointer in zptr4
-.negvar1
-{
-  LDY #var1
-
-  LDA (zptr4), Y
-  NEGATEACC
-  STA (zptr4), Y
-
-  RTS
-}
-
-.portcullisrou
-{
-  LDA porthere+var1:BEQ done
-
-  CLC:ADC porthere+movey:STA porthere+movey
-  CMP porthere+oldmovex
-  BEQ turnportcullisplusdelay
-
-  CMP porthere+oldmovey
-  BNE notturnportcullis
-
-  ; Raising portcullis delay
-  LDA #&04:STA porthere+delay
-
-.turnportcullis
-  JSR negvar1
-.notturnportcullis
-  JSR printmoving
-  JSR collidewithdizzy16
-  BEQ done
-
-  LDA #STR_killedbyportcullis:STA deathmsg ; Set death message to show
-  LDA #&01:STA killed ; Set Dizzy as killed
-  BNE done
-
-.turnportcullisplusdelay
-  ; Lowering portcullis delay
-  LDA #&01:STA porthere+delay
-  BNE turnportcullis
-
-.done
-  RTS
-}
-
-.portswitchrou
-{
-  ; If not trying to interact, end now
-  LDA pickup:BEQ done
-
-  ; Check for collision, if not end now
-  JSR collidewithdizzy16
-  BEQ done
-
-  ; Check if var1 is set (already switched), if so end now
-  LDA portswitchhere+var1:BNE done
-
-  ; Disable further interaction
-  LDA #&00:STA pickup
-
-  ; Set portcullis var1
-  LDA #&FE:STA porthere+var1 ; -2
-
-  ; Set portcullis animation delay
-  LDA #&06:STA porthere+delay
-
-  ; Flag switch as used
-  LDA #&01:STA portswitchhere+var1
-
-  ; Display switch message
-  LDA #STR_throwswitchmess:JSR findroomstr
-  JMP windowrou
-
-.done
-  RTS
-}
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;BRING DAISY LIFT DOWN
-
-.switchrou1
-{
-  ; Turn Daisy's lift off by default
-  LDA #&00:STA daisylifthere+var1
-
-  ; See how far down Daisy's lift is
-  LDA daisylifthere+movey
-  CMP #100
-  BCC done
-
-  ; Draw the switch - not sure that this is needed?
-  JSR printmoving
-
-  ; If collided with Dizzy set var=1 else var1=0
-  JSR collidewithdizzy16:BEQ keepgoing
-  LDA #&01
-.keepgoing
-  LDY #var1:STA (zptr4), Y
-
-  ; Update the colour/redraw based on on/off state of var1
-  JSR resetmachines
-
-  ; If switch is off, finish here
-  LDY #var1:LDA (zptr4), Y:AND #&01:BEQ done
-
-  ; Turn on Daisy's lift
-  LDA #&01:STA daisylifthere+var1
-
-.done
-  RTS
-}
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; These are pointers to the room attribute of the object which appears after talking
 ; to specific yolkfolk, it gets updated from 255 to the current room, to become visible.
@@ -1202,441 +1061,116 @@ dylantalking = duffmem
   LDA #STR_stereoess:JSR findroomstr
   JMP windowrou
 }
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-; Proximity locations, when dropping things, to know how to interact
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;APPLE
-.proxapple
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;ARMOROG
+.resetarmorog
 {
-  EQUB 36 ;;room
-  EQUB 78,152 ;;;x,y
-  EQUB 4,16 ;;;w,h
+  ; If "happy", don't reset everything
+  LDA armoroghere+var1
+  CMP #ARMOROG_HAPPY:BEQ done
 
-.proxapplerou
-  ; Make apple disappear
-  LDY #movex:LDA #&FF:STA (zptr4), Y
+.^armorogreguard
+  ; Equivalent to reseteach()
+  LDA #54:STA armoroghere+movex
+  LDA #156:STA armoroghere+movey
+  LDA #SPR_GRUNT0:STA armoroghere+movefrm
+  LDA #&00
+  STA armoroghere+var1
+  STA armoroghere+delaycounter
 
-  LDA #STR_trollgotapplemess:JSR findroomstr
-  JMP chatter
+  ; Clear h-flip
+  LDA armoroghere+colour
+	AND #&7F:STA armoroghere+colour
+
+.done
+  JMP printmoving
 }
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;DAGGERS
-.daggerrou
+
+.armorogrou
 {
   ; Check for collision with Dizzy
   JSR collidewithdizzy16
-  BEQ done
+  BEQ armnotkilldizzy
 
-  LDA roomno
-  CMP #94 ; Are we in the cloud prison
-  BEQ roomdagok
+  ; TODO - LDA #&00:STA left:STA right
 
-  ; We are down the dagger pit in room (castle room 69)
-  ; So put Dizzy out of the pit
-  LDA #84:STA startroom
-  LDA #56:STA startx
-  LDA #176:STA starty
-
-.roomdagok
-  LDA #STR_killedbydaggersmess:STA deathmsg ; Set death message to show
+  LDA #STR_armorogkilledmess:STA deathmsg ; Set death message to show
   LDA #&01:STA killed ; Set Dizzy as killed
-
-.done
-  RTS
-}
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;EGG IN NEST
-.proxegg
-{
-  EQUB 40 ;;room
-  EQUB 54,150 ;;;x,y
-  EQUB 4,20 ;;;w,h
-
-.proxeggrou
-  ; Make dragon happy
-  LDA #&FF:STA dragonhere1+var1
-
-  LDA #STR_puteggbackmess:JSR findroomstr
-  JMP windowrou
-}
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;ROCK
-.proxrock
-{
-  EQUB 48 ;;room
-  EQUB 72,80 ;;;x,y
-  EQUB 10,30 ;;;w,h
-
-.proxrockrou
-  LDY #room:LDA proxrock:STA (zptr4), Y
-
-  ; Raise water
-  LDA waterheight
-  CLC:ADC #&06:STA waterheight
-
-  ; Place the rock in the water (from right to left) to displace water
-  NEGATEACC
-  ADC #76
-  LDY #movex:STA (zptr4), Y
-  LDY #movey:LDA #176:STA (zptr4), Y
-
-  LDA #STR_rockinwatermess:JSR findroomstr
-  JMP windowrou
-}
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;SLEEP
-.proxsleep
-{
-  EQUB 54 ;;room
-  EQUB 60,150 ;;;x,y
-  EQUB 10,30 ;;;w,h
-
-.proxsleeprou
-  LDA #&FF
-  LDY #room:STA (zptr4), Y ; Remove sleeping potion from room
-  STA dragonhere+var1 ; Set dragon to be asleep
-
-  LDA #STR_dragonasleepmess:JSR findroomstr
-  JMP windowrou
-}
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;CROCODILE
-.crocodilerou
-{
-  ; Only process if Dizzy is not dead
-  LDA killed:BEQ cont
-  RTS
-.cont
-
-  ; Advance delay counter to animate every 8th frame
-  LDY #delaycounter:LDA (zptr4), Y
-  CLC:ADC #&01:AND #&07:STA (zptr4), Y
-  BNE justcroccoll
-
-  ; Check if Dizzy is positioned on right of croc
-  LDA #74:STA cx:LDA #80:STA cy
-  LDA #20:STA cw:LDA #100:STA ch
-  JSR collidewithdizzy3:STA ztmp7 ; cache result
-
-  ; Start with default colour / plot
-  LDA #(PAL_GREEN+PLOT_OR):STA ztmp8
-
-  ; Don't flip if croc is tied
-  LDY #var1:LDA (zptr4), Y
-  BMI nottied
-
-  ; Flip croc sprite horizontally when on right of it
-  LDA ztmp7:BEQ notflipped
-  LDA ztmp8:ORA #ATTR_REVERSE:STA ztmp8
-.notflipped
-
-.nottied
-  JSR rubprintmoving ; Remove previously drawn croc
-
-  ; Set new colour / plot
-  LDY #colour:LDA ztmp8:STA (zptr4), Y
-
-  ; See if crocodile is tied up
-  LDY #var1:LDA (zptr4), Y:CMP #&FF
-  BEQ hestied
-
-  ; Advance var1
-  CLC:ADC #&01:AND #&07
-  STA (zptr4), Y
-
-.hestied
-  ; Start with mouth closed
-  LDY #movefrm:LDA #SPR_CROCCLOSED:STA (zptr4), Y
-
-  ; Determine if we need to open mouth
-  LDY #var1:LDA (zptr4), Y
-  CMP #240:BCS doprintmoving
-  CMP #3:BCC doprintmoving
-  AND #&01:BEQ doprintmoving
-
-  ; Open crocodile's mouth
-  LDY #movefrm:LDA #SPR_CROCOPEN:STA (zptr4), Y
-
-  JSR printmoving
-
-.justcroccoll
-  LDY #movefrm:LDA (zptr4), Y:AND #&01:BNE done ; If mouth shut - skip death check
-
-  ; Check for collision (proximitycollide)
-  ;  Is Dizzy on top of crocodile with mouth open?
-  LDA #70:STA cx:LDA #140:STA cy
-  LDA #6:STA cw:LDA #10:STA ch
-  JSR collidewithdizzy3:BEQ done
-
-  ; Dizzy got eaten by crocodile
-
-  LDA #7:STA sequence
-  ; LDA #&00:STA left:STA right ; Clear keystate for left/right
-  LDA #(69-32):STA x:LDA #160:STA y ; Set X, Y position for respawn
-.^CROCDEATH
-  LDA #STR_croceatenmess:STA deathmsg ; Set death message to show
-  LDA #&01:STA killed ; Set Dizzy as killed
-  ;JSR killdizzy
-
-.done
   RTS
 
-.doprintmoving
-  JMP printmoving
-}
+.armnotkilldizzy
+  ; State machine
+  LDA armoroghere+var1:BEQ armasleep ; Default state
+  CMP #ARMOROG_COUNTDOWN:BEQ armcountdown
+  CMP #ARMOROG_RUNNING:BEQ armrunning
+  CMP #ARMOROG_GUARDING:BEQ armguarding
+.armhappy
+.armguarding
+  RTS
 
-.proxcroc
-{
-  EQUB 53 ;;room
-  EQUB 68,140 ;;;x,y
-  EQUB 10,20 ;;;w,h
+.armasleep
+  ; Wake Armorog, to charge if Dizzy is in front of den
+  LDA #64:STA cx:LDA #125:STA cy
+  LDA #12:STA cw:LDA #40:STA ch
+  JSR collidewithdizzy3:BEQ armguarding
 
-.proxcrocrou
-  LDA #&FF
-  LDY #room:STA (zptr4), Y ; Remove rope from room
-  STA crochere+var1 ; Set crocodile to be tied up
-
-  LDA #STR_croctiedmess:JSR findroomstr
-  JMP windowrou
-}
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;FLOATING LOG
-.logrou
-{
+  ; Start countdown to charge
+  LDA #ARMOROG_COUNTDOWN:STA armoroghere+var1
   JSR rubprintmoving
 
-  ; fall through
-}
-
-.resetlog
-{
-  LDY #var1:LDA (zptr4), Y
-  CLC:ADC #&01:AND #&03
-  STA (zptr4), Y
-  BNE logup
-
-  LDA #&02
-.logup
-  STA ripple+2
-  LDA waterheight
-  NEGATEACC
-.ripple
-  CLC:ADC #&00
-  CLC:ADC #162
-  LDY #movey:STA (zptr4), Y
-
-  JMP printmoving
-}
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;HAWK
-.resethawk
-{
-  LDY #movey:LDA #52:STA (zptr4), Y ; Place hawk in sky
-  LDY #var1:LDA #&00:STA (zptr4), Y ; Set to flying state (not diving)
-
-  ; Draw in initial position
+  ; Indicate change of awareness
+  LDA #155:STA armoroghere+movey
+  LDA #SPR_GRUNT1:STA armoroghere+movefrm
   JSR printmoving
-}
+  LDA #20:STA armoroghere+oldmovex ; Set countdown value
 
-.hawkrou
-{
-  ; Erase hawk
+  ; Count down to charge
+.armcountdown
+  DEC armoroghere+oldmovex
+  BNE done
+  LDA #ARMOROG_RUNNING:STA armoroghere+var1
+
+  ; Running towards den
+.armrunning
+  ;JSR waitvsync
   JSR rubprintmoving
+  INC armoroghere+movex ; Move right a bit
 
-  ; Check first if hawk is diving for Dizzy
-  LDY #var1:LDA (zptr4), Y
-  BNE hawkdiving
+  ; Alternate between sprites for animation
+  LDA armoroghere+movefrm:EOR #&01:STA armoroghere+movefrm
 
-.^joinresthawk
-  ; Advance animation frame
-  LDY #oldmovefrm:LDA (zptr4), Y
-  AND #&03:BNE hawkupdown
+  ; If Dizzy is on the ground, charge
+  LDA dizzyy:CMP #150:BCS intoden
 
-  LDA #&02
-.hawkupdown
-  CLC:ADC #SPR_HAWK0-1
-  LDY #movefrm:STA (zptr4), Y
+  ; See if the bone is in the den, if so charge
+  LDA bonehere+room:CMP armoroghere+room:BNE guardarm
+  LDA bonehere+movex:CMP #80:BCC guardarm
+  LDA bonehere+movey:CMP #140:BCC guardarm
 
-  LDY #oldmovefrm:LDA (zptr4), Y
-  CLC:ADC #&01
-  AND #127
-  STA (zptr4), Y
-
-  LSR A
-  CMP #32
-  BCC okhawkx
-
-  ;Flip direction of horizontal travel
-  SEC:SBC #32
-  NEGATEACC
-  CLC:ADC #32
-
-.okhawkx
-  CLC:ADC #40
-  LDY #movex:STA (zptr4), Y ; Set new X position
-
-  ; If hawk above left cloud, it can't see Dizzy
-  CMP #50
-  BCS nextx
-  JMP printmoving ; Draw hawk above left cloud
-
-.nextx
-  ; If hawk is above right cloud, it can't see Dizzy
-  CMP #64
-  BCC nextx2
-  JMP printmoving ; Draw hawk above right cloud
-.nextx2
-
-  ; Check if Dizzy can be "seen" in narrow strip below hawk
-  CLC:ADC #&02:STA cx
-  LDA #52:STA cy
-  LDA #4:STA cw
-  LDA #120:STA ch
-  JSR collidewithdizzy3:BEQ nocollide
-
-  ; Hawk has seen Dizzy
-  LDY #var1:LDA #&01:STA (zptr4), Y ; Start dive
-  LDY #movefrm:LDA #SPR_HAWK0:STA (zptr4), Y ; Set sprite
-
-.nocollide
-  ; End by drawing hawk in new position/frame
-  JMP printmoving ; Draw hawk between clouds
-
-  ; Hawk is diving for Dizzy
-.hawkdiving
-  LDA dizzyx
-  LDY #movex:STA (zptr4), Y
-
-  LDY #movey:LDA (zptr4), Y
-  CLC:ADC #8
-  STA (zptr4), Y
-
-  JSR printmoving ; Draw hawk diving
-
-  ; Check for collision with Dizzy
-  JSR collidewithdizzy16
-  BEQ done
-
-  ; Collision occured
-  LDA #STR_killedbyhawk:STA deathmsg ; Set death message to show
-  LDA #&01:STA killed ; Set Dizzy as killed
-
-.done
-  RTS ; TODO - remove
-}
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;KEYS
-.proxkey1
-{
-  EQUB 56 ;;room
-  EQUB 51,120 ;;;x,y
-  EQUB 4,16 ;;;w,h
-
-  LDA #hi(machine1here):STA machineptr+1
-  LDA #lo(machine1here):STA machineptr
-  LDA #hi(lift1here):STA liftptr+1
-  LDA #lo(lift1here):STA liftptr
-
-.^proxkey1rou
-  ; Remove dropped key
-  LDY #room:LDA #OFFMAP:STA (zptr4), Y
-
-  ; Set bottom bit of var1, on machine and associated lift
-  LDY #var1
-  LDA (machineptr), Y:ORA #&01:STA (machineptr), Y
-  LDA (liftptr), Y:ORA #&01:STA (liftptr), Y
-
-  ; Show message about turning machine on with key
-  LDA #STR_keyinmachine:JSR findroomstr
-
-  JMP windowrou
-}
-
-.proxkey2
-{
-  EQUB 56 ;;room
-  EQUB 73,120 ;;;x,y
-  EQUB 4,16 ;;;w,h
-
-  LDA #hi(machine2here):STA machineptr+1
-  LDA #lo(machine2here):STA machineptr
-  LDA #hi(lift2here):STA liftptr+1
-  LDA #lo(lift2here):STA liftptr
-
-  JMP proxkey1rou
-}
-.proxkey3
-{
-  EQUB 56 ;;room
-  EQUB 53,160 ;;;x,y
-  EQUB 4,16 ;;;w,h
-
-  LDA #hi(machine3here):STA machineptr+1
-  LDA #lo(machine3here):STA machineptr
-  LDA #hi(lift3here):STA liftptr+1
-  LDA #lo(lift3here):STA liftptr
-
-  JMP proxkey1rou
-}
-.proxkey4
-{
-  EQUB 56 ;;room
-  EQUB 71,160 ;;;x,y
-  EQUB 4,16 ;;;w,h
-
-  LDA #hi(machine4here):STA machineptr+1
-  LDA #lo(machine4here):STA machineptr
-  LDA #hi(lift4here):STA liftptr+1
-  LDA #lo(lift4here):STA liftptr
-
-  JMP proxkey1rou
-}
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;MACHINES
-.resetmachines
-{
-  ; Clear colour
-  LDY #colour:LDA (zptr4), Y
-  AND #%01111101
-  STA (zptr4), Y
-
-  ; Get machine state (0=off, 1=on)
-  LDY #var1:LDA (zptr4), Y
-  BEQ justdraw
-
-  ; Merge with blanked bit 1 in colour and h-flip
-  LDY #colour
-  LDA #&82:ORA (zptr4), Y
-  STA (zptr4), Y
-
-.justdraw
-
-  ; Draw this machine
+.intoden
+  LDA armoroghere+movex:CMP #78:BEQ not78
   JMP printmoving
-}
+.not78
+  ; LDA #78:STA armoroghere+movex ; Stop armorog going offscreen (not in original)
+  LDA armoroghere+colour:ORA #&80:STA armoroghere+colour ; h-flip
+  LDA #156:STA armoroghere+movey
+  LDA #ARMOROG_HAPPY:STA armoroghere+var1 ; Set to state to happy
+  JSR printmoving
 
-machinesrou = rethere
-resetportswitch = resetmachines
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;DRUNK
-.checkifdrunk
-{
-  ; Check if Dizzy is drunk
-  LDA drunk:BEQ done
+  ; If dizzy is dead, reset armorog
+  LDA killed:BEQ notdead
+  JMP armorogreguard
+.notdead
 
-  ; Yes, he's drunk, so decrement drunkeness
-  SEC:SBC #&01
-  STA drunk
+  ; Remove bone from room
+  LDA #OFFMAP:STA bonehere+room
+  LDA #STR_fedarmorog:JSR findroomstr
+  JMP windowrou
 
-  ; Check if divisible by 64 (frames?)
-  AND #%00111111:BNE done
-
-  ; Check which animation sequence we are currently running
-  LDA sequence
-  CMP #&03 ; Are we walking left/right or still? -> Fall over
-  BCC fallover
-
-  INC drunk
-  RTS
-
-.fallover
-  JSR random:AND #&01 ; 50/50 chance for direction to go in
-  PHA
-  LDA #&00:STA dy
-  LDA #&01:STA animation
-  PLA:PHA ; TODO - :STA right
-  EOR #&01 ; TODO - :STA left
-  PLA:CLC:ADC #&04:STA sequence ; Tumble left or right
+.guardarm
+  JSR printmoving
+  LDA armoroghere+movex
+  CMP #62:BCS done
+  LDA #ARMOROG_GUARDING:STA armoroghere+var1 ; Set state to guarding
 
 .done
   RTS
@@ -1930,6 +1464,390 @@ resetportswitch = resetmachines
 .done
   RTS
 }
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;SLEEP
+.proxsleep
+{
+  EQUB 54 ;;room
+  EQUB 60,150 ;;;x,y
+  EQUB 10,30 ;;;w,h
+
+.proxsleeprou
+  LDA #&FF
+  LDY #room:STA (zptr4), Y ; Remove sleeping potion from room
+  STA dragonhere+var1 ; Set dragon to be asleep
+
+  LDA #STR_dragonasleepmess:JSR findroomstr
+  JMP windowrou
+}
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;CROCODILE
+.crocodilerou
+{
+  ; Only process if Dizzy is not dead
+  LDA killed:BEQ cont
+  RTS
+.cont
+
+  ; Advance delay counter to animate every 8th frame
+  LDY #delaycounter:LDA (zptr4), Y
+  CLC:ADC #&01:AND #&07:STA (zptr4), Y
+  BNE justcroccoll
+
+  ; Check if Dizzy is positioned on right of croc
+  LDA #74:STA cx:LDA #80:STA cy
+  LDA #20:STA cw:LDA #100:STA ch
+  JSR collidewithdizzy3:STA ztmp7 ; cache result
+
+  ; Start with default colour / plot
+  LDA #(PAL_GREEN+PLOT_OR):STA ztmp8
+
+  ; Don't flip if croc is tied
+  LDY #var1:LDA (zptr4), Y
+  BMI nottied
+
+  ; Flip croc sprite horizontally when on right of it
+  LDA ztmp7:BEQ notflipped
+  LDA ztmp8:ORA #ATTR_REVERSE:STA ztmp8
+.notflipped
+
+.nottied
+  JSR rubprintmoving ; Remove previously drawn croc
+
+  ; Set new colour / plot
+  LDY #colour:LDA ztmp8:STA (zptr4), Y
+
+  ; See if crocodile is tied up
+  LDY #var1:LDA (zptr4), Y:CMP #&FF
+  BEQ hestied
+
+  ; Advance var1
+  CLC:ADC #&01:AND #&07
+  STA (zptr4), Y
+
+.hestied
+  ; Start with mouth closed
+  LDY #movefrm:LDA #SPR_CROCCLOSED:STA (zptr4), Y
+
+  ; Determine if we need to open mouth
+  LDY #var1:LDA (zptr4), Y
+  CMP #240:BCS doprintmoving
+  CMP #3:BCC doprintmoving
+  AND #&01:BEQ doprintmoving
+
+  ; Open crocodile's mouth
+  LDY #movefrm:LDA #SPR_CROCOPEN:STA (zptr4), Y
+
+  JSR printmoving
+
+.justcroccoll
+  LDY #movefrm:LDA (zptr4), Y:AND #&01:BNE done ; If mouth shut - skip death check
+
+  ; Check for collision (proximitycollide)
+  ;  Is Dizzy on top of crocodile with mouth open?
+  LDA #70:STA cx:LDA #140:STA cy
+  LDA #6:STA cw:LDA #10:STA ch
+  JSR collidewithdizzy3:BEQ done
+
+  ; Dizzy got eaten by crocodile
+
+  LDA #7:STA sequence
+  ; LDA #&00:STA left:STA right ; Clear keystate for left/right
+  LDA #(69-32):STA x:LDA #160:STA y ; Set X, Y position for respawn
+.^CROCDEATH
+  LDA #STR_croceatenmess:STA deathmsg ; Set death message to show
+  LDA #&01:STA killed ; Set Dizzy as killed
+  ;JSR killdizzy
+
+.done
+  RTS
+
+.doprintmoving
+  JMP printmoving
+}
+
+.proxcroc
+{
+  EQUB 53 ;;room
+  EQUB 68,140 ;;;x,y
+  EQUB 10,20 ;;;w,h
+
+.proxcrocrou
+  LDA #&FF
+  LDY #room:STA (zptr4), Y ; Remove rope from room
+  STA crochere+var1 ; Set crocodile to be tied up
+
+  LDA #STR_croctiedmess:JSR findroomstr
+  JMP windowrou
+}
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;ROCK
+.proxrock
+{
+  EQUB 48 ;;room
+  EQUB 72,80 ;;;x,y
+  EQUB 10,30 ;;;w,h
+
+.proxrockrou
+  LDY #room:LDA proxrock:STA (zptr4), Y
+
+  ; Raise water
+  LDA waterheight
+  CLC:ADC #&06:STA waterheight
+
+  ; Place the rock in the water (from right to left) to displace water
+  NEGATEACC
+  ADC #76
+  LDY #movex:STA (zptr4), Y
+  LDY #movey:LDA #176:STA (zptr4), Y
+
+  LDA #STR_rockinwatermess:JSR findroomstr
+  JMP windowrou
+}
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;FLOATING LOG
+.logrou
+{
+  JSR rubprintmoving
+
+  ; fall through
+}
+
+.resetlog
+{
+  LDY #var1:LDA (zptr4), Y
+  CLC:ADC #&01:AND #&03
+  STA (zptr4), Y
+  BNE logup
+
+  LDA #&02
+.logup
+  STA ripple+2
+  LDA waterheight
+  NEGATEACC
+.ripple
+  CLC:ADC #&00
+  CLC:ADC #162
+  LDY #movey:STA (zptr4), Y
+
+  JMP printmoving
+}
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;HAWK
+.resethawk
+{
+  LDY #movey:LDA #52:STA (zptr4), Y ; Place hawk in sky
+  LDY #var1:LDA #&00:STA (zptr4), Y ; Set to flying state (not diving)
+
+  ; Draw in initial position
+  JSR printmoving
+}
+
+.hawkrou
+{
+  ; Erase hawk
+  JSR rubprintmoving
+
+  ; Check first if hawk is diving for Dizzy
+  LDY #var1:LDA (zptr4), Y
+  BNE hawkdiving
+
+.^joinresthawk
+  ; Advance animation frame
+  LDY #oldmovefrm:LDA (zptr4), Y
+  AND #&03:BNE hawkupdown
+
+  LDA #&02
+.hawkupdown
+  CLC:ADC #SPR_HAWK0-1
+  LDY #movefrm:STA (zptr4), Y
+
+  LDY #oldmovefrm:LDA (zptr4), Y
+  CLC:ADC #&01
+  AND #127
+  STA (zptr4), Y
+
+  LSR A
+  CMP #32
+  BCC okhawkx
+
+  ;Flip direction of horizontal travel
+  SEC:SBC #32
+  NEGATEACC
+  CLC:ADC #32
+
+.okhawkx
+  CLC:ADC #40
+  LDY #movex:STA (zptr4), Y ; Set new X position
+
+  ; If hawk above left cloud, it can't see Dizzy
+  CMP #50
+  BCS nextx
+  JMP printmoving ; Draw hawk above left cloud
+
+.nextx
+  ; If hawk is above right cloud, it can't see Dizzy
+  CMP #64
+  BCC nextx2
+  JMP printmoving ; Draw hawk above right cloud
+.nextx2
+
+  ; Check if Dizzy can be "seen" in narrow strip below hawk
+  CLC:ADC #&02:STA cx
+  LDA #52:STA cy
+  LDA #4:STA cw
+  LDA #120:STA ch
+  JSR collidewithdizzy3:BEQ nocollide
+
+  ; Hawk has seen Dizzy
+  LDY #var1:LDA #&01:STA (zptr4), Y ; Start dive
+  LDY #movefrm:LDA #SPR_HAWK0:STA (zptr4), Y ; Set sprite
+
+.nocollide
+  ; End by drawing hawk in new position/frame
+  JMP printmoving ; Draw hawk between clouds
+
+  ; Hawk is diving for Dizzy
+.hawkdiving
+  LDA dizzyx
+  LDY #movex:STA (zptr4), Y
+
+  LDY #movey:LDA (zptr4), Y
+  CLC:ADC #8
+  STA (zptr4), Y
+
+  JSR printmoving ; Draw hawk diving
+
+  ; Check for collision with Dizzy
+  JSR collidewithdizzy16
+  BEQ done
+
+  ; Collision occured
+  LDA #STR_killedbyhawk:STA deathmsg ; Set death message to show
+  LDA #&01:STA killed ; Set Dizzy as killed
+
+.done
+  RTS ; TODO - remove
+}
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;KEYS
+.proxkey1
+{
+  EQUB 56 ;;room
+  EQUB 51,120 ;;;x,y
+  EQUB 4,16 ;;;w,h
+
+  LDA #hi(machine1here):STA machineptr+1
+  LDA #lo(machine1here):STA machineptr
+  LDA #hi(lift1here):STA liftptr+1
+  LDA #lo(lift1here):STA liftptr
+
+.^proxkey1rou
+  ; Remove dropped key
+  LDY #room:LDA #OFFMAP:STA (zptr4), Y
+
+  ; Set bottom bit of var1, on machine and associated lift
+  LDY #var1
+  LDA (machineptr), Y:ORA #&01:STA (machineptr), Y
+  LDA (liftptr), Y:ORA #&01:STA (liftptr), Y
+
+  ; Show message about turning machine on with key
+  LDA #STR_keyinmachine:JSR findroomstr
+
+  JMP windowrou
+}
+
+.proxkey2
+{
+  EQUB 56 ;;room
+  EQUB 73,120 ;;;x,y
+  EQUB 4,16 ;;;w,h
+
+  LDA #hi(machine2here):STA machineptr+1
+  LDA #lo(machine2here):STA machineptr
+  LDA #hi(lift2here):STA liftptr+1
+  LDA #lo(lift2here):STA liftptr
+
+  JMP proxkey1rou
+}
+.proxkey3
+{
+  EQUB 56 ;;room
+  EQUB 53,160 ;;;x,y
+  EQUB 4,16 ;;;w,h
+
+  LDA #hi(machine3here):STA machineptr+1
+  LDA #lo(machine3here):STA machineptr
+  LDA #hi(lift3here):STA liftptr+1
+  LDA #lo(lift3here):STA liftptr
+
+  JMP proxkey1rou
+}
+.proxkey4
+{
+  EQUB 56 ;;room
+  EQUB 71,160 ;;;x,y
+  EQUB 4,16 ;;;w,h
+
+  LDA #hi(machine4here):STA machineptr+1
+  LDA #lo(machine4here):STA machineptr
+  LDA #hi(lift4here):STA liftptr+1
+  LDA #lo(lift4here):STA liftptr
+
+  JMP proxkey1rou
+}
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;MACHINES
+.resetmachines
+{
+  ; Clear colour
+  LDY #colour:LDA (zptr4), Y
+  AND #%01111101
+  STA (zptr4), Y
+
+  ; Get machine state (0=off, 1=on)
+  LDY #var1:LDA (zptr4), Y
+  BEQ justdraw
+
+  ; Merge with blanked bit 1 in colour and h-flip
+  LDY #colour
+  LDA #&82:ORA (zptr4), Y
+  STA (zptr4), Y
+
+.justdraw
+
+  ; Draw this machine
+  JMP printmoving
+}
+
+machinesrou = rethere
+resetportswitch = resetmachines
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;DRUNK
+.checkifdrunk
+{
+  ; Check if Dizzy is drunk
+  LDA drunk:BEQ done
+
+  ; Yes, he's drunk, so decrement drunkeness
+  SEC:SBC #&01
+  STA drunk
+
+  ; Check if divisible by 64 (frames?)
+  AND #%00111111:BNE done
+
+  ; Check which animation sequence we are currently running
+  LDA sequence
+  CMP #&03 ; Are we walking left/right or still? -> Fall over
+  BCC fallover
+
+  INC drunk
+  RTS
+
+.fallover
+  JSR random:AND #&01 ; 50/50 chance for direction to go in
+  PHA
+  LDA #&00:STA dy
+  LDA #&01:STA animation
+  PLA:PHA ; TODO - :STA right
+  EOR #&01 ; TODO - :STA left
+  PLA:CLC:ADC #&04:STA sequence ; Tumble left or right
+
+.done
+  RTS
+}
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;FILL BUCKET
 turnonfullbucket = movingsize+room
 
@@ -2209,6 +2127,112 @@ turnonfullbucket = movingsize+room
 .done
   RTS
 }
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;PORTCULLIS HERE
+.resetportcullis
+{
+  LDA porthere+var1
+  BNE resetrope1
+
+.resetrope
+  LDA #&00:STA porthere+var1
+  LDA porthere+oldmovey:STA porthere+movey
+
+.resetrope1
+  LDA porthere+movey:PHA ; Cache current
+  LDA #96-2:STA porthere+movey ; portcullis.origy-2
+  PLA ; Restore previous
+
+.drawropedownlp
+  PHA
+  INC porthere+movey
+  INC porthere+movey
+  JSR printmoving
+  PLA
+  CMP porthere+movey
+  BNE drawropedownlp
+
+  RTS
+}
+
+; Negate object.var1
+;
+; IN object pointer in zptr4
+.negvar1
+{
+  LDY #var1
+
+  LDA (zptr4), Y
+  NEGATEACC
+  STA (zptr4), Y
+
+  RTS
+}
+
+.portcullisrou
+{
+  LDA porthere+var1:BEQ done
+
+  CLC:ADC porthere+movey:STA porthere+movey
+  CMP porthere+oldmovex
+  BEQ turnportcullisplusdelay
+
+  CMP porthere+oldmovey
+  BNE notturnportcullis
+
+  ; Raising portcullis delay
+  LDA #&04:STA porthere+delay
+
+.turnportcullis
+  JSR negvar1
+.notturnportcullis
+  JSR printmoving
+  JSR collidewithdizzy16
+  BEQ done
+
+  LDA #STR_killedbyportcullis:STA deathmsg ; Set death message to show
+  LDA #&01:STA killed ; Set Dizzy as killed
+  BNE done
+
+.turnportcullisplusdelay
+  ; Lowering portcullis delay
+  LDA #&01:STA porthere+delay
+  BNE turnportcullis
+
+.done
+  RTS
+}
+
+.portswitchrou
+{
+  ; If not trying to interact, end now
+  LDA pickup:BEQ done
+
+  ; Check for collision, if not end now
+  JSR collidewithdizzy16
+  BEQ done
+
+  ; Check if var1 is set (already switched), if so end now
+  LDA portswitchhere+var1:BNE done
+
+  ; Disable further interaction
+  LDA #&00:STA pickup
+
+  ; Set portcullis var1
+  LDA #&FE:STA porthere+var1 ; -2
+
+  ; Set portcullis animation delay
+  LDA #&06:STA porthere+delay
+
+  ; Flag switch as used
+  LDA #&01:STA portswitchhere+var1
+
+  ; Display switch message
+  LDA #STR_throwswitchmess:JSR findroomstr
+  JMP windowrou
+
+.done
+  RTS
+}
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;DOZY FLOATING
 .resetdozyfloat
 {
@@ -2404,116 +2428,40 @@ turnonfullbucket = movingsize+room
 .done
   RTS
 }
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;ARMOROG
-.resetarmorog
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;APPLE
+.proxapple
 {
-  ; If "happy", don't reset everything
-  LDA armoroghere+var1
-  CMP #ARMOROG_HAPPY:BEQ done
+  EQUB 36 ;;room
+  EQUB 78,152 ;;;x,y
+  EQUB 4,16 ;;;w,h
 
-.^armorogreguard
-  ; Equivalent to reseteach()
-  LDA #54:STA armoroghere+movex
-  LDA #156:STA armoroghere+movey
-  LDA #SPR_GRUNT0:STA armoroghere+movefrm
-  LDA #&00
-  STA armoroghere+var1
-  STA armoroghere+delaycounter
+.proxapplerou
+  ; Make apple disappear
+  LDY #movex:LDA #&FF:STA (zptr4), Y
 
-  ; Clear h-flip
-  LDA armoroghere+colour
-	AND #&7F:STA armoroghere+colour
-
-.done
-  JMP printmoving
+  LDA #STR_trollgotapplemess:JSR findroomstr
+  JMP chatter
 }
-
-.armorogrou
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;DAGGERS
+.daggerrou
 {
   ; Check for collision with Dizzy
   JSR collidewithdizzy16
-  BEQ armnotkilldizzy
+  BEQ done
 
-  ; TODO - LDA #&00:STA left:STA right
+  LDA roomno
+  CMP #94 ; Are we in the cloud prison
+  BEQ roomdagok
 
-  LDA #STR_armorogkilledmess:STA deathmsg ; Set death message to show
+  ; We are down the dagger pit in room (castle room 69)
+  ; So put Dizzy out of the pit
+  LDA #84:STA startroom
+  LDA #56:STA startx
+  LDA #176:STA starty
+
+.roomdagok
+  LDA #STR_killedbydaggersmess:STA deathmsg ; Set death message to show
   LDA #&01:STA killed ; Set Dizzy as killed
-  RTS
-
-.armnotkilldizzy
-  ; State machine
-  LDA armoroghere+var1:BEQ armasleep ; Default state
-  CMP #ARMOROG_COUNTDOWN:BEQ armcountdown
-  CMP #ARMOROG_RUNNING:BEQ armrunning
-  CMP #ARMOROG_GUARDING:BEQ armguarding
-.armhappy
-.armguarding
-  RTS
-
-.armasleep
-  ; Wake Armorog, to charge if Dizzy is in front of den
-  LDA #64:STA cx:LDA #125:STA cy
-  LDA #12:STA cw:LDA #40:STA ch
-  JSR collidewithdizzy3:BEQ armguarding
-
-  ; Start countdown to charge
-  LDA #ARMOROG_COUNTDOWN:STA armoroghere+var1
-  JSR rubprintmoving
-
-  ; Indicate change of awareness
-  LDA #155:STA armoroghere+movey
-  LDA #SPR_GRUNT1:STA armoroghere+movefrm
-  JSR printmoving
-  LDA #20:STA armoroghere+oldmovex ; Set countdown value
-
-  ; Count down to charge
-.armcountdown
-  DEC armoroghere+oldmovex
-  BNE done
-  LDA #ARMOROG_RUNNING:STA armoroghere+var1
-
-  ; Running towards den
-.armrunning
-  ;JSR waitvsync
-  JSR rubprintmoving
-  INC armoroghere+movex ; Move right a bit
-
-  ; Alternate between sprites for animation
-  LDA armoroghere+movefrm:EOR #&01:STA armoroghere+movefrm
-
-  ; If Dizzy is on the ground, charge
-  LDA dizzyy:CMP #150:BCS intoden
-
-  ; See if the bone is in the den, if so charge
-  LDA bonehere+room:CMP armoroghere+room:BNE guardarm
-  LDA bonehere+movex:CMP #80:BCC guardarm
-  LDA bonehere+movey:CMP #140:BCC guardarm
-
-.intoden
-  LDA armoroghere+movex:CMP #78:BEQ not78
-  JMP printmoving
-.not78
-  ; LDA #78:STA armoroghere+movex ; Stop armorog going offscreen (not in original)
-  LDA armoroghere+colour:ORA #&80:STA armoroghere+colour ; h-flip
-  LDA #156:STA armoroghere+movey
-  LDA #ARMOROG_HAPPY:STA armoroghere+var1 ; Set to state to happy
-  JSR printmoving
-
-  ; If dizzy is dead, reset armorog
-  LDA killed:BEQ notdead
-  JMP armorogreguard
-.notdead
-
-  ; Remove bone from room
-  LDA #OFFMAP:STA bonehere+room
-  LDA #STR_fedarmorog:JSR findroomstr
-  JMP windowrou
-
-.guardarm
-  JSR printmoving
-  LDA armoroghere+movex
-  CMP #62:BCS done
-  LDA #ARMOROG_GUARDING:STA armoroghere+var1 ; Set state to guarding
 
 .done
   RTS
@@ -2601,6 +2549,20 @@ turnonfullbucket = movingsize+room
   LDA #OFFMAP:STA rockhere+room
 
   LDA #STR_usepickaxemess:JSR findroomstr
+  JMP windowrou
+}
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;EGG IN NEST
+.proxegg
+{
+  EQUB 40 ;;room
+  EQUB 54,150 ;;;x,y
+  EQUB 4,20 ;;;w,h
+
+.proxeggrou
+  ; Make dragon happy
+  LDA #&FF:STA dragonhere1+var1
+
+  LDA #STR_puteggbackmess:JSR findroomstr
   JMP windowrou
 }
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;MINER
@@ -2730,6 +2692,38 @@ turnonfullbucket = movingsize+room
   JSR chatter
 
   JMP theheartdemo
+
+.done
+  RTS
+}
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;BRING DAISY LIFT DOWN
+.switchrou1
+{
+  ; Turn Daisy's lift off by default
+  LDA #&00:STA daisylifthere+var1
+
+  ; See how far down Daisy's lift is
+  LDA daisylifthere+movey
+  CMP #100
+  BCC done
+
+  ; Draw the switch - not sure that this is needed?
+  JSR printmoving
+
+  ; If collided with Dizzy set var=1 else var1=0
+  JSR collidewithdizzy16:BEQ keepgoing
+  LDA #&01
+.keepgoing
+  LDY #var1:STA (zptr4), Y
+
+  ; Update the colour/redraw based on on/off state of var1
+  JSR resetmachines
+
+  ; If switch is off, finish here
+  LDY #var1:LDA (zptr4), Y:AND #&01:BEQ done
+
+  ; Turn on Daisy's lift
+  LDA #&01:STA daisylifthere+var1
 
 .done
   RTS
