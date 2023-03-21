@@ -474,3 +474,21 @@
 
   RTS ; TODO - Needs to be a JMP plotnew ?
 }
+
+.killdizzy
+{
+  LDA #10
+
+.^killdizzy1
+  STA z80breg
+
+  LDA killed:BNE done
+
+  LDA z80breg:STA killed
+
+  LDA z80hreg:STA killedmess+1
+  LDA z80lreg:STA killedmess
+
+.done
+  RTS
+}
