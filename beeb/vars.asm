@@ -8,6 +8,22 @@ GUARD ZP_ECONET_WORKSPACE
 ; Input bitfield
 .keys EQUB &00
 
+; Z80 equivalents
+.z80bcreg
+.z80creg EQUB 0
+.z80breg EQUB 0
+
+.z80dereg
+.z80ereg EQUB 0
+.z80dreg EQUB 0
+
+.z80hlreg
+.z80lreg EQUB 0
+.z80hreg EQUB 0
+
+.z80ixreg EQUW 0
+.z80iyreg EQUW 0
+
 ; Pointers and indexes
 .zptr1 EQUW 0
 .zidx1 EQUB 0
