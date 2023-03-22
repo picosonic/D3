@@ -1997,11 +1997,11 @@ turnonfullbucket = movingsize+room
 
 .notfirstlift
   ; Load origy for this lift into b_reg
-  JSR liftorigy:STA ztmp8
+  JSR liftorigy:STA z80breg
   LDY #movey:LDA (zptr4), Y
-  DEC ztmp8
+  DEC z80breg
   PHA
-  LDA ztmp8:STA (zptr4), Y
+  LDA z80breg:STA (zptr4), Y
   PLA
 
 .drawdownlp
@@ -2013,17 +2013,16 @@ turnonfullbucket = movingsize+room
   JSR rublift
 
   LDY #oldmovex:LDA (zptr4), Y:STA frmy
-  STA ztmp8
+  STA z80breg
 
   LDY #oldmovey:LDA (zptr4), Y
-  SEC:SBC ztmp8
+  SEC:SBC z80breg
   CLC:ADC #42
   STA frmheight
 
   LDA #&00:STA frmplot
   LDA #&07:STA frmattri
-
-  RTS ; TODO should be JMP plotattris
+  JMP plotattris
 }
 
 .liftrou
@@ -2036,7 +2035,7 @@ turnonfullbucket = movingsize+room
   ; See if colliding with Dizzy (proximitycollide)
   ; if so, stop the lift, otherwise move it
   LDY #movex:LDA (zptr4), Y:STA cx
-  LDA #movey:LDA (zptr4), Y:SEC:SBC #&02:STA cy
+  LDY #movey:LDA (zptr4), Y:SEC:SBC #&02:STA cy
   LDA #8:STA cw
   LDA #48:STA ch
   JSR collidewithdizzy3:BEQ movelift

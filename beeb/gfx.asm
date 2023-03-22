@@ -73,7 +73,7 @@ PAL_DIZZY2 = $02
   CMP #hi(ROMSBASE)-2 ; Avoid bottom border
   BNE outerloop
 
-  RTS
+  JMP clearattris
 }
 
 ; Test if pixel about to be plotted would overwrite border or header
@@ -907,3 +907,16 @@ PAL_DIZZY2 = $02
 .seq6 EQUB 4,5,5,6,6,5,5,4; bob upside down
 .seq7 EQUB 0,1,8,8,7,6,7,7; fall over backwards
 .seq8 EQUB 8,7,6,5,4,3,2,1; upside down tumble
+
+; Clear attribute table (used for solidity)
+.clearattris
+{
+  RTS
+}
+
+; Plot a shape onto the attribute table
+; uses frmx, frmy, frmwidth, frmheight and frmattri
+.plotattris
+{
+  RTS
+}
