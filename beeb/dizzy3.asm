@@ -551,8 +551,9 @@ ENDMACRO
 
   ; See if UP pressed
   LDA keys:AND #PAD_UP:BEQ notupmenu
-; yesupmenu
+.yesupmenu
   DEY
+  LDA objectscarried, Y:CMP #0:BEQ yesupmenu ; Prevent getting stuck on empty item - TODO rework
 .notupmenu
 
 .distdownmenu
@@ -561,8 +562,9 @@ ENDMACRO
 
   ; See if DOWN pressed
   LDA keys:AND #PAD_DOWN:BEQ notdownmenu
-; yesdownmenu
+.yesdownmenu
   INY
+  LDA objectscarried, Y:CMP #0:BEQ yesdownmenu ; Prevent getting stuck on empty item - TODO rework
 .notdownmenu
   CPY objecttodrop:BEQ chooseobjecttodrop ; If selection hasn't changed, go round again
 
@@ -575,7 +577,9 @@ ENDMACRO
 
   ; Something has been chosen
 .tryingtodrop
-  LDA objectscarried, Y:STA objecttodrop ; Record selected item
+  LDA objectscarried, Y
+  CMP #0:BEQ justexitinvent ; Prevent empty slot being selected - TODO rework
+  STA objecttodrop ; Record selected item
   JSR gettomovingdata ; Point to it
 
   ; See if it's the whiskey
