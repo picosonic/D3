@@ -495,7 +495,7 @@ ENDMACRO
   TYA:PHA:JSR printcarryingline:PLA:TAY
   INY
 .distdownmenu1
-  CPY #1 ; 2+bag*2
+  CMP #1 ; 2+bag*2
   BNE printwhatcarrying
 
   ; If first item is empty, then nothing being carried
