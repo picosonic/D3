@@ -226,26 +226,32 @@ INCLUDE "gfx.asm"
   LDA #PAL_WHITE:STA frmattri
   JSR drawdizzy
 
-;  LDA killed:BEQ notdeadyet
-;
-;  LDA sequence:CMP #6:BEQ cantstop
-;  CMP #7:BNE notkeelingover
-;
+  ; Check Dizzy is still alive
+  LDA killed:BEQ notdeadyet
+
+  ; Check for bobbing upside down
+  LDA sequence:CMP #6:BEQ cantstop
+
+  ; Check for not keeling over backwards
+  CMP #7:BNE notkeelingover
+
+  ; Check to see if keeling over animation sequence has finished
 ;  LDA animation:CMP #7:BEQ cantstop
-;
+
+  ; Set animation frame to penultimate one
 ;  LDA #6:STA animation:BNE cantstop
-;
-;.notkeelingover
+
+.notkeelingover
 ;  BNE notdeadyet
 ;
 ;  STA animation
 ;
 ;  LDA #7:STA sequence:BNE cantstop
 ;
-;.notdeadyet
+.notdeadyet
 ;  LDA sequence:CMP #3:BCS jumping
 ;
-;.checkfloor
+.checkfloor
 ;  LDA floor
 ;  BEQ cantstop
 ;
@@ -253,13 +259,13 @@ INCLUDE "gfx.asm"
 ;  TXA:AND #PAD_LEFT:BNE tryright
 ;  LDA #1:BNE tryjump
 ;
-;.tryright
+.tryright
 ;  TXA:AND #PAD_RIGHT:BNE trynone
 ;  LDA #2:BNE tryjump
 ;
-;.trynone
+.trynone
 ;  LDA #0
-;.tryjump
+.tryjump
 ;  STA ztmp1
 ;  TXA:AND #PAD_JUMP:BEQ setsequnce ; No jump
 ;
@@ -267,10 +273,10 @@ INCLUDE "gfx.asm"
 ;  LDA #256-8:STA dy
 ;  LDA #3
 ;
-;.setsequnce
+.setsequnce
 ;  CLC:ADC ztmp1
 ;
-;.cantstop
+.cantstop
 ;  ; Don't check keys
 ;  LDA sequence
 ;  ROL A:ROL A
@@ -284,9 +290,33 @@ INCLUDE "gfx.asm"
 ;
 ;  LDA x:STA ztmp1
 ;
-;.sidereturn
-;
-;.jumping ;;;;;
+.sidereturn
+.sideback
+.aroundgravity
+
+.updownback
+.updownback1
+
+.vertreturn
+
+.checktopside
+.checktopsidelp
+
+.checkbottomside
+.slowfall
+.checkbottomsidelp
+.floorfound
+.storedizzy
+
+.checkleftside
+.checkleftsidelp
+
+.checkrightside
+.checkrightsidelp
+
+.nosidemove
+
+.jumping ;;;;;
 ;
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ; Draw new
@@ -297,6 +327,20 @@ INCLUDE "gfx.asm"
   JSR drawdizzy
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+  RTS
+}
+
+.checkline
+{
+.checklinelp
+  RTS
+}
+
+; Check attributes at specified position
+;
+; IN lookx, looky
+.checkattri
+{
   RTS
 }
 
@@ -452,9 +496,7 @@ ENDMACRO
   INY
 .distdownmenu1
   CPY #1 ; 2+bag*2
-  BCC printwhatcarrying
-
-  ;JSR printcarryingline ; TODO - temporary to show "EXIT AND DON'T DROP"
+  BNE printwhatcarrying
 
   ; If first item is empty, then nothing being carried
   LDA objectscarried
@@ -489,7 +531,7 @@ ENDMACRO
 .chooseobjecttodrop
   STY objecttodrop ; cache selection
 .flywait
-  TYA:PHA:JSR waitvsync:PLA:TAY
+  TYA:PHA:JSR waitvsync:PLA:TAY ; TODO - temporary
 
   ; Change colour of highlighted item
   INC cyclecolour:LDA cyclecolour:AND #&07:STA cyclecolour
