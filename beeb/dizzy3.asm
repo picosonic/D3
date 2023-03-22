@@ -183,18 +183,6 @@ INCLUDE "gfx.asm"
   JSR prtmessage
   PLA:STA roomno ; Restore room number
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; This is here just to set killedmess
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-  LDA roomno:PHA ; Cache room number
-  LDA #ROOM_STRINGS:STA roomno
-  LDA deathmsg:JSR findroomstr
-  PLA:STA roomno ; Restore room number
-
-  LDA zptr5:STA killedmess
-  LDA zptr5+1:STA killedmess+1
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
   LDA killedmess:STA zptr5
   LDA killedmess+1:STA zptr5+1
 

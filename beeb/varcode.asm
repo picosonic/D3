@@ -100,9 +100,9 @@
 
   if liquidkills=1
 
-  LDA #STR_killedbyvolcano:STA deathmsg
+  LDA #STR_killedbyvolcano:STA deathmsg ; Set death message to show
   LDA roomno:CMP #77:BEQ yesfellinlava
-  LDA #STR_killedbywater:STA deathmsg
+  LDA #STR_killedbywater:STA deathmsg ; Set death message to show
 .yesfellinlava
   LDA #&01:STA killed
   ;JSR killdizzy1
@@ -147,9 +147,9 @@
   JSR collidewithdizzy3
   BEQ notburnt
 
-  LDA #STR_killedbyflame:STA deathmsg
-  LDA #&01:STA killed ; TODO - remove
-  ;JSR killdizzy1
+  LDA #STR_killedbyflame:STA deathmsg ; Set death message to show
+  LDA #50 ;; flame
+  JSR killdizzy1
 
   endif
 
@@ -477,17 +477,26 @@
 
 .killdizzy
 {
+  ; Set killed parameter default
   LDA #10
 
 .^killdizzy1
-  STA z80breg
+  STA z80breg ; Cache parameter
 
+  ; If killed is set, stop now
   LDA killed:BNE done
 
+  ; Restore parameter, set killed
   LDA z80breg:STA killed
 
-  LDA z80hreg:STA killedmess+1
-  LDA z80lreg:STA killedmess
+  ; Lookup killed message
+  LDA roomno:PHA ; Cache room number
+  LDA #ROOM_STRINGS:STA roomno
+  LDA deathmsg:JSR findroomstr
+  PLA:STA roomno ; Restore room number
+
+  LDA zptr5:STA killedmess
+  LDA zptr5+1:STA killedmess+1
 
 .done
   RTS

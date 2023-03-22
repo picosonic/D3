@@ -1095,8 +1095,7 @@ dylantalking = duffmem
   ; TODO - LDA #&00:STA left:STA right
 
   LDA #STR_armorogkilledmess:STA deathmsg ; Set death message to show
-  LDA #&01:STA killed ; Set Dizzy as killed
-  RTS
+  LDA #20:JSR killdizzy1
 
 .armnotkilldizzy
   ; State machine
@@ -1268,8 +1267,7 @@ dylantalking = duffmem
   JSR collidewithdizzy16:BEQ notdragvdizz
 
   LDA #STR_dragonkilledmess:STA deathmsg ; Set death message to show
-  LDA #&01:STA killed ; Set Dizzy as killed
-  ; TODO - JSR killdizzy
+  JSR killdizzy
 
 .notdragvdizz
   LDA breathingfire:BEQ keepgoing2
@@ -1458,9 +1456,8 @@ dylantalking = duffmem
   JSR collidewithdizzy3
   BEQ done
 
-  LDA #STR_dragonflameskilledmess:STA deathmsg
-  LDA #&01:STA killed ; Set Dizzy as killed
-  ; TODO - JSR killdizzy1
+  LDA #STR_dragonflameskilledmess:STA deathmsg ; Set death message to show
+  LDA #30:JMP killdizzy1
 
 .done
   RTS
@@ -1555,8 +1552,7 @@ dylantalking = duffmem
   LDA #(69-32):STA x:LDA #160:STA y ; Set X, Y position for respawn
 .^CROCDEATH
   LDA #STR_croceatenmess:STA deathmsg ; Set death message to show
-  LDA #&01:STA killed ; Set Dizzy as killed
-  ;JSR killdizzy
+  JMP killdizzy
 
 .done
   RTS
@@ -1720,10 +1716,10 @@ dylantalking = duffmem
 
   ; Collision occured
   LDA #STR_killedbyhawk:STA deathmsg ; Set death message to show
-  LDA #&01:STA killed ; Set Dizzy as killed
+  LDA #3:JMP killdizzy1
 
 .done
-  RTS ; TODO - remove
+  RTS
 }
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;KEYS
 .proxkey1
@@ -2118,15 +2114,12 @@ turnonfullbucket = movingsize+room
   ; Set back to lift top
   LDY #movefrm:LDA #SPR_LIFTTOP:STA (zptr4), Y
 
+.done
   RTS
 
 .killedbycogs
-  LDA #STR_killedbyliftmess:STA deathmsg
-  LDA #&01:STA killed ; TODO - remove
-  ;JMP killdizzy1
-
-.done
-  RTS
+  LDA #STR_killedbyliftmess:STA deathmsg ; Set death message to show
+  JMP killdizzy
 }
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;PORTCULLIS HERE
 .resetportcullis
@@ -2191,8 +2184,7 @@ turnonfullbucket = movingsize+room
   BEQ done
 
   LDA #STR_killedbyportcullis:STA deathmsg ; Set death message to show
-  LDA #&01:STA killed ; Set Dizzy as killed
-  BNE done
+  LDA #&01:JMP killdizzy1
 
 .turnportcullisplusdelay
   ; Lowering portcullis delay
@@ -2341,8 +2333,7 @@ turnonfullbucket = movingsize+room
   BEQ ratnotgotyou
 
   LDA #STR_ratgotyoumess:STA deathmsg ; Set death message to show
-  LDA #&01:STA killed ; Set Dizzy as killed
-  BNE done
+  JSR killdizzy
 
 .ratnotgotyou
   LDY #movex:LDA (zptr4), Y
@@ -2462,8 +2453,8 @@ turnonfullbucket = movingsize+room
 
 .roomdagok
   LDA #STR_killedbydaggersmess:STA deathmsg ; Set death message to show
-  LDA #&01:STA killed ; Set Dizzy as killed
-
+  LDA #20:JMP killdizzy1
+  
 .done
   RTS
 }
