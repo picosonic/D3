@@ -430,7 +430,7 @@ OBJ_DOZY = 40
 OBJ_DOZYFLOAT = 41
 
 .dozyfloathere
- EQUB 45,dozyfloat,68 ,139,SPR_DOZY,0  ,0  ,0   ,0,      0 ,0 ,PAL_WHITE+ATTR_NOTSOLID+PLOT_NULL
+ EQUB 45,dozyfloat,68 ,139,SPR_DOZY,0  ,0  ,0   ,0,      0 ,0 ,PAL_WHITE+ATTR_NOTSOLID+PLOT_OR
  ;EQUB 45,68,139,SPR_DOZY
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -2243,20 +2243,18 @@ turnonfullbucket = movingsize+room
   LDA dozyfloathere+var1
   BEQ done
 
-  JSR printmoving
+  JSR rubprintmoving
 
   LDA dozyfloathere+var1
   SEC:SBC #&01
   AND #&03
   BNE stillfloatdozy
 
-  LDA dozyfloathere+movex
-  SEC:SBC #&01
-  STA (zptr4), Y
+  DEC dozyfloathere+movex
 
   LDA #&04
 .stillfloatdozy
-  LDA dozyfloathere+var1
+  STA dozyfloathere+var1
   SEC:SBC #&01
   CMP #&03
   BNE okbob
