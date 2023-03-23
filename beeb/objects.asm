@@ -1413,9 +1413,11 @@ dylantalking = duffmem
 .juststoreit
   STA breathingfire
   JMP printdragonhead
+}
 
 .printdragonflame
-  STA ztmp8
+{
+  STA z80breg
 
   LDA roomno
   LDX #50
@@ -1426,7 +1428,7 @@ dylantalking = duffmem
 .gotfirelim
   LDA dragonflame
   ASL A ; *2
-  SEC:SBC #&00
+  SEC:SBC z80breg
   CLC:ADC #68  ;;;position of 1st flame
   STA hcomp+1 ; Cache for compare
 
@@ -1438,7 +1440,7 @@ dylantalking = duffmem
 
   STA frmx
 
-  LDA #&01:STA ztmp8 ; b_reg = 1
+  LDA #&01:STA z80breg
 
   LDY #movey:LDA (zptr4), Y
   CLC:ADC #&08
@@ -1446,7 +1448,7 @@ dylantalking = duffmem
   STA frmy
   LDA #SPR_DRAGONFIRE:STA frmno
 
-  JSR frame
+  JSR frame ; simprintflame()
 
   ; Set flame frame size for collision
   LDA #4:STA cw
