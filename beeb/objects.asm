@@ -1438,14 +1438,16 @@ dylantalking = duffmem
 
   CMP #68:BCS done
 
-  STA frmx
+  STA frmx:STA cx
 
   LDA #&01:STA z80breg
 
+  ; Get head position
   LDY #movey:LDA (zptr4), Y
-  CLC:ADC #&08
+  CLC:ADC #&08 ; Add on 8 (to appear in line with dragon's mouth)
+  
+  STA frmy:STA cy
 
-  STA frmy
   LDA #SPR_DRAGONFIRE:STA frmno
 
   JSR frame ; simprintflame()
