@@ -1279,7 +1279,7 @@ dylantalking = duffmem
 
   ;JSR waitvsync
 
-  LDA #1:STA ztmp8
+  LDA #1:STA z80breg
 .dragonneck
   JSR findnecky ; Find Y position for this neck piece
 
@@ -1287,15 +1287,15 @@ dylantalking = duffmem
   CLC:ADC #152 ; origy (both dragons are at the same Y position)
   LDY #movey:STA (zptr4), Y ; Set neck Y position
 
-  LDA ztmp8
+  LDA z80breg
   NEGATEACC
   CLC:ADC #77
   LDY #movex:STA (zptr4), Y ; Set neck X position
 
   JSR printmoving ; Draw neck piece
 
-  INC ztmp8 ; Advance to next neck piece (1..6)
-  LDA ztmp8:CMP #&07:BNE dragonneck ; Loop for each next piece
+  INC z80breg ; Advance to next neck piece (1..6)
+  LDA z80breg:CMP #&07:BNE dragonneck ; Loop for each next piece
 
 .^printdragonhead
   LDY #oldmovex:LDA (zptr4), Y
@@ -1309,39 +1309,39 @@ dylantalking = duffmem
   LDA breathingfire
   SEC:SBC #&01
   CMP #16
-  LDA #SPR_DRAGONHEADCLOSED
-  ADC #&00 ; Add the carry on if set (i.e. >16)
+  LDA #SPR_DRAGONHEADCLOSED:BCS headclosed
+  CLC:ADC #&01
+.headclosed
   LDY #movefrm:STA (zptr4), Y ; Set head frame
 
   JMP printmoving ; Draw head
 }
 
-; ztmp7 = c reg
-; ztmp8 = b reg (neck piece 1..6)
+; z80creg
+; z80breg (neck piece 1..6)
 .findnecky
 {
-  LDA ztmp8:BEQ done ; Don't think it ever will be 0 though
+  LDA z80breg:BEQ done ; Don't think it ever will be 0 though
 
-  PHA ; cache b_reg (ztmp8)
-  LDA ztmp7:PHA ; cache c_reg (ztmp7)
-  LDY #oldmovex:LDA (zptr4), Y
-  STA ztmp7
+  PHA ; cache neck piece
+  LDA z80creg:PHA ; cache c_reg
+  LDY #oldmovex:LDA (zptr4), Y:STA z80creg
 
-  ; Multiply b_reg by c_reg, result in a
+  ; Multiply neck piece by c_reg, result in a
   LDA #&00
 .findnecklp
-  CLC:ADC ztmp7
-  DEC ztmp8:BNE findnecklp
+  CLC:ADC z80creg
+  DEC z80breg:BNE findnecklp
 
   PHA ; Cache result
-  LDA #3:STA ztmp8 ; b_reg = 3
+  LDA #3:STA z80breg ; neck piece = 3
   PLA ; Restore result
 
   JSR divide
 
   STA result+1 ; Cache divide result
-  PLA:STA ztmp7 ; restore c_reg (ztmp7)
-  PLA:STA ztmp8 ; restore b_reg (ztmp8)
+  PLA:STA z80creg ; restore c_reg
+  PLA:STA z80breg ; restore neck piece
 
 .result
   LDA #&00 ; Restore divide result to return to callee
@@ -1359,7 +1359,7 @@ dylantalking = duffmem
   ; Do positive divide
 .dividelp
   LSR A
-  DEC ztmp8:BNE dividelp
+  DEC z80breg:BNE dividelp
   RTS
 
   ; Do negative divide
@@ -1367,7 +1367,7 @@ dylantalking = duffmem
   NEGATEACC ; Change -ve to +ve
 .divideneglp
   LSR A
-  DEC ztmp8:BNE divideneglp
+  DEC z80breg:BNE divideneglp
   NEGATEACC ; Change +ve back to -ve
   RTS
 }
@@ -1379,7 +1379,7 @@ dylantalking = duffmem
 .dragonfirelp
   STA dragonflame
 
-  LDA #7+64:STA ztmp7 ; c_reg = 7+64
+  LDA #7+64:STA z80creg ; c_reg = 7+64
   LDA breathingfire
   JSR printdragonflame
 
@@ -1388,7 +1388,7 @@ dylantalking = duffmem
   ASL A
 .three
   CLC:ADC #&00:ADC #2+64
-  STA ztmp7
+  STA z80creg
 
   LDA breathingfire
   CLC:ADC #&01
@@ -2769,14 +2769,14 @@ turnonfullbucket = movingsize+room
   LDY #delay:LDA (zptr4), Y
   BEQ done
 
-  STA ztmp7 ; Store delay
+  STA z80breg ; Store delay
 
   ; Advance delaycounter
   LDY #delaycounter:LDA (zptr4), Y
   CLC:ADC #&01:STA (zptr4), Y
 
   ; Compare delaycounter to delay
-  CMP ztmp7:BCC done ; If < return
+  CMP z80breg:BCC done ; If < return
 
   ; Reset counter, setting Z flag so that routine is run
   LDY #delaycounter:LDA #&00:STA (zptr4), Y
