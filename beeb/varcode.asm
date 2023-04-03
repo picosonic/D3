@@ -41,25 +41,27 @@
   ; See if we've gone offscreen to the left
 .chleft
   LDA dizzyx:CMP #32:BCS chright
-  DEC roomno:LDA #92:STA dizzyx:JMP roomrange
+  LDA roomno:SEC:SBC #&01:STA newroomno
+  LDA #92:STA dizzyx:JMP roomrange
   ; See if we've gone offscreen to the right
 .chright
   LDA dizzyx:CMP #92:BCC chtop
-  INC roomno:LDA #32:STA dizzyx:JMP roomrange
+  LDA roomno:CLC:ADC #&01:STA newroomno
+  LDA #32:STA dizzyx:JMP roomrange
   ; See if we've gone offscreen to the top
 .chtop
   LDA dizzyy:CMP #40:BCS chbottom
-  LDA roomno:CLC:ADC #&10:STA roomno
+  LDA roomno:CLC:ADC #&10:STA newroomno
   LDA #168:STA dizzyy:JMP roomrange
   ; See if we've gone offscreen to the bottom
 .chbottom
   LDA dizzyy:CMP #168:BCC roomrange
-  LDA roomno:SEC:SBC #&10:STA roomno
+  LDA roomno:SEC:SBC #&10:STA newroomno
   LDA #40:STA dizzyy
 
 .roomrange
-  LDA roomno:CMP #101:BCC done
-  LDA #STARTROOM:STA roomno ; Reset
+  LDA newroomno:CMP #101:BCC done
+  LDA #STARTROOM:STA newroomno ; Reset
 
 .done
   RTS
@@ -317,10 +319,10 @@
   LDA #&00
   STA noofwater:STA noofflames:STA breathingfire
 
+  JSR drawfullroom
+
   JSR checkbeanstalk
   JSR checkfireout
-
-  JSR drawfullroom
 
   if seecoins=0
     ; Draw any coins in this room

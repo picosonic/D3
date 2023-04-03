@@ -9,9 +9,6 @@
   ; Default to drawing frames clipped to play area
   LDA #&01:STA cliptoplayarea
 
-  ; Reset loaded room number
-  LDA #&FF:STA loadedroomno
-
   ; Reset animation countdown
   LDA #&02:STA eggcount
 

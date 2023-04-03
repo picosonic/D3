@@ -471,8 +471,6 @@ PAL_DIZZY2 = $02
   ; Set roomlen to empty
   LDA #&00:STA roomlen:STA roomlen+1
 
-  LDA roomno:STA loadedroomno ; Mark new room as the currently loaded one
-
   RTS
 
 .roomok
@@ -481,12 +479,6 @@ PAL_DIZZY2 = $02
   LDA nextroomptr:SBC roomptr:STA roomlen
   LDA nextroomptr+1:SBC roomptr+1:STA roomlen+1
 
-  ; See if this is the room already loaded
-  LDA loadedroomno:CMP roomno:BEQ loaded
-
-  LDA roomno:STA loadedroomno ; Mark new room as the currently loaded one
-
-.loaded
   ; Add offset
   CLC
   LDA roomptr+1:ADC #hi(ROMSBASE):STA roomptr+1 ; Adjust to point to SWR

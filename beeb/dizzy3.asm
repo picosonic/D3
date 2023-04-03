@@ -150,9 +150,9 @@ INCLUDE "gfx.asm"
 .wantaquickkill
 
   ; See if room changed
-  LDA roomno:CMP loadedroomno:BEQ notanewroom
+  LDA newroomno:CMP roomno:BEQ notanewroom
 
-  JSR roomsetup
+  STA roomno:JSR roomsetup
 
 .notanewroom
 

@@ -203,7 +203,6 @@ GUARD ENVELOPE_DEFS
 .roomno EQUB 0 ; Current room
 .newroomno EQUB 0
 .oldroomno EQUB 0
-.loadedroomno EQUB 0 ; Last room loaded from disk
 .roomlen EQUW 0 ; Length of active room
 .spritenothere EQUB 0
 .dontupdatedizzy EQUB 0
