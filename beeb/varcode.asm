@@ -308,8 +308,6 @@
 
   PAGE_ROOMDATA
 
-  LDA #&01:STA dontupdatedizzy ; Stop Dizzy being drawn
-
   ; Clear palette to hide draw
   LDA #PAL_BLANK:JSR setpal
 
@@ -323,7 +321,6 @@
   JSR checkfireout
 
   JSR drawfullroom
-  JSR resetroommoving
 
   if seecoins=0
     ; Draw any coins in this room
@@ -347,10 +344,9 @@
   ; Show room in game palette
   LDA #PAL_GAME:JSR setpal
 
-  LDA #&00:STA dontupdatedizzy ; Allow Dizzy to be drawn
-
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   LDA roomno:BEQ done
+  LDA dontupdatedizzy:BNE done
 
   ; Draw initial frame (so there is something to rub out)
   LDA dizzyfrm:AND #&1F:STA frmno
