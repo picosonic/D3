@@ -333,17 +333,23 @@ PAL_DIZZY2 = $02
   ;   frmx of 32 means 0 in screen coordinates, so anything less is negative
   ;
   ; The formula is screenx = (frmx * 4) - 128
-  LDA #&00:STA zidx6 ; first block to draw
+  LDA #&00:STA zidx5 ; first block to draw
   LDA frmx:AND #&7F:PHA
   CMP #31:BCS noneg ; values >= 32 are not negative
 
   ; Calculate first block to draw in row
   ;  block = (16 - ceil(frmx / 2))
-  PLA:LSR A:ADC #&00:STA zidx6
-  LDA #&10:SEC:SBC zidx6:STA zidx6
+  PLA:LSR A:ADC #&00:STA zidx5
+  LDA #&10:SEC:SBC zidx5:STA zidx5
   PHA
 .noneg
   PLA
+
+  ; Test for RHS overflow
+  LDA ztmp1:STA zidx6 ; last block to draw
+
+  ; TODO work out last block
+
 
 .loop
   LDA #&00:STA ztmp2 ; Reset row counter
@@ -354,7 +360,8 @@ PAL_DIZZY2 = $02
   LDA #&00:BEQ nextnibble
 
 .no_clip
-  LDA ztmp2:CMP zidx6:BCC nextnibble ; skip while negative screenx
+  LDA ztmp2:CMP zidx5:BCC nextnibble ; skip while negative screenx
+  CMP zidx6:BCS nextnibble ; Skip while RHS overflow
 
   ; High nibble
   LDY zidx1
@@ -376,7 +383,8 @@ PAL_DIZZY2 = $02
   LDA #&00:BEQ nextsourcebyte
 
 .no_clip2
-  LDA ztmp2:CMP zidx6:BCC nextsourcebyte ; skip while negative screenx
+  LDA ztmp2:CMP zidx5:BCC nextsourcebyte ; skip while negative screenx
+  CMP zidx6:BCS nextsourcebyte ; Skip while RHS overflow
 
   ; Low nibble
   LDY zidx1
