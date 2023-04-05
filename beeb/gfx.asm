@@ -335,7 +335,7 @@ PAL_DIZZY2 = $02
   ; The formula is screenx = (frmx * 4) - 128
   LDA #&00:STA zidx5 ; first block to draw
   LDA frmx:AND #&7F:PHA
-  CMP #31:BCS noneg ; values >= 32 are not negative
+  CMP #NEGATIVE_OFFSET:BCS noneg ; values >= 32 are not negative
 
   ; Calculate first block to draw in row
   ;  block = (16 - ceil(frmx / 2))
@@ -346,10 +346,18 @@ PAL_DIZZY2 = $02
   PLA
 
   ; Test for RHS overflow
+  ;
+  ; Right border starts at 248 pixels (94 in frmx coordinates)
+
   LDA ztmp1:STA zidx6 ; last block to draw
 
-  ; TODO work out last block
+  LDA frmx:AND #&7F ; get left side of sprite
+  CLC:ADC frmwidth ; add width
+  CMP #BORDER_RIGHT:BCC loop ; check for border overflow
 
+  SEC:SBC #BORDER_RIGHT ; calculate difference
+  LSR A:STA ztmp2 ; convert to delta (bytes per row) and cache
+  LDA zidx6:SEC:SBC ztmp2:STA zidx6 ; subtract delta
 
 .loop
   LDA #&00:STA ztmp2 ; Reset row counter

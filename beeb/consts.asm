@@ -33,6 +33,12 @@ PLAYAREA = MODE8BASE+((5+1)*BYTESPERLINE)
 MAIN_LOAD_ADDR = DFS_OPEN_FILE_BUFFER1 ; We don't need to open any files, so load where 1st file buffer starts
 EXO_LOAD_ADDR = DFS_PAGE
 
+; Pixel positions
+NEGATIVE_OFFSET = 32
+BORDER_WIDTH = 8
+BORDER_LEFT = (((NEGATIVE_OFFSET + BORDER_WIDTH) + 128) / 4)
+BORDER_RIGHT = (((MAXX-BORDER_WIDTH) + 128) / 4)
+
 ; Colours (as per Spectrum offsets)
 PAL_BLACK = 0
 PAL_BLUE = 1
