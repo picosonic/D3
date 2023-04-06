@@ -220,11 +220,7 @@ INCLUDE "gfx.asm"
   LDA #4:STA eggcount ; Schedule next update in 4 frames time
 
   ; Rub out
-  LDA dizzyfrm:STA frmno
-  LDA oldx:STA frmx
-  LDA oldy:STA frmy
-  LDA #PAL_WHITE:STA frmattri
-  JSR drawdizzy
+  JSR ruboutdizzy
 
   ; Check Dizzy is still alive
   LDA killed:BEQ notdeadyet

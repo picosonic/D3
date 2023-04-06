@@ -153,6 +153,18 @@ PAL_DIZZY2 = $02
   RTS
 }
 
+; Rub out Dizzy
+.ruboutdizzy
+{
+  ; Rub out
+  LDA dizzyfrm:STA frmno
+  LDA oldx:STA frmx
+  LDA oldy:STA frmy
+  LDA #PAL_WHITE:STA frmattri
+
+  ; Fall through
+}
+
 ; Draw Dizzy
 .drawdizzy
 {
