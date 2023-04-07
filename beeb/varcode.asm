@@ -473,7 +473,7 @@
 {
   LDA roomno:JSR roomsetup
 
-  RTS ; TODO - Needs to be a JMP plotnew ?
+  JMP plotnew
 }
 
 .killdizzy

@@ -262,6 +262,83 @@ INCLUDE "gfx.asm"
   RTS
 }
 
+; Draw Dizzy in new position
+.plotnew
+{
+  LDA x:STA ox ; Cache X
+  STA frmx
+
+  LDA y:STA oy ; Cache Y
+  CLC:ADC #&01
+  STA frmy
+
+  LDA ff:STA of ; Cache frame
+  STA frmno
+
+  JMP drawdizzy
+}
+
+; Dizzy has gone off the screen to the left
+.goneleft
+{
+  LDA #56:STA x ; Put Dizzy on the far right
+
+  ; Determine new room number
+  LDA roomno
+  SEC:SBC #&01
+
+  JMP newroom
+}
+
+; Dizzy has gone off the screen to the right
+.goneright
+{
+  LDA #2:STA x ; Put Dizzy on the far left
+
+  ; Determine new room number
+  LDA roomno
+  CLC:ADC #&01
+
+  JMP newroom
+}
+
+; Dizzy has gone off the screen upwards
+.goneup
+{
+  LDA y:CLC:ADC #118:STA y ; Put Dizzy at the bottom
+
+  ; Determine new room number
+  LDA roomno
+  CLC:ADC #16
+
+  JMP newroom
+}
+
+; Dizzy has gone off the screen downwarsd
+.gonedown
+{
+  LDA y:SEC:SBC #114:STA y ; Put Dizzy at the top
+
+  ; Determine new room number
+  LDA roomno
+  SEC:SBC #16
+
+  ; Fall through
+}
+
+; Handle switching to a new room
+;
+; IN A = new room number
+.newroom
+{
+  AND #127:STA newroomno
+
+  ; Prevent Dizzy being drawn
+  LDA #&01:STA dontupdatedizzy
+
+  RTS
+}
+
 .updatedizzy
 {
   ; Should be called from vsync, so wait for one
@@ -347,7 +424,7 @@ if dosndfx = 1
 endif
 
   LDA #0:STA animation ; Set animation to first frame
-;  LDA #256-8:STA dy
+  LDA #256-8:STA dy ; ??? Set delta Y -> gravity ???
 
   LDA #3 ; Jumping sequence base
 .setsequnce
@@ -356,18 +433,32 @@ endif
 
 .cantstop
   ; Don't check keys
-  LDA sequence
-  ROL A:ROL A
-  CLC:ADC animation:TAY
-  LDA seq0, Y:STA ff
 
+  ; Look up frame to use from sequence[n][animation]
+  LDA sequence
+  ASL A ; * 2 (and clear carry)
+  ROL A:ROL A ; * 4 to make a total of * 8, as there are 8 frames in each sequence
+  ADC animation ; Add animation frame for offset (no need for CLC due to ASL above)
+  TAY:LDA seq0, Y ; Load frame from sequence
+  STA ff ; Cache animation frame
+
+  ; Advance animation frame
   LDY animation:INY:TYA
   AND #7:STA animation
-;
-;  LDA roomno:STA oldroomno
-;
-;  LDA x:STA ztmp1
-;
+
+  LDA roomno:STA oldroomno
+
+  ; Determine new x position based on keys pressed
+  LDA x:STA z80breg
+  SEC:SBC left
+  CLC:ADC right
+
+  ; See if Dizzy has gone off the screen
+  CMP #1:BNE noleft:JMP goneleft
+.noleft
+  CMP #57:BNE noright:JMP goneright
+.noright
+
 .sidereturn
 .sideback
 .aroundgravity
