@@ -63,6 +63,13 @@ GUARD ZP_ECONET_WORKSPACE
 .oldclock EQUB &00
 .clock EQUB &00
 
+if dosndfx = 1
+
+; Sound effect to play
+.sndfx EQUB 0
+
+endif
+
 ; Frame data
 .frmno EQUB 0
 .frmx EQUB 0

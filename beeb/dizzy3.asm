@@ -1,7 +1,8 @@
-; Debug settings
+; Debug settings and flags
 seecoins = 0
 liquidkills = 0
 firekills = 0
+dosndfx = 0
 
 ; OS defines
 INCLUDE "os.asm"
