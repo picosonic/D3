@@ -339,6 +339,16 @@ INCLUDE "gfx.asm"
   RTS
 }
 
+.jumping
+{
+  ; If animation is in progress, then don't stop
+  LDA animation:BNE done
+  JMP checkfloor
+
+.done
+  JMP cantstop
+}
+
 .updatedizzy
 {
   ; Should be called from vsync, so wait for one
@@ -365,23 +375,28 @@ INCLUDE "gfx.asm"
   CMP #7:BNE notkeelingover
 
   ; Check to see if keeling over animation sequence has finished
-;  LDA animation:CMP #7:BEQ cantstop
+  LDA animation:CMP #7:BEQ cantstop
 
   ; Set animation frame to penultimate one
-;  LDA #6:STA animation:BNE cantstop
+  LDA #6:STA animation:BNE cantstop
 
 .notkeelingover
-;  BNE notdeadyet
-;
-;  STA animation
-;
-;  LDA #7:STA sequence:BNE cantstop
-;
+  LDA sequence
+  BNE notdeadyet
+
+  ; Reset animation frame to 0
+  STA animation
+
+  ; Set sequence to "fall over backwards"
+  LDA #7:STA sequence:BNE cantstop
+
+  ; Check for "jumping/tumbling straight up/down"
 .notdeadyet
-;  LDA sequence:CMP #3:BCS jumping
-;
-.checkfloor
-;  LDA floor:BEQ cantstop
+  LDA sequence:CMP #3:BCC checkfloor
+  JMP jumping
+
+.^checkfloor
+  LDA floor:BEQ cantstop
 
 if dosndfx = 1
 
@@ -431,7 +446,7 @@ endif
   CLC:ADC z80breg
   STA sequence
 
-.cantstop
+.^cantstop
   ; Don't check keys
 
   ; Look up frame to use from sequence[n][animation]
@@ -460,13 +475,40 @@ endif
 .noright
 
 .sidereturn
+  STA x:STA z80breg
+  LDA ox:CMP z80breg
+  BEQ sideback ; ox == x
+  BCC checkrightside ; ox < x
+  JMP checkleftside ; ox > x
+
 .sideback
+  LDA sequence
+
+  CMP #6:BEQ vertreturn ; upside down in water
+
+  CMP #8:PHP ; tumbling upsidedown
+  LDA #256-6:PLA
+  BEQ aroundgravity
+
+  LDA dy
+  CLC:ADC #&01
+
 .aroundgravity
+  STA dy
+  BMI checktopside
+  JMP checkbottomside
 
 .updownback
+  LDA #&00:STA floor
 .updownback1
 
 .vertreturn
+  ; If room changed don't draw Dizzy
+  LDA roomno:STA z80breg
+  LDA oldroomno:CMP z80breg:BNE dontdraw
+  JMP plotnew
+.dontdraw
+  RTS
 
 .checktopside
 .checktopsidelp
@@ -485,8 +527,6 @@ endif
 
 .nosidemove
 
-.jumping ;;;;;
-;
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ; Draw new
   INC dizzyfrm ; Advance animation frame
@@ -901,6 +941,39 @@ ENDMACRO
 
 .skipthis
   LDA #0:RTS
+}
+
+.killdizzy
+{
+  ; Set killed parameter default
+  LDA #10
+
+.^killdizzy1
+  STA z80breg ; Cache parameter
+
+  ; If killed is set, stop now
+  LDA killed:BNE done
+
+  ; Restore parameter, set killed
+  LDA z80breg:STA killed
+
+  ; Lookup killed message
+  LDA roomno:PHA ; Cache room number
+  LDA #ROOM_STRINGS:STA roomno
+  LDA deathmsg:JSR findroomstr
+  PLA:STA roomno ; Restore room number
+
+  LDA zptr5:STA killedmess
+  LDA zptr5+1:STA killedmess+1
+
+if dosndfx = 1
+
+  LDA #25:STA sndfx
+
+endif
+
+.done
+  RTS
 }
 
 eggheight = 16
