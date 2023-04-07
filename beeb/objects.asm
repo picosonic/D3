@@ -805,6 +805,12 @@ noofmoving = (endofmovingdata-movingdata)/movingsize
   LDA dizzyy ; TODO - REMOVE
   LDY #movey:STA (zptr4), Y
 
+if dosndfx = 1
+
+  LDA #11:STA sndfx
+
+endif
+
   RTS
 }
 
@@ -1218,6 +1224,13 @@ dylantalking = duffmem
 
 .startbreath
   LDA #1:STA breathingfire
+
+if dosndfx = 1
+
+  LDA #10:STA sndfx ; snd fx for starting to breath fire
+
+endif
+
   JMP alreadybreathing
 
 .done
