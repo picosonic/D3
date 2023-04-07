@@ -477,3 +477,15 @@
   ; Start by drawing Dizzy so there is something to rub out
   JMP plotnew
 }
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;LOOKING AT PICTURE
+.proxpicture
+{
+  EQUB 52      ;; room
+  EQUB 62, 104 ;; x, y
+  EQUB 5, 16   ;; w, h
+
+.proxpicturerou
+  PLA:PLA ; Prevent inventory appearing
+  JMP dotreasurepic
+}

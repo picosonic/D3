@@ -656,18 +656,6 @@ ENDMACRO
   RTS
 }
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;LOOKING AT PICTURE
-.proxpicture
-{
-  EQUB 52      ;; room
-  EQUB 62, 104 ;; x, y
-  EQUB 5, 16   ;; w, h
-
-.proxpicturerou
-  PLA:PLA ; Prevent inventory appearing
-  JMP dotreasurepic
-}
-
 .tryputtingdown
 {
   ; Do nothing if we're not allowed to pickup
