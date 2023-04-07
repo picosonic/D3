@@ -794,7 +794,16 @@ PAL_DIZZY2 = $02
   ;42 46 40 40 40 46 43
   ;   45          45
  
+ if dosndfx = 1
+
+  LDA #6:STA sndfx
+
+ endif
+
   LDA #10:STA usepickup
+
+  LDA #&00
+  STA pickup:STA frmplot:STA frmreverse
 
   LDA (zptr5), Y:CLC:ADC #&02:STA ztmp5:STA messwidth:INC messwidth:INC messwidth:INY
   LDA (zptr5), Y:CLC:ADC #&02:STA ztmp6:STA messheight:INC messheight:INC messheight:INY
