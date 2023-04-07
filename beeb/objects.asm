@@ -624,7 +624,7 @@ OBJ_DAISY = 63
 ; DAISY'S PRISON
 OBJ_SWITCH2 = 64
 
- EQUB 94,switch1 ,62 ,70,SPR_SWITCH,0   ,0   ,0   ,2  ,0 ,0 ,PAL_CYAN+ATTR_NOTSOLID+PLOT_OR
+ EQUB 94,switch1 ,62 ,70,SPR_SWITCH,0   ,0   ,0   ,2  ,0 ,0 ,PAL_CYAN+ATTR_NOTSOLID
  ;EQUB 94 ,62 ,70 ,SPR_SWITCH
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
