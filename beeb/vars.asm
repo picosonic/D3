@@ -232,6 +232,12 @@ GUARD ENVELOPE_DEFS
 .startroom EQUB 0 ; Starting room id
 .objcollide EQUB 0 ; Allow proximity collision detection to work
 
+; Bit flags for Dizzy movement
+.fire EQUB 0
+.left EQUB 0
+.right EQUB 0
+.jump EQUB 0
+
 ; Collision box
 .cx EQUB 0
 .cy EQUB 0

@@ -206,6 +206,61 @@ INCLUDE "gfx.asm"
   JMP titlescreen
 }
 
+; Set input key states
+.checkkeys
+{
+  ; Set defaults to "nothing" pressed
+  LDA #&00
+
+  STA left
+  STA right
+  STA jump
+  STA fire
+
+  ; Do nothing if killed
+  LDA killed:BNE done
+
+  ; Cache the current input state
+  LDX keys
+
+  ; Prevent fire (pickup/inventory) being pressed when not "looking forward idle"
+  LDA sequence:BNE firenotpressed
+
+  ; Prevent fire (pickup/inventory) being pressed when already picking up
+  LDA usepickup:BNE firenotpressed
+
+  ; Check for FIRE button
+  TXA:AND #PAD_FIRE:BEQ firenotpressed
+
+.firepressed
+  INC fire
+  RTS
+
+  ; Check for LEFT button
+.firenotpressed
+  TXA:AND #PAD_LEFT:BEQ leftnotpressed
+
+.leftpressed
+  INC left
+
+  ; Check for RIGHT button
+.leftnotpressed
+  TXA:AND #PAD_RIGHT:BEQ rightnotpressed
+
+.rightpressed
+  INC right
+
+  ; Check for JUMP button
+.rightnotpressed
+  TXA:AND #PAD_JUMP:BEQ done
+
+.jumppressed
+  INC jump
+
+.done
+  RTS
+}
+
 .updatedizzy
 {
   ; Should be called from vsync, so wait for one
