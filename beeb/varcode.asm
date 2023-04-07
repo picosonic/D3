@@ -60,7 +60,7 @@
   LDA #40:STA dizzyy
 
 .roomrange
-  LDA newroomno:CMP #101:BCC done
+  LDA newroomno:CMP #ROOM_STRINGS:BCC done
   LDA #STARTROOM:STA newroomno ; Reset
 
 .done
@@ -437,6 +437,7 @@
   LDA startroom:STA newroomno
 
   LDA #0
+  STA left:STA right:STA jump:STA fire
   STA dy
   STA floor
   STA sequence ; Looking forward idle animation
@@ -473,32 +474,6 @@
 {
   LDA roomno:JSR roomsetup
 
+  ; Start by drawing Dizzy so there is something to rub out
   JMP plotnew
-}
-
-.killdizzy
-{
-  ; Set killed parameter default
-  LDA #10
-
-.^killdizzy1
-  STA z80breg ; Cache parameter
-
-  ; If killed is set, stop now
-  LDA killed:BNE done
-
-  ; Restore parameter, set killed
-  LDA z80breg:STA killed
-
-  ; Lookup killed message
-  LDA roomno:PHA ; Cache room number
-  LDA #ROOM_STRINGS:STA roomno
-  LDA deathmsg:JSR findroomstr
-  PLA:STA roomno ; Restore room number
-
-  LDA zptr5:STA killedmess
-  LDA zptr5+1:STA killedmess+1
-
-.done
-  RTS
 }
