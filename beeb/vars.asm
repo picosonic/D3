@@ -70,31 +70,33 @@ if dosndfx = 1
 
 endif
 
-; Frame data
-.frmno EQUB 0
-.frmx EQUB 0
-.frmy EQUB 0
-.frmattri EQUB 0
-.frmwidth EQUB 0
-.frmheight EQUB 0
-.frmplot EQUB 0
-.frmreverse EQUB 0
-.frmlocation EQUW 0
-.frmcolour EQUB 0
+; Frame (sprite) attribute data
+.frmno EQUB 0 ; Frame number
+.frmx EQUB 0 ; X position
+.frmy EQUB 0 ; Y position
+.frmattri EQUB 0 ; Attributes
+.frmwidth EQUB 0 ; Width
+.frmheight EQUB 0 ; Height
+.frmplot EQUB 0 ; Plot mode
+.frmreverse EQUB 0 ; Horizontal flip flag
+.frmlocation EQUW 0 ; Pointer to frame data ??
+.frmcolour EQUB 0 ; Foreground colour (ink) for sprite
 
 .eggcount EQUB 0 ; Dizzy animation countdown
-.x EQUB 0
-.ox EQUB 0
-.y EQUB 0
-.oy EQUB 0
+.x EQUB 0 ; Dizzy X position
+.ox EQUB 0 ; Old Dizzy X position
+.y EQUB 0 ; Dizzy Y position
+.oy EQUB 0 ; Old Dizzy Y position
 .dy EQUB 0
-.ff EQUB 0
-.of EQUB 0
+.ff EQUB 0 ; Dizzy sprite frame
+.of EQUB 0 ; Old Dizzy sprite frame
 .floor EQUB 0
-.animation EQUB 0
-.sequence EQUB 0
-.lookx EQUB 0
-.looky EQUB 0
+.animation EQUB 0 ; Current animation index within sequence
+.sequence EQUB 0 ; Current sequence
+
+; Collision detection coordinates
+.lookx EQUB 0 ; X position
+.looky EQUB 0 ; Y position
 
 .startx EQUB 0 ; Starting X position
 .starty EQUB 0 ; Starting Y position
@@ -140,10 +142,10 @@ endif
   EQUB 0, 0, 0, 0, 0
   EQUB 0
 
+; Contents of the bag
 .objectscarried
   EQUB 0, 0, 0, 0
-.bag
-  EQUB 0
+.bag EQUB 0 ; Flag if we've picked up the bigger bag
 
 ; Dragon
 .dragonvar EQUB 0
