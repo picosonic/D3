@@ -102,11 +102,14 @@
 
   if liquidkills=1
 
+  LDA #30:STA killed
+  ; LDA #6:STA sequence ; bob upside down
+  JSR checkkeys ; resets left & right
+
   LDA #STR_killedbyvolcano:STA deathmsg ; Set death message to show
   LDA roomno:CMP #77:BEQ yesfellinlava
   LDA #STR_killedbywater:STA deathmsg ; Set death message to show
 .yesfellinlava
-  LDA #&01:STA killed
   ;JSR killdizzy1
 
   endif
