@@ -304,39 +304,65 @@ INCLUDE "gfx.asm"
 ;  LDA sequence:CMP #3:BCS jumping
 ;
 .checkfloor
-;  LDA floor
-;  BEQ cantstop
-;
-;  LDX keys
-;  TXA:AND #PAD_LEFT:BNE tryright
-;  LDA #1:BNE tryjump
-;
+;  LDA floor:BEQ cantstop
+
+if dosndfx = 1
+
+  ; Don't make movement sounds when not moving
+  LDA sequence:BEQ bettercheckkeys
+
+  ; Movement sound (once every 4 frames)
+  LDA animation:AND #&03:LSR A:BCC bettercheckkeys
+  STA sndfx
+
+endif
+
+.bettercheckkeys
+  JSR checkkeys
+
+  ; See if LEFT is pressed
+.tryleft
+  LDA left:BEQ tryright
+  LDA #1:BNE tryjump ; Left animation sequence
+
+  ; See if RIGHT is pressed
 .tryright
-;  TXA:AND #PAD_RIGHT:BNE trynone
-;  LDA #2:BNE tryjump
-;
+  LDA right:BEQ trynone
+  LDA #2:BNE tryjump ; Right animation sequence
+
 .trynone
-;  LDA #0
+  LDA #0 ; Up animation sequence
 .tryjump
-;  STA ztmp1
-;  TXA:AND #PAD_JUMP:BEQ setsequnce ; No jump
-;
-;  LDA #0:STA animation
+  STA z80breg ; Cache direction of jump
+
+  ; See if JUMP is pressed
+  LDA jump
+  BEQ setsequnce ; no jump
+
+if dosndfx = 1
+
+  ; Jump sound effect
+  LDA #21:STA sndfx
+
+endif
+
+  LDA #0:STA animation ; Set animation to first frame
 ;  LDA #256-8:STA dy
-;  LDA #3
-;
+
+  LDA #3 ; Jumping sequence base
 .setsequnce
-;  CLC:ADC ztmp1
-;
+  CLC:ADC z80breg
+  STA sequence
+
 .cantstop
-;  ; Don't check keys
-;  LDA sequence
-;  ROL A:ROL A
-;  CLC:ADC animation:TAY
-;  LDA seq0, Y:STA ff
-;
-;  LDY animation:INY:TYA
-;  AND #7:STA animation
+  ; Don't check keys
+  LDA sequence
+  ROL A:ROL A
+  CLC:ADC animation:TAY
+  LDA seq0, Y:STA ff
+
+  LDY animation:INY:TYA
+  AND #7:STA animation
 ;
 ;  LDA roomno:STA oldroomno
 ;
@@ -372,7 +398,8 @@ INCLUDE "gfx.asm"
 ;
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ; Draw new
-  INC dizzyfrm
+  INC dizzyfrm ; Advance animation frame
+
   LDA dizzyfrm:AND #&1F:STA dizzyfrm:STA frmno
   LDA dizzyx:STA frmx:STA oldx
   LDA dizzyy:STA frmy:STA oldy
