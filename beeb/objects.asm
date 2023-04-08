@@ -749,8 +749,11 @@ noofmoving = (endofmovingdata-movingdata)/movingsize
 
 .rubprintmoving
 {
+  ; Load plot mode, and cache it
+  LDY #colour:LDA (zptr4), Y:PHA
+
   ; Change to XOR plot
-  LDY #colour:LDA (zptr4), Y:PHA:AND #&E7:ORA #PLOT_XOR:STA (zptr4), Y
+  AND #&E7:ORA #PLOT_XOR:STA (zptr4), Y
 
   ; Erase object
   JSR printmoving
@@ -974,7 +977,7 @@ dylantalking = duffmem
   ; Find out how many times we've spoken before
   SEC:SBC #SPR_DOZY:TAY
   LDA talkbefore, Y
-  BEQ notyolkfolk1
+  BEQ notyolkfolk1 ; Not spoken yet (count is 0)
 
   ; clear bit 3 in talkbefore, and add 1
   AND #&F7:CLC:ADC #&01
@@ -987,6 +990,7 @@ dylantalking = duffmem
 .jump
   JMP duffmem
 
+; Not spoken yet, so set to 1
 .notyolkfolk1
   LDA #&01:STA talkbefore, Y
 
@@ -1855,8 +1859,8 @@ resetportswitch = resetmachines
   PHA
   LDA #&00:STA dy
   LDA #&01:STA animation
-  PLA:PHA ; TODO - :STA right
-  EOR #&01 ; TODO - :STA left
+  PLA:PHA:STA right
+  EOR #&01:STA left
   PLA:CLC:ADC #&04:STA sequence ; Tumble left or right
 
 .done
@@ -1905,7 +1909,7 @@ turnonfullbucket = movingsize+room
   EQUB 8,16 ;;;w,h
 
 .proxbeanrou
-  LDY #room:LDA #&FF:STA (zptr4), Y ; Hide bean
+  LDY #room:LDA #OFFMAP:STA (zptr4), Y ; Hide bean
 
   LDA #STR_plantbeanmess:JSR findroomstr
   JMP windowrou
@@ -1924,8 +1928,8 @@ turnonfullbucket = movingsize+room
 
   ; Make shop keeper appear in room 22 (market square)
   LDA #22
-  STA shopkeeperhere+room
-  STA shopkeeperhere1+room
+  STA shopkeeperhere+room  ; Left side
+  STA shopkeeperhere1+room ; Right side
 
   LDA #STR_shopkeeperappearsmess:JSR findroomstr
   JMP windowrou
@@ -2227,7 +2231,7 @@ turnonfullbucket = movingsize+room
   LDA #&00:STA pickup
 
   ; Set portcullis var1
-  LDA #&FE:STA porthere+var1 ; -2
+  LDA #256-2:STA porthere+var1
 
   ; Set portcullis animation delay
   LDA #&06:STA porthere+delay
@@ -2442,7 +2446,7 @@ turnonfullbucket = movingsize+room
   EQUB 4,16 ;;;w,h
 
 .proxapplerou
-  ; Make apple disappear
+  ; Make apple disappear off to the right
   LDY #movex:LDA #&FF:STA (zptr4), Y
 
   LDA #STR_trollgotapplemess:JSR findroomstr
@@ -2460,7 +2464,7 @@ turnonfullbucket = movingsize+room
   BEQ roomdagok
 
   ; We are down the dagger pit in room (castle room 69)
-  ; So put Dizzy out of the pit
+  ; So put Dizzy out of the pit in room 84
   LDA #84:STA startroom
   LDA #56:STA startx
   LDA #176:STA starty
@@ -2487,6 +2491,11 @@ turnonfullbucket = movingsize+room
   JMP windowrou
 }
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;DOOR
+;
+; -- TODO --
+; Not needed since knocking places door out of the room, which stops it being drawn.
+; Plus door.var1 is never changed
+;
 .resetdoor
 {
   ; Don't draw door if it's been opened
@@ -2500,6 +2509,7 @@ turnonfullbucket = movingsize+room
 
 .doorrou
 {
+  ; Make sure Dizzy is not moving
   LDA sequence:BNE done
 
   ; Check proximity box for knock
