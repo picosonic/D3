@@ -138,8 +138,13 @@ endif
   EQUB 0, 0, 0
   EQUB 0
 
+; Flags for how many times we've spoken to each of the yolkfolk
 .talkbefore
-  EQUB 0, 0, 0, 0, 0
+  EQUB 0 ; Dozy
+  EQUB 0 ; Denzil
+  EQUB 0 ; Dylan
+  EQUB 0 ; Daisy
+  EQUB 0 ; Doug (Grand Dizzy)
   EQUB 0
 
 ; Contents of the bag
