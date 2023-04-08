@@ -1,0 +1,41 @@
+Opening inventory when being chased by armorog resets it to the middle of the field.
+
+Opening inventory when being chased by hawk resets it to the top of the sky.
+
+Drop the bread in the rat's path, then pick it up again - the rat thinks it's still there and runs away, leaving you with the bread.
+
+
+Dropping the bucket full of water on the cowpat makes the beanstalk grow even without placing the bean there.
+\_
+.Use Jug of water (36) on Fire (36) to get out of Dungeon (36).
+.Enable portcullis (51) with switch (51) to get to Bridge (48).
+.Bone (100) -> Armarog (49) to get to Bridge (48).
+.Rock 1 (35), Rock 2 (50), Rock 3 (53) -> Bridge (48). To get Key 4 and Sleeping Potion.
+.Sleeping Potion from Dozy (45) -> Dragon (54). To get past Dragon.
+.Key 4 (48) -> Machine 4 BR (56) -> Lift 4 (56). To be able to use Key 1.
+.Key 1 (85) -> Machine 1 TL (56) -> Lift 1 (71). To get to walkway.
+.Get doorknocker (89). To open west tower.
+.Use doorknocker on door (84). To get into west tower.
+.Get bucket from west tower (83). To fill with water.
+.Fill bucket at base of volcano (60). To water beanstalk.
+.Place full bucket on cowpat (58). To make beanstalk.
+
+Navigate mode, press "C" after using special key combination on ??? screen.
+
+It is possible to jump over armorog to get to the bridge, but once done you can't get back.
+
+Only the dragon's head and flames are lethal, so it it possible to get past without sleeping potion.
+
+Taking the egg from the dragon in the mine causes it to breath fire, it will stop if you drop the egg anywhere in the mine.
+
+Dizzy stops being drunk immediately when leaving the room he drank whisky in. Also he only tumbles drunkely when walking left or standing still.
+
+You can only open the inventory when Dizy is not moving.
+
+Hawk can only "see" Dizzy when both are between clouds with line of sight.
+
+When using the doorknocker to open the west tower, the door is removed but the knocker is left behind.
+
+Troll stays in castle dungeon until you try to leave the mine on the right hand side, then he is swapped for the miner.
+
+Dizzy can't switch lift in Daisy's Prison to on, he has to stand over it until lift has finished moving.
