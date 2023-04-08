@@ -2,7 +2,7 @@
 seecoins = 0
 liquidkills = 0
 firekills = 0
-dosndfx = 0
+allowsndfx = 0
 
 ; OS defines
 INCLUDE "os.asm"
@@ -398,7 +398,7 @@ INCLUDE "gfx.asm"
 .^checkfloor
   LDA floor:BEQ cantstop
 
-if dosndfx = 1
+if allowsndfx = 1
 
   ; Don't make movement sounds when not moving
   LDA sequence:BEQ bettercheckkeys
@@ -431,7 +431,7 @@ endif
   LDA jump
   BEQ setsequnce ; no jump
 
-if dosndfx = 1
+if allowsndfx = 1
 
   ; Jump sound effect
   LDA #21:STA sndfx
@@ -954,7 +954,7 @@ ENDMACRO
   LDA zptr5:STA killedmess
   LDA zptr5+1:STA killedmess+1
 
-if dosndfx = 1
+if allowsndfx = 1
 
   LDA #25:STA sndfx
 

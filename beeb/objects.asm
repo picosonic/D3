@@ -808,7 +808,7 @@ noofmoving = (endofmovingdata-movingdata)/movingsize
   LDA dizzyy ; TODO - REMOVE
   LDY #movey:STA (zptr4), Y
 
-if dosndfx = 1
+if allowsndfx = 1
 
   LDA #11:STA sndfx
 
@@ -1141,7 +1141,7 @@ dylantalking = duffmem
 
   ; Running towards den
 .armrunning
-  ;JSR waitvsync
+  JSR flyback
   JSR rubprintmoving
   INC armoroghere+movex ; Move right a bit
 
@@ -1229,7 +1229,7 @@ dylantalking = duffmem
 .startbreath
   LDA #1:STA breathingfire
 
-if dosndfx = 1
+if allowsndfx = 1
 
   LDA #10:STA sndfx ; snd fx for starting to breath fire
 
@@ -1294,7 +1294,7 @@ endif
 .^printneck
   LDA #SPR_DRAGONNECK:LDY #movefrm:STA (zptr4), Y
 
-  ;JSR waitvsync
+  JSR flyback
 
   LDA #1:STA z80breg
 .dragonneck
@@ -1414,7 +1414,7 @@ endif
   LDA dragonflame
   AND #&01
   BNE keepgoing
-  ;JSR waitvsync
+  JSR flyback
 .keepgoing
 
   LDA dragonflame
@@ -1529,6 +1529,7 @@ endif
 .notflipped
 
 .nottied
+  JSR flyback
   JSR rubprintmoving ; Remove previously drawn croc
 
   ; Set new colour / plot
@@ -1622,6 +1623,7 @@ endif
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;FLOATING LOG
 .logrou
 {
+  JSR flyback
   JSR rubprintmoving
 
   ; fall through
@@ -2415,13 +2417,21 @@ turnonfullbucket = movingsize+room
 
   ; When Dizzy collides with troll he gets thrown back into room
 .^proxtrollrou
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ; TODO - set throw vector correctly
   LDA #dizzyx:SEC:SBC #20:STA dizzyx ; TODO - remove
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
   ; TODO - put back in when moving correctly
+  ;
+  ;LDA x:SEC:SBC #&02:STA x ; Move left a bit
+  ;LDA #256-9:STA dy ; Point delta upwards (simulate jump)
+
   ;LDA #4:STA sequence ; Jump/tumble left
-  ;LDA #1:STA animation
+  ;LDA #1:STA animation ; Set second frame - horizontal/left on front (sprite 26)
+  ;STA left ; Set left button pressed to "true"
+  ;LDA #&00:STA right ; Set right button pressed to "false"
+  ;LDA ff:CMP #25:BEQ done ; If current frame is leaning left (sprite 25), we're done
 
   ; Set up for message when in dungeon
   LDA #STR_getbackintheremess:JSR findroomstr

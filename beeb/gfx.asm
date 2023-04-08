@@ -19,6 +19,8 @@ PAL_DIZZY2 = $02
 ; Set palette to one specified in A
 .setpal
 {
+  JSR flyback
+
   ASL A:ASL A:ASL A:TAY
   LDX #&00
 .loop
@@ -794,7 +796,7 @@ PAL_DIZZY2 = $02
   ;42 46 40 40 40 46 43
   ;   45          45
  
- if dosndfx = 1
+ if allowsndfx = 1
 
   LDA #6:STA sndfx
 
@@ -947,5 +949,26 @@ PAL_DIZZY2 = $02
 ; uses frmx, frmy, frmwidth, frmheight and frmattri
 .plotattris
 {
+  RTS
+}
+
+; Protects and exit when next flyback (vsync) occurs
+; interrupts must be enabled
+.flyback
+{
+  ; Save A/B regs
+  PHA
+  LDA z80breg:PHA
+
+  ; Wait until vsync by seeing when clock value (incremented in vsync) changes
+  LDA clock:STA z80breg
+
+.flybacklp
+  LDA clock:CMP z80breg:BEQ flybacklp
+
+  ; Restore A/B regs
+  PLA:STA z80breg
+  PLA
+
   RTS
 }
