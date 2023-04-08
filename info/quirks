@@ -20,7 +20,8 @@ Dropping the bucket full of water on the cowpat makes the beanstalk grow even wi
 .Fill bucket at base of volcano (60). To water beanstalk.
 .Place full bucket on cowpat (58). To make beanstalk.
 
-Navigate mode, press "C" after using special key combination on ??? screen.
+Navigate mode, press "C" after holding special key combination (DYLAN on CPC, PAFWD on Spectrum) on title screen when pressing SPACE to start.
+Move around with Z - left / X - right / K - up / M - down. Dizzy won't be shown whilst moving around, also animations will be paused. Use JUMP to exit back to game mode.
 
 It is possible to jump over armorog to get to the bridge, but once done you can't get back.
 
@@ -30,7 +31,7 @@ Taking the egg from the dragon in the mine causes it to breath fire, it will sto
 
 Dizzy stops being drunk immediately when leaving the room he drank whisky in. Also he only tumbles drunkely when walking left or standing still.
 
-You can only open the inventory when Dizy is not moving.
+You can only open the inventory when Dizzy is not moving.
 
 Hawk can only "see" Dizzy when both are between clouds with line of sight.
 
@@ -39,3 +40,5 @@ When using the doorknocker to open the west tower, the door is removed but the k
 Troll stays in castle dungeon until you try to leave the mine on the right hand side, then he is swapped for the miner.
 
 Dizzy can't switch lift in Daisy's Prison to on, he has to stand over it until lift has finished moving.
+
+If Dizzy gets "stuck" overlapping a solid object, he starts moving upwards until free.
