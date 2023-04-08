@@ -972,3 +972,31 @@ PAL_DIZZY2 = $02
 
   RTS
 }
+
+; Store z80 registers into sprite variables
+;
+; IN a=frmno, c=frmattri, b=frmplot/frmreverse, e=frmx, l=frmy
+.store_sprite_vars
+{
+  STA z80hreg ; Cache frmno
+
+  LDA z80creg:STA frmattri
+  LDA z80breg:AND #&03:STA frmplot
+  LDA z80breg:PHA:ASL A:PLA:ROL A:AND #&01:STA frmreverse
+
+  LDA z80hreg ; Restore frmno
+
+.^store_sprite_vars1
+  STA frmno
+  LDA z80ereg:STA frmx
+  LDA z80lreg:STA frmy
+
+  ; Fall through
+}
+
+.findfrmsize
+{
+  ; TODO
+
+  RTS
+}
