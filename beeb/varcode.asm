@@ -83,17 +83,17 @@
   ; Get water colour, e.g. water or lava
   LDA watercolour
   AND #&E7:ORA #&10 ; Make sure it's set to EOR plot
-  STA frmattri
+  STA z80creg
 
   LDY #&00
 .updatewaterlp
 
-  LDA waterlist, Y:STA frmx:AND #&7F:STA cx:INY
-  LDA waterlist, Y:STA frmy:STA cy:INY
+  LDA waterlist, Y:STA z80ereg:AND #&7F:STA cx:INY
+  LDA waterlist, Y:STA z80lreg:STA cy:INY
   LDA waterlist, Y
   STA zidx4:INC zidx4:LDA zidx4:AND #&03:STA waterlist, Y:INY
-  CLC:ADC #SPR_WATER0:STA frmno
-
+  CLC:ADC #SPR_WATER0
+  JSR store_sprite_vars
   JSR frame
 
   ; Check for collision with water or lava
@@ -129,10 +129,6 @@
   ; Save flame count for loop
   TAX
 
-  ; Set flame frame size for collision
-  LDA #16:LSR A:LSR A:STA cw
-  LDA #13:STA ch
-
   ; Update flame loop
   LDA #SPR_FLAME:STA frmno
   LDA clock:AND #&01:TAY:LDA flamecolours, Y ; Set flame colour based on odd/even clock
@@ -148,9 +144,16 @@
 
   if firekills=1
 
+  ; Set flame frame size for collision
+  LDA #16:LSR A:LSR A:STA cw
+  LDA #13:STA ch
+
   ; Check for collision with flame
   JSR collidewithdizzy3
   BEQ notburnt
+
+  ;Disable left/right movement
+  LDA #&00:STA left:STA right
 
   LDA #STR_killedbyflame:STA deathmsg ; Set death message to show
   LDA #50 ;; flame
@@ -177,6 +180,8 @@
   LDA #0:STA ztmp6
   LDA noofflames:TAY
   INC noofflames
+
+  LDA #&00:STA frmplot
 
   JMP joinaddtothing
 }
@@ -428,64 +433,4 @@
 
 .done
   RTS
-}
-
-.starteggres
-{
-  LDA startx:STA x
-  LDA starty:STA y
-  LDA startroom:STA newroomno
-
-  LDA #0
-  STA left:STA right:STA jump:STA fire
-  STA dy
-  STA floor
-  STA sequence ; Looking forward idle animation
-  STA animation ; Animation frame offset within sequence
-  STA killed ; Dizzy is not dead
-  STA obstructinglift ; Not obstructing lift
-  STA drunk ; Not drunk
-
-  LDA #10:STA usepickup
-
-  LDX #1
-  LDA newroomno:CMP #STARTROOM
-  BNE standforwardframe
-
-  LDA y:CMP #100:BCC standforwardframe
-
-  LDX #25
-
-.standforwardframe
-  STX ff
-
-.enterroom
-  LDA newroomno
-  STA roomno
-  STA startroom
-
-  LDA x:STA startx
-  LDA y:STA starty
-
-  ; Fall through
-}
-
-.resetuproom
-{
-  LDA roomno:JSR roomsetup
-
-  ; Start by drawing Dizzy so there is something to rub out
-  JMP plotnew
-}
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;LOOKING AT PICTURE
-.proxpicture
-{
-  EQUB 52      ;; room
-  EQUB 62, 104 ;; x, y
-  EQUB 5, 16   ;; w, h
-
-.proxpicturerou
-  PLA:PLA ; Prevent inventory appearing
-  JMP dotreasurepic
 }

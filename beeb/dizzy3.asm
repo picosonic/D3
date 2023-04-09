@@ -67,10 +67,11 @@ INCLUDE "gfx.asm"
   JSR prtmessage
 
   ; Dizzy logo
-  LDA #SPR_DIZZYLOGO:STA frmno
-  LDA #58:STA frmx
-  LDA #57:STA frmy
-  LDA #7:STA frmattri
+  LDA #58:STA z80ereg
+  LDA #57:STA z80lreg
+  LDA #SPR_DIZZYLOGO
+  JSR store_sprite_vars1
+  ; JSR plotattris
   JSR frame
 
 .keeptesting
@@ -962,6 +963,66 @@ endif
 
 .done
   RTS
+}
+
+.starteggres
+{
+  LDA startx:STA x
+  LDA starty:STA y
+  LDA startroom:STA newroomno
+
+  LDA #0
+  STA left:STA right:STA jump:STA fire
+  STA dy
+  STA floor
+  STA sequence ; Looking forward idle animation
+  STA animation ; Animation frame offset within sequence
+  STA killed ; Dizzy is not dead
+  STA obstructinglift ; Not obstructing lift
+  STA drunk ; Not drunk
+
+  LDA #10:STA usepickup
+
+  LDX #1
+  LDA newroomno:CMP #STARTROOM
+  BNE standforwardframe
+
+  LDA y:CMP #100:BCC standforwardframe
+
+  LDX #25
+
+.standforwardframe
+  STX ff
+
+.enterroom
+  LDA newroomno
+  STA roomno
+  STA startroom
+
+  LDA x:STA startx
+  LDA y:STA starty
+
+  ; Fall through
+}
+
+.resetuproom
+{
+  LDA roomno:JSR roomsetup
+
+  ; Start by drawing Dizzy so there is something to rub out
+  JMP plotnew
+}
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;LOOKING AT PICTURE
+.proxpicture
+{
+  EQUB 52      ;; room
+  EQUB 62, 104 ;; x, y
+  EQUB 5, 16   ;; w, h
+
+.proxpicturerou
+  PLA:PLA ; Prevent inventory appearing
+  JMP dotreasurepic
 }
 
 eggheight = 16
