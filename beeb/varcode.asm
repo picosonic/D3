@@ -181,7 +181,7 @@
   LDA noofflames:TAY
   INC noofflames
 
-  LDA #&00:STA frmplot
+  LDA #PLOT_AND:STA frmplot
 
   JMP joinaddtothing
 }
