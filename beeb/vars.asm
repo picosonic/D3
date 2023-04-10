@@ -102,17 +102,14 @@ endif
 .starty EQUB 0 ; Starting Y position
 .oldx EQUB 0
 .oldy EQUB 0
-.oldox EQUB 0
-.oldoy EQUB 0
 
-; Dizzy position / status
-.dizzyx EQUB 0 ; X
-.dizzyy EQUB 0 ; Y
-.dizzyfrm EQUB 0 ; Frame
-.dizzyox EQUB 0 ; Old X
-.dizzyoy EQUB 0 ; Old Y
-.dizzyofrm EQUB 0 ; Old frame
-.deathmsg EQUB 0 ; Message ID to use upon death
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Dizzy position / status - TODO - REMOVE - 
+.dizzyx EQUB 0 ; TODO - REMOVE - X
+.dizzyy EQUB 0 ; TODO - REMOVE - Y
+.dizzyfrm EQUB 0 ; TODO - REMOVE - Frame
+.deathmsg EQUB 0 ; TODO - REMOVE - Message ID to use upon death
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ; Flames / water / lava
 .noofflames EQUB 0 ; Count of active flames
@@ -153,7 +150,6 @@ endif
 .bag EQUB 0 ; Flag if we've picked up the bigger bag
 
 ; Dragon
-.dragonvar EQUB 0
 .breathingfire EQUB 0
 .dragonflame EQUB 0
 
@@ -215,7 +211,7 @@ GUARD ENVELOPE_DEFS
 
 .lastroom EQUB 0
 .roomno EQUB 0 ; Current room
-.newroomno EQUB 0
+.newroomno EQUB 0 ; Next room going to when leaving current room
 .oldroomno EQUB 0
 .roomlen EQUW 0 ; Length of active room
 .spritenothere EQUB 0
@@ -224,29 +220,39 @@ GUARD ENVELOPE_DEFS
 .killedmess EQUW 0 ; Pointer to message to show why Dizzy killed
 .coins EQUB 0 ; Count of collected coins
 .lives EQUB 0 ; Number of lives remaining
-.usepickup EQUB 0
-.pickup EQUB 0 ; Flag to say if we can pickup/drop objects
+.usepickup EQUB 0 ; 0=Ok to pick up objects, or countdown (from 10 to 0) upon entering a room
+.pickup EQUB 0 ; 0=Can't pickup - Flag to say if we can pickup/drop objects
 .toomuchtohold EQUB 0
 .objecttodrop EQUB 0 ; The id of object to be dropped
 .cyclecolour EQUB 0 ; Used when colouring selected inventory item, 0..7
 .tryputdownvar EQUB 0
 .obstructinglift EQUB 0
-.drunk EQUB 0
-.shopkeepercount EQUB 0
-.spat EQUB 0
-.fireout EQUB 0 ; Non-zero means fire in room 36 is out
-.ratcount EQUB 0 ; 0 / 1 / 2
+.drunk EQUB 0 ; 0=Not drunk, or countdown (from 255 to 0) until not drunk, can go up too
+.shopkeepercount EQUB 0 ; Countdown (from 255 to 0) until shopkeeper appears
+.fireout EQUB 0 ; Non-zero means fire in room 36 (dungeon) is out
+.ratcount EQUB 0 ; Rat state, 0=idle / 1=patrolling / 2=got loaf
 .slotno EQUB 0
 .completedgame EQUB 0
-.holding EQUB 0
-.holdingix EQUB 0
-.holidingnumberix EQUB 0
-.deadmess EQUB 0
-.implode EQUB 0
-.startroom EQUB 0 ; Starting room id
+.startroom EQUB 0 ; Starting room, and where to go back to if killed
 .objcollide EQUB 0 ; Allow proximity collision detection to work
 
-; Bit flags for Dizzy movement
+; Unused variables in original code
+;
+; .spat EQUB 0
+; .holding EQUB 0
+; .holdingix EQUB 0
+; .holidingnumberix EQUB 0
+; .deadmess EQUB 0
+; .cheatcount EQUB 0
+; .implode EQUB 0
+; .dizzyox EQUB 0
+; .dizzyoy EQUB 0
+; .dizzyofrm EQUB 0
+; .oldox EQUB 0
+; .oldoy EQUB 0
+; .dragonvar EQUB 0
+
+; Bit flags for Dizzy movement, fed from button states
 .fire EQUB 0
 .left EQUB 0
 .right EQUB 0
