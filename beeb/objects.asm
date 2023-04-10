@@ -954,7 +954,7 @@ dylantalking = duffmem
 .fullwhiskeymess EQUB "A:BOTTLE:OF:WHISKEY",PRT_END
 .ropemess EQUB "A:PIECE:OF:ROPE",PRT_END
 .rockmess EQUB "A:HEAVY:BOULDER",PRT_END
-.fullwinemess EQUB "A:BOTTLE:OF:WINE",PRT_END
+.fullwinemess EQUB "A:BOTTLE:OF:WINE",PRT_END ; Never used by original code
 .emptybottlemess EQUB "AN:EMPTY:BOTTLE",PRT_END
 .keymess EQUB "A:SHINY:GOLD:KEY",PRT_END
 .mtbucketmess EQUB "AN:EMPTY:BUCKET",PRT_END
