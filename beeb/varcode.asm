@@ -61,7 +61,7 @@
 
 .roomrange
   LDA newroomno:CMP #ROOM_STRINGS:BCC done
-  LDA #STARTROOM:STA newroomno ; Reset
+  LDA #GAMESTARTROOM:STA newroomno ; Reset
 
 .done
   RTS
@@ -424,12 +424,12 @@
 
 .checkfireout
 {
-  LDA roomno:CMP #STARTROOM:BNE done ; Make sure we are in the dungeon
+  LDA roomno:CMP #GAMESTARTROOM:BNE done ; Make sure we are in the dungeon
 
   LDA fireout:BNE done ; Check status of fire
 
   LDA #FIREROOM:STA roomno:JSR drawfullroom ; Draw fire
-  LDA #STARTROOM:STA roomno ; Reset current room to be dungeon
+  LDA #GAMESTARTROOM:STA roomno ; Reset current room to be dungeon
 
 .done
   RTS

@@ -98,7 +98,7 @@ INCLUDE "gfx.asm"
   LDA #3:STA lives ; Set the number of lives to start with
   LDA #46:STA startx
   LDA #168:STA starty
-  LDA #STARTROOM:STA startroom ; THE CASTLE'S DUNGEON
+  LDA #GAMESTARTROOM:STA startroom ; THE CASTLE'S DUNGEON
 
   LDA #&00:STA completedgame
   STA objcollide
@@ -154,7 +154,9 @@ INCLUDE "gfx.asm"
   ; See if room changed
   LDA newroomno:CMP roomno:BEQ notanewroom
 
-  STA roomno:JSR roomsetup
+.gotoenterroom
+  JSR enterroom
+  LDA #&00:STA dontupdatedizzy
 
 .notanewroom
 
@@ -968,7 +970,9 @@ endif
 .starteggres
 {
   LDA startx:STA x
+  STA dizzyx ; TODO - REMOVE
   LDA starty:STA y
+  STA dizzyy ; TODO - REMOVE
   LDA startroom:STA newroomno
 
   LDA #0
@@ -984,7 +988,7 @@ endif
   LDA #10:STA usepickup
 
   LDX #1
-  LDA newroomno:CMP #STARTROOM
+  LDA newroomno:CMP #GAMESTARTROOM
   BNE standforwardframe
 
   LDA y:CMP #100:BCC standforwardframe
@@ -994,13 +998,18 @@ endif
 .standforwardframe
   STX ff
 
-.enterroom
+.^enterroom
   LDA newroomno
   STA roomno
   STA startroom
 
-  LDA x:STA startx
-  LDA y:STA starty
+  LDA x
+  LDA dizzyx ; TODO - REMOVE
+  STA startx
+
+  LDA y
+  LDA dizzyy ; TODO - REMOVE
+  STA starty
 
   ; Fall through
 }
