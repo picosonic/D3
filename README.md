@@ -10,11 +10,13 @@ NOTE : This project requires at least 2 x 16k banks of sideways RAM to be availa
 
 # Folder structure
 
-beeb - contains all the BBC micro source code and assets required to build the project
+[root folder](https://github.com/picosonic/D3) - Javascript test code
 
-info - information gathered from various sources which aided the porting process
+[beeb](https://github.com/picosonic/D3/tree/main/beeb) - contains all the BBC micro source code and assets required to build the project
 
-original_source - orignal z80 source code
+[info](https://github.com/picosonic/D3/tree/main/info) - information gathered from various sources which aided the porting process
+
+[original_source](https://github.com/picosonic/D3/tree/main/original_source) - orignal z80 source code
 
 # Building
 
