@@ -172,7 +172,7 @@ function drawdizzy(ctx, x, y, framenum, scale)
           else
             ctx.fillStyle="#000000";
           
-          drawclippedpixel(ctx, Math.floor(x+(px*scale)), Math.floor(y+(20-fheight)+(py*scale)), Math.ceil(scale), Math.ceil(scale), true);
+          drawclippedpixel(ctx, Math.floor(x+(px*scale)), Math.floor(y+(17-fheight)+(py*scale)), Math.ceil(scale), Math.ceil(scale), true);
 
         }
 
@@ -189,7 +189,7 @@ function drawdizzy(ctx, x, y, framenum, scale)
 
   // DEBUG
   ctx.strokeStyle="red";
-  ctx.strokeRect(x, y, fwidth, fheight);
+  ctx.strokeRect(x, y-3, fwidth, fheight);
   //
 
   ctx.restore();
@@ -519,9 +519,9 @@ function collide(x, y)
   var twidth=Math.floor(xmax/8);
 
   if ((gs.solid[(ty*twidth)+tx]) || // top left
-      (gs.solid[(ty*twidth)+tx+3]) || // top right
-      (gs.solid[((ty+3)*twidth)+tx]) || // bottom left
-      (gs.solid[((ty+3)*twidth)+tx+3]))   // bottom right
+      (gs.solid[(ty*twidth)+tx+2]) || // top right
+      (gs.solid[((ty+2)*twidth)+tx]) || // bottom left
+      (gs.solid[((ty+2)*twidth)+tx+2]))   // bottom right
     return true;
 
   return false;
