@@ -8,6 +8,14 @@ I've included playback of the original speech sample (Digitized on a C64 by G.Ra
 
 NOTE : This project requires at least 2 x 16k banks of sideways RAM to be available. So it will work on a [BBC Master](https://en.wikipedia.org/wiki/BBC_Master) or a standard BBC Micro with added sideways RAM.
 
+# Folder structure
+
+beeb - contains all the BBC micro source code and assets required to build the project
+
+info - information gathered from various sources which aided the porting process
+
+original_source - orignal z80 source code
+
 # Building
 
 Development of this project has been done with Linux and as such the build scripts and environment are tailored to it. A Visual Studio Code project is included.
