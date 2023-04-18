@@ -362,8 +362,6 @@ function drawroom(roomnum)
 
       drawframe(gs.ctx, (objects[i].movex*4)-128, objects[i].movey, objects[i].movefrm, 1, objreverse, getpalette(objcolour), objplot, true);
 
-      //if ((gs.debug) && (objects[i].routine=="pickupable"))
-      if (gs.debug)
       {
         var offs=frametable[objects[i].movefrm];
         var fx=(objects[i].movex*4)-128;
@@ -380,9 +378,12 @@ function drawroom(roomnum)
 
         setsolidity(fx, fy, fwidth, fheight, framesolid);
 
-        // Highlight object
-        gs.ctx.fillStyle="rgba(255,255,0,0.5)";
-        gs.ctx.fillRect(fx, fy, fwidth, fheight);
+        if (gs.debug)
+        {
+          // Highlight object
+          gs.ctx.fillStyle="rgba(255,255,0,0.5)";
+          gs.ctx.fillRect(fx, fy, fwidth, fheight);
+        }
       }
     }
  }
