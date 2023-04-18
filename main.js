@@ -34,7 +34,7 @@ var gs={
   dir:0, // direction (-1=left, 0=none, 1=right)
   maxvs:1, // max vertical speed
   maxhs:1, // max horizontal speed
-  walkspeed:2, // walking speed
+  walkspeed:3, // walking speed
   jumpspeed:6, // jumping speed
   sequence:0, // sequence being used for animation
   animation:0, // current frame within sequence
@@ -188,9 +188,11 @@ function drawdizzy(ctx, x, y, framenum, scale)
   }
 
   // DEBUG
-  ctx.strokeStyle="red";
-  ctx.strokeRect(x, y-3, fwidth, fheight);
-  //
+  if (gs.debug)
+  {
+    ctx.strokeStyle="red";
+    ctx.strokeRect(x, y-3, fwidth, fheight);
+  }
 
   ctx.restore();
 }
