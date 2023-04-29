@@ -56,7 +56,7 @@ struct ym6_header
 //
 //     2000000 Atari ST
 //     1789772 MSX / Spectravideo
-//     1773400 ZX Spectrum
+//     1773400 ZX Spectrum 128
 //     1625000 ZX81
 //     1000000 Amstrad CPC / Amstrad PCW
 //
