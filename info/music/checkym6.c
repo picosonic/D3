@@ -14,13 +14,8 @@ unsigned char *framedata;
 unsigned char frame[YM6_REGS];
 unsigned char lastframe[YM6_REGS];
 
-uint16_t lastanote=0;
-uint16_t lastbnote=0;
-uint16_t lastcnote=0;
-
-uint16_t acounter=0;
-uint16_t bcounter=0;
-uint16_t ccounter=0;
+uint16_t lastnote[YM6_CHANS];
+uint16_t counter[YM6_CHANS];
 
 int ym6_processheader(FILE *fp)
 {
@@ -106,12 +101,14 @@ void buildnotetable()
   }
 }
 
-void ym6_notes(const uint16_t divider, const uint16_t lastdivider, uint16_t *counter)
+void ym6_notes(const uint16_t divider, const int channel)
 {
   double freq = ym6header.clock / (16.0 * (double)divider);
-  double lastfreq = ym6header.clock / (16.0 * (double)lastdivider);
+  double lastfreq = ym6header.clock / (16.0 * (double)lastnote[channel]);
   int i = 0;
   int j = 0;
+
+  lastnote[channel]=divider;
 
   if (divider==0)
   {
@@ -150,13 +147,13 @@ void ym6_notes(const uint16_t divider, const uint16_t lastdivider, uint16_t *cou
   if (i!=j)
   {
     printf("  %s ", note_mapping[i].name);
-    *counter=0; // Reset counter due to note change
+    counter[channel]=0; // Reset counter due to note change
   }
   else
   {
     printf("  ... ");
 
-    *counter=*counter+1; // Advance counter due to note staying same
+    counter[channel]++; // Advance counter due to note staying same
   }
 }
 
@@ -176,9 +173,9 @@ void ym6_processframe(const uint32_t framenum, unsigned char *frame)
   }
 
   // Print equivalent note names
-  note=((frame[1]&0x0f)<<8) | frame[0]; ym6_notes(note, lastanote, &acounter); lastanote=note; // A
-  note=((frame[3]&0x0f)<<8) | frame[2]; ym6_notes(note, lastbnote, &bcounter); lastbnote=note; // B
-  note=((frame[5]&0x0f)<<8) | frame[4]; ym6_notes(note, lastcnote, &ccounter); lastcnote=note; // C
+  note=((frame[1]&0x0f)<<8) | frame[0]; ym6_notes(note, 0); // A
+  note=((frame[3]&0x0f)<<8) | frame[2]; ym6_notes(note, 1); // B
+  note=((frame[5]&0x0f)<<8) | frame[4]; ym6_notes(note, 2); // C
 
   printf("\n");
 

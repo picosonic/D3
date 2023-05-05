@@ -5,6 +5,7 @@
 #define YM6_CHECKSTR "LeOnArD!"
 #define YM6_ENDMARKER "End!"
 #define YM6_REGS 16
+#define YM6_CHANS 3
 
 #pragma pack(push,1)
 
