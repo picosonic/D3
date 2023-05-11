@@ -144,10 +144,17 @@ function ym6_notes($divider, $channel)
 
   if ($i!=$j)
   {
+    $midi=$i+12;
+    $beeb=($midi-47)*4;
+
     printf("  %s%01d ", $notenames[floor($i%$NOTES_IN_OCTAVE)], floor($i/$NOTES_IN_OCTAVE));
+    if (($beeb>=0) && ($beeb<=255))
+      printf(" [%03d] ", $beeb);
+    else
+      printf("       ");
   }
   else
-    printf("  --- ");
+    printf("  ---------- ");
 }
 
 // Check filename was specified on command line
