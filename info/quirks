@@ -31,7 +31,7 @@ Taking the egg from the dragon in the mine causes it to breath fire, it will sto
 
 Dizzy stops being drunk immediately when leaving the room he drank whisky in. Also he only tumbles drunkely when walking left or standing still.
 
-You can only open the inventory when Dizzy is not moving.
+You can only open the inventory when Dizzy is not moving. Likely to prevent objects being dropped midair.
 
 Hawk can only "see" Dizzy when both are between clouds with line of sight.
 
