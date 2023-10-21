@@ -14,7 +14,7 @@
 ; Palettes
 PAL_BLANK = &00
 PAL_GAME  = &01
-PAL_DIZZY2 = $02
+PAL_DIZZY2 = &02
 
 ; Set palette to one specified in A
 .setpal
