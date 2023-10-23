@@ -32,7 +32,7 @@ ALIGN &100
   CPY #&FD:BEQ swrdone ; Stop if we've found 2 SWR
  
 .noswryet
-  INX:CPX #16:BNE findswr ; Keep looking until we get to slot 16
+  INX:CPX #SWR_SLOTS:BNE findswr ; Keep looking until we get to slot 16
 
   ; Re-select ROM (likely BASIC)
 .swrdone
@@ -54,7 +54,7 @@ ALIGN &100
   LDX #&00
 .swrcpyloop
   ; Copy a page of data
-  LDA &4000, X:STA ROMSBASE, X
+  LDA SWR_CACHE, X:STA ROMSBASE, X
   INX
   CPX #&00:BNE swrcpyloop
 
@@ -63,13 +63,13 @@ ALIGN &100
 
   ; See if src has got to the end
   LDA swrcpyloop+2
-  CMP #&80:BNE swrcpyloop
+  CMP #hi(ROMSBASE):BNE swrcpyloop
 
   ; Re-select ROM (likely BASIC)
   LDY ROMSEL_CACHE:STY ROMSEL
 
   ; Put back source/dest incase further copies are done
-  LDA #&40:STA swrcpyloop+2
+  LDA #hi(SWR_CACHE):STA swrcpyloop+2
   LDA #hi(ROMSBASE):STA swrcpyloop+5
 
   CLI
