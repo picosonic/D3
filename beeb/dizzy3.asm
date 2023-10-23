@@ -1055,8 +1055,8 @@ PUTFILE "MELODY", "$.MELODY", EXO_LOAD_ADDR
 SAVE "EXTRA", extradata, extraend
 SAVE "VARCODE", start_of_var_code, end_of_var_code
 SAVE "DIZZY3", start, objend, onetimeinit
-PUTFILE "RMDATA", "$.RMDATA", &4000
-PUTFILE "XDATA", "$.XDATA", &4000
+PUTFILE "RMDATA", "$.RMDATA", ROMSBASE-ROM_SIZE16KB
+PUTFILE "XDATA", "$.XDATA", ROMSBASE-ROM_SIZE16KB
 SAVE "OBJDATA", movingdata, endofmovingdata
 PUTFILE "TREPIC", "TREPIC", MODE8BASE
 PUTFILE "loadscr", "FRAME", MODE8BASE
@@ -1072,7 +1072,7 @@ PRINT "DATA from ", ~datastart, " to ", ~dataend-1, "  (", dataend-datastart, " 
 PRINT "CODE from ", ~codestart, " to ", ~codeend-1, "  (", codeend-codestart, " bytes )"
 PRINT ""
 PRINT "Main code entry point : ", ~onetimeinit
-PRINT "Objects : ", ~movingdata, "..", ~endofmovingdata, " (", endofmovingdata-movingdata, " bytes, ", noofmoving, " objs )"
+PRINT "Objects : ", ~movingdata, "..", ~endofmovingdata-1, " (", endofmovingdata-movingdata, " bytes, ", noofmoving, " objs )"
 PRINT ""
 remaining = MODE8BASE-objend
 PRINT "Space before screen memory : ", ~remaining, "  (", remaining, " bytes left )"
