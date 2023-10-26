@@ -38,6 +38,7 @@ int remap=0;
 long colours=0;
 long ext_colours=0;
 unsigned char quantpal[MAX_CMAP_SIZE*3];
+long bpp=2; // Default to 4-colour mode
 
 void loadpalette(const char *filename)
 {
@@ -284,7 +285,7 @@ int numeric(const char c)
 void showsyntax()
 {
   fprintf(stderr, "img2beeb v%s - Jasper Renow-Clarke (c) 2022\n", REVISION);
-  fprintf(stderr, "  Usage : img2beeb [-c<max_colours>] [-d<dither>] [-X<width>] [-Y<height>] [-f <palette_file>] <image_file> <beeb_file>\n");
+  fprintf(stderr, "  Usage : img2beeb [-c<max_colours>] [-d<dither>] [-b<bpp>] [-X<width>] [-Y<height>] [-f <palette_file>] <image_file> <beeb_file>\n");
 }
 
 int main(int argc, char **argv)
@@ -340,6 +341,20 @@ int main(int argc, char **argv)
 
       switch (argv[argn][1])
       {
+        case 'b': // bits per pixel
+          sscanf(&argv[argn][parampos], "%ld", &bpp);
+
+          // Make sure bpp is a supported value
+          //
+          // 2 colours - not supported - MODES 0/4
+          // 4 colours - 2bpp - MODES 1/5
+          // 8 colours - 4bpp - MODE 2
+
+          if (bpp>4) bpp=4;
+          if (bpp==3) bpp=2;
+          if (bpp<2) bpp=2;
+          break;
+
         case 'c': // max colours
           sscanf(&argv[argn][parampos], "%ld", &targetcolours);
 
@@ -570,7 +585,7 @@ int main(int argc, char **argv)
 
     for (offs=0; offs<height; offs+=8)
     {
-      for (blockx=0; blockx<width; blockx+=4)
+      for (blockx=0; blockx<width; blockx+=(bpp==2?4:2))
       {
         for (blocky=0; blocky<8; blocky++)
         {
@@ -578,14 +593,28 @@ int main(int argc, char **argv)
 
           p1=findpal(impal, imdata[ptr+0]);
           p2=findpal(impal, imdata[ptr+1]);
-          p3=findpal(impal, imdata[ptr+2]);
-          p4=findpal(impal, imdata[ptr+3]);
 
-          // pack bits
-          bc =(p1&2)<<6; bc|=(p1&1)<<3;
-          bc|=(p2&2)<<5; bc|=(p2&1)<<2;
-          bc|=(p3&2)<<4; bc|=(p3&1)<<1;
-          bc|=(p4&2)<<3; bc|=(p4&1)<<0;
+          if (bpp==2)
+          {
+            p3=findpal(impal, imdata[ptr+2]);
+            p4=findpal(impal, imdata[ptr+3]);
+
+            // pack bits for 2bpp (4 colours)
+            bc =(p1&2)<<6; bc|=(p1&1)<<3;
+            bc|=(p2&2)<<5; bc|=(p2&1)<<2;
+            bc|=(p3&2)<<4; bc|=(p3&1)<<1;
+            bc|=(p4&2)<<3; bc|=(p4&1)<<0;
+          }
+
+          if (bpp==4)
+          {
+            // pack bits for 4bpp (16 colours)
+            bc =(p1&0x1)<<1; bc|=(p1&0x2)<<2;
+            bc|=(p1&0x4)<<3; bc|=(p1&0x8)<<4;
+
+            bc|=(p2&0x1)<<0; bc|=(p2&0x2)<<1;
+            bc|=(p2&0x4)<<2; bc|=(p2&0x8)<<3;
+          }
 
           fprintf(fp, "%c", bc);
         }
