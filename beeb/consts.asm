@@ -106,6 +106,10 @@ ARMOROG_RUNNING = 2
 ARMOROG_GUARDING = 3
 ARMOROG_HAPPY = 4
 
+; Dragon(s) head default position
+DRAGON_HEAD_X = 68
+DRAGON_HEAD_Y = 152
+
 ; String offsets
 STR_roomname = 1
 

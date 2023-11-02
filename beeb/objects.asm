@@ -1301,7 +1301,7 @@ endif
   JSR findnecky ; Find Y position for this neck piece
 
   NEGATEACC
-  CLC:ADC #152 ; origy (both dragons are at the same Y position)
+  CLC:ADC #DRAGON_HEAD_Y ; origy (both dragons are at the same Y position)
   LDY #movey:STA (zptr4), Y ; Set neck Y position
 
   LDA z80breg
@@ -1317,10 +1317,10 @@ endif
 .^printdragonhead
   LDY #oldmovex:LDA (zptr4), Y
   NEGATEACC
-  CLC:ADC #152 ; origy (both dragons are at the same Y position)
+  CLC:ADC #DRAGON_HEAD_Y ; origy (both dragons are at the same Y position)
   LDY #movey:STA (zptr4), Y ; Set head Y position
 
-  LDY #movex:LDA #68:STA (zptr4), Y ; Set head X position
+  LDY #movex:LDA #DRAGON_HEAD_X:STA (zptr4), Y ; Set head X position
 
   ; Open mouth if breathing fire
   LDA breathingfire
@@ -1446,14 +1446,14 @@ endif
   LDA dragonflame
   ASL A ; *2
   SEC:SBC z80breg
-  CLC:ADC #68  ;;;position of 1st flame
+  CLC:ADC #DRAGON_HEAD_X ;;;position of 1st flame
   STA hcomp+1 ; Cache for compare
 
 .hcomp
   ;;;flame run out position
-  CPX #&00:BCC done
+  CPX #&00:BCS done ; stop if run out to right of flame
 
-  CMP #68:BCS done
+  CMP #DRAGON_HEAD_X:BCS done ; stop if flame to right of dragon head
 
   STA frmx:STA cx
 
