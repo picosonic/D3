@@ -1018,10 +1018,11 @@ endif
 
 .resetuproom
 {
-  LDA roomno:JSR roomsetup
+  JMP roomsetup
 
   ; Start by drawing Dizzy so there is something to rub out
-  JMP plotnew
+  ; TODO - reinstate plotnew, and change above to JSR
+  ;JMP plotnew
 }
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;LOOKING AT PICTURE

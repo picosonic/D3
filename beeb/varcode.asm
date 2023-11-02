@@ -316,8 +316,6 @@
   ; Then if the colour of the next frame is the same
   ; as the previous then bit 7 of the X coord is set
 
-  STA roomno ; Backup room number
-
   PAGE_ROOMDATA
 
   ; Clear palette to hide draw
@@ -396,7 +394,8 @@
   JSR OSCLI
 
   ; Re-draw the room
-  LDA #52:JSR roomsetup
+  LDA #52:STA roomno
+  JSR roomsetup
 
    ; Revert to game palette
   LDA #PAL_GAME:JSR setpal
