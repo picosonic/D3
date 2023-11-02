@@ -113,6 +113,7 @@ endif
 
 ; Flames / water / lava
 .noofflames EQUB 0 ; Count of active flames
+.flameindex EQUB 0 ; Flame colour counter
 .noofwater EQUB 0 ; Count of active water / lava
 .waterheight EQUB 0 ; Water line
 .watercolour EQUB 0 ; If "water" is actually water / lava

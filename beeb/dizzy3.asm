@@ -142,8 +142,10 @@ INCLUDE "gfx.asm"
   JSR pickupcoins
   JSR tryputtingdown ; Put object down / Inventory
 
+  LDA clock:AND #&03:BNE skipwaterflame ; Limit drawing fire/water
   JSR updatewater
   JSR updateflames
+.skipwaterflame
 
   JSR checkholdinghole
   JSR checkifdrunk

@@ -110,6 +110,7 @@
   LDA roomno:CMP #77:BEQ yesfellinlava
   LDA #STR_killedbywater:STA deathmsg ; Set death message to show
 .yesfellinlava
+  ; TODO - re-enable liquid death
   ;JSR killdizzy1
 
   endif
@@ -131,8 +132,9 @@
 
   ; Update flame loop
   LDA #SPR_FLAME:STA frmno
-  LDA clock:AND #&01:TAY:LDA flamecolours, Y ; Set flame colour based on odd/even clock
+  LDA flameindex:AND #&01:TAY:LDA flamecolours, Y
   STA frmattri
+  INY:STY flameindex ; Increment flame colour index
 
   LDY #&00
 .updateflamelp
