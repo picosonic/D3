@@ -942,6 +942,14 @@ PAL_DIZZY2 = &02
 ; Clear attribute table (used for solidity)
 .clearattris
 {
+  LDA #0
+
+  LDY #attrisize
+.loop
+  STA attritable, Y
+  DEY
+  BPL loop
+
   RTS
 }
 
