@@ -542,6 +542,9 @@ PAL_DIZZY2 = &02
   ; All the data has been read for this frame, so draw it
   JSR frame
 
+  ; ... and fill in solidity bitmap
+  JSR plotattris
+
   TYA:PHA
 
   ; Check for water
@@ -955,9 +958,157 @@ PAL_DIZZY2 = &02
 
 ; Plot a shape onto the attribute table
 ; uses frmx, frmy, frmwidth, frmheight and frmattri
+;
+; Attribute table, used for hit-detection on 8x8 grid of screen
+; 256x136 = 32x17 blocks = 4x17 bytes
 .plotattris
 {
+  ; Save registers
+  PHA
+  TXA:PHA
+  TYA:PHA
+
+  ; Set dest pointer
+  LDA #hi(attritable):STA zptr2+1
+  LDA #lo(attritable):STA zptr2
+
+  ; Find out if this shape is solid or not
+  LDA frmattri:AND #ATTR_NOTSOLID:BNE notsolid
+  LDA #&00
+.notsolid
+  STA columnloop+1
+
+  ; Calculate width in blocks (rounded up)
+  LDA frmwidth:LSR A:ADC #&00:STA bwidth
+
+  ; Calculate height in blocks (rounded up)
+  LDA frmheight:LSR A:LSR A:LSR A:ADC #&00:STA bheight
+
+  ; Calculate first row
+  LDA frmy
+  LSR A:LSR A:LSR A ; A /= 8 (8 pixel high blocks)
+  STA fymax
+  SEC:SBC #6 ; A -= 6 (attritable ignores top header)
+  BPL notopclip
+  LDA #&00 ; Clip to top
+.notopclip
+  STA fymin
+
+  ; Set starting offset
+  ASL A:ASL A ; Determine byte offset for start of row
+  STA zptr2
+
+  ; Calculate last row
+  LDA fymax:CLC:ADC bheight
+  SEC:SBC #6 ; A -= 6 (attritable ignores top header)
+  CMP #17:BCC nobotclip
+  LDA #16 ; Clip to bottom
+.nobotclip
+  STA fymax
+  ;INC fymax ; +1 to make loop easier
+
+  ; Calculate first column (bit position 0..31)
+  LDA frmx:AND #&7F
+  STA fxmax
+  CMP #34:BCS noleftclip
+  LDA #34 ; Clip to left
+.noleftclip
+  SEC:SBC #32
+  LSR A
+  STA fxmin
+
+  ; Calculate last column
+  LDA fxmax
+  SEC:SBC #32
+  LSR A
+  CLC:ADC bwidth
+  CMP #32:BCC norightclip
+  LDA #31 ; Clip to right
+.norightclip
+  STA fxmax
+  ;INC fxmax ; +1 to make loop easier
+
+  ; Calculate starting bit pattern
+  LDA fxmin:AND #&07
+  TAY:LDA bitpattern, Y
+  STA bits
+
+  ; Row loop
+  LDX fymin
+.rowloop
+  ; Move to starting byte on this row
+  LDA fxmin:LSR A:LSR A:LSR A
+  CLC:ADC zptr2:STA zptr2
+
+  ; Column loop
+  TXA:PHA ; Cache row
+  LDX fxmin
+
+  LDY #&00
+.columnloop
+  
+  LDA #&00:BNE makeclear
+  LDA bits
+  ORA (zptr2), Y
+  STA (zptr2), Y
+  LDA #&00:BEQ setdone
+.makeclear
+  LDA bits:EOR #&FF
+  AND (zptr2), Y
+  STA (zptr2), Y
+.setdone
+
+  LDA bits ; Move to next bit
+  LSR A
+  BNE samebyte
+  INC zptr2 ; Move to next byte
+  LDA bitpattern
+.samebyte
+  STA bits
+
+  INX
+  CPX fxmax:BCC columnloop
+
+  ; Move to start of next row down
+  PLA:PHA:CLC:ADC #&01:ASL A:ASL A
+  STA zptr2
+
+  ; Calculate starting bit pattern
+  LDA fxmin:AND #&07
+  TAY:LDA bitpattern, Y
+  STA bits
+
+  PLA:TAX ; Restore row
+  INX
+  CPX fymax:BCC rowloop
+
+  ; Restore registers
+  PLA:TAY
+  PLA:TAX
+  PLA
+
   RTS
+
+.bwidth
+  EQUB &00
+.bheight
+  EQUB &00
+
+.fymin
+  EQUB &00
+.fymax
+  EQUB &00
+
+.fxmin
+  EQUB &00
+.fxmax
+  EQUB &00
+
+.bits
+  EQUB &00
+
+.bitpattern
+  EQUB &80, &40, &20, &10, &08, &04, &02, &01
 }
 
 ; Protects and exit when next flyback (vsync) occurs
