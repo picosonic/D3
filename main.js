@@ -51,6 +51,7 @@ var gs={
   flames:[], flamerate:4,
   water:[], waterrate:6, waterheight:(0*6),
   solid:[],
+  attritable:[],
 
   heartsetup:false,
   numhearts:16,
@@ -237,6 +238,52 @@ function resetobjects()
   }
 }
 
+function setpackedsolidity(fx, fy, fwidth, fheight, solid)
+{
+  var bwidth=Math.ceil(fwidth/2); // Width in blocks
+  var bheight=Math.ceil(fheight/8); // Height in blocks
+
+  var fymin=Math.floor(fy >> 3)-6; // Calculate row
+  var fymax=fymin+bheight;
+
+  if (fymin<0) fymin=0; // Clip top
+  if (fymax>17) fymax=17; // Clip bottom
+
+  var offset=fymin<<2; // Byte position for start of first row
+
+  var fxmin=Math.floor(((fx&0x7f)-32) >> 1); // Calculate column (bit position (0..31))
+  var fxmax=fxmin+bwidth;
+
+  if (fxmin<1) fxmin=1; // Clip left
+  if (fxmax>31) fxmax=31; // Clip right
+
+  var bit=(0x80 >> (fxmin & 0x07)); // Starting bit pattern
+
+  for (var y=fymin; y<fymax; y++)
+  {
+    offset+=Math.floor(fxmin >> 3); // Move to starting byte on this row
+
+    for (var x=fxmin; x<fxmax; x++)
+    {
+      if (solid)
+        gs.attritable[offset]|=bit;
+      else
+        gs.attritable[offset]&=(bit ^ 0xFF);
+
+      bit=bit>>1; // Move to next bit
+      if (bit==0)
+      {
+        // Move to next byte
+        bit=0x80;
+        offset++;
+      }
+    }
+
+    offset=(y+1)<<2; // Move to start of next row down
+    bit=(0x80 >> (fxmin & 0x07)); // Starting bit pattern
+  }
+}
+
 // Mark as solid/notsolid
 function setsolidity(fx, fy, fwidth, fheight, solid)
 {
@@ -282,6 +329,7 @@ function drawroom(roomnum)
   gs.flames=[];
 
   setsolidity(0, 0, xmax, ymax, framesolid);
+  setpackedsolidity(32, 6*8, xmax/4, ymax-(7*8), framesolid);
 
   gs.ctx.fillStyle="#000000";
   gs.ctx.fillRect(border, header+border, xmax-(border*2), ymax-header-(border*2));
@@ -342,6 +390,7 @@ function drawroom(roomnum)
       if ((fy+fheight)>(ymax-border)) fheight=((ymax-border)-fy); // bottom
 
       setsolidity(fx, fy, fwidth, fheight, framesolid);
+      setpackedsolidity(framex, framey, fwidth/4, fheight, framesolid);
     }
   }
 
@@ -377,6 +426,7 @@ function drawroom(roomnum)
         if ((fy+fheight)>(ymax-border)) fheight=((ymax-border)-fy); // bottom
 
         setsolidity(fx, fy, fwidth, fheight, framesolid);
+        setpackedsolidity(objects[i].movex, objects[i].movey, fwidth/4, fheight, framesolid);
 
         if (gs.debug)
         {
