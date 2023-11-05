@@ -534,7 +534,38 @@ endif
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ; Draw new
-  INC dizzyfrm ; Advance animation frame
+  ;INC dizzyfrm ; Advance animation frame
+
+  LDA #&00:STA dizzyfrm
+  LDA frmx:STA lookx
+  LDA frmy:STA looky
+
+  ; Check top left
+  JSR checkattri
+  BEQ emptytl
+  LDA #&03:STA dizzyfrm
+.emptytl
+
+  ; Check top right
+  LDA lookx:CLC:ADC #&05:STA lookx
+  JSR checkattri
+  BEQ emptytr
+  LDA #&03:STA dizzyfrm
+.emptytr
+
+  ; Bottom right
+  LDA looky:CLC:ADC #20:STA looky
+  JSR checkattri
+  BEQ emptybr
+  LDA #&03:STA dizzyfrm
+.emptybr
+
+  ; Bottom left
+  LDA frmx:STA lookx
+  JSR checkattri
+  BEQ emptybl
+  LDA #&03:STA dizzyfrm
+.emptybl
 
   LDA dizzyfrm:AND #&1F:STA dizzyfrm:STA frmno
   LDA dizzyx:STA frmx:STA oldx
@@ -551,11 +582,48 @@ endif
   RTS
 }
 
-; Check attributes at specified position
+; Check attributes at specified position (8x8 blocks)
 ;
-; IN lookx, looky
+; IN lookx (0..63)
+; IN looky (0..191)
+;
+; OUT A=0 not set, A!=0 set
 .checkattri
 {
+  ; Set target pointer
+  LDA #hi(attritable):STA zptr2+1
+  LDA #lo(attritable):STA zptr2
+
+  ; Calculate row
+  LDA looky
+  LSR A:LSR A:LSR A ; A /= 8 (8 pixel high blocks)
+  SEC:SBC #6 ; A -= 6 (attritable ignores top header)
+
+  ; Set row offset
+  ASL A:ASL A ; Determine byte offset for start of row
+  STA zptr2
+
+  ; Calculate column (bit position 0..31)
+  LDA lookx:AND #&7F
+  SEC:SBC #32
+  LSR A
+  STA colpos+1
+  
+  ; Set column offset
+  LSR A:LSR A:LSR A
+  CLC:ADC zptr2:STA zptr2
+
+  ; Calculate starting bit pattern
+.colpos
+  LDA #&00:AND #&07
+  TAY:LDA bitpattern, Y
+  STA bitmask+1
+
+  LDY #&00
+  LDA (zptr2), Y
+.bitmask
+  AND #&00
+
   RTS
 }
 
