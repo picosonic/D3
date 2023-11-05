@@ -1005,7 +1005,6 @@ PAL_DIZZY2 = &02
   LDA #16 ; Clip to bottom
 .nobotclip
   STA fymax
-  ;INC fymax ; +1 to make loop easier
 
   ; Calculate first column (bit position 0..31)
   LDA frmx:AND #&7F
@@ -1026,7 +1025,6 @@ PAL_DIZZY2 = &02
   LDA #31 ; Clip to right
 .norightclip
   STA fxmax
-  ;INC fxmax ; +1 to make loop easier
 
   ; Calculate starting bit pattern
   LDA fxmin:AND #&07
@@ -1106,10 +1104,11 @@ PAL_DIZZY2 = &02
 
 .bits
   EQUB &00
+}
 
+; 1 set bit shifted down
 .bitpattern
   EQUB &80, &40, &20, &10, &08, &04, &02, &01
-}
 
 ; Protects and exit when next flyback (vsync) occurs
 ; interrupts must be enabled
