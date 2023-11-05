@@ -695,7 +695,11 @@ OBJ_RAILING4 = 71
 
 .endofmovingdata
 
-noofmoving = (endofmovingdata-movingdata)/movingsize
+noofmoving = (((endofmovingdata-movingdata)/movingsize) AND &FF)
+
+IF (endofmovingdata-movingdata) <> (noofmoving*movingsize)
+  ERROR "moving data typed in wrong"
+ENDIF
 
 ; Reset moving items state, to when entering room they are in
 .resetrous
