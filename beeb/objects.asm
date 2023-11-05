@@ -66,7 +66,7 @@ OBJ_HAWK = 0
 
  EQUB 49, hawk, 60, 80, SPR_HAWK0
  EQUW nothingheremess
- EQUB 0, 2, 0, 0, PAL_CYAN+PLOT_OR
+ EQUB 0, 2, 0, 0, PAL_CYAN+PLOT_OR+ATTR_NOTSOLID
  ;EQUB 49, 60, 80, SPR_HAWK0
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -83,7 +83,7 @@ OBJ_BAG = 1
 OBJ_PORTCULLIS = 2
 
 .porthere
- EQUB 51,portcullis,76 ,96,SPR_PORTCULLIS,96,136,   0   ,4  ,0 ,0 ,PAL_WHITE
+ EQUB 51,portcullis,76 ,96,SPR_PORTCULLIS,96,136,   0   ,4  ,0 ,0 ,PAL_WHITE+ATTR_NOTSOLID ; TODO - align not solid with original
  ;EQUB 51 ,76 ,96,SPR_PORTCULLIS
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -457,7 +457,7 @@ OBJ_BREAD = 43
 OBJ_RAT = 44
 
 .rathere
- EQUB 36,rat       ,96 ,73 ,SPR_RAT,44,80 ,   60   ,2  ,0 ,255 ,PAL_CYAN
+ EQUB 36,rat       ,96 ,73 ,SPR_RAT,44,80 ,   60   ,2  ,0 ,255 ,PAL_CYAN+ATTR_NOTSOLID
  ;EQUB 36,96,73 ,SPR_RAT
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -915,6 +915,7 @@ endif
   LDY #colour:LDA (zptr4), Y:STA frmattri
 
   JSR frame
+  JSR plotattris ; TODO - align better with original code
 
   RTS
 }
@@ -2047,8 +2048,8 @@ turnonfullbucket = movingsize+room
   CLC:ADC #42
   STA frmheight
 
-  LDA #&00:STA frmplot
-  LDA #&07:STA frmattri
+  LDA #PLOT_AND:STA frmplot
+  LDA #PAL_WHITE:STA frmattri
   JMP plotattris
 }
 
