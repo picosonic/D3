@@ -587,10 +587,15 @@ PAL_DIZZY2 = &02
   LDA cointable+2, Y:CMP roomno:BNE nextcoin
 
   LDA #SPR_COIN:STA frmno ; Coin frame
-  LDA #PAL_WHITE:STA frmattri
+  LDA #PAL_WHITE+ATTR_NOTSOLID:STA frmattri
   LDA cointable, Y:STA frmx
   LDA cointable+1, Y:STA frmy
+
+  ; Draw coin
   JSR frame
+
+  ; ... and fill in solidity bitmap
+  JSR plotattris
 
 .nextcoin
 
