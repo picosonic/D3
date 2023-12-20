@@ -370,6 +370,64 @@
   RTS
 }
 
+; Where to cache the previous IRQ
+oldirq = zptr6
+
+vsync_position = 35 ; usually 32 are visible, so vsync fires after visible raster
+total_rows = 39 ; character rows per frame
+
+us_per_scanline = 64 ; microseconds per scanline
+us_per_row = 8*us_per_scanline
+
+timer2_base_in_us = (total_rows-vsync_position)*us_per_row - 2*us_per_scanline
+
+scanline_pal_change = 74+30 ; Y position to run palette switch
+scanline_time = scanline_pal_change*us_per_scanline
+
+.pal_irqhandler
+{
+  ; Cache A
+  LDA &FC:PHA
+
+  ; Find out which interrupt it is
+  LDA SYSVIA_IFR
+  AND #INT_VSYNC
+  BEQ try_timer2 ; not vsync, so try timer2
+
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ; Handle vsync, top-half palette
+  SET_COL2 PAL_OS_Yellow
+
+  ; Set timer2 to change palette part way down
+  LDA #lo(scanline_time)
+  ADC #lo(timer2_base_in_us)
+  STA SYSVIA_T2CL ; Low value
+
+  LDA #hi(scanline_time)
+  ADC #hi(timer2_base_in_us)
+  STA SYSVIA_T2CH ; High value - also starts timer
+
+  ; Skip over timer2 handler
+  JMP return_to_os
+
+.try_timer2
+  LDA SYSVIA_IFR
+  AND #INT_TIMER2
+  BEQ return_to_os ; not timer2, so hand back to OS
+
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ; Handle timer2, bottom-half palette
+  LDA SYSVIA_T2CL ; Clear timer2
+
+  SET_COL2 PAL_OS_Red
+
+.return_to_os
+  ; Restore A
+  PLA:STA &FC
+
+  JMP (oldirq)
+}
+
 .dotreasurepic
 {
   ; Clear palette to hide draw
@@ -383,7 +441,32 @@
   ; Show the picture with correct palette
   LDA #PAL_DIZZY2:JSR setpal
 
+  ; Install interrupt handler to alter palette to allow more than 4 colours
+  SEI
+  ; Back up current IRQ handler
+  LDA IRQ1V:STA oldirq
+  LDA IRQ1V+1:STA oldirq+1
+
+  ; Enable vsync and timer2 interrupts
+  LDA #INT_ENABLE+INT_TIMER2+INT_VSYNC:STA SYSVIA_IER
+
+  ; Timer2 control = one shot
+  LDA #&00:STA SYSVIA_ACR
+
+  ; Set new IRQ handler
+  LDA #lo(pal_irqhandler):STA IRQ1V
+  LDA #hi(pal_irqhandler):STA IRQ1V+1
+  CLI
+
+  ; Wait for no key press, then keypress before continuing
   JSR handoffandwait
+
+  ; Disable palette switching interrupt handler
+  SEI
+  ; Restore previous IRQ handler
+  LDA oldirq:STA IRQ1V
+  LDA oldirq+1:STA IRQ1V+1
+  CLI
 
   ; Clear palette to hide draw
   LDA #PAL_BLANK:JSR setpal
@@ -394,7 +477,7 @@
   JSR OSCLI
 
   ; Re-draw the room
-  LDA #52:STA roomno
+  LDA #ENTRANCEHALLROOM:STA roomno
   JSR roomsetup
 
    ; Revert to game palette
