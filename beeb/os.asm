@@ -120,10 +120,10 @@ ACIA08 = SHEILABASE+&08 ; Control / Status
 ACIA09 = SHEILABASE+&09 ; Data
 ; Serial ULA
 ; Video ULA
-ULA_VID20 = SHEILABASE+&20 ; video control register
-ULA_VID21 = SHEILABASE+&21 ; colour palette
-ULA_VID22 = SHEILABASE+&22 ; border control
-ULA_VID23 = SHEILABASE+&23 ; 24-bit palette selection
+ULA_VID_CONTROL = SHEILABASE+&20 ; video control register
+ULA_VID_PALETTE = SHEILABASE+&21 ; colour palette
+ULA_VID_BORDER = SHEILABASE+&22 ; border control
+ULA_VID_PALETTE24 = SHEILABASE+&23 ; 24-bit palette selection
 ; Paged ROM/RAM selector
 ROMSEL = SHEILABASE+&30 ; paged ROM select (4 bit)
 RAMSEL = SHEILABASE+&32 ; paged RAM select
@@ -178,6 +178,10 @@ FDC_RESET = SHEILABASE+&82
 FDC_DATA = SHEILABASE+&84
 ; 68B54 - ADLC Econet controller
 ; uPD7002 - Analogue-to-digital converter
+ADC_LATCH = SHEILABASE+&C0 ; Data latch and conversion start
+ADC_STATUS = ADC_LATCH ; Status register
+ADC_HIGH = SHEILABASE+&C1 ; High data byte
+ADC_LOW = SHEILABASE+&C2 ; Low data byte
 ; Tube ULA
 
 ; Other constants
@@ -197,6 +201,19 @@ OSBASE = &C000
 OPENIN = &40
 OPENOUT = &80
 OPENINOUT = &C0
+
+; System VIA interrupts
+INT_KEYPRESS = &01
+INT_VSYNC    = &02
+INT_SHIFTREG = &04
+INT_LIGHTPEN = &08
+INT_ADC      = &10
+INT_TIMER2   = &20
+INT_TIMER1   = &40
+
+; IER flags
+INT_ENABLE   = &80
+INT_DISABLE  = &00
 
 ; Zero page availibility
 ; &00 to &6F - available to machine code programs not using BASIC
@@ -221,3 +238,55 @@ OPENINOUT = &C0
 ; 5 magenta
 ; 6 cyan
 ; 7 white
+
+PAL_OS_Black   = 0 EOR 7
+PAL_OS_Red     = 1 EOR 7
+PAL_OS_Green   = 2 EOR 7
+PAL_OS_Yellow  = 3 EOR 7
+PAL_OS_Blue    = 4 EOR 7
+PAL_OS_Magenta = 5 EOR 7
+PAL_OS_Cyan    = 6 EOR 7
+PAL_OS_White   = 7 EOR 7
+
+; Direct palette manipulation
+; as per Advanced User Guide p.379..381
+
+; Set logical colour 0 to actual colour col
+MACRO SET_COL0 col
+{
+    LDA #&00 + col : STA ULA_VID_PALETTE
+    LDA #&10 + col : STA ULA_VID_PALETTE
+    LDA #&40 + col : STA ULA_VID_PALETTE
+    LDA #&50 + col : STA ULA_VID_PALETTE
+}
+ENDMACRO
+
+; Set logical colour 1 to actual colour col
+MACRO SET_COL1 col
+{
+    LDA #&20 + col : STA ULA_VID_PALETTE
+    LDA #&30 + col : STA ULA_VID_PALETTE
+    LDA #&60 + col : STA ULA_VID_PALETTE
+    LDA #&70 + col : STA ULA_VID_PALETTE
+}
+ENDMACRO
+
+; Set logical colour 2 to actual colour col
+MACRO SET_COL2 col
+{
+    LDA #&80 + col : STA ULA_VID_PALETTE
+    LDA #&90 + col : STA ULA_VID_PALETTE
+    LDA #&C0 + col : STA ULA_VID_PALETTE
+    LDA #&D0 + col : STA ULA_VID_PALETTE
+}
+ENDMACRO
+
+; Set logical colour 0 to actual colour col
+MACRO SET_COL3 col
+{
+    LDA #&A0 + col : STA ULA_VID_PALETTE
+    LDA #&B0 + col : STA ULA_VID_PALETTE
+    LDA #&E0 + col : STA ULA_VID_PALETTE
+    LDA #&F0 + col : STA ULA_VID_PALETTE
+}
+ENDMACRO
