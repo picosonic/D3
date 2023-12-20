@@ -29,6 +29,10 @@ ORG EXO_LOAD_ADDR
   LDA #&07:STA CRTC00
   LDA #&1F:STA CRTC01
 
+	; Turn off interlace and cursor
+	LDA #&08:STA CRTC00
+	LDA #&C0:STA CRTC01
+
   ; Change screen start to &4800 to gain an extra 6k bytes
   LDA #&0D:STA CRTC00
   LDA #(MODE8BASE) MOD 256:STA CRTC01
