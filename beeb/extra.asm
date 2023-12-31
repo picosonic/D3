@@ -185,6 +185,8 @@ INCLUDE "hearts.asm"
 {
   INC coins
 
+.^drawcoins
+
   ; Determine how many 10s
   LDX #0:SEC:LDA coins
 .more10s
@@ -209,6 +211,8 @@ INCLUDE "hearts.asm"
 {
   ; Subtract 1 from lives
   DEC lives
+
+  .^drawlives
 
   ; Inject lives number into number of lives messages, using repeat count
   LDA lives:STA nooflivesmess+1

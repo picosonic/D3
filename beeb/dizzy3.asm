@@ -1102,7 +1102,11 @@ endif
 
 .proxpicturerou
   PLA:PLA ; Prevent inventory appearing
-  JMP dotreasurepic
+  JSR dotreasurepic
+
+  ; Put lives/coin counts back in status
+  JSR drawlives
+  JMP drawcoins
 }
 
 eggheight = 16
