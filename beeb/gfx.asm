@@ -1163,3 +1163,25 @@ PAL_DIZZY2 = &02
 
   RTS
 }
+
+; Lookup table for start of each line of the screen in memory
+;
+; high bytes are : 50,50,50,50,50,50,50,50 52,52,52,52,52,52,52,52...
+;  low bytes are : 00,01,02,03,04,05,06,07 00,01,02,03,04,05,06,07...
+ALIGN &100
+.screentable_hi
+{
+  FOR n, 0, (MAXY-1)/8
+    FOR m, 0, 7
+      EQUB HI((MODE8BASE)+(n*512)+m)
+    NEXT
+  NEXT
+}
+.screentable_lo
+{
+  FOR n, 0, (MAXY-1)/8
+    FOR m, 0, 7
+      EQUB LO((MODE8BASE)+(n*512)+m)
+    NEXT
+  NEXT
+}
