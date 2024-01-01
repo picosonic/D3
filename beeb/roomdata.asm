@@ -1355,7 +1355,7 @@ EQUW youfoundcoinmess-room101 ; 17
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 .roomname ; DUMMY
-EQUB "PICOSONIC 2023", PRT_END
+EQUB "PICOSONIC 2024", PRT_END
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;Generic dead messages
 
