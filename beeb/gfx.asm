@@ -1,3 +1,5 @@
+uselookup = 1
+
 ; Wait for vertical trace
 .waitvsync
 {
@@ -305,6 +307,7 @@ PAL_DIZZY2 = &02
   JMP done
 .cont
 
+IF uselookup = 0
   ; Point to start of top left of position to draw frame
   LDA #MODE8BASE DIV 256:STA zptr3+1:STA zptr2+1
   LDA #MODE8BASE MOD 256:STA zptr3:STA zptr2
@@ -326,6 +329,22 @@ PAL_DIZZY2 = &02
   STA ztmp4
   CLC:ADC zptr3:STA zptr3:STA zptr2
 .noy
+ENDIF
+
+IF uselookup = 1
+  TXA:PHA
+  LDX frmy
+  LDA screentable_hi, X
+  STA zptr3+1:STA zptr2+1
+
+  LDA screentable_lo, X
+  STA zptr3:STA zptr2
+  PLA:TAX
+
+  LDA frmy
+  AND #&07
+  STA ztmp4
+ENDIF
 
   LDA frmx:AND #&7F
   BEQ nox ; Don't advance pointer if it's 0
@@ -1164,6 +1183,7 @@ PAL_DIZZY2 = &02
   RTS
 }
 
+IF uselookup = 1
 ; Lookup table for start of each line of the screen in memory
 ;
 ; high bytes are : 50,50,50,50,50,50,50,50 52,52,52,52,52,52,52,52...
@@ -1171,17 +1191,19 @@ PAL_DIZZY2 = &02
 ALIGN &100
 .screentable_hi
 {
-  FOR n, 0, (MAXY-1)/8
+  FOR n, 0, (MAXY/8)-1
     FOR m, 0, 7
       EQUB HI((MODE8BASE)+(n*512)+m)
     NEXT
   NEXT
 }
+ALIGN &100
 .screentable_lo
 {
-  FOR n, 0, (MAXY-1)/8
+  FOR n, 0, (MAXY/8)-1
     FOR m, 0, 7
       EQUB LO((MODE8BASE)+(n*512)+m)
     NEXT
   NEXT
 }
+ENDIF
