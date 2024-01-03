@@ -58,6 +58,7 @@ INCLUDE "gfx.asm"
   PAGE_ROOMDATA
 
   LDA #&01:STA dontupdatedizzy ; Stop Dizzy being drawn
+  STA upsidedown:DEC upsidedown ; Make sure we're not upsidedown
 
   LDA #TITLEROOM:STA roomno
   JSR roomsetup
@@ -156,6 +157,55 @@ INCLUDE "gfx.asm"
   ; See if room changed
   LDA newroomno:CMP roomno:BEQ notanewroom
 
+  ; only a problem if newroomno =23 or 55
+  ; when roomno=39
+  ; or if newroomno=39 (set path to tumble)
+
+  ; Check if we've just left the well
+  LDA roomno
+  CMP #WELLROOM:BEQ leaving39
+
+  ; Check if we went down from Australia
+  LDA newroomno
+  CMP #UNDERAUSROOM:BEQ fallenoutof23
+  CMP #WELLROOM:BNE gotoenterroom
+
+  ; Gone down from Australia (into well)
+.fallenoutof23
+  LDA #WELLROOM:STA newroomno
+  ; set to ordinary tumble
+  LDA roomno:STA lastroom
+  BNE gotoenterroom
+
+  ; Leaving well, if into Australia, then vertical flip
+.leaving39
+  LDA newroomno
+  CMP #STRANGENEWROOM:BEQ flipandsettumble
+
+  ; notroom23
+  ; were going up on seq. 8
+  LDA lastroom
+  CMP #TOPWELLROOM:BEQ skipthis
+  LDA #TOPWELLROOM:BNE settojumpout
+.skipthis
+  LDA #STRANGENEWROOM
+
+.settojumpout
+  STA newroomno
+  ; set path to jump (+ve x)
+  JMP gotoenterroom
+
+.flipandsettumble
+  ; set path to upside down tumble
+  LDA #90:STA dizzyy
+
+  ; Switch upsidedown
+  LDA upsidedown
+  EOR #&01:STA upsidedown
+
+  ; Go through the well a second time
+  LDA #WELLROOM:STA newroomno
+
 .gotoenterroom
   JSR enterroom
   LDA #&00:STA dontupdatedizzy
@@ -178,8 +228,11 @@ INCLUDE "gfx.asm"
   LDA completedgame:BNE quitted
 
 .notdonegame
-  LDA killed:BEQ maingamelp
-  DEC killed:LDA killed:BNE maingamelp
+  LDA killed:BEQ restartloop
+  DEC killed:LDA killed:BEQ keepgoing
+.restartloop
+  JMP maingamelp
+.keepgoing
 
   LDA #&01:STA dontupdatedizzy ; Stop Dizzy being drawn
 

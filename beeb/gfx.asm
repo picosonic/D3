@@ -1,5 +1,3 @@
-uselookup = 1
-
 ; Wait for vertical trace
 .waitvsync
 {
@@ -307,44 +305,22 @@ PAL_DIZZY2 = &02
   JMP done
 .cont
 
-IF uselookup = 0
-  ; Point to start of top left of position to draw frame
-  LDA #MODE8BASE DIV 256:STA zptr3+1:STA zptr2+1
-  LDA #MODE8BASE MOD 256:STA zptr3:STA zptr2
-
-  ; Advance to X/Y position
-  LDA frmy
-  BEQ noy
-  LSR A:LSR A ; Divide Y by 4
-  AND #&FE
-  STA yjump+2 ; Store result as operand for ADC below
-  LDA zptr3+1
-.yjump
-  CLC:ADC #&00
-  STA zptr3+1:STA zptr2+1
-
-  ; Add small y offset
-  LDA frmy
-  AND #&07
-  STA ztmp4
-  CLC:ADC zptr3:STA zptr3:STA zptr2
-.noy
-ENDIF
-
-IF uselookup = 1
-  TXA:PHA
-  LDX frmy
+  ;TXA:PHA
+  LDA frmy:TAX:TAY
+  LDA upsidedown:BEQ noflip
+  LDA #MAXY+(5*8):SEC:SBC frmy:TAY
+  TAX
+.noflip
   LDA screentable_hi, X
   STA zptr3+1:STA zptr2+1
 
   LDA screentable_lo, X
   STA zptr3:STA zptr2
-  PLA:TAX
+  ;PLA:TAX
 
-  LDA frmy
+  TYA
   AND #&07
   STA ztmp4
-ENDIF
 
   LDA frmx:AND #&7F
   BEQ nox ; Don't advance pointer if it's 0
@@ -450,6 +426,9 @@ ENDIF
   CMP ztmp1
   BNE rowloop ; Go round again if we haven't completed the row
 
+  LDA upsidedown
+  BNE drawupsidedown
+{
   INC ztmp4
 
   ; Reset to start of row, but one down
@@ -465,6 +444,29 @@ ENDIF
   LDA zptr3:SBC #&08:STA zptr3:STA zptr2
   LDA zptr3+1:CLC:ADC #&02:STA zptr3+1:STA zptr2+1
 .nodiv8
+  JMP drawdone
+}
+
+.drawupsidedown
+{
+  DEC ztmp4
+
+  ; Reset to start of row, but one up
+  LDA #&00:STA zidx2
+  DEC zptr3:LDA zptr3:STA zptr2
+  LDA zptr3+1:STA zptr2+1
+
+  ; If we're divisible by 8, need to move to bottom of next cell up
+  LDA ztmp4
+  AND #&07
+  CMP #&07
+  BNE nodiv8
+  LDA zptr3:CLC:ADC #&08:STA zptr3:STA zptr2
+  LDA zptr3+1:SEC:SBC #&02:STA zptr3+1:STA zptr2+1
+.nodiv8
+}
+
+.drawdone
 
   ; Check to see if we've drawn all the source bytes
   LDA zidx1:CMP ztmp3:BEQ done
@@ -687,8 +689,12 @@ ENDIF
   ;
   ; Pointer to message in zptr5
 
+  ; Cache upsidedown state
+  LDA upsidedown:PHA
+
   ; Disable clipping so we can print room name, lives and coin counts
   LDA #&00:STA cliptoplayarea
+  STA upsidedown ; Also force upsidedown off
 
   LDY #&00
 
@@ -937,6 +943,9 @@ ENDIF
 .done
   LDA #&01:STA cliptoplayarea
 
+  ; Restore upsidedown state
+  PLA:STA upsidedown
+
   RTS
 
 ; Message variables
@@ -1183,7 +1192,6 @@ ENDIF
   RTS
 }
 
-IF uselookup = 1
 ; Lookup table for start of each line of the screen in memory
 ;
 ; high bytes are : 50,50,50,50,50,50,50,50 52,52,52,52,52,52,52,52...
@@ -1206,4 +1214,3 @@ ALIGN &100
     NEXT
   NEXT
 }
-ENDIF

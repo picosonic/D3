@@ -160,6 +160,8 @@ endif
 .printloops EQUB 0 ; Number of remaining loops when doing print repeats
 .printidx EQUB 0 ; Place to loop back to on repeats
 
+.upsidedown EQUB 0 ; Vertical flip flag
+
 .zpend
 
 ; ---------------------------------------------------------
