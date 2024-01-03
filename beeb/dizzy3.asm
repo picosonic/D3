@@ -155,7 +155,11 @@ INCLUDE "gfx.asm"
 .wantaquickkill
 
   ; See if room changed
-  LDA newroomno:CMP roomno:BEQ notanewroom
+  LDA newroomno
+  CMP roomno:BNE differentroom
+  JMP notanewroom
+
+.differentroom
 
   ; only a problem if newroomno =23 or 55
   ; when roomno=39
@@ -175,7 +179,18 @@ INCLUDE "gfx.asm"
   LDA #WELLROOM:STA newroomno
   ; set to ordinary tumble
   LDA roomno:STA lastroom
-  BNE gotoenterroom
+  
+  SEI
+  LDA #0
+  STA animation ; First frame of animation
+  ;STA left      ; Not going left
+  ;STA right     ; Not going right
+
+  LDA #4:STA dy
+  LDA #3:STA sequence ; jumping/tumbling straight up/down
+  CLI
+
+  JMP gotoenterroom
 
   ; Leaving well, if into Australia, then vertical flip
 .leaving39
@@ -193,11 +208,34 @@ INCLUDE "gfx.asm"
 .settojumpout
   STA newroomno
   ; set path to jump (+ve x)
+
+  SEI
+
+  LDA #0
+  STA animation ; First frame of animation
+  ;STA left ; Not going left
+
+  ;LDA #1:STA right ; Going right
+  LDA #256-8:STA dy
+  LDA #5:STA sequence ; jump/tumble right
+
+  CLI
+
   JMP gotoenterroom
 
 .flipandsettumble
   ; set path to upside down tumble
-  LDA #90:STA dizzyy
+  SEI
+
+  LDA #90:STA dizzyy ; TODO
+
+  LDA #0
+  STA animation ; First frame of animation
+  ;STA left ; Not going left
+  ;STA right ; Not going right
+  ; (dy) will automatically be set to -6
+
+  LDA #8:STA sequence ; upside down tumble
 
   ; Switch upsidedown
   LDA upsidedown
@@ -205,6 +243,8 @@ INCLUDE "gfx.asm"
 
   ; Go through the well a second time
   LDA #WELLROOM:STA newroomno
+
+  CLI
 
 .gotoenterroom
   JSR enterroom
