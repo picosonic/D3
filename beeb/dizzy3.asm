@@ -1202,6 +1202,53 @@ endif
   JMP drawcoins
 }
 
+; Handler for VBLANK event
+.eventhandler
+{
+  STA eventno+1
+
+  ; Save registers
+  PHP
+  PHA
+  TXA:PHA
+  TYA:PHA
+
+  ; Find out which event it is
+.eventno
+  LDA #&00
+  CMP #EV_VSYNC
+  BNE done ; not vsync, so end now
+
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  LDA palettefoo:BEQ skipthis
+  ; Handle vsync, top-half palette
+  SET_COL2 PAL_OS_Yellow
+
+  ; Set timer2 to change palette part way down
+  LDA #lo(scanline_time)
+  ADC #lo(timer2_base_in_us)
+  STA USERVIA_T2CL ; Low value
+
+  LDA #hi(scanline_time)
+  ADC #hi(timer2_base_in_us)
+  STA USERVIA_T2CH ; High value - also starts timer
+.skipthis
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+  INC clock
+
+  JSR read_input
+
+.done
+  ; Restore registers
+  PLA:TAY
+  PLA:TAX
+  PLA
+  PLP
+
+  RTS
+}
+
 eggheight = 16
 eggwidth = 5
 

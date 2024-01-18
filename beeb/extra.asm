@@ -51,28 +51,6 @@ INCLUDE "hearts.asm"
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-; Handler for VBLANK event
-.eventhandler
-{
-  ; Save registers
-  PHP
-  PHA
-  TXA:PHA
-  TYA:PHA
-
-  INC clock
-
-  JSR read_input
-
-  ; Restore registers
-  PLA:TAY
-  PLA:TAX
-  PLA
-  PLP
-
-  RTS
-}
-
 .resetmoving
 {
   LDX #lo(objresetcmd)

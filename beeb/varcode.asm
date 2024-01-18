@@ -389,35 +389,15 @@ scanline_time = scanline_pal_change*us_per_scanline
   ; Cache A
   LDA &FC:PHA
 
-  ; Find out which interrupt it is
-  LDA SYSVIA_IFR
-  AND #INT_VSYNC
-  BEQ try_timer2 ; not vsync, so try timer2
-
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-  ; Handle vsync, top-half palette
-  SET_COL2 PAL_OS_Yellow
-
-  ; Set timer2 to change palette part way down
-  LDA #lo(scanline_time)
-  ADC #lo(timer2_base_in_us)
-  STA SYSVIA_T2CL ; Low value
-
-  LDA #hi(scanline_time)
-  ADC #hi(timer2_base_in_us)
-  STA SYSVIA_T2CH ; High value - also starts timer
-
-  ; Skip over timer2 handler
-  JMP return_to_os
-
-.try_timer2
-  LDA SYSVIA_IFR
+  ; Check for TIMER2
+  LDA USERVIA_IFR
   AND #INT_TIMER2
   BEQ return_to_os ; not timer2, so hand back to OS
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ; Handle timer2, bottom-half palette
-  LDA SYSVIA_T2CL ; Clear timer2
+  STA USERVIA_IFR ; Mark interrupt as handled
+  LDA USERVIA_T2CL ; Clear timer2
 
   SET_COL2 PAL_OS_Red
 
@@ -447,25 +427,33 @@ scanline_time = scanline_pal_change*us_per_scanline
   LDA IRQ1V:STA oldirq
   LDA IRQ1V+1:STA oldirq+1
 
-  ; Enable vsync and timer2 interrupts
-  LDA #INT_ENABLE+INT_TIMER2+INT_VSYNC:STA SYSVIA_IER
+  ; Enable timer2 interrupts
+  LDA #INT_ENABLE+INT_TIMER2:STA USERVIA_IER
 
   ; Timer2 control = one shot
-  LDA #&00:STA SYSVIA_ACR
+  LDA #&00:STA USERVIA_ACR
 
   ; Set new IRQ handler
   LDA #lo(pal_irqhandler):STA IRQ1V
   LDA #hi(pal_irqhandler):STA IRQ1V+1
   CLI
 
+  ; Enable palette switching by VSYNC handler
+  LDA #&01:STA palettefoo
+
   ; Wait for no key press, then keypress before continuing
   JSR handoffandwait
 
   ; Disable palette switching interrupt handler
   SEI
+  LDA #INT_DISABLE+INT_TIMER2:STA USERVIA_IER
+
   ; Restore previous IRQ handler
   LDA oldirq:STA IRQ1V
   LDA oldirq+1:STA IRQ1V+1
+
+  ; Disable palette switching by VSYNC handler
+  DEC palettefoo
   CLI
 
   ; Clear palette to hide draw

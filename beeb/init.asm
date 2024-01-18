@@ -30,7 +30,7 @@
 
   CLI
 
-  LDA #&0E:LDX #&04:JSR OSBYTE ; Enable vsync event handler
+  LDA #&0E:LDX #EV_VSYNC:JSR OSBYTE ; Enable vsync event handler
 
   ; Clear variables in language workspace
   LDX #&00

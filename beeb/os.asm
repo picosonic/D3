@@ -215,6 +215,18 @@ INT_TIMER1   = &40
 INT_ENABLE   = &80
 INT_DISABLE  = &00
 
+; Events
+EV_EMPTY = &00
+EV_FULL  = &01
+EV_INPUT = &02
+EV_ADC   = &03
+EV_VSYNC = &04
+EV_ZERO  = &05
+EV_ESC   = &06
+EV_RS423 = &07
+EV_NET   = &08
+EV_USER  = &09
+
 ; Zero page availibility
 ; &00 to &6F - available to machine code programs not using BASIC
 ; &70 to &8F - reserved by BASIC for the user

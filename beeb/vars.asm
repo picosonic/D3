@@ -162,6 +162,8 @@ endif
 
 .upsidedown EQUB 0 ; Vertical flip flag
 
+.palettefoo EQUB 0 ; Palette manipulation flag
+
 .zpend
 
 ; ---------------------------------------------------------
