@@ -1,58 +1,4 @@
-ÖÚ (ÿ]X0      PDS	200000000â
-
-save	equ 0
-u 1
-00
-
-5ea7 - &5fff  sp set to &5ea6
-ote the code"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-F0F1F2F3F4F5F6F7F8F9;  
+;  
 ;
 ;  PDS Pc1.10 :000:  (C)  1985-7 P.D Systems   
 ;
@@ -326,46 +272,7 @@ seeifstarttune	ld a,(killed)
 
 	endif
 
-“
-
-
-
-
-
-
-
-
-
-¬O¢cI (ÿ™]X1      PDS	600010000ÀO
-usedoorknockermess
-ARING:BOXING:GLOVES",mend,mend
-+3
-
-S FOR DOING THINGS
-S"
-
-6+64
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-F0F1F2F3F4F5F6F7F8F9;  
+;  
 ;
 ;  PDS Pc1.10 :000:  (C)  1985-7 P.D Systems   
 ;
@@ -1206,26 +1113,7 @@ windowmess	defb "A:WINDOW:FRAME",mend
 	org beforerelocate
 	endif
 
-
-“
-
-
-
-
-
-
-
-
-
- J<¬ (ÿ¡]X2      PDS	000000006			;;jp settojumpout
-e down tumble
-estart
-p
-32 ,0 ,0 ,5+64 ,56,50 ,116,127
- 
-
-
-F0F1F2F3F4F5F6F7F8F9;  
+;  
 ;
 ;  PDS Pc1.24 :000: (c) P.D.Systems Ltd 1985-88
 ;
@@ -1908,47 +1796,7 @@ movingrous	defw portcullisrou
 	defw switchrou1
 	defw daisyrou1
 
-
-
-“
-
-
-
-
-
-
-
-
-
-†s¦yƒ (ÿ]X3      PDS	400000000ˆs
-d (ix+0),a
-t
-p
-c
- (sub) 
-;;heart demo
-;;;;;;HEART DEMO
-FOLK
-
-0
-2
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-+64,51 ,50 ,120,6
-F0F1F2F3F4F5F6F7F8F9;  
+;  
 ;
 ;  PDS Pc1.10 :000:  (C)  1985-7 P.D Systems   
 ;
@@ -2498,7 +2346,7 @@ noslotsleft	dec hl
 	ld a,(hl)
 	ld (objecttodrop),a
 	ld c,a
-	push ix
+	push ix
 	push bc
 	call dropobject
 	pop bc	
@@ -3761,7 +3609,7 @@ resetheartslp	push af
 
 	ld (ix+0),a
 	call random
-œ	ld (ix+1),a
+	ld (ix+1),a
 	call printheart
 	inc ix
 	inc ix
@@ -3871,35 +3719,7 @@ noadd	sla e
 	djnz multlp
 	ret	
 
-
-“
-
-
-
-
-
-
-
-
-
-Š^;0 (ÿ÷]X4      PDS	600000000¨hearttable	equ attritable+64
-(0-191)
-2
-e=x   d=y 0=topline
-mask1
-7,67 ;;;DINAMITE
-ghtening
-
-
-
-
-
-
-
-
-
-
-F0F1F2F3F4F5F6F7F8F9;  
+;  
 ;
 ;  PDS Pc1.10 :000:  (C)  1985-7 P.D Systems   
 ;
@@ -4972,50 +4792,7 @@ newattrihere1	ld de,attritable
 	add hl,de
 	ret
 
-“
-
-
-
-
-
-
-
-“
-b¾Cì(ÿU]X5      PDS	900000000h	cpl
-x+0),a
-
-hold)
-ht jump 
-and (keybyte) set
-the start of the
-
-
-
-"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-F0F1F2F3F4F5F6F7F8F9;  
+;  
 ;
 ;  PDS Pc1.10 :000:  (C)  1985-7 P.D Systems   
 ;
@@ -6275,27 +6052,7 @@ storeatpatches
 	pop hl
 	ret	
 
-
-“
-
-
-
-
-
-
-
-
-
-6 ' (ÿ©]X6      PDS	600000000Naroundgravity	ld (dy),a
-p
-p
-3,47
-1,2,7*32
-2+3,4*32+1  ;;;SINCLAIR 1
-&c6,&c7 
-c7 
-
-F0F1F2F3F4F5F6F7F8F9;  
+;  
 ;
 ;  PDS Pc1.10 :000:  (C)  1985-7 P.D Systems   
 ;
@@ -7066,20 +6823,7 @@ veryveryend
 
 	END
  
-
-“
-
-
-
-
-
-
-
-	Ed ÐS’]¥(ÿb]X7      PDS	00000000öS%%	HEX 2100107556D9FFAAEB7D448924B79BE9
-
-
- on his C64............"
-F0F1F2F3F4F5F6F7F8F9;  
+;  
 ;
 ;  PDS Pc1.24 :000: (c) P.D.Systems Ltd 1985-88
 ;
@@ -7756,15 +7500,3 @@ DATA
 	HEX 88888867666666665555667688788788
 	HEX 9899898888989999
 ss	
-
-“
-
-
-
-
-
-
-
-
-
-
