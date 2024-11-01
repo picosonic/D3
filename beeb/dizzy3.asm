@@ -602,8 +602,7 @@ endif
 
 .vertreturn
   ; If room changed don't draw Dizzy
-  LDA roomno:STA z80breg
-  LDA oldroomno:CMP z80breg:BNE dontdraw
+  LDA oldroomno:CMP roomno:BNE dontdraw
   JMP plotnew
 .dontdraw
   RTS
