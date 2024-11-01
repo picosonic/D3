@@ -1222,7 +1222,7 @@ dylantalking = duffmem
 .trytostartbreathing
 {
   ; Check if this the fire-breathing dragon
-  LDA roomno:CMP #54:BEQ justrandomfire
+  LDA roomno:CMP #WIDEEYEDDRAGONROOM:BEQ justrandomfire
 
   ; This is the dragon in the mine, so see check where golden egg is
   LDA goldenegghere1+room:CMP #OFFMAP:BNE done
@@ -1443,7 +1443,7 @@ endif
 
   LDA roomno
   LDX #50
-  CMP #40 ; Is this the dragon in the mine?
+  CMP #DRAGONSLAIRROOM ; Is this the dragon in the mine?
   BNE gotfirelim
   LDX #40
 
@@ -1925,7 +1925,7 @@ turnonfullbucket = movingsize+room
 .shopkeeperrou
 {
   ; See if we are in room 22 (market square)
-  LDA roomno:CMP #22:BNE done
+  LDA roomno:CMP #MARKETSQUAREROOM:BNE done
 
   ; If we're at 0 do nothing
   LDA shopkeepercount:BEQ done
@@ -1934,7 +1934,7 @@ turnonfullbucket = movingsize+room
   SEC:SBC #&01:STA shopkeepercount:BNE done
 
   ; Make shop keeper appear in room 22 (market square)
-  LDA #22
+  LDA #MARKETSQUAREROOM
   STA shopkeeperhere+room  ; Left side
   STA shopkeeperhere1+room ; Right side
 
@@ -2000,14 +2000,14 @@ turnonfullbucket = movingsize+room
 {
   LDA roomno
 
-  CMP #40:BNE keepgoing ; dragon's lair - LIFT 2
+  CMP #DRAGONSLAIRROOM:BNE keepgoing ; dragon's lair - LIFT 2
   LDA #56:BNE done
+
 .keepgoing
-
-  CMP #56:BNE keepgoing2 ; lift control room - LIFT 4
+  CMP #LIFTCONTROLROOM:BNE keepgoing2 ; lift control room - LIFT 4
   LDA #104:BNE done
-.keepgoing2
 
+.keepgoing2
   LDA #48 ; key1 / key3 / cloudcastle
 
 .done
@@ -2440,7 +2440,7 @@ turnonfullbucket = movingsize+room
 
   ; Set up for message when in dungeon
   LDA #STR_getbackintheremess:JSR findroomstr
-  LDA roomno:CMP #36:BEQ showmessage
+  LDA roomno:CMP #CASTLEDUNGEONROOM:BEQ showmessage
 
   ; See if the miner has already given the message
   LDY #var1:LDA (zptr4), Y:BNE done
@@ -2475,12 +2475,12 @@ turnonfullbucket = movingsize+room
   BEQ done
 
   LDA roomno
-  CMP #94 ; Are we in the cloud prison
+  CMP #DAISYSPRISONROOM ; Are we in the cloud prison
   BEQ roomdagok
 
   ; We are down the dagger pit in room (castle room 69)
   ; So put Dizzy out of the pit in room 84
-  LDA #84:STA startroom
+  LDA #CASTLESTAIRCASEROOM:STA startroom
   LDA #56:STA startx
   LDA #176:STA starty
 
@@ -2664,13 +2664,13 @@ turnonfullbucket = movingsize+room
   JSR theheartdemo
 
   ; Get back to cloud prison
-  LDA #94:STA roomno
+  LDA #DAISYSPRISONROOM:STA roomno
 
   ; Remove Daisy from prison
   LDA #OFFMAP:STA daisyhere+room
 
   ; Place Daisy in treehouse village
-  LDA #73:STA daisy1here+room
+  LDA #DAISYSHUTROOM:STA daisy1here+room
 
   ; Let Dizzy know that Daisy has gone
   LDA #STR_daisyrunsmess:JSR findroomstr

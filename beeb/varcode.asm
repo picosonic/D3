@@ -107,7 +107,7 @@
   JSR checkkeys ; resets left & right
 
   LDA #STR_killedbyvolcano:STA deathmsg ; Set death message to show
-  LDA roomno:CMP #77:BEQ yesfellinlava
+  LDA roomno:CMP #ACTIVEVOLCANOROOM:BEQ yesfellinlava
   LDA #STR_killedbywater:STA deathmsg ; Set death message to show
 .yesfellinlava
   ; TODO - re-enable liquid death
@@ -194,7 +194,7 @@
   LDA #3:STA ztmp6
 
   ; Check if we're at the broken bridge
-  LDA roomno:CMP #48:BNE normalwater
+  LDA roomno:CMP #BROKENBRIDGEROOM:BNE normalwater
 
   LDA waterheight
   EOR #&FF:CLC:ADC #1+168 ; Negate then add 168
@@ -496,12 +496,12 @@ scanline_time = scanline_pal_change*us_per_scanline
 
 .checkfireout
 {
-  LDA roomno:CMP #GAMESTARTROOM:BNE done ; Make sure we are in the dungeon
+  LDA roomno:CMP #CASTLEDUNGEONROOM:BNE done ; Make sure we are in the dungeon
 
   LDA fireout:BNE done ; Check status of fire
 
   LDA #FIREROOM:STA roomno:JSR drawfullroom ; Draw fire
-  LDA #GAMESTARTROOM:STA roomno ; Reset current room to be dungeon
+  LDA #CASTLEDUNGEONROOM:STA roomno ; Reset current room to be dungeon
 
 .done
   RTS
