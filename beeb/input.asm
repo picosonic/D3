@@ -94,3 +94,54 @@
 
   RTS
 }
+
+.read_joystick
+{
+  ; Set to read
+  LDX #&00:STX SYSVIA_DDRA
+
+  ; Read channel 0 - Master Joystick Left/Right
+  JSR adc_joystick
+  ; Process horizontal axis (low=right)
+  ASL A:STA keys
+
+  ; Read channel 1 - Master Joystick Up/Down
+  LDX #&01:JSR adc_joystick
+  ; Process vertical axis (low=down)
+  ASL A:ASL A:ASL A:ASL A:ORA keys:STA keys
+
+  ; Get fire button - PB4 (logic 0 when pressed)
+  LDA SYSVIA_REGB
+  AND #%00010000:EOR #%11101111:LSR A
+  ORA keys:STA keys
+
+  LDX #&FF:STX SYSVIA_DDRA
+
+  RTS
+}
+
+.adc_joystick
+{
+  ; Set input channel and start conversion
+  STX ADC_LATCH
+
+.wait_for_adc
+  ; Wait for data to be "ready"
+  LDA ADC_STATUS:AND #&80:BNE wait_for_adc
+
+  ; 8-bit ADC value read
+  LDA ADC_HIGH
+  CMP #255-32:BCS joy_adc_high
+  CMP #32:BCC joy_adc_low
+
+  ; Within dead-zone (centred)
+  LDA #&00:RTS
+
+  ; Right / Down
+.joy_adc_low
+  LDA #&01:RTS
+
+  ; Left / Up
+.joy_adc_high
+  LDA #&02:RTS
+}
