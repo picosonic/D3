@@ -3,6 +3,7 @@ seecoins = 0
 liquidkills = 0
 firekills = 0
 allowsndfx = 0
+allowupsidedown = 0
 
 ; OS defines
 INCLUDE "os.asm"
@@ -58,7 +59,6 @@ INCLUDE "gfx.asm"
   PAGE_ROOMDATA
 
   LDA #&01:STA dontupdatedizzy ; Stop Dizzy being drawn
-  STA upsidedown:DEC upsidedown ; Make sure we're not upsidedown
 
   LDA #TITLEROOM:STA roomno
   JSR roomsetup
@@ -114,6 +114,7 @@ INCLUDE "gfx.asm"
   STA oldclock
   STA clock ; Init clock
   STA dontupdatedizzy ; Allow Dizzy to be drawn
+  STA upsidedown ; Start right-way-up
 
   ; Fall through into main game loop
 }
@@ -155,6 +156,8 @@ INCLUDE "gfx.asm"
 .wantaquickkill
 
   ; See if room changed
+
+if allowupsidedown = 1
   LDA newroomno
   CMP roomno:BNE differentroom
   JMP notanewroom
@@ -245,6 +248,11 @@ INCLUDE "gfx.asm"
   LDA #WELLROOM:STA newroomno
 
   CLI
+endif
+
+if allowupsidedown = 0
+  LDA newroomno:CMP roomno:BEQ notanewroom
+endif
 
 .gotoenterroom
   JSR enterroom
