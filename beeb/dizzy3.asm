@@ -187,7 +187,7 @@ INCLUDE "gfx.asm"
   ;STA right     ; Not going right
 
   LDA #4:STA dy
-  LDA #3:STA sequence ; jumping/tumbling straight up/down
+  ; LDA #3:STA sequence ; jumping/tumbling straight up/down ; TODO put this back in when animation done
   ;CLI ; REMOVED
 
   JMP gotoenterroom
@@ -217,7 +217,7 @@ INCLUDE "gfx.asm"
 
   ;LDA #1:STA right ; Going right
   LDA #256-8:STA dy
-  LDA #5:STA sequence ; jump/tumble right
+  ; LDA #5:STA sequence ; jump/tumble right ; TODO put this back in when animation done
 
   ;CLI ; REMOVED
 
@@ -235,7 +235,7 @@ INCLUDE "gfx.asm"
   ;STA right ; Not going right
   ; (dy) will automatically be set to -6
 
-  LDA #8:STA sequence ; upside down tumble
+  ; LDA #8:STA sequence ; upside down tumble ; TODO put this back in when animation done
 
   ; Switch upsidedown
   LDA upsidedown
@@ -486,7 +486,8 @@ INCLUDE "gfx.asm"
   STA animation
 
   ; Set sequence to "fall over backwards"
-  LDA #7:STA sequence:BNE cantstop
+  ; LDA #7:STA sequence:BNE cantstop ; TODO put this back in when animation done
+  JMP cantstop ; TODO remove this when animation done
 
   ; Check for "jumping/tumbling straight up/down"
 .notdeadyet
