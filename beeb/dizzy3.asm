@@ -3,7 +3,6 @@ seecoins = 0
 liquidkills = 0
 firekills = 0
 allowsndfx = 0
-allowupsidedown = 0
 
 ; OS defines
 INCLUDE "os.asm"
@@ -156,8 +155,6 @@ INCLUDE "gfx.asm"
 .wantaquickkill
 
   ; See if room changed
-
-if allowupsidedown = 1
   LDA newroomno
   CMP roomno:BNE differentroom
   JMP notanewroom
@@ -183,7 +180,7 @@ if allowupsidedown = 1
   ; set to ordinary tumble
   LDA roomno:STA lastroom
   
-  SEI
+  ;SEI ; REMOVED
   LDA #0
   STA animation ; First frame of animation
   ;STA left      ; Not going left
@@ -191,7 +188,7 @@ if allowupsidedown = 1
 
   LDA #4:STA dy
   LDA #3:STA sequence ; jumping/tumbling straight up/down
-  CLI
+  ;CLI ; REMOVED
 
   JMP gotoenterroom
 
@@ -212,7 +209,7 @@ if allowupsidedown = 1
   STA newroomno
   ; set path to jump (+ve x)
 
-  SEI
+  ;SEI ; REMOVED
 
   LDA #0
   STA animation ; First frame of animation
@@ -222,13 +219,13 @@ if allowupsidedown = 1
   LDA #256-8:STA dy
   LDA #5:STA sequence ; jump/tumble right
 
-  CLI
+  ;CLI ; REMOVED
 
   JMP gotoenterroom
 
 .flipandsettumble
   ; set path to upside down tumble
-  SEI
+  ;SEI ; REMOVED
 
   LDA #90:STA dizzyy ; TODO
 
@@ -247,12 +244,7 @@ if allowupsidedown = 1
   ; Go through the well a second time
   LDA #WELLROOM:STA newroomno
 
-  CLI
-endif
-
-if allowupsidedown = 0
-  LDA newroomno:CMP roomno:BEQ notanewroom
-endif
+  ;CLI ; REMOVED
 
 .gotoenterroom
   JSR enterroom

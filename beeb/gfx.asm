@@ -305,31 +305,6 @@ PAL_DIZZY2 = &02
   JMP done
 .cont
 
-if allowupsidedown = 0
-  ; Point to start of top left of position to draw frame
-  LDA #MODE8BASE DIV 256:STA zptr3+1:STA zptr2+1
-  LDA #MODE8BASE MOD 256:STA zptr3:STA zptr2
-
-  ; Advance to X/Y position
-  LDA frmy
-  BEQ noy
-  LSR A:LSR A ; Divide Y by 4
-  AND #&FE
-  STA yjump+2 ; Store result as operand for ADC below
-  LDA zptr3+1
-.yjump
-  CLC:ADC #&00
-  STA zptr3+1:STA zptr2+1
-
-  ; Add small y offset
-  LDA frmy
-  AND #&07
-  STA ztmp4
-  CLC:ADC zptr3:STA zptr3:STA zptr2
-.noy
-endif
-
-if allowupsidedown = 1
   ;TXA:PHA
   LDA frmy:TAX:TAY
   LDA upsidedown:BEQ noflip
@@ -346,7 +321,6 @@ if allowupsidedown = 1
   TYA
   AND #&07
   STA ztmp4
-endif
 
   LDA frmx:AND #&7F
   BEQ nox ; Don't advance pointer if it's 0
@@ -452,11 +426,9 @@ endif
   CMP ztmp1
   BNE rowloop ; Go round again if we haven't completed the row
 
-if allowupsidedown = 1
   LDA upsidedown
   BNE drawupsidedown
 {
-endif
 
   INC ztmp4
 
@@ -474,7 +446,6 @@ endif
   LDA zptr3+1:CLC:ADC #&02:STA zptr3+1:STA zptr2+1
 .nodiv8
 
-if allowupsidedown = 1
   JMP drawdone
 }
 
@@ -498,7 +469,6 @@ if allowupsidedown = 1
 }
 
 .drawdone
-endif
 
   ; Check to see if we've drawn all the source bytes
   LDA zidx1:CMP ztmp3:BEQ done
@@ -721,17 +691,12 @@ endif
   ;
   ; Pointer to message in zptr5
 
-if allowupsidedown = 1
   ; Cache upsidedown state
-  LDA upsidedown:PHA
-endif
+  LDA upsidedown:STA ztmp8
 
   ; Disable clipping so we can print room name, lives and coin counts
   LDA #&00:STA cliptoplayarea
-
-if allowupsidedown = 1
   STA upsidedown ; Also force upsidedown off
-endif
 
   LDY #&00
 
@@ -980,10 +945,8 @@ endif
 .done
   LDA #&01:STA cliptoplayarea
 
-if allowupsidedown = 1
   ; Restore upsidedown state
-  PLA:STA upsidedown
-endif
+  LDA ztmp8:STA upsidedown
 
   RTS
 
