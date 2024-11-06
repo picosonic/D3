@@ -201,6 +201,7 @@ INCLUDE "gfx.asm"
   ; were going up on seq. 8
   LDA lastroom
   CMP #TOPWELLROOM:BEQ skipthis
+  CMP #STRANGENEWROOM:BNE gotoenterroom ; TODO remove when collision detection done
   LDA #TOPWELLROOM:BNE settojumpout
 .skipthis
   LDA #STRANGENEWROOM
