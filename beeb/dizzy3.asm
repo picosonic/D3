@@ -918,7 +918,7 @@ ENDMACRO
   LDA keys:AND #PAD_UP:BEQ notupmenu
 .yesupmenu
   DEY
-  LDA objectscarried, Y:CMP #0:BEQ yesupmenu ; Prevent getting stuck on empty item - TODO rework
+  LDA objectscarried, Y:CMP #OBJ_EMPTY:BEQ yesupmenu ; Prevent getting stuck on empty item - TODO rework
 .notupmenu
 
 .distdownmenu
@@ -929,7 +929,7 @@ ENDMACRO
   LDA keys:AND #PAD_DOWN:BEQ notdownmenu
 .yesdownmenu
   INY
-  LDA objectscarried, Y:CMP #0:BEQ yesdownmenu ; Prevent getting stuck on empty item - TODO rework
+  LDA objectscarried, Y:CMP #OBJ_EMPTY:BEQ yesdownmenu ; Prevent getting stuck on empty item - TODO rework
 .notdownmenu
   CPY objecttodrop:BEQ chooseobjecttodrop ; If selection hasn't changed, go round again
 
@@ -943,7 +943,7 @@ ENDMACRO
   ; Something has been chosen
 .tryingtodrop
   LDA objectscarried, Y
-  CMP #0:BEQ justexitinvent ; Prevent empty slot being selected - TODO rework
+  CMP #OBJ_EMPTY:BEQ justexitinvent ; Prevent empty slot being selected - TODO rework
   STA objecttodrop ; Record selected item
   JSR gettomovingdata ; Point to it
 
@@ -962,7 +962,7 @@ ENDMACRO
   JMP sufflelp
 
 .justexitinvent1
-  LDA #&00:STA objectscarried-1, Y ; Empty inventory slot
+  LDA #OBJ_EMPTY:STA objectscarried-1, Y ; Empty inventory slot
   JSR dropobject
 
   ;CHECK DROPPING OBJECT BY TRIGGER

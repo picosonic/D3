@@ -49,6 +49,9 @@ daisy1     = 19 ; Daisy at hut
 ; The number of routines defined
 roucount = 20
 
+; For empty inventory slot
+OBJ_EMPTY = 0
+
 ;colour byte     7   6   5     4   3   2   1   0
 ;               rev:dull:atplot:plot: colour
 
@@ -855,7 +858,7 @@ endif
 .lookforslot
   LDA objectscarried, Y
   CMP #OBJ_BAG:BEQ noslotsleft ;;; end of carry list
-  CMP #&00:BEQ gotslot ; found an empty slot
+  CMP #OBJ_EMPTY:BEQ gotslot ; found an empty slot
   INY:CLC:BCC lookforslot ; try next slot, this one is occupied
 
 .gotslot
@@ -1208,7 +1211,7 @@ dylantalking = duffmem
 
   TYA:PHA:JSR dropobject:PLA:TAY
 
-  LDA #&00:STA objectscarried, Y
+  LDA #OBJ_EMPTY:STA objectscarried, Y
   INY:JMP droplp
 .enddrop
 

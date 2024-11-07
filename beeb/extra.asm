@@ -207,7 +207,7 @@ INCLUDE "hearts.asm"
 
 .resetcarrying
 {
-  LDA #&00
+  LDA #OBJ_EMPTY
   STA objectscarried+1
   STA objectscarried+3
   STA objectscarried+4
