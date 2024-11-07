@@ -133,7 +133,7 @@ OBJ_MANURE = 7
 .manurehere
  EQUB 58,pickupable,72 ,170,SPR_MANURE
  EQUW                0 ;;;pickupmanuremess
- EQUB        0,   0,  0 ,0 ,PAL_RED+ATTR_NOTSOLID
+ EQUB        0,   0,  MANURE_IDLE ,0 ,PAL_RED+ATTR_NOTSOLID
  ;EQUB 58,72 ,170,SPR_MANURE
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -903,7 +903,7 @@ endif
   LDA manurehere+var1:BEQ yuck ; See if message already shown
   JMP tryputtingdown1
 .yuck
-  LDA #&01:STA manurehere+var1 ; Note that attempt was made to pick it up
+  LDA #MANURE_PICKUP:STA manurehere+var1 ; Note that attempt was made to pick it up
 
   LDA #STR_pickupmanuremess:JSR findroomstr
   JMP windowrou
@@ -1906,7 +1906,7 @@ turnonfullbucket = movingsize+room
   LDA x:SEC:SBC #10:STA x
 
   ; Change manure state
-  LDA #2:STA manurehere+var1
+  LDA #MANURE_WATERED:STA manurehere+var1
 
   LDA #STR_throwwateronbeanmess:JSR findroomstr
   JMP windowrou

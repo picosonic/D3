@@ -485,7 +485,7 @@ scanline_time = scanline_pal_change*us_per_scanline
   LDA roomno:CMP #ALLOTMENTROOM:BNE done ; Make sure we are in the allotment
 
   LDA manurehere+var1
-  CMP #02:BNE done ; Check status of manure
+  CMP #MANURE_WATERED:BNE done ; Check status of manure
 
   LDA #BEANSTALKROOM:STA roomno:JSR drawfullroom ; Draw beanstalk
   LDA #ALLOTMENTROOM:STA roomno ; Reset current room to be allotment

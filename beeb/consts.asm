@@ -123,6 +123,11 @@ ARMOROG_RUNNING = 2
 ARMOROG_GUARDING = 3
 ARMOROG_HAPPY = 4
 
+; Manure state machine
+MANURE_IDLE = 0
+MANURE_PICKUP = 1
+MANURE_WATERED = 2
+
 ; Dragon(s) head default position
 DRAGON_HEAD_X = 68
 DRAGON_HEAD_Y = 152
