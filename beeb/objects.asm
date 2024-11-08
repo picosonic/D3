@@ -76,17 +76,18 @@ OBJ_HAWK = 0
 ; THE BOTTOMLESS WELL
 OBJ_BAG = 1
 
- EQUB 55, pickupable, 48, 144, SPR_BAG
+ EQUB TOPWELLROOM, pickupable, 48, 144, SPR_BAG
  EQUW bagmess
  EQUB 0, 0, 0, 0, PAL_RED+ATTR_NOTSOLID
- ;EQUB 55, 48, 144, SPR_BAG
+ ;EQUB TOPWELLROOM, 48, 144, SPR_BAG
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; MOAT AND PORTCULLIS
 OBJ_PORTCULLIS = 2
 
 .porthere
- EQUB 51,portcullis,76 ,96,SPR_PORTCULLIS,96,136,   0   ,4  ,0 ,0 ,PAL_WHITE+ATTR_NOTSOLID ; TODO - align not solid with original
+ EQUB 51, portcullis, 76 ,96, SPR_PORTCULLIS
+ EQUB 96,136,   0   ,4  ,0 ,0 ,PAL_WHITE+ATTR_NOTSOLID ; TODO - align not solid with original
  ;EQUB 51 ,76 ,96,SPR_PORTCULLIS
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -94,7 +95,8 @@ OBJ_PORTCULLIS = 2
 OBJ_SWITCH = 3
 
 .portswitchhere
- EQUB 51,portswitch,66 ,78 ,SPR_SWITCH,0   ,0   ,0   ,0  ,0 ,0 ,PAL_CYAN+ATTR_NOTSOLID
+ EQUB 51, portswitch, 66 ,78, SPR_SWITCH
+ EQUB 0, 0, 0, 0, 0, 0, PAL_CYAN+ATTR_NOTSOLID
  ;EQUB 51 ,66 ,78 ,SPR_SWITCH
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -104,7 +106,7 @@ OBJ_SHOPKEEPER = 4
 .shopkeeperhere
  EQUB OFFMAP,pickupable,68 ,136,SPR_SHOPKEEPER
  EQUW                pigmycowmess,shoptalk
- EQUB                   STR_thanksforthecowmess ,0 ,PAL_WHITE+ATTR_NOTSOLID
+ EQUB                STR_thanksforthecowmess ,0 ,PAL_WHITE+ATTR_NOTSOLID
  ;EQUB OFFMAP,68,136,SPR_SHOPKEEPER
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -131,10 +133,10 @@ OBJ_BLACKHOLE = 6
 OBJ_MANURE = 7
 
 .manurehere
- EQUB 58,pickupable,72 ,170,SPR_MANURE
+ EQUB ALLOTMENTROOM, pickupable,72 ,170,SPR_MANURE
  EQUW                0 ;;;pickupmanuremess
  EQUB        0,   0,  MANURE_IDLE ,0 ,PAL_RED+ATTR_NOTSOLID
- ;EQUB 58,72 ,170,SPR_MANURE
+ ;EQUB ALLOTMENTROOM, 72 ,170,SPR_MANURE
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This item starts in your inventory
@@ -189,7 +191,7 @@ OBJ_ROCK2 = 12
 OBJ_ARMOROG = 13
 
 .armoroghere
- EQUB 50,armorog   ,54 ,156,SPR_GRUNT0,0   ,0   ,0   ,2  ,0 ,0 ,PAL_RED+ATTR_NOTSOLID+PLOT_OR
+ EQUB 50,armorog   ,54 ,156,SPR_GRUNT0,0   ,0   ,0   ,2  ,ARMOROG_SLEEPING ,0 ,PAL_RED+ATTR_NOTSOLID+PLOT_OR
  ;EQUB 50 ,54 ,156,SPR_GRUNT0
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -197,8 +199,8 @@ OBJ_ARMOROG = 13
 OBJ_DRAGON = 14
 
 .dragonhere
- EQUB 54,dragon    ,68 ,152,SPR_DRAGONHEADCLOSED,0   ,0   ,0   ,0  ,0 ,0 ,PAL_RED+ATTR_NOTSOLID
- ;EQUB 54 ,68 ,152,SPR_DRAGONHEADCLOSED
+ EQUB WIDEEYEDDRAGONROOM, dragon    ,68 ,152,SPR_DRAGONHEADCLOSED,0   ,0   ,0   ,0  ,0 ,0 ,PAL_RED+ATTR_NOTSOLID
+ ;EQUB WIDEEYEDDRAGONROOM, 68 ,152,SPR_DRAGONHEADCLOSED
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This item is given to you by Dozy
@@ -250,8 +252,8 @@ OBJ_ROCK0 = 19
 ; THE BROKEN BRIDGE
 OBJ_WOOD = 20
 
- EQUB 48,log       ,60 ,136,SPR_WOOD0,0   ,0   ,0   ,4  ,0 ,0 ,PAL_RED+PLOT_OR
- ;EQUB 48 ,60 ,136,SPR_WOOD0
+ EQUB BROKENBRIDGEROOM, log       ,60 ,136,SPR_WOOD0,0   ,0   ,0   ,4  ,0 ,0 ,PAL_RED+PLOT_OR
+ ;EQUB BROKENBRIDGEROOM, 60 ,136,SPR_WOOD0
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THE SNAP HAPPY GATOR
@@ -276,8 +278,8 @@ OBJ_LIFT = 22
 OBJ_MACHINE = 23
 
 .machine1here
- EQUB 56,machines  ,50 ,116,SPR_MACHINE ,0   ,0   ,0   ,32 ,0 ,0 ,PAL_CYAN+ATTR_NOTSOLID
- ;EQUB 56,50 ,116,SPR_MACHINE
+ EQUB LIFTCONTROLROOM, machines  ,50 ,116,SPR_MACHINE ,0   ,0   ,0   ,32 ,0 ,0 ,PAL_CYAN+ATTR_NOTSOLID
+ ;EQUB LIFTCONTROLROOM, 50 ,116,SPR_MACHINE
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THE EAST TOWER
@@ -293,16 +295,16 @@ OBJ_KEY = 24
 OBJ_LIFT2 = 25
 
 .lift2here
- EQUB 40,lift      ,40 ,56 ,SPR_LIFTTOP,56,134,  56   ,1  ,0 ,0 ,PAL_WHITE+PLOT_XOR
- ;EQUB 40 ,40,56 ,SPR_LIFTTOP
+ EQUB DRAGONSLAIRROOM, lift      ,40 ,56 ,SPR_LIFTTOP,56,134,  56   ,1  ,0 ,0 ,PAL_WHITE+PLOT_XOR
+ ;EQUB DRAGONSLAIRROOM, 40,56 ,SPR_LIFTTOP
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THE LIFT CONTROL HUT
 OBJ_MACHINE2 = 26
 
 .machine2here
- EQUB 56,machines  ,72 ,116,SPR_MACHINE ,0   ,0   ,0   ,32 ,0 ,0 ,PAL_CYAN+ATTR_NOTSOLID
- ;EQUB 56,72 ,116,SPR_MACHINE
+ EQUB LIFTCONTROLROOM, machines  ,72 ,116,SPR_MACHINE ,0   ,0   ,0   ,32 ,0 ,0 ,PAL_CYAN+ATTR_NOTSOLID
+ ;EQUB LIFTCONTROLROOM, 72 ,116,SPR_MACHINE
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; INSIDE THE CHURCH
@@ -326,8 +328,8 @@ OBJ_LIFT3 = 28
 OBJ_MACHINE3 = 29
 
 .machine3here
- EQUB 56,machines  ,52 ,156,SPR_MACHINE ,0   ,0   ,0   ,32 ,0 ,0 ,PAL_CYAN+ATTR_NOTSOLID
- ;EQUB 56,52 ,156 ,SPR_MACHINE
+ EQUB LIFTCONTROLROOM, machines  ,52 ,156,SPR_MACHINE ,0   ,0   ,0   ,32 ,0 ,0 ,PAL_CYAN+ATTR_NOTSOLID
+ ;EQUB LIFTCONTROLROOM, 52 ,156 ,SPR_MACHINE
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; BASE OF THE VOLCANO
@@ -343,25 +345,25 @@ OBJ_KEY3 = 30
 OBJ_LIFT4 = 31
 
 .lift4here
- EQUB 56,lift      ,60 ,104 ,SPR_LIFTTOP,104,140,  104  ,1  ,0 ,0 ,PAL_WHITE+PLOT_XOR
- ;EQUB 56 ,60,104 ,SPR_LIFTTOP
+ EQUB LIFTCONTROLROOM, lift      ,60 ,104 ,SPR_LIFTTOP,104,140,  104  ,1  ,0 ,0 ,PAL_WHITE+PLOT_XOR
+ ;EQUB LIFTCONTROLROOM, 60,104 ,SPR_LIFTTOP
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THE LIFT CONTROL HUT
 OBJ_MACHINE4 = 32
 
 .machine4here
- EQUB 56,machines  ,70 ,156,SPR_MACHINE ,0   ,0   ,0   ,32 ,0 ,0 ,PAL_CYAN+ATTR_NOTSOLID
- ;EQUB 56,70 ,156,SPR_MACHINE
+ EQUB LIFTCONTROLROOM, machines  ,70 ,156,SPR_MACHINE ,0   ,0   ,0   ,32 ,0 ,0 ,PAL_CYAN+ATTR_NOTSOLID
+ ;EQUB LIFTCONTROLROOM, 70 ,156,SPR_MACHINE
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THE BROKEN BRIDGE
 OBJ_KEY4 = 33
 
- EQUB 48,pickupable,40 ,96,SPR_KEY
+ EQUB BROKENBRIDGEROOM, pickupable,40 ,96,SPR_KEY
  EQUW                keymess,proxkey4
  EQUB                 0 ,0 ,PAL_YELLOW+ATTR_NOTSOLID
- ;EQUB 48 ,40 ,96,SPR_KEY
+ ;EQUB BROKENBRIDGEROOM, 40 ,96,SPR_KEY
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THE WEST TOWER
@@ -395,28 +397,28 @@ OBJ_LEAF = 36
 ; THE SMELLY ALLOTMENT
 OBJ_COW = 37
 
- EQUB 58,pickupable,60 ,160,SPR_COW
+ EQUB ALLOTMENTROOM, pickupable,60 ,160,SPR_COW
  EQUW                pigmycowmess
  EQUB        0,   0,  0 ,0 ,PAL_WHITE+ATTR_NOTSOLID
- ;EQUB 58,60 ,160,SPR_COW
+ ;EQUB ALLOTMENTROOM, 60 ,160,SPR_COW
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THE BOTTOMLESS WELL
 OBJ_LEAF2 = 38
 
- EQUB 55,pickupable,58 ,136,SPR_LEAFYBIT1
+ EQUB TOPWELLROOM, pickupable,58 ,136,SPR_LEAFYBIT1
  EQUW                leavesmess
  EQUB        0,   0,  0 ,0 ,PAL_GREEN+ATTR_NOTSOLID
- ;EQUB 55,58 ,136,SPR_LEAFYBIT1
+ ;EQUB TOPWELLROOM, 58 ,136,SPR_LEAFYBIT1
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THE BOTTOMLESS WELL
 OBJ_RAILING = 39
 
- EQUB 55,pickupable,76 ,128,SPR_WOODENRAIL
+ EQUB TOPWELLROOM, pickupable,76 ,128,SPR_WOODENRAIL
  EQUW                railingmess
  EQUB        0,   0,  0 ,0 ,PAL_RED+ATTR_NOTSOLID
- ;EQUB 55,76 ,128,SPR_WOODENRAIL
+ ;EQUB TOPWELLROOM, 76 ,128,SPR_WOODENRAIL
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; LOOKING OUT TO SEA
@@ -440,36 +442,36 @@ OBJ_DOZYFLOAT = 41
 ; THE CASTLE'S DUNGEON
 OBJ_JUGOFWATER = 42
 
- EQUB 36,pickupable,68 ,144,SPR_JUGOFWATER
+ EQUB CASTLEDUNGEONROOM, pickupable,68 ,144,SPR_JUGOFWATER
  EQUW                jugmess,proxjug
  EQUB                 0 ,0 ,PAL_CYAN+ATTR_NOTSOLID
- ;EQUB 36,68 ,144,SPR_JUGOFWATER
+ ;EQUB CASTLEDUNGEONROOM, 68 ,144,SPR_JUGOFWATER
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THE CASTLE'S DUNGEON
 OBJ_BREAD = 43
 
 .loafhere
- EQUB 36,pickupable,72 ,144,SPR_BREAD
+ EQUB CASTLEDUNGEONROOM, pickupable,72 ,144,SPR_BREAD
  EQUW                loafmess,proxloaf
  EQUB               0 ,0 ,PAL_YELLOW+ATTR_NOTSOLID
- ;EQUB 36,72 ,144,SPR_BREAD
+ ;EQUB CASTLEDUNGEONROOM, 72 ,144,SPR_BREAD
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THE CASTLE'S DUNGEON
 OBJ_RAT = 44
 
 .rathere
- EQUB 36,rat       ,96 ,73 ,SPR_RAT,44,80 ,   60   ,2  ,0 ,255 ,PAL_CYAN+ATTR_NOTSOLID
- ;EQUB 36,96,73 ,SPR_RAT
+ EQUB CASTLEDUNGEONROOM, rat       ,96 ,73 ,SPR_RAT,44,80 ,   60   ,2  ,0 ,255 ,PAL_CYAN+ATTR_NOTSOLID
+ ;EQUB CASTLEDUNGEONROOM, 96,73 ,SPR_RAT
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THE CASTLE'S DUNGEON
 OBJ_TROLL = 45
 
 .trollhere
- EQUB 36,troll     ,78 ,136,SPR_TROLL ,44,80 ,   0   ,0  ,0 ,0 ,PAL_GREEN+ATTR_NOTSOLID
- ;EQUB 36,78,136 ,SPR_TROLL
+ EQUB CASTLEDUNGEONROOM, troll     ,78 ,136,SPR_TROLL ,44,80 ,   0   ,0  ,0 ,0 ,PAL_GREEN+ATTR_NOTSOLID
+ ;EQUB CASTLEDUNGEONROOM, 78,136 ,SPR_TROLL
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THE EAST WING
@@ -492,8 +494,8 @@ OBJ_DOORKNOCKER = 47
 OBJ_PLANK = 48
 
 .doorhere
- EQUB 84,door    ,34 ,144,SPR_PLANKOFWOOD ,0 ,0 ,   0   ,0  ,0 ,0 ,  PAL_RED
- ;EQUB 84,34,144 ,SPR_PLANKOFWOOD
+ EQUB CASTLESTAIRCASEROOM, door    ,34 ,144,SPR_PLANKOFWOOD ,0 ,0 ,   0   ,0  ,0 ,0 ,  PAL_RED
+ ;EQUB CASTLESTAIRCASEROOM, 34,144 ,SPR_PLANKOFWOOD
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; LIFT TO THE ELDERS
@@ -510,18 +512,18 @@ OBJ_GRANDDIZZY = 49
 OBJ_DRAGON2 = 50
 
 .dragonhere1
- EQUB 40,dragon    ,68 ,152,SPR_DRAGONHEADCLOSED,0   ,0   ,0   ,0  ,0 ,0 ,PAL_GREEN+ATTR_NOTSOLID
- ;EQUB 40 ,68 ,152,SPR_DRAGONHEADCLOSED
+ EQUB DRAGONSLAIRROOM, dragon    ,68 ,152,SPR_DRAGONHEADCLOSED,0   ,0   ,0   ,0  ,0 ,0 ,PAL_GREEN+ATTR_NOTSOLID
+ ;EQUB DRAGONSLAIRROOM, 68 ,152,SPR_DRAGONHEADCLOSED
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THE DRAGON'S LAIR
 OBJ_GOLDENEGG2 = 51
 
 .goldenegghere1
- EQUB 40,pickupable,60 ,152,SPR_GOLDENEGG
+ EQUB DRAGONSLAIRROOM, pickupable,60 ,152,SPR_GOLDENEGG
  EQUW                goldeneggmess
  EQUB        0   ,0  ,0 ,0 ,PAL_WHITE+ATTR_NOTSOLID
- ;EQUB 40 ,60,152,SPR_GOLDENEGG
+ ;EQUB DRAGONSLAIRROOM, 60,152,SPR_GOLDENEGG
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; This item is given to you by Doug
@@ -538,8 +540,8 @@ OBJ_CROWBAR = 52
 OBJ_WELLLID = 53
 
 .welllidhere
- EQUB 55,crowbar  ,46 ,160,SPR_WOOD0 ,0 ,0 ,   0   ,0  ,0 ,0 ,  PAL_RED
- ;EQUB 55,46,160,SPR_WOOD0
+ EQUB TOPWELLROOM, crowbar  ,46 ,160,SPR_WOOD0 ,0 ,0 ,   0   ,0  ,0 ,0 ,  PAL_RED
+ ;EQUB TOPWELLROOM, 46,160,SPR_WOOD0
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THE MEETING HALL
@@ -570,24 +572,24 @@ OBJ_TROLL2 = 56
 ; DAISY'S PRISON
 OBJ_DAGGER2 = 57
 
- EQUB 94,dagger    ,42 ,152,SPR_DAGGERBLADE ,0 ,0 ,   0   ,0  ,0 ,0 ,PAL_WHITE+ATTR_NOTSOLID
- ;EQUB 94,42,152,SPR_DAGGERBLADE
+ EQUB DAISYSPRISONROOM, dagger    ,42 ,152,SPR_DAGGERBLADE ,0 ,0 ,   0   ,0  ,0 ,0 ,PAL_WHITE+ATTR_NOTSOLID
+ ;EQUB DAISYSPRISONROOM, 42,152,SPR_DAGGERBLADE
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; DAISY'S PRISON
 OBJ_DAGGER3 = 58
 
- EQUB 94,dagger    ,50 ,152,SPR_DAGGERBLADE ,0 ,0 ,   0   ,0  ,0 ,0 ,PAL_WHITE+ATTR_NOTSOLID
- ;EQUB 94,50,152,SPR_DAGGERBLADE
+ EQUB DAISYSPRISONROOM, dagger    ,50 ,152,SPR_DAGGERBLADE ,0 ,0 ,   0   ,0  ,0 ,0 ,PAL_WHITE+ATTR_NOTSOLID
+ ;EQUB DAISYSPRISONROOM, 50,152,SPR_DAGGERBLADE
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THE DRAGON'S LAIR
 OBJ_RUG = 59
 
- EQUB 40,pickupable,52 ,112,SPR_THICKRUG
+ EQUB DRAGONSLAIRROOM, pickupable,52 ,112,SPR_THICKRUG
  EQUW              rugmess,proxrug
  EQUB                   0 ,0 ,PAL_RED+ATTR_NOTSOLID
- ;EQUB 40,52,112,SPR_THICKRUG
+ ;EQUB DRAGONSLAIRROOM, 52,112,SPR_THICKRUG
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; DAISY'S PRISON
@@ -620,15 +622,15 @@ OBJ_LIFT5 = 62
 OBJ_DAISY = 63
 
 .daisyhere
- EQUB 94,daisy   ,75 ,80,SPR_DAISY,0  ,0  ,0   ,2   ,  0 ,0 ,PAL_WHITE+ATTR_NOTSOLID
- ;EQUB 94,75,80,SPR_DAISY
+ EQUB DAISYSPRISONROOM, daisy   ,75 ,80,SPR_DAISY,0  ,0  ,0   ,2   ,  0 ,0 ,PAL_WHITE+ATTR_NOTSOLID
+ ;EQUB DAISYSPRISONROOM, 75,80,SPR_DAISY
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; DAISY'S PRISON
 OBJ_SWITCH2 = 64
 
- EQUB 94,switch1 ,62 ,70,SPR_SWITCH,0   ,0   ,0   ,2  ,0 ,0 ,PAL_CYAN+ATTR_NOTSOLID
- ;EQUB 94 ,62 ,70 ,SPR_SWITCH
+ EQUB DAISYSPRISONROOM, switch1 ,62 ,70,SPR_SWITCH,0   ,0   ,0   ,2  ,0 ,0 ,PAL_CYAN+ATTR_NOTSOLID
+ ;EQUB DAISYSPRISONROOM, 62 ,70 ,SPR_SWITCH
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THE LARGE OAK TREE
@@ -662,10 +664,10 @@ OBJ_DAISY2 = 67
 ; THE LIFT CONTROL HUT
 OBJ_RAILING2 = 68
 
- EQUB 56,pickupable,84 ,128,SPR_WOODENRAIL
+ EQUB LIFTCONTROLROOM, pickupable,84 ,128,SPR_WOODENRAIL
  EQUW                railingmess
  EQUB        0,   0,  0 ,0 ,PAL_RED+ATTR_NOTSOLID
- ;EQUB 56,84 ,128,SPR_WOODENRAIL
+ ;EQUB LIFTCONTROLROOM, 84 ,128,SPR_WOODENRAIL
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; DENZIL'S PAD
@@ -680,19 +682,19 @@ OBJ_RAILING3 = 69
 ; DAISY'S EMPTY HUT
 OBJ_WINDOW = 70
 
- EQUB 73,pickupable,56 ,72,SPR_WINDOW
+ EQUB DAISYSHUTROOM, pickupable,56 ,72,SPR_WINDOW
  EQUW                windowmess
  EQUB        0,   0,  0 ,0 ,PAL_GREEN+ATTR_NOTSOLID
- ;EQUB 73,56 ,72,SPR_WINDOW
+ ;EQUB DAISYSHUTROOM, 56 ,72,SPR_WINDOW
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; THE ENTRANCE HALL
 OBJ_RAILING4 = 71
 
- EQUB 52,pickupable,86 ,88,SPR_WOODENRAIL
+ EQUB ENTRANCEHALLROOM, pickupable,86 ,88,SPR_WOODENRAIL
  EQUW                railingmess
  EQUB        0,   0,  0 ,0 ,PAL_WHITE+ATTR_NOTSOLID
- ;EQUB 52,86 ,88,SPR_WOODENRAIL
+ ;EQUB ENTRANCEHALLROOM, 86 ,88,SPR_WOODENRAIL
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -1830,7 +1832,7 @@ endif
 
   ; Merge with blanked bit 1 in colour and h-flip
   LDY #colour
-  LDA #&82:ORA (zptr4), Y
+  LDA #%10000010:ORA (zptr4), Y
   STA (zptr4), Y
 
 .justdraw
