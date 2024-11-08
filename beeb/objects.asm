@@ -1885,7 +1885,7 @@ turnonfullbucket = movingsize+room
 
 .proxmtbucketrou
   LDY #room:LDA #OFFMAP:STA (zptr4), Y ; Hide empty bucket
-  LDY #turnonfullbucket:LDA #60:STA (zptr4), Y ; Show full bucket
+  LDY #turnonfullbucket:LDA roomno:STA (zptr4), Y ; Show full bucket
 
   LDA #STR_fillbucketmess:JSR findroomstr
   JMP windowrou
@@ -2635,7 +2635,7 @@ turnonfullbucket = movingsize+room
   LDY #room:LDA #OFFMAP:STA (zptr4), Y
 
   ; Show two pieces of carpet covering daggers
-  LDA proxrug
+  LDA roomno
   STA carpethere+room
   STA carpethere1+room
 
