@@ -69,7 +69,7 @@ OBJ_HAWK = 0
 
  EQUB 49, hawk, 60, 80, SPR_HAWK0
  EQUW nothingheremess
- EQUB 0, 2, 0, 0, PAL_CYAN+PLOT_OR+ATTR_NOTSOLID
+ EQUB 0, 2, HAWK_FLYING, 0, PAL_CYAN+PLOT_OR+ATTR_NOTSOLID
  ;EQUB 49, 60, 80, SPR_HAWK0
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1658,7 +1658,7 @@ endif
 .resethawk
 {
   LDY #movey:LDA #52:STA (zptr4), Y ; Place hawk in sky
-  LDY #var1:LDA #&00:STA (zptr4), Y ; Set to flying state (not diving)
+  LDY #var1:LDA #HAWK_FLYING:STA (zptr4), Y ; Set to flying state (not diving)
 
   ; Draw in initial position
   JSR printmoving
@@ -1721,7 +1721,7 @@ endif
   JSR collidewithdizzy3:BEQ nocollide
 
   ; Hawk has seen Dizzy
-  LDY #var1:LDA #&01:STA (zptr4), Y ; Start dive
+  LDY #var1:LDA #HAWK_DIVING:STA (zptr4), Y ; Start dive
   LDY #movefrm:LDA #SPR_HAWK0:STA (zptr4), Y ; Set sprite
 
 .nocollide

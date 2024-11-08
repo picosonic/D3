@@ -128,6 +128,10 @@ MANURE_IDLE = 0
 MANURE_PICKUP = 1
 MANURE_WATERED = 2
 
+; Hawk state machine
+HAWK_FLYING = 0
+HAWK_DIVING = 1
+
 ; Dragon(s) head default position
 DRAGON_HEAD_X = 68
 DRAGON_HEAD_Y = 152
