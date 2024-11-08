@@ -1499,8 +1499,7 @@ endif
   EQUB 10,30 ;;;w,h
 
 .proxsleeprou
-  LDA #&FF
-  LDY #room:STA (zptr4), Y ; Remove sleeping potion from room
+  LDY #room:LDA #OFFMAP:STA (zptr4), Y ; Remove sleeping potion from room
   STA dragonhere+var1 ; Set dragon to be asleep
 
   LDA #STR_dragonasleepmess:JSR findroomstr
@@ -1598,8 +1597,7 @@ endif
   EQUB 10,20 ;;;w,h
 
 .proxcrocrou
-  LDA #&FF
-  LDY #room:STA (zptr4), Y ; Remove rope from room
+  LDY #room:LDA #OFFMAP:STA (zptr4), Y ; Remove rope from room
   STA crochere+var1 ; Set crocodile to be tied up
 
   LDA #STR_croctiedmess:JSR findroomstr
@@ -2312,8 +2310,7 @@ turnonfullbucket = movingsize+room
   EQUB 6,26 ;;;w,h
 
 .proxjugrou
-  LDY #room:LDA #OFFMAP
-  STA (zptr4), Y ; Remove jug from room
+  LDY #room:LDA #OFFMAP:STA (zptr4), Y ; Remove jug from room
   STA fireout ; Put fire out
 
   LDA #STR_throwwateronfiremess:JSR findroomstr
