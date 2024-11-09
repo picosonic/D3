@@ -65,7 +65,7 @@ INCLUDE "hearts.asm"
   STA fireout
   STA ratcount
 
-  LDY #&00:LDA #&00
+  LDY #&00
 .scrubtalkbefore
   STA talkbefore, Y
   INY
