@@ -143,7 +143,10 @@ endif
   EQUB 0 ; Dylan
   EQUB 0 ; Daisy
   EQUB 0 ; Doug (Grand Dizzy)
-  EQUB 0
+.endoftalkbefore
+  ; EQUB 0 ; TODO - this was in original - but not needed?
+
+nooftalkbefore = ((endoftalkbefore-talkbefore) AND &FF)
 
 ; Contents of the bag
 .objectscarried

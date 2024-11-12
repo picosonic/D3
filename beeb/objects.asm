@@ -990,7 +990,7 @@ dylantalking = duffmem
   BEQ notyolkfolk1 ; Not spoken yet (count is 0)
 
   ; clear bit 3 in talkbefore, and add 1
-  AND #&F7:CLC:ADC #&01
+  AND #%11110111:CLC:ADC #&01
   STA talkbefore, Y
 
   ; jump to routine in object
@@ -1009,7 +1009,7 @@ dylantalking = duffmem
   INY:LDA (zptr4), Y:STA zptr5+1
 
 .^talkingtopeople1
-  LDY #&00:LDA roomno:STA (zptr5), Y ; Make object appear in current room
+  LDY #room:LDA roomno:STA (zptr5), Y ; Make object appear in current room
 
   ; Find associated chatter
   LDY #delaycounter:LDA (zptr4), Y

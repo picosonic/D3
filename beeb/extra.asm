@@ -69,7 +69,7 @@ INCLUDE "hearts.asm"
 .scrubtalkbefore
   STA talkbefore, Y
   INY
-  CPY #&05:BNE scrubtalkbefore
+  CPY #nooftalkbefore:BNE scrubtalkbefore
 
   RTS
 
