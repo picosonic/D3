@@ -1190,7 +1190,7 @@ endif
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;LOOKING AT PICTURE
 .proxpicture
 {
-  EQUB 52      ;; room
+  EQUB ENTRANCEHALLROOM ;; room
   EQUB 62, 104 ;; x, y
   EQUB 5, 16   ;; w, h
 

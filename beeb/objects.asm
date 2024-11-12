@@ -1496,7 +1496,7 @@ endif
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;SLEEP
 .proxsleep
 {
-  EQUB 54 ;;room
+  EQUB WIDEEYEDDRAGONROOM ;;room
   EQUB 60,150 ;;;x,y
   EQUB 10,30 ;;;w,h
 
@@ -1594,7 +1594,7 @@ endif
 
 .proxcroc
 {
-  EQUB 53 ;;room
+  EQUB GATORROOM ;;room
   EQUB 68,140 ;;;x,y
   EQUB 10,20 ;;;w,h
 
@@ -1608,7 +1608,7 @@ endif
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;ROCK
 .proxrock
 {
-  EQUB 48 ;;room
+  EQUB BROKENBRIDGEROOM ;;room
   EQUB 72,80 ;;;x,y
   EQUB 10,30 ;;;w,h
 
@@ -1755,7 +1755,7 @@ endif
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;KEYS
 .proxkey1
 {
-  EQUB 56 ;;room
+  EQUB LIFTCONTROLROOM ;;room
   EQUB 51,120 ;;;x,y
   EQUB 4,16 ;;;w,h
 
@@ -1781,7 +1781,7 @@ endif
 
 .proxkey2
 {
-  EQUB 56 ;;room
+  EQUB LIFTCONTROLROOM ;;room
   EQUB 73,120 ;;;x,y
   EQUB 4,16 ;;;w,h
 
@@ -1794,7 +1794,7 @@ endif
 }
 .proxkey3
 {
-  EQUB 56 ;;room
+  EQUB LIFTCONTROLROOM ;;room
   EQUB 53,160 ;;;x,y
   EQUB 4,16 ;;;w,h
 
@@ -1807,7 +1807,7 @@ endif
 }
 .proxkey4
 {
-  EQUB 56 ;;room
+  EQUB LIFTCONTROLROOM ;;room
   EQUB 71,160 ;;;x,y
   EQUB 4,16 ;;;w,h
 
@@ -1881,7 +1881,7 @@ turnonfullbucket = movingsize+room
 
 .proxmtbucket
 {
-  EQUB 60 ;;room
+  EQUB BASEOFVOLCANOROOM ;;room
   EQUB 46,144 ;;;x,y
   EQUB 4,16 ;;;w,h
 
@@ -1895,7 +1895,7 @@ turnonfullbucket = movingsize+room
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;WATER BEAN STALK
 .proxfullbucket
 {
-  EQUB 58 ;;room
+  EQUB ALLOTMENTROOM ;;room
   EQUB 71,160 ;;;x,y
   EQUB 8,16 ;;;w,h
 
@@ -1914,7 +1914,7 @@ turnonfullbucket = movingsize+room
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;PLANTING BEAN
 .proxbean
 {
-  EQUB 58 ;;room
+  EQUB ALLOTMENTROOM ;;room
   EQUB 71,160 ;;;x,y
   EQUB 8,16 ;;;w,h
 
@@ -1950,7 +1950,7 @@ turnonfullbucket = movingsize+room
 
 .proxshopkeeper
 {
-  EQUB 22 ;;room
+  EQUB MARKETSQUAREROOM ;;room
   EQUB 66,160 ;;;x,y
   EQUB 8,16 ;;;w,h
 
@@ -2307,7 +2307,7 @@ turnonfullbucket = movingsize+room
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;THROWING WATER OF FIRE
 .proxjug
 {
-  EQUB 36 ;;room
+  EQUB CASTLEDUNGEONROOM ;;room
   EQUB 44,150 ;;;x,y
   EQUB 6,26 ;;;w,h
 
@@ -2394,7 +2394,7 @@ turnonfullbucket = movingsize+room
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;LOAF AND RAT
 .proxloaf
 {
-  EQUB 36 ;;room
+  EQUB CASTLEDUNGEONROOM ;;room
   EQUB 46,64 ;;;x,y
   EQUB 40,16 ;;;w,h
 
@@ -2418,7 +2418,7 @@ turnonfullbucket = movingsize+room
 
 .proxtroll
 {
-  EQUB 36      ;; room
+  EQUB CASTLEDUNGEONROOM ;; room
   EQUB 82, 136 ;; x, y
   EQUB 8, 32   ;; w, h
 
@@ -2458,7 +2458,7 @@ turnonfullbucket = movingsize+room
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;APPLE
 .proxapple
 {
-  EQUB 36 ;;room
+  EQUB CASTLEDUNGEONROOM ;;room
   EQUB 78,152 ;;;x,y
   EQUB 4,16 ;;;w,h
 
@@ -2496,7 +2496,7 @@ turnonfullbucket = movingsize+room
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;DOOR KNOCKER
 .proxdoor
 {
-  EQUB 84 ;;room
+  EQUB CASTLESTAIRCASEROOM ;;room
   EQUB 34,160 ;;;x,y
   EQUB 4,16 ;;;w,h
 
@@ -2540,7 +2540,7 @@ turnonfullbucket = movingsize+room
 
 .proxknox
 {
-  EQUB 84 ;;room
+  EQUB CASTLESTAIRCASEROOM ;;room
   EQUB 34,160 ;;;x,y
   EQUB 4,16 ;;;w,h
 
@@ -2557,7 +2557,7 @@ turnonfullbucket = movingsize+room
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;CROW BAR
 .proxcrowbar
 {
-  EQUB 55 ;;room
+  EQUB TOPWELLROOM ;;room
   EQUB 46,144 ;;;x,y
   EQUB 8,16 ;;;w,h
 
@@ -2573,7 +2573,7 @@ turnonfullbucket = movingsize+room
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;PICK AXE
 .proxpickaxe
 {
-  EQUB 41 ;;room
+  EQUB MINESROOM ;;room
   EQUB 36,101 ;;;x,y
   EQUB 12,20 ;;;w,h
 
@@ -2587,7 +2587,7 @@ turnonfullbucket = movingsize+room
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;EGG IN NEST
 .proxegg
 {
-  EQUB 40 ;;room
+  EQUB DRAGONSLAIRROOM ;;room
   EQUB 54,150 ;;;x,y
   EQUB 4,20 ;;;w,h
 
@@ -2610,7 +2610,7 @@ turnonfullbucket = movingsize+room
 
 .proxminer
 {
-  EQUB 41      ;; room
+  EQUB MINESROOM ;; room
   EQUB 90, 120 ;; x, y
   EQUB 2, 32   ;; w, h
 
@@ -2628,7 +2628,7 @@ turnonfullbucket = movingsize+room
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;RUG TRICK
 .proxrug
 {
-  EQUB 94 ;;room
+  EQUB DAISYSPRISONROOM ;;room
   EQUB 34,152 ;;;x,y
   EQUB 4,16 ;;;w,h
 
