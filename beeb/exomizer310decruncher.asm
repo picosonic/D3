@@ -135,14 +135,14 @@ ENDIF
         stx INPOS ; Store pointer to source data (lo)
         sty INPOS+1 ; Store pointer to source data (hi)
 
-	lda #$AD ; LDA abs
-	sta get_crunched_byte
-	ldx #get_crunched_byte_copy_end-get_crunched_byte_copy-1 ; 210227 0xC0DE: -1!!
+        lda #$AD ; LDA abs
+        sta get_crunched_byte
+        ldx #get_crunched_byte_copy_end-get_crunched_byte_copy-1 ; 210227 0xC0DE: -1!!
 .copyloop
-	lda get_crunched_byte_copy,X
-	sta get_crunched_byte_code,X
-	dex
-	bpl copyloop
+        lda get_crunched_byte_copy,X
+        sta get_crunched_byte_code,X
+        dex
+        bpl copyloop
         ; -------------------------------------------------------------------
 
 IF ENABLE_SPLIT_ENCODING = 1

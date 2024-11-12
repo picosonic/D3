@@ -1100,7 +1100,7 @@ dylantalking = duffmem
 
   ; Clear h-flip
   LDA armoroghere+colour
-	AND #&7F:STA armoroghere+colour
+  AND #&7F:STA armoroghere+colour
 
 .done
   JMP printmoving
@@ -2418,9 +2418,9 @@ turnonfullbucket = movingsize+room
 
 .proxtroll
 {
-	EQUB 36      ;; room
-	EQUB 82, 136 ;; x, y
-	EQUB 8, 32   ;; w, h
+  EQUB 36      ;; room
+  EQUB 82, 136 ;; x, y
+  EQUB 8, 32   ;; w, h
 
   ; When Dizzy collides with troll he gets thrown back into room
 .^proxtrollrou

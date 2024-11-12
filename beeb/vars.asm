@@ -223,7 +223,7 @@ GUARD ENVELOPE_DEFS
 .oldroomno EQUB 0
 .roomlen EQUW 0 ; Length of active room
 .spritenothere EQUB 0
-.dontupdatedizzy EQUB 0
+.dontupdatedizzy EQUB 0 ; 0=Draw Dizzy in interrupt, 1=Don't draw Dizzy in interrupt
 .killed EQUB 0
 .killedmess EQUW 0 ; Pointer to message to show why Dizzy killed
 .coins EQUB 0 ; Count of collected coins
@@ -240,7 +240,7 @@ GUARD ENVELOPE_DEFS
 .fireout EQUB 0 ; Non-zero means fire in room 36 (dungeon) is out
 .ratcount EQUB 0 ; Rat state, 0=idle / 1=patrolling / 2=got loaf
 .slotno EQUB 0
-.completedgame EQUB 0
+.completedgame EQUB 0 ; 1=Interacting with Daisy when all 30 coins collected - end of game
 .startroom EQUB 0 ; Starting room, and where to go back to if killed
 .objcollide EQUB 0 ; Allow proximity collision detection to work
 
