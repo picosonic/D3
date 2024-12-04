@@ -1,0 +1,6049 @@
+; VIC-II = &D000 .. &D3FF
+
+SPR_MSB_X = &D010
+GFX_VICII_REG1 = &D011
+GFX_RASTER_LINE = &D012
+SPR_ENABLE = &D015
+GFX_VICII_REG2 = &D016
+SPR_Y_EXP = &D017
+GFX_MEM_PTR = &D018
+SPR_PRIORITY = &D01B
+SPR_MULTICOLOUR = &D01C
+SPR_X_EXP = &D01D
+SPR_COLLISION = &D01E ; Sprite-sprite collision
+SPR_COLLISION2 = &D01F ; Sprite-data collision
+GFX_BORDER_COLOUR = &D020
+SPR_MULTICOLOUR_01 = &D025
+SPR_MULTICOLOUR_11 = &D026
+SPR_0_COLOUR = &D027
+
+; SID (audio) = &D400 .. &D7FF
+
+CIA1_PRA = &DC00
+CIA2_PRA = &DD00
+
+JOY_UP    = %00000001
+JOY_DOWN  = %00000010
+JOY_LEFT  = %00000100
+JOY_RIGHT = %00001000
+JOY_FIRE  = %00010000
+
+ORG &00
+
+.c64start
+
+; Variables
+.v0314
+.v0315
+.v0339
+.v033A
+.v033B
+.v033C
+.v033D
+.v033E
+.v033F
+.v0340
+.v0342
+.v0344
+.v0345
+.v0346
+.v0347
+.v0349
+.v034A
+.v034B
+.v034E
+.v0352
+.v0354
+.v0355
+.v0356
+.v0357
+.v035C
+.v035E
+.v035F
+.v0360
+.v0361
+.v0366
+.v0368
+.v0369
+.v036A
+.v036B
+.v0370
+.v037A
+.v0384
+.v0398
+.v0399
+.v039A
+.v039B
+.v039C
+.v03B7
+.v03B8
+.v03B9
+.v03BA
+.v03BB
+.v03BC
+.v03BD
+.v03BE
+.v03BF
+.v03C0
+.v03C1
+.v03C2
+.v03C3
+.v03C4
+.v03C5
+.v03C6
+.v03C7
+.v03C8
+.v03C9
+.v03D5
+.v03D6
+.v03D7
+.v03D8
+.v03D9
+.v03DA
+.v03DB
+.v03DC
+.v03DD
+.v03DF
+.v03E0
+.v03E1
+.v03E2
+.v03E3
+.v03E5
+
+ORG &0B00
+
+.v0B00
+  EQUB &FF
+
+.l0B01
+  LDA &0B00
+  BNE l0B0F
+  STA &116D
+  JSR l0F78
+.l0B0C
+  JMP l0F72
+.l0B0F
+  CMP #&05
+  BCS l0B50
+  SBC #&00
+  ASL  A
+  STA &0B1B
+  ASL  A
+  ADC #&00
+  TAY
+  LDX #&00
+.l0B1F
+  LDA &1235,Y
+  STA &11BC,X
+  INY
+  LDA &1235,Y
+  STA &11BF,X
+  INY
+  INX
+  CPX #&03
+  BNE l0B1F
+  LDX #&02
+.l0B34
+  LDA #&00
+  STA &1188,X
+  STA &118B,X
+  STA &1170,X
+  JSR l0FC3
+  DEX
+  BPL l0B34
+  JSR l1147
+  LDA #&01
+  STA &116D
+  JMP l0F72
+.l0B50
+  LDA &116D
+  BEQ l0B0C
+  INC &11C9
+  INC &11CA
+  INC &11CB
+  LDX #&02
+  STX &116C
+.l0B63
+  LDX &116C
+  LDA &1158,X
+  STA &11CC
+  LDA &116F
+  BNE l0B84
+  DEC &1188,X
+  BMI l0B98
+  LDA &119D,X
+  BEQ l0B95
+  INC &1169,X
+  JSR l0F83
+  JMP l0EEC
+.l0B84
+  LDA &11A0,X
+  BEQ l0B95
+  DEC &11A0,X
+  DEC &1169,X
+  JSR l0F83
+  JMP l0EEC
+.l0B95
+  JMP l0CDD
+.l0B98
+  LDA #&00
+  LDY &118B,X
+  CPY #&02
+  BEQ l0BA7
+  STA &118E,X
+  STA &118B,X
+.l0BA7
+  STA &11C2
+  STA &1194,X
+  STA &119D,X
+  LDA #&03
+  STA &11C6,X
+  LDA &117F,X
+  STA &A7
+  LDA &1182,X
+  STA &A8
+.l0BBF
+  LDY &11C2
+  INC &11C2
+  LDA (&A7),Y
+  INY
+  CMP #&FF
+  BNE l0BD7
+  JSR l0FC3
+  LDA #&00
+  STA &11C2
+  JMP l0BBF
+.l0BD7
+  CMP #&FE
+  BNE l0BE3
+  LDA #&00
+  STA &0B00
+  JMP l0B01
+.l0BE3
+  CMP #&FD
+  BNE l0BF4
+  LDA (&A7),Y
+  INY
+  STA &D418
+  LDA (&A7),Y
+  INY
+  CMP #&FF
+  BEQ l0BBF
+.l0BF4
+  CMP #&F0
+  BCC l0C00
+  AND #&0F
+  STA &116E
+  LDA (&A7),Y
+  INY
+.l0C00
+  CMP #&C0
+  BCC l0C0F
+  AND #&1F
+  ASL  A
+  ASL  A
+  ASL  A
+  STA &11C3,X
+  LDA (&A7),Y
+  INY
+.l0C0F
+  CMP #&80
+  BCC l0C1B
+  AND #&3F
+  STA &1185,X
+  LDA (&A7),Y
+  INY
+.l0C1B
+  CMP #&60
+  BCC l0C4D
+  CMP #&7B
+  BNE l0C40
+  LDA #&00
+  STA &118E,X
+  LDA #&01
+  STA &118B,X
+  LDA (&A7),Y
+  INY
+  CLC
+  ADC &1191,X
+  STA &1194,X
+  LDA (&A7),Y
+  INY
+  STA &1197,X
+  JMP l0C4A
+.l0C40
+  CMP #&7A
+  BNE l0C4D
+  LDA (&A7),Y
+  INY
+  STA &11B1,X
+.l0C4A
+  LDA (&A7),Y
+  INY
+.l0C4D
+  STY &11C2
+  CLC
+  ADC &1191,X
+  STA &1169,X
+  PHA
+  LDY &11C3,X
+  LDA #&FF
+  STA &11C9,X
+  LDA &1250,Y
+  STA &0C7A
+  PLA
+  BEQ l0C76
+  LDA &118E,X
+  BNE l0C76
+  LDA &1253,Y
+  BEQ l0C76
+  STA &118E,X
+.l0C76
+  JSR l0F83
+  LDA #&07
+  LDY &11CC
+  PHA
+  AND #&F0
+  STA &1179,X
+  STA &D402,Y
+  PLA
+  AND #&0F
+  STA &117C,X
+  STA &D403,Y
+  LDA &1166,X
+  BEQ l0CB4
+  LDA &11C3,X
+  TAX
+  LDA &124E,X
+  STA &D405,Y
+  LDA &124F,X
+  STA &D406,Y
+  LDA #&00
+  STA &D404,Y
+  LDA &124D,X
+  AND #&F0
+  ORA #&05
+  STA &D404,Y
+.l0CB4
+  LDX &116C
+  LDA &117F,X
+  CLC
+  ADC &11C2
+  STA &117F,X
+  BCC l0CC6
+  INC &1182,X
+.l0CC6
+  LDA &1185,X
+  STA &1188,X
+  LDA &11B1,X
+  STA &11B4,X
+  LDY &115B,X
+  INY
+  TYA
+  STA &11A6,X
+  JMP l0EEC
+.l0CDD
+  LDA &1169,X
+  BEQ l0CEF
+  LDY &11C3,X
+  LDA &1254,Y
+  AND #&08
+  BEQ l0CF2
+  JMP l0D57
+.l0CEF
+  JMP l0EEC
+.l0CF2
+  LDA &1254,Y
+  AND #&04
+  BEQ l0CFC
+  JMP l0D73
+.l0CFC
+  LDY &11C3,X
+  LDA &1254,Y
+  LDY &11CC
+  AND #&01
+  BEQ l0D54
+  LDY &11C3,X
+  LDA &1251,Y
+  AND #&0F
+  ASL  A
+  ASL  A
+  TAY
+  LDA &11ED,Y
+  STA &0D36
+  LDA &11EE,Y
+  STA &0D37
+  LDA &11EF,Y
+  STA &0D41
+  LDA &11F0,Y
+  STA &0D42
+  LDA &11C9,X
+  CMP #&1F
+  BCS l0D54
+  PHA
+  TAY
+  LDA &1225,Y
+  LDY &11CC
+  STA &D404,Y
+  PLA
+  TAY
+  LDA &1215,Y
+  LDY &11CC
+  CLC
+  ADC #&0D
+  STA &D401,Y
+  LDA #&00
+  STA &D400,Y
+  JMP l0EEC
+.l0D54
+  JMP l0DA1
+.l0D57
+  LDY &11C3,X
+  LDA &11C9,X
+  CMP #&01
+  BCS l0D8F
+  LDA #&48
+  LDY &11CC
+  STA &D401,Y
+  LDA #&00
+  STA &D400,Y
+  LDA #&81
+  JMP l0D98
+.l0D73
+  LDY &11C3,X
+  LDA &11C9,X
+  CMP #&01
+  BCS l0D8F
+  LDA #&48
+  LDY &11CC
+  STA &D401,Y
+  LDA #&00
+  STA &D400,Y
+  LDA #&11
+  JMP l0D98
+.l0D8F
+  JSR l0F83
+  LDY &11C3,X
+  LDA &124D,Y
+.l0D98
+  LDY &11CC
+  STA &D404,Y
+  JMP l0EEC
+.l0DA1
+  LDA &118B,X
+  BNE l0DAE
+  LDY &11C3,X
+  LDA &1251,Y
+  BNE l0DB1
+.l0DAE
+  JMP l0E63
+.l0DB1
+  PHA
+  AND #&0F
+  STA &11AA
+  PLA
+  LSR  A
+  LSR  A
+  LSR  A
+  LSR  A
+  STA &11A9
+  LDY &1169,X
+  LDA &10E7,Y
+  SEC
+  SBC &10E6,Y
+  STA &11B9
+  LDA &1086,Y
+  SBC &1085,Y
+  STA &11BA
+.l0DD5
+  DEC &11AA
+  BMI l0DE3
+  LSR &11BA
+  ROR &11B9
+  JMP l0DD5
+.l0DE3
+  LDA &11AB,X
+  BPL l0DF2
+  DEC &11AE,X
+  BNE l0E00
+  INC &11AB,X
+  BPL l0E00
+.l0DF2
+  INC &11AE,X
+  LDA &11AE,X
+  CMP &11A9
+  BCC l0E00
+  DEC &11AB,X
+.l0E00
+  LDA &11B4,X
+  BEQ l0E0B
+  DEC &11B4,X
+  JMP l0EEC
+.l0E0B
+  LDA &1173,X
+  STA &11B7
+  LDA &1176,X
+  STA &11B8
+  LDA &11A9
+  LSR  A
+  TAY
+.l0E1C
+  DEY
+  BMI l0E35
+  LDA &11B7
+  SEC
+  SBC &11B9
+  STA &11B7
+  LDA &11B8
+  SBC &11BA
+  STA &11B8
+  JMP l0E1C
+.l0E35
+  LDY &11AE,X
+.l0E38
+  DEY
+  BMI l0E51
+  LDA &11B7
+  CLC
+  ADC &11B9
+  STA &11B7
+  LDA &11B8
+  ADC &11BA
+  STA &11B8
+  JMP l0E38
+.l0E51
+  LDY &11CC
+  LDA &11B7
+  STA &D400,Y
+  LDA &11B8
+  STA &D401,Y
+  JMP l0EEC
+.l0E63
+  LDA &118E,X
+  BEQ l0E9E
+  STA &11BB
+  JSR l0F9E
+.l0E6E
+  LDY &11A6,X
+  LDA &11CD,Y
+  CMP #&FF
+  BNE l0E81
+  LDA &115B,X
+  STA &11A6,X
+  JMP l0E6E
+.l0E81
+  CLC
+  ADC &1169,X
+  LDY &11CC
+  TAX
+  LDA &10E6,X
+  STA &D400,Y
+  LDA &1085,X
+  STA &D401,Y
+  LDX &116C
+  INC &11A6,X
+  JMP l0EEC
+.l0E9E
+  LDA &1194,X
+  BEQ l0EEC
+  STA &0FFF
+  LDA &1197,X
+  PHA
+  AND #&0F
+  STA &0EC1
+  STA &104F
+  PLA
+  LSR  A
+  LSR  A
+  LSR  A
+  LSR  A
+  CLC
+  ADC &1188,X
+  CMP &1185,X
+  BCS l0EEC
+  ADC #&00
+  CMP &1185,X
+  BCC l0EEC
+  LDY &1169,X
+  JSR l0FFE
+  LDX &116C
+  LDY &11CC
+  LDA &1173,X
+  ; Polymorphic code
+.v0ED6
+  CLC
+.v0ED7
+  ADC &119A
+  STA &1173,X
+  STA &D400,Y
+  LDA &1176,X
+.v0EE3
+  ADC &119B
+  STA &1176,X
+  STA &D401,Y
+.l0EEC
+  LDA &1185,X
+  BEQ l0F0A
+  LSR  A
+  CMP &1188,X
+  BNE l0F0A
+  LDY &11C3,X
+  LDA &124D,Y
+  AND #&0F
+  CLC
+  ROL  A
+  ROL  A
+  ROL  A
+  ROL  A
+  LDY &11CC
+  STA &D404,Y
+.l0F0A
+  LDY &11C3,X
+  LDA &1252,Y
+  BEQ l0F5F
+  LDA &11A3,X
+  BNE l0F37
+  LDA &1179,X
+  CLC
+  ADC &1252,Y
+  PHA
+  STA &1179,X
+  LDA &117C,X
+  ADC #&00
+  STA &117C,X
+  PHA
+  CMP #&0F
+  BCC l0F54
+  LDA #&01
+  STA &11A3,X
+  JMP l0F54
+.l0F37
+  LDA &1179,X
+  SEC
+  SBC &1252,Y
+  PHA
+  STA &1179,X
+  LDA &117C,X
+  SBC #&00
+  STA &117C,X
+  PHA
+  CMP #&08
+  BCS l0F54
+  LDA #&00
+  STA &11A3,X
+.l0F54
+  LDY &11CC
+  PLA
+  STA &D403,Y
+  PLA
+  STA &D402,Y
+.l0F5F
+  DEC &116C
+  BMI l0F67
+  JMP l0B63
+.l0F67
+  DEC &116F
+  BPL l0F72
+  LDA &116E
+  STA &116F
+.l0F72
+  LDA #&FF
+  STA &0B00
+  RTS
+
+.l0F78
+  LDY #&18
+  LDA #&00
+.l0F7C
+  STA &D400,Y
+  DEY
+  BPL l0F7C
+  RTS
+
+.l0F83
+  LDY &1169,X
+  LDA &10E6,Y
+  STA &1173,X
+  PHA
+  LDA &1085,Y
+  STA &1176,X
+  LDY &11CC
+  STA &D401,Y
+  PLA
+  STA &D400,Y
+  RTS
+
+.l0F9E
+  LDY &115B,X
+  INY
+  LDX #&00
+.l0FA4
+  ROR &11BB
+  BCC l0FB0
+  LDA &115E,X
+  STA &11CD,Y
+  INY
+.l0FB0
+  INX
+  CPX #&08
+  BNE l0FA4
+  LDX &116C
+  LDA #&FF
+  STA &11CD,Y
+  LDA #&00
+  STA &1194,X
+  RTS
+
+.l0FC3
+  LDA &11BC,X
+  STA &A9
+  LDA &11BF,X
+  STA &AA
+.l0FCD
+  LDY &1170,X
+  INC &1170,X
+  LDA (&A9),Y
+  BPL l0FEB
+  CMP #&FF
+  BNE l0FE2
+  LDA #&00
+  STA &1170,X
+  BEQ l0FCD
+.l0FE2
+  CLC
+  ADC #&40
+  STA &1191,X
+  JMP l0FCD
+.l0FEB
+  ASL  A
+  TAY
+  LDA &12DD,Y
+  STA &117F,X
+  STA &A7
+  LDA &12DE,Y
+  STA &1182,X
+  STA &A8
+  RTS
+
+.l0FFE
+  LDX #&00
+  CPY &0FFF
+  BCS l1028
+  LDA #&18 ; CLC
+  STA &0ED6
+  LDA #&6D ; ADC
+  STA &0ED7
+  STA &0EE3
+  SEC
+  LDA &10E6,X
+  SBC &10E6,Y
+  STA &119A
+  LDA &1085,X
+  SBC &1085,Y
+  STA &119B
+  JMP l1048
+.l1028
+  LDA #&38 ; SEC
+  STA &0ED6
+  LDA #&ED ; SBC
+  STA &0ED7
+  STA &0EE3
+  SEC
+  LDA &10E6,Y
+  SBC &10E6,X
+  STA &119A
+  LDA &1085,Y
+  SBC &1085,X
+  STA &119B
+.l1048
+  LDY &116E
+  LDA #&00
+  CLC
+.l104E
+  ADC #&00
+  DEY
+  BPL l104E
+  STA &119C
+  CLC
+  LDX #&10
+  LDA #&00
+.l105B
+  ROL &119A
+  ROL &119B
+  ROL  A
+  BCS l1069
+  CMP &119C
+  BCC l106D
+.l1069
+  SBC &119C
+  SEC
+.l106D
+  DEX
+  BNE l105B
+  ROL &119A
+  ROL &119B
+  ASL  A
+  CMP &119C
+  BCC l1084
+  INC &119A
+  BNE l1084
+  INC &119B
+.l1084
+  RTS
+
+.v1085
+.v1086
+.v10E6
+.v10E7
+
+ORG &1147
+
+.l1147
+  JSR l0F78
+  LDA #&0F
+  STA &D418
+  LDA #&00
+  STA &116F
+  STA &116D
+  RTS
+
+.v1158
+.v115B
+.v115E
+.v1166
+.v1169
+.v116C
+.v116D
+.v116E
+.v116F
+.v1170
+.v1173
+.v1176
+.v1179
+.v117C
+.v117F
+.v1182
+.v1185
+.v1188
+.v118B
+.v118E
+.v1191
+.v1194
+.v1197
+.v119A
+.v119B
+.v119C
+.v119D
+.v11A0
+.v11A3
+.v11A6
+.v11A9
+.v11AA
+.v11AB
+.v11AE
+.v11B1
+.v11B4
+.v11B7
+.v11B8
+.v11B9
+.v11BA
+.v11BB
+.v11BC
+.v11BF
+.v11C2
+.v11C3
+.v11C6
+.v11C9
+.v11CA
+.v11CB
+.v11CC
+.v11CD
+.v11ED
+.v11EE
+.v11EF
+.v11F0
+.v1215
+.v1225
+.v1235
+.v124D
+.v124E
+.v124F
+.v1250
+.v1251
+.v1252
+.v1253
+.v1254
+.v12DD
+.v12DE
+.v180E
+.v1828
+.v1877
+.v1897
+.v189F
+.v18B8
+.v18D9
+.v18DE
+.v18E5
+.v18E6
+.v18E7
+.v18E8
+.v18EC
+.v18F0
+.v18F4
+.v18F8
+.v1903
+
+ORG &190E
+
+  JSR l2B32
+  LDX #&C6
+  LDA #&00
+.l1915
+  STA &0339,X
+  DEX
+  BNE l1915
+  JSR l3B6D
+  LDA #&36
+  STA &01
+  LDA #&0A
+  STA &0B00
+.l1927
+  LDA #&00
+  STA GFX_BORDER_COLOUR
+  STA &03B9
+  LDX #&00
+.l1931
+  JSR l313F
+  INX
+  CPX #&08
+  BCC l1931
+  LDA #&01
+  STA &0B00
+  LDA #&00
+  STA &033F
+  JSR l3B6D
+  JSR l3023
+  LDA #&58
+  STA &03DC
+  LDA #&00
+  STA &03E5
+  JSR l2E79
+  JSR l3090
+  JSR l3A30
+  LDA #&3A
+  STA &033A
+  LDA #&39
+  STA &033B
+  LDA #&04
+  STA &033C
+  LDA #&00
+  STA &03DC
+  LDA #&1B
+  JSR l2B5B
+  JSR l37D0
+  LDA #&00
+  JSR l357D
+  JSR l3023
+  LDX #&00
+  TXA
+.l1983
+  STA &5800,X
+  STA &58C8,X
+  STA &5990,X
+  STA &5A58,X
+  STA &5B20,X
+  INX
+  CPX #&C8
+  BCC l1983
+  LDA #&00
+  STA &18E5
+  STA &18E6
+  STA &18E7
+  LDA #&02
+  STA &03B9
+  LDX #&00
+.l19A9
+  LDA &18EC,X
+  STA &18F4,X
+  INX
+  CPX #&04
+  BCC l19A9
+  LDA #&24
+  STA &03B8
+  STA &03E5
+  LDA #&01 ; White
+  STA SPR_0_COLOUR
+  JSR l3A30
+  LDA #&00
+  STA SPR_Y_EXP
+  STA SPR_X_EXP
+  STA SPR_MULTICOLOUR
+  STA &CFF8
+  STA SPR_PRIORITY
+  STA &2B48
+  LDX #&86
+.l19DA
+  DEX
+  LDA &C400,X
+  STA &C69E,X
+  LDA &C486,X
+  STA &C724,X
+  LDA &C50C,X
+  STA &C7AA,X
+  LDA &C592,X
+  STA &C830,X
+  LDA &C618,X
+  STA &C8B6,X
+  CPX #&00
+  BNE l19DA
+  JSR l29E4
+  LDA #&1C
+  STA &03D6
+  STA &0352
+  LDA #&64
+  STA &03D7
+  STA &035C
+  LDA #&FF
+  STA &03DF
+  LDA #&00
+  STA &03E0
+  JSR l2F22
+  JSR l346B
+  LDA #&02
+  STA &0B00
+.l1A25
+  NOP
+  JSR l3541
+  CPY #&3E
+  BNE l1A30
+  JMP l1927
+.l1A30
+  CPY #&29
+  BNE l1A45
+.l1A34
+  JSR l3541
+  CPY #&40
+  BNE l1A34
+.l1A3B
+  JSR l3541
+  CPY #&40
+  BEQ l1A3B
+  JMP l1A6C
+.l1A45
+  CPY #&24
+  BNE l1A6C
+  LDA &2B48
+  BEQ l1A5B
+  LDA #&00
+  STA &2B48
+  LDA #&02
+  STA &0B00
+  JMP l1A65
+.l1A5B
+  LDA #&00
+  STA &0B00
+  LDA #&01
+  STA &2B48
+.l1A65
+  JSR l3541
+  CPY #&24
+  BEQ l1A65
+.l1A6C
+  JSR l3B00
+  JSR l33AA
+  LDA #&00
+  STA &03C1
+  LDA &03BC
+  JSR l31D6
+  INC &03C4
+  LDA &C6B1
+  CMP #&FF
+  BNE l1A96
+  LDA &03C4
+  AND #&20
+  BNE l1A96
+  LDA &03C0
+  EOR #&0C
+  STA &03C0
+.l1A96
+  LDA &03BE
+  BEQ l1A9E
+  DEC &03BE
+.l1A9E
+  LDA &03E5
+  CMP #&19
+  BCS l1AD2
+  LDA &03C0
+  AND #&0C
+  BEQ l1AB4
+  LDA &03C0
+  EOR #&0C
+  STA &03C0
+.l1AB4
+  JSR l3257
+  CMP #&FA
+  BCC l1AD2
+  JSR l326A
+  AND #&01
+  ORA &03C0
+  STA &03C0
+  JSR l326A
+  ASL  A
+  AND #&0C
+  ORA &03C0
+  STA &03C0
+.l1AD2
+  NOP
+  NOP
+  LDA #&06
+  STA &0342
+.l1AD9
+  LDA &03C9
+  BEQ l1AE1
+  JMP l1B95
+.l1AE1
+  LDA #&16
+  STA &033B
+  LDA #&01
+  STA &033A
+.l1AEB
+  INC &033A
+  LDA &033A
+  CMP #&06
+  BCS l1B04
+  JSR l3154
+  BEQ l1AEB
+  LDA &033F
+  AND #&40
+  BEQ l1AEB
+  JMP l1B0C
+.l1B04
+  LDA #&03
+  STA &03C8
+  INC &035C
+.l1B0C
+  LDA &03C8
+  CMP #&03
+  BNE l1B68
+  LDA #&16
+  STA &033B
+  LDA #&01
+  STA &033A
+.l1B1D
+  INC &033A
+  LDA &033A
+  CMP #&06
+  BCS l1B58
+  JSR l3154
+  LDA &033E
+  BEQ l1B1D
+  LDA &033F
+  AND #&40
+  BEQ l1B1D
+  LDA &03C0
+  AND #&0D
+  BNE l1B48
+  LDA #&00
+  STA &03C8
+  STA &03C7
+  JMP l1B68
+.l1B48
+  LDA #&01
+  STA &03C8
+  LDA &03C2
+  STA &03C7
+  LDA #&00
+  JMP l1B68
+.l1B58
+  DEC &0342
+  LDA &0342
+  BEQ l1B63
+  JMP l1AD9
+.l1B63
+  LDA #&00
+  STA &03C0
+.l1B68
+  LDA &03C8
+  CMP #&02
+  BCS l1B95
+  LDA &03C0
+  AND #&04
+  BNE l1B80
+  LDA &03C0
+  AND #&08
+  BNE l1B90
+  JMP l1B95
+.l1B80
+  LDA #&02
+.l1B82
+  STA &03C7
+  STA &03C2
+  LDA #&01
+  STA &03C8
+  JMP l1B95
+.l1B90
+  LDA #&01
+  JMP l1B82
+.l1B95
+  LDA &03C8
+  CMP #&03
+  BNE l1B9F
+.l1B9C
+  JMP l1C85
+.l1B9F
+  CMP #&02
+  BEQ l1BCD
+  LDA &03C0
+  AND #&01
+  BNE l1BAD
+  JMP l1B9C
+.l1BAD
+  LDA &03C0
+  AND #&0F
+  CMP #&01
+  BNE l1BBE
+  LDA #&00
+  STA &03C7
+  STA &03C2
+.l1BBE
+  LDA #&02
+  STA &03C8
+  LDA #&00
+  STA &03C9
+  LDA #&11
+  STA &03C3
+.l1BCD
+  INC &03C9
+  LDA &03C9
+  CMP #&09
+  BCS l1C15
+  JSR l1C62
+.l1BDA
+  LDA #&00
+  STA &033B
+  LDA #&01
+  STA &033A
+.l1BE4
+  INC &033A
+  LDA &033A
+  CMP #&06
+  BCS l1BFD
+  JSR l3154
+  BEQ l1BE4
+  BCC l1BE4
+  LDA #&02
+  STA &03C1
+  JMP l1C85
+.l1BFD
+  DEC &035C
+  DEC &0342
+  LDA &0342
+  BNE l1BDA
+  LDA &03C3
+  CMP #&0A
+  BCC l1C85
+  DEC &03C3
+  JMP l1C85
+.l1C15
+  JSR l1C62
+.l1C18
+  LDA #&16
+  STA &033B
+  LDA #&01
+  STA &033A
+  LDA &03C9
+  CMP &03C3
+  BCC l1C85
+.l1C2A
+  INC &033A
+  LDA &033A
+  CMP #&06
+  BCS l1C3E
+  JSR l3154
+  BEQ l1C2A
+  BCC l1C2A
+  JMP l1C51
+.l1C3E
+  INC &035C
+  DEC &0342
+  LDA &0342
+  BNE l1C18
+  LDA #&00
+  STA &03C3
+  JMP l1C85
+.l1C51
+  LDA &03C9
+  CMP #&11
+  BCS l1C5D
+  LDA #&01
+  STA &03C1
+.l1C5D
+  LDA #&00
+  JMP l1C85
+.l1C62
+  LDA &03C9
+  CMP #&07
+  BCC l1C72
+  CMP #&0B
+  BCS l1C72
+  LDA #&02
+  JMP l1C81
+.l1C72
+  CMP #&02
+  BCC l1C7F
+  CMP #&10
+  BCS l1C7F
+  LDA #&04
+  JMP l1C81
+.l1C7F
+  LDA #&06
+.l1C81
+  STA &0342
+  RTS
+
+.l1C85
+  LDA &03C8
+  CMP #&02
+  BCS l1CA8
+  CMP #&00
+  BEQ l1C96
+  DEC &03C8
+  JMP l1CA8
+.l1C96
+  STA &03C8
+  STA &03C7
+  STA &03C3
+  STA &03C9
+  STA &03C1
+  JMP l1CB9
+.l1CA8
+  LDA &03C7
+  BNE l1CB0
+  JMP l1CB9
+.l1CB0
+  CMP #&01
+  BEQ l1CCB
+  LDA #&00
+  JMP l1CCD
+.l1CB9
+  LDA &03C1
+  CMP #&01
+  BNE l1CC8
+  LDA #&00
+  STA &03C1
+  JMP l1BDA
+.l1CC8
+  JMP l1D41
+.l1CCB
+  LDA #&07
+.l1CCD
+  STA &033A
+  LDA #&0C
+  STA &033B
+  JSR l3154
+  BCC l1CFC
+  LDA &03C1
+  CMP #&02
+  BNE l1CE9
+  LDA #&00
+  STA &03C1
+  JMP l1CF7
+.l1CE9
+  LDA &03C3
+  CMP #&0A
+  BCC l1CB9
+  LDA &03C9
+  CMP #&09
+  BCC l1CB9
+.l1CF7
+  LDA &033E
+  BNE l1CB9
+.l1CFC
+  LDA #&0C
+  STA &033B
+  JSR l3154
+  BCS l1CB9
+  LDA #&0C
+  STA &033B
+  JSR l3154
+  BCC l1D12
+  BNE l1CB9
+.l1D12
+  LDA #&0D
+  STA &033B
+  JSR l3154
+  BCC l1D1E
+  BNE l1CB9
+.l1D1E
+  LDA &03C9
+  BEQ l1D2E
+  CMP #&09
+  BCS l1D2E
+  LDA &033F
+  AND #&40
+  BNE l1CB9
+.l1D2E
+  LDA &03C7
+  CMP #&01
+  BNE l1D3B
+  INC &0352
+  JMP l1D41
+.l1D3B
+  DEC &0352
+  JMP l1D41
+.l1D41
+  LDA &03C8
+  CMP #&02
+  BNE l1D7C
+  LDA &03C9
+  CMP #&09
+  BCC l1D7C
+  AND #&07
+  BNE l1D7C
+  LDA #&16
+  STA &033B
+  LDA #&00
+  STA &033A
+.l1D5D
+  INC &033A
+  LDA &033A
+  CMP #&06
+  BCS l1D7C
+  JSR l3154
+  BCC l1D5D
+  BEQ l1D5D
+  LDA #&00
+  STA &03C8
+  STA &03C7
+  STA &03C9
+  STA &03C3
+.l1D7C
+  LDA #&15
+  STA &033B
+.l1D81
+  LDA #&01
+  STA &033A
+.l1D86
+  INC &033A
+  LDA &033A
+  CMP #&06
+  BCS l1D9D
+  JSR l3154
+  BCC l1D86
+  BEQ l1D86
+  DEC &035C
+  JMP l1D41
+.l1D9D
+  DEC &033B
+  LDA &033B
+  CMP #&12
+  BCS l1D81
+  LDA &0352
+  CMP #&39
+  BCC l1DB9
+  LDA #&02
+  STA &0352
+  INC &03E5
+  JMP l1DFC
+.l1DB9
+  CMP #&02
+  BCS l1DC8
+  LDA #&38
+  STA &0352
+  DEC &03E5
+  JMP l1DFC
+.l1DC8
+  LDA &035C
+  CMP #&80
+  BCC l1E1D
+  CMP #&C0
+  BCS l1DE7
+  LDA #&00
+  STA &035C
+  LDA &03E5
+  SEC
+  SBC #&10
+  STA &03E5
+  JSR l2A01
+  JMP l1DFC
+.l1DE7
+  LDA &035C
+  CMP #&C0
+  BCC l1E1D
+  LDA #&72
+  STA &035C
+  LDA &03E5
+  CLC
+  ADC #&10
+  STA &03E5
+.l1DFC
+  LDA &03E5
+  CMP #&45
+  BEQ l1E12
+  STA &03B8
+  LDA &0352
+  STA &03D6
+  LDA &035C
+  STA &03D7
+.l1E12
+  LDA #&00
+  STA &03E0
+  LDA &03E5
+  JSR l2F22
+.l1E1D
+  LDA &035C
+  CLC
+  ADC #&5A
+  STA &D001
+  LDA &0352
+  ASL  A
+  ASL  A
+  CLC
+  ADC #&38
+  STA &D000
+  BCC l1E3B
+  LDA SPR_MSB_X
+  ORA #&01
+  JMP l1E40
+.l1E3B
+  LDA SPR_MSB_X
+  AND #&FE
+.l1E40
+  STA SPR_MSB_X
+  LDA &03C8
+  BNE l1E55
+  LDA &03C7
+  BNE l1E7E
+  LDA &03C4
+  AND #&01
+  JMP l1E9E
+.l1E55
+  CMP #&02
+  BNE l1E7E
+  LDA &03C7
+  BNE l1E63
+  LDA #&02
+  JMP l1E6E
+.l1E63
+  CMP #&01
+  BNE l1E6C
+  LDA #&1A
+  JMP l1E6E
+.l1E6C
+  LDA #&22
+.l1E6E
+  STA &FF
+  LDA &03C9
+  SEC
+  SBC #&01
+  AND #&07
+  CLC
+  ADC &FF
+  JMP l1E9E
+.l1E7E
+  LDA &03C2
+  BEQ l1E9E
+  JSR l2AB7
+  LDA &03C2
+  CMP #&01
+  BNE l1E92
+  LDA #&0A
+  JMP l1E94
+.l1E92
+  LDA #&12
+.l1E94
+  STA &FF
+  LDA &03C4
+  AND #&07
+  CLC
+  ADC &FF
+.l1E9E
+  JSR l2A7F
+  STA &5FF8
+  LDA #&FF
+  STA SPR_ENABLE
+  LDA &03C7
+  CMP #&02
+  BEQ l1ECC
+  LDX #&43
+  JSR l39D4
+  BCC l1ECC
+  LDA #&26
+  JSR l357D
+  LDA #&00
+  STA &03C7
+  STA &03C8
+  LDA #&05
+  STA &03C0
+  JMP l1B68
+.l1ECC
+  LDX #&41
+  JSR l39D4
+  BCC l1EE8
+  LDA #&16
+  STA &C6DD
+  STA &C6DE
+  LDA #&FF
+  STA &C6DF
+  LDA #&02
+  JSR l357D
+  JMP l1F33
+.l1EE8
+  LDA &03E5
+  CMP #&29
+  BNE l1F33
+  LDA &0352
+  CMP #&34
+  BCC l1F33
+  LDA #&29
+  CMP &C6E0
+  BEQ l1F33
+  STA &C6E0
+  LDA #&5A
+  STA &C766
+  LDA #&78
+  STA &C7EC
+  LDA #&44
+  STA &C872
+  LDA #&FF
+  STA &C6E1
+  LDX #&42
+  JSR l29D3
+  LDA #&1F
+  JSR l357D
+  LDA #&00
+  STA &03C7
+  STA &03C8
+  LDA #&05
+  STA &03C0
+  LDA #&24
+  STA &C6D5
+  JMP l1B68
+.l1F33
+  LDA #&FF
+  STA &03D9
+  STA &18DE
+  LDA &03C7
+  BNE l1F48
+  LDA &03C8
+  BNE l1F48
+  JMP l1F50
+.l1F48
+  LDA &03C0
+  AND #&EF
+  STA &03C0
+.l1F50
+  LDA &03C0
+  AND #&10
+  BNE l1F5A
+  JMP l24A0
+.l1F5A
+  LDX #&00
+.l1F5C
+  LDA &0352
+  CLC
+  ADC #&1E
+  STA &033A
+  CLC
+  ADC #&08
+  STA &033C
+  LDA &035C
+  CLC
+  ADC #&1A
+  STA &033B
+  CLC
+  ADC #&22
+  STA &033D
+.l1F7A
+  LDA &C69E,X
+  CMP &03E5
+  BNE l1FA9
+  LDA &C830,X
+  AND #&80
+  BNE l1FA9
+  LDA &C724,X
+  CMP &033A
+  BCC l1FA9
+  CMP &033C
+  BCS l1FA9
+  LDA &C7AA,X
+  CMP &033B
+  BCC l1FA9
+  CMP &033D
+  BCS l1FA9
+  STX &18DE
+  JMP l1FB3
+.l1FA9
+  INX
+  CPX #&3F
+  BCC l1F7A
+  LDX #&FF
+  STX &18DE
+.l1FB3
+  LDX #&5E
+  JSR l39D4
+  BCC l1FD1
+  LDY #&0A
+  LDA &C6AE
+  CMP #&65
+  BNE l1FCA
+  LDA #&44
+  STA &C6AE
+  LDY #&09
+.l1FCA
+  TYA
+  JSR l357D
+  JMP l24A0
+.l1FD1
+  LDX #&55
+  JSR l39D4
+  BCC l1FE0
+  LDA #&12
+  JSR l357D
+  JMP l24A0
+.l1FE0
+  LDX #&53
+  JSR l39D4
+  BCC l1FFB
+  LDA &C883
+  CMP #&05
+  BNE l1FFB
+  LDA #&87
+  STA &C883
+  LDA #&16
+  JSR l357D
+  JMP l24A0
+.l1FFB
+  LDX #&4A
+  JSR l39D4
+  BCC l202B
+  LDA &C6AF
+  CMP #&65
+  BNE l2013
+  LDA #&2D
+  STA &C6AF
+  LDY #&05
+  JMP l2024
+.l2013
+  LDX #&4A
+  JSR l32EB
+  LDA #&3C
+  STA &C76E
+  LDA #&86
+  STA &C7F4
+  LDY #&06
+.l2024
+  TYA
+  JSR l357D
+  JMP l24A0
+.l202B
+  LDA &03E5
+  CMP #&54
+  BNE l2048
+  LDA &C6B4
+  CMP #&04
+  BEQ l2048
+  LDX #&44
+  JSR l39D4
+  BCC l2048
+  LDA #&20
+  JSR l357D
+  JMP l24A0
+.l2048
+  LDX #&63
+  JSR l39D4
+  BCC l2066
+  LDY #&10
+  LDA &C6A1
+  CMP #&65
+  BNE l205F
+  LDA #&58
+  STA &C6A1
+  LDY #&0F
+.l205F
+  TYA
+  JSR l357D
+  JMP l24A0
+.l2066
+  LDX #&5C
+  JSR l39D4
+  BCC l2084
+  LDY #&08
+  LDA &C88C
+  CMP #&07
+  BNE l207D
+  LDA #&87
+  STA &C88C
+  LDY #&07
+.l207D
+  TYA
+  JSR l357D
+  JMP l24A0
+.l2084
+  LDX #&64
+  JSR l39D4
+  BCC l20CE
+  LDA #&87
+  CMP &C894
+  BEQ l20CE
+  STA &C894
+  LDX #&64
+  JSR l29D3
+.l209A
+  LDX #&66
+  JSR l32EB
+  INC &C810
+  JSR l29D3
+  INX
+  JSR l32EB
+  INC &C811
+  LDA &C897
+  EOR #&80
+  STA &C897
+  JSR l29D3
+  LDX #&65
+  INC &C80F
+  JSR l29D3
+  LDA #&0A
+  JSR l31D6
+  LDA &C810
+  CMP #&8B
+  BCC l209A
+  JMP l24A0
+.l20CE
+  LDX #&46
+  JSR l39D4
+  BCC l20E2
+  LDX #&46
+  JSR l32EB
+  LDA #&FF
+  STA &C6E4
+  JMP l24A0
+.l20E2
+  JMP l2A2E
+.l20E5
+  LDX &18DE
+  CPX #&00
+  BNE l20F9
+  LDA #&04
+  STA &C69E
+.l20F1
+  LDA #&FF
+  STA &18DE
+  JMP l214C
+.l20F9
+  CPX #&02
+  BNE l2113
+  LDA &C832
+  CMP #&80
+  BCS l210E
+  ORA #&80
+  STA &C832
+  LDA #&15
+  JSR l357D
+.l210E
+  LDX #&03
+  JMP l1F5C
+.l2113
+  CPX #&0A
+  BNE l214C
+  LDX #&01
+.l2119
+  LDA &C69E,X
+  CMP #&04
+  BNE l213A
+  LDA &03E5
+  STA &C69E,X
+  LDA &0352
+  CLC
+  ADC #&21
+  AND #&FE
+  STA &C724,X
+  LDA &035C
+  CLC
+  ADC #&2D
+  STA &C7AA,X
+.l213A
+  INX
+  CPX #&3F
+  BCC l2119
+  LDA #&27
+  JSR l357D
+  LDA #&FF
+  STA &C6A8
+  JMP l20F1
+.l214C
+  LDX &18DE
+  CPX #&1A
+  BCC l215D
+  CPX #&38
+  BCS l215D
+  JSR l3997
+  JMP l24A0
+.l215D
+  CPX #&3F
+  BCS l21A0
+  LDA #&04
+  STA &C69E,X
+  CPX #&38
+  BCC l2177
+  LDA &C696,X
+  CMP #&65
+  BNE l2177
+  LDA &03E5
+  STA &C696,X
+.l2177
+  JSR l374F
+  LDA &C69E
+  LDX #&02
+  CMP #&04
+  BNE l2185
+  LDX #&04
+.l2185
+  LDA &18D9,X
+  CMP #&FF
+  BEQ l21A0
+  CMP #&00
+  BEQ l21A0
+  LDX &18D9
+  STX &03D9
+  LDA #&FF
+  STA &C69E,X
+  LDA #&3A
+  JSR l357D
+.l21A0
+  LDA #&00
+  STA SPR_ENABLE
+  JSR l3776
+  LDA &18D9
+  BEQ l21B4
+  LDA &03D9
+  CMP #&FF
+  BEQ l21C4
+.l21B4
+  LDA #&F0
+  JSR l31D6
+  LDA #&F0
+  JSR l31D6
+  JSR l2F39
+  JMP l242D
+.l21C4
+  LDA #&39
+  JSR l357D
+.l21C9
+  LDX #&00
+.l21CB
+  LDA &18D9,X
+  BEQ l21D4
+  INX
+  JMP l21CB
+.l21D4
+  STX &03D9
+.l21D7
+  LDA #&05
+  JSR l3A71
+  LDA #&3C
+  JSR l31D6
+.l21E1
+  JSR l33AA
+  LDA &03C0
+  AND #&1C
+  BEQ l21E1
+  AND #&10
+  BEQ l2202
+  LDX &03D9
+  LDA &18D9,X
+  BNE l21F9
+  LDA #&FF
+.l21F9
+  STA &03D9
+  JSR l2F39
+  JMP l222E
+.l2202
+  LDA #&03
+  JSR l3A71
+  LDA &03C0
+  AND #&04
+  BEQ l221B
+  DEC &03D9
+  LDX &03D9
+  CPX #&FA
+  BCS l21C9
+  JMP l21D7
+.l221B
+  LDX &03D9
+  INC &03D9
+  LDA &18D9,X
+  BNE l21D7
+  LDA #&00
+  STA &03D9
+  JMP l21D7
+.l222E
+  LDX #&3F
+  JSR l39D4
+  BCC l225C
+  LDA &03D9
+  CMP #&06
+  BEQ l2244
+  LDA #&03
+  JSR l357D
+  JMP l242D
+.l2244
+  LDA #&16
+  STA &C69F
+  JSR l29C1
+  LDA #&FF
+  STA &C6DD
+  STA &C6DE
+  LDA #&04
+  JSR l357D
+  JMP l242D
+.l225C
+  LDA &03D9
+  CMP #&12
+  BNE l2275
+  LDX #&42
+  JSR l39D4
+  BCC l2272
+  JSR l29C1
+  LDA #&01
+  JSR l357D
+.l2272
+  JMP l242D
+.l2275
+  CMP #&14
+  BNE l2295
+  LDX #&44
+  JSR l39D4
+  BCC l2272
+  JSR l29C1
+  LDA #&11
+  JSR l357D
+  LDA #&54
+  STA &C6E2
+  LDA #&24
+  STA &C768
+  JMP l242D
+.l2295
+  CMP #&10
+  BNE l22B0
+  LDX #&56
+  JSR l39D4
+  BCC l2272
+  JSR l29C1
+  LDA #&7B
+  STA &C90C
+  LDA #&19
+  JSR l357D
+  JMP l242D
+.l22B0
+  CMP #&17
+  BCC l22E2
+  CMP #&1A
+  BCS l22E2
+  LDX #&4F
+  JSR l39D4
+  BCC l2272
+  LDA &C7F5
+  SEC
+  SBC #&05
+  STA &C7F5
+  STA &C7F6
+  STA &C7F7
+  LDA &C7F8
+  SEC
+  SBC #&05
+  STA &C7F8
+  JSR l29C1
+  LDA #&1A
+  JSR l357D
+  JMP l242D
+.l22E2
+  CMP #&16
+  BNE l2307
+  LDX &03E5
+  CPX #&54
+  BNE l2307
+  LDX #&44
+  JSR l39D4
+  BCC l2304
+  JSR l29C1
+  LDA #&FF
+  STA &C700
+  STA &C6E2
+  LDA #&21
+  JSR l357D
+.l2304
+  JMP l242D
+.l2307
+  CMP #&05
+  BNE l2324
+  LDX #&52
+  JSR l39D4
+  BCC l2304
+  LDA #&17
+  JSR l357D
+  LDA #&87
+  STA &C835
+  LDA #&FF
+  STA &C6F0
+  JMP l242D
+.l2324
+  CMP #&03
+  BNE l233F
+  LDX #&57
+  JSR l39D4
+  BCC l2304
+  JSR l29C1
+  LDA #&FF
+  STA &C6F5
+  LDA #&22
+  JSR l357D
+  JMP l242D
+.l233F
+  CMP #&01
+  BNE l2365
+  LDX #&02
+  JSR l39D4
+  BCC l2304
+  JSR l29C1
+  LDA #&14
+  JSR l357D
+  JMP l242D
+.l2355
+  LDA #&00
+  STA &03C7
+  STA &03C8
+  LDA #&05
+  STA &03C0
+  JMP l1B68
+.l2365
+  CMP #&04
+  BNE l23A7
+  LDA &C834
+  CMP #&01
+  BNE l238E
+  LDA &C69F
+  CMP #&FF
+  BNE l23C5
+  LDX #&02
+  JSR l39D4
+  BCC l23C5
+  JSR l29C1
+  LDA #&3A
+  STA &C721
+  LDA #&13
+  JSR l357D
+  JMP l2355
+.l238E
+  LDX #&5D
+  JSR l39D4
+  BCC l23C5
+  LDA #&01
+  STA &C834
+  LDA #&FF
+  STA &03D9
+  LDA #&1C
+  JSR l357D
+  JMP l242D
+.l23A7
+  CMP #&0C
+  BCC l23C8
+  CMP #&10
+  BCS l23C8
+  CLC
+  ADC #&4C
+  TAX
+  JSR l39D4
+  BCC l23C5
+  LDA #&07
+  STA &C830,X
+  JSR l29C1
+  LDA #&1B
+  JSR l357D
+.l23C5
+  JMP l242D
+.l23C8
+  CMP #&09
+  BNE l23E0
+  LDX #&47
+  JSR l39D4
+  BCC l23C5
+  LDA #&1E
+  JSR l357D
+  LDA #&86
+  STA &C839
+  JMP l242D
+.l23E0
+  CMP #&08
+  BNE l23FB
+  LDX #&49
+  JSR l39D4
+  BCC l23C5
+  JSR l29C1
+  LDA #&FF
+  STA &C6E6
+  LDA #&23
+  JSR l357D
+  JMP l242D
+.l23FB
+  CMP #&0B
+  BNE l2417
+  LDA #&5E
+  CMP &03E5
+  BNE l23C5
+  STA &C708
+  STA &C709
+  JSR l29C1
+  LDA #&25
+  JSR l357D
+  JMP l242D
+.l2417
+  CMP #&11
+  BNE l242D
+  LDA #&36
+  CMP &03E5
+  BNE l242D
+  JSR l29C1
+  LDA #&18
+  JSR l357D
+  JMP l242D
+.l242D
+  LDX #&73
+  STX &03DB
+.l2432
+  JSR l39D4
+  BCC l243F
+  LDX #&FF
+  STX &03D9
+  JMP l2449
+.l243F
+  INC &03DB
+  LDX &03DB
+  CPX #&7B
+  BCC l2432
+.l2449
+  LDX &03D9
+  CPX #&13
+  BNE l245B
+  JSR l29C1
+  LDA #&28
+  JSR l357D
+  JMP l24A0
+.l245B
+  CPX #&FF
+  BEQ l24A0
+  LDA #&3F
+  STA &03DD
+  LDA #&00
+  STA &03D5
+.l2469
+  LDA GFX_RASTER_LINE
+  CMP #&FA
+  BCC l2469
+  JSR l3329
+  LDX &03D9
+  LDA &03E5
+  STA &C69E,X
+  LDA &0352
+  CLC
+  ADC #&21
+  AND #&FE
+  STA &C724,X
+  LDA &035C
+  CLC
+  ADC #&2D
+  STA &C7AA,X
+  LDA #&3F
+  STA &03DD
+  LDA #&FF
+  STA &03D5
+  JSR l3329
+  JSR l3090
+.l24A0
+  LDX #&00
+  STX &03B7
+.l24A5
+  LDA &18F8,X
+  TAX
+  JSR l39D4
+  BCC l24B7
+  LDX &03B7
+  LDA &1903,X
+  JMP l2572
+.l24B7
+  INC &03B7
+  LDX &03B7
+  CPX #&0B
+  BCC l24A5
+  LDA &C90C
+  CMP #&7C
+  BNE l24D4
+  LDX #&56
+  JSR l39D4
+  BCC l24D4
+  LDA #&31
+  JMP l2572
+.l24D4
+  LDA &03E5
+  CMP #&28
+  BEQ l24E2
+  CMP #&36
+  BEQ l24EC
+  JMP l2527
+.l24E2
+  LDA &C839
+  AND #&80
+  BEQ l24F3
+  JMP l24FF
+.l24EC
+  LDA &C6AF
+  CMP #&FF
+  BEQ l24FF
+.l24F3
+  LDX #&72
+  JSR l39D4
+  BCC l24FF
+  LDA #&2D
+  JMP l2572
+.l24FF
+  LDA &035C
+  CMP #&58
+  BCC l2527
+  LDA &03BA
+  BEQ l2527
+  LDA &0352
+  CLC
+  ADC #&23
+  CMP #&31
+  BCC l2527
+  CMP &03BA
+  BCC l2527
+  SEC
+  SBC #&04
+  CMP &03BA
+  BCS l2527
+  LDA #&2E
+  JMP l2572
+.l2527
+  LDA #&02
+  STA &033A
+.l252C
+  LDA #&06
+  STA &033B
+  JSR l3154
+  LDA &033F
+  AND #&30
+  BNE l2554
+  LDA #&0D
+  STA &033B
+  JSR l3154
+  LDA &033F
+  AND #&30
+  BNE l2554
+  INC &033A
+  LDA &033A
+  CMP #&06
+  BCC l252C
+.l2554
+  LDA &033F
+  AND #&20
+  BEQ l2560
+  LDA #&2F
+  JMP l2572
+.l2560
+  LDA &033F
+  AND #&10
+  BEQ l25C7
+  LDA #&34
+  LDY &03E5
+  CPY #&4D
+  BEQ l2572
+  LDA #&30
+.l2572
+  STA &03B7
+  CMP #&35
+  BNE l258A
+  LDA &03E5
+  CMP #&5E
+  BNE l258A
+  LDA &C6A9
+  CMP #&FF
+  BNE l258A
+  JMP l25C7
+.l258A
+  LDA #&04
+  STA &0B00
+  JSR l34E2
+  LDA #&29
+  JSR l357D
+  LDA &03B7
+  JSR l357D
+  LDA #&07
+  STA &03B7
+.l25A2
+  LDA #&FA
+  JSR l31D6
+  DEC &03B7
+  BNE l25A2
+  LDA &03B9
+  BNE l25B4
+  JMP l1927
+.l25B4
+  DEC &03B9
+  JSR l2F22
+  JSR l346B
+  LDA &2B48
+  BNE l25C7
+  LDA #&02
+  STA &0B00
+.l25C7
+  LDA &03E5
+  CMP #&24
+  BNE l2629
+  LDA &C6E3
+  CMP #&FF
+  BEQ l2629
+  LDA &03E5
+  CMP &C6B3
+  BNE l2601
+  LDA &C7BF
+  CMP #&64
+  BCS l2601
+  LDA &C739
+  CLC
+  ADC #&04
+  CMP &C769
+  BCC l2601
+  LDA #&FF
+  STA &C6B3
+  LDA &C875
+  ORA #&80
+  STA &C875
+  LDA #&1D
+  JSR l357D
+.l2601
+  LDX #&45
+  LDA &C875
+  AND #&80
+  BEQ l263E
+  JSR l32EB
+  INC &C769
+  JSR l3306
+  LDA &C6B3
+  CMP #&FF
+  BNE l262C
+  LDA &C769
+  CMP #&60
+  BCC l2650
+  JSR l32EB
+  LDA #&FF
+  STA &C6E3
+.l2629
+  JMP l2650
+.l262C
+  LDA &C769
+  CMP #&4F
+  BCC l2650
+.l2633
+  LDA &C875
+  EOR #&80
+  STA &C875
+  JMP l2650
+.l263E
+  LDX #&45
+  JSR l32EB
+  DEC &C769
+  JSR l3306
+  LDA &C769
+  CMP #&2F
+  BCC l2633
+.l2650
+  LDA &03E5
+  CMP #&35
+  BNE l267A
+  LDA &C6AE
+  CMP #&FF
+  BEQ l267A
+  LDA &03C4
+  LSR  A
+  LSR  A
+  AND #&07
+  CMP #&06
+  BCC l266B
+  LDA #&01
+.l266B
+  AND #&01
+  EOR #&01
+  CLC
+  ADC #&7B
+  STA &C90C
+  LDX #&56
+  JSR l29D3
+.l267A
+  LDA &03E5
+  CMP #&33
+  BNE l26BE
+  LDA &C883
+  CMP #&05
+  BEQ l26BE
+  LDA &C884
+  AND #&80
+  BNE l26AE
+  LDX #&54
+  JSR l32EB
+  DEC &C7FE
+  LDA &C7FE
+  CMP #&61
+  BCS l26A6
+.l269E
+  LDA &C884
+  EOR #&80
+  STA &C884
+.l26A6
+  LDX #&54
+  JSR l29D3
+  JMP l26BE
+.l26AE
+  LDA &C7FE
+  CMP #&88
+  BCS l269E
+  CLC
+  ADC #&04
+  STA &C7FE
+  JMP l26A6
+.l26BE
+  LDA &03E5
+  CMP #&2D
+  BNE l26E8
+  LDA &C76E
+  CMP #&46
+  BCS l26E8
+  LDA &03C4
+  AND #&03
+  BNE l26E8
+  LDX #&4A
+  JSR l32EB
+  LDA &03C4
+  AND #&04
+  CLC
+  ADC #&86
+  STA &C7F4
+  LDX #&4A
+  JSR l29D3
+.l26E8
+  LDX #&00
+  LDA &03BE
+  BEQ l26F2
+  JMP l2767
+.l26F2
+  LDA &18E8,X
+  CMP &03E5
+  BNE l2762
+  LDA &C888,X
+  CMP #&07
+  BNE l2762
+  STX &03B7
+  TXA
+  ASL  A
+  CLC
+  ADC #&73
+  TAX
+  LDA &C831,X
+  AND #&80
+  BNE l273F
+  INC &C7AA,X
+  JSR l29D3
+  INX
+  JSR l32EB
+  INC &C7AA,X
+  JSR l29D3
+  LDY &03B7
+  LDA &C7AA,X
+  STA &18F4,Y
+  CMP &18F0,Y
+  BCC l2767
+.l272F
+  LDA &C830,X
+  EOR #&80
+  STA &C830,X
+  LDA #&10
+  STA &03BE
+  JMP l2767
+.l273F
+  DEC &C7AA,X
+  JSR l29D3
+  INX
+  JSR l32EB
+  DEC &C7AA,X
+  JSR l29D3
+  LDY &03B7
+  LDA &C7AA,X
+  STA &18F4,Y
+  CMP &18EC,Y
+  BEQ l272F
+  BCC l272F
+  JMP l2767
+.l2762
+  INX
+  CPX #&04
+  BCC l26F2
+.l2767
+  LDA &03E5
+  CMP #&31
+  BEQ l2771
+  JMP l2809
+.l2771
+  LDX #&50
+  JSR l3306
+  LDA &C7FA
+  CMP #&38
+  BNE l279B
+  LDA &C774
+  CMP #&3D
+  BCS l279E
+  CMP #&2E
+  BCC l279E
+  LDA &0352
+  CLC
+  ADC #&1C
+  CMP &C774
+  BEQ l279B
+  CLC
+  ADC #&01
+  CMP &C774
+  BNE l279E
+.l279B
+  JMP l27DF
+.l279E
+  LDA &C774
+  CMP #&23
+  BCC l27A9
+  CMP #&50
+  BCC l27B1
+.l27A9
+  LDA &C880
+  EOR #&80
+  STA &C880
+.l27B1
+  LDA &C880
+  AND #&80
+  BNE l27C1
+  INC &C774
+  INC &C774
+  JMP l27C7
+.l27C1
+  DEC &C774
+  DEC &C774
+.l27C7
+  LDA &03C4
+  LSR  A
+  AND #&03
+  CMP #&03
+  BNE l27D3
+  LDA #&01
+.l27D3
+  CLC
+  ADC #&61
+  STA &C906
+  JSR l3306
+  JMP l2809
+.l27DF
+  LDA &C7FA
+  CLC
+  ADC #&08
+  STA &C7FA
+  LDA &0352
+  CLC
+  ADC #&1C
+  CMP &C774
+  BCC l27FE
+  LDA &C880
+  AND #&7F
+  STA &C880
+  JMP l27B1
+.l27FE
+  LDA &C880
+  ORA #&80
+  STA &C880
+  JMP l27B1
+.l2809
+  LDA &03E5
+  CMP #&32
+  BNE l283A
+  LDA &03C4
+  AND #&01
+  BEQ l283A
+  LDA &C6A3
+  CMP #&FF
+  BEQ l283A
+  LDX #&51
+  LDA &035C
+  CMP #&68
+  BCS l283D
+  LDA &C6F0
+  CMP #&FF
+  BEQ l283D
+  LDA &C775
+  CMP #&37
+  BCS l2847
+  LDA #&00
+  STA &03BD
+.l283A
+  JMP l28B0
+.l283D
+  LDA &03BD
+  CMP #&28
+  BCS l2847
+  INC &03BD
+.l2847
+  LDA #&00
+  STA &03DC
+  JSR l3306
+  LDA &03C4
+  LSR  A
+  AND #&01
+  CLC
+  ADC #&66
+  STA &C907
+  LDA &03BD
+  CMP #&20
+  BCC l28A8
+  LDA &C881
+  AND #&80
+  BNE l2872
+  INC &C775
+  INC &C775
+  JMP l2878
+.l2872
+  DEC &C775
+  DEC &C775
+.l2878
+  LDA &C775
+  CMP #&37
+  BCC l2883
+  CMP #&4E
+  BCC l28A8
+.l2883
+  LDA &C881
+  EOR #&80
+  STA &C881
+  LDA &C775
+  CMP #&4E
+  BNE l28A8
+  LDA &C835
+  AND #&80
+  BEQ l28A8
+  LDA #&FF
+  STA &C6A3
+  LDA #&92
+  STA &C881
+  LDX #&51
+  JSR l32EB
+.l28A8
+  LDA #&00
+  STA &03DC
+  JSR l3306
+.l28B0
+  LDA &03E5
+  CMP #&28
+  BEQ l28C3
+  CMP #&36
+  BEQ l28D2
+  LDA #&00
+  STA &03BA
+  JMP l295E
+.l28C3
+  LDA &C839
+  CMP #&80
+  BCC l28E1
+  LDA &03BB
+  BNE l28E1
+  JMP l295E
+.l28D2
+  LDA &C6AF
+  CMP #&FF
+  BNE l28E1
+  LDA &03BB
+  BNE l28E1
+  JMP l2993
+.l28E1
+  LDA &C928
+  CMP #&6D
+  BEQ l28EB
+  JMP l295E
+.l28EB
+  LDA &03C4
+  AND #&01
+  BEQ l28F5
+  JMP l295E
+.l28F5
+  LDX #&72
+.l28F7
+  JSR l32EB
+  DEX
+  CPX #&6C
+  BCS l28F7
+  LDX #&72
+.l2901
+  STX &FF
+  LDA #&72
+  SEC
+  SBC &FF
+  CMP &03BB
+  BEQ l290F
+  BCS l2925
+.l290F
+  LDA &C89C
+  AND #&20
+  BNE l291F
+  DEC &C7AA,X
+  DEC &C7AA,X
+  JMP l2925
+.l291F
+  INC &C7AA,X
+  INC &C7AA,X
+.l2925
+  LDA #&00
+  STA &03DC
+  JSR l3306
+  DEX
+  CPX #&6C
+  BCS l2901
+  LDA &C89C
+  AND #&20
+  BNE l2949
+  INC &03BB
+  LDA &03BB
+  CMP #&07
+  BCC l295E
+  DEC &03BB
+  JMP l2956
+.l2949
+  DEC &03BB
+  LDA &03BB
+  CMP #&FF
+  BNE l295E
+  INC &03BB
+.l2956
+  LDA &C89C
+  EOR #&20
+  STA &C89C
+.l295E
+  LDA &03E5
+  CMP #&28
+  BNE l296F
+  LDA &C6E4
+  CMP #&FF
+  BNE l2993
+  JMP l297F
+.l296F
+  CMP #&36
+  BNE l2993
+  LDA &03BB
+  BNE l2993
+  JSR l326A
+  CMP #&01
+  BNE l2993
+.l297F
+  LDA &03BA
+  BNE l2993
+  LDA #&42
+  STA &03BA
+  LDA #&6E
+  STA &C928
+  LDX #&72
+  JSR l3306
+.l2993
+  LDA &03BA
+  BEQ l29BA
+  DEC &03BA
+  DEC &03BA
+  LDA &03BA
+  CMP #&2A
+  BCS l29B7
+  LDA #&00
+  STA &03BA
+  LDA #&6D
+  STA &C928
+  LDX #&72
+  JSR l3306
+  JMP l29BA
+.l29B7
+  JSR l3A9F
+.l29BA
+  NOP
+  JSR l38B1
+  JMP l1A25
+.l29C1
+  STX &034E
+  LDX &03D9
+  LDA #&FF
+  STA &C69E,X
+  STA &03D9
+  LDX &034E
+  RTS
+
+.l29D3
+  LDA #&58
+  STA &03DC
+  JSR l3306
+  LDA #&00
+  STA &03DC
+  JSR l3306
+  RTS
+
+.l29E4
+  LDA #&80
+  STA &C7BB
+  LDA #&52
+  STA &C735
+  LDA #&FF
+  STA &C6A5
+  LDA #&0F
+  STA &C875
+  STA &C880
+  LDA #&0A
+  STA &C881
+  RTS
+
+.l2A01
+  LDA &03E5
+  CMP #&17
+  BEQ l2A11
+  CMP #&07
+  BNE l2A2D
+  LDA #&37
+  STA &03E5
+.l2A11
+  LDA #&72
+  STA &035C
+  LDA #&01
+  STA &03C7
+  STA &03C2
+  LDA #&02
+  STA &03C8
+  LDA #&01
+  STA &03C9
+  LDA #&11
+  STA &03C3
+.l2A2D
+  RTS
+
+.l2A2E
+  LDX #&67
+  JSR l39D4
+  BCS l2A38
+  JMP l20E5
+.l2A38
+  LDA &03E5
+  CMP #&5E
+  BNE l2A68
+  LDA #&0B
+  JSR l357D
+  LDA #&49
+  STA &C705
+  LDA #&32
+  STA &C78B
+  LDA #&4D
+  STA &C811
+  LDA #&00
+  STA SPR_ENABLE
+  JSR l3849
+  LDA #&0C
+  JSR l357D
+  LDA #&02
+  STA &0B00
+  JMP l24A0
+.l2A68
+  LDA &18E5
+  CMP #&03
+  BNE l2A77
+  LDA #&0E
+  JSR l357D
+  JMP l1927
+.l2A77
+  LDA #&0D
+  JSR l357D
+  JMP l24A0
+.l2A7F
+  LDY &03E5
+  CPY #&19
+  BCC l2A87
+  RTS
+.l2A87
+  LDY #&00
+  STY &FC
+  LDX #&06
+.l2A8D
+  CLC
+  ROL  A
+  ROL &FC
+  DEX
+  BNE l2A8D
+  STA &FB
+  LDA &FC
+  CLC
+  ADC #&40
+  STA &FC
+  LDY #&00
+  LDX #&3E
+.l2AA1
+  LDA (&FB),Y
+  STX &FF
+  TAX
+  LDA flip_lut,X
+  LDX &FF
+  STA &4A80,X
+  DEX
+  INY
+  CPY #&3F
+  BCC l2AA1
+  LDA #&2A
+  RTS
+
+.l2AB7
+  LDA &2B48
+  BNE l2ABD
+.l2ABC
+  RTS
+.l2ABD
+  LDA &03C4
+  AND #&01
+  BEQ l2ABC
+  LDA &03C8
+  CMP #&02
+  BCS l2ABC
+  SEI
+  LDA #&00
+  STA &D404
+  LDA #&09
+  STA &D418
+  LDA &03C4
+  AND #&02
+  ASL  A
+  CLC
+  ADC #&06
+  STA &D401
+  LDA #&00
+  STA &D406
+  LDA #&10
+  STA &D405
+  LDA #&81
+  STA &D404
+  CLI
+.v2AF2
+  RTS
+
+  ; No idea what this is
+.v2AF3
+  EQUB &00, &00, &b8, &00, &00, &00, &81, &00, &80
+.v2B13
+.v2B14
+.v2B1E
+.v2B28
+
+ORG &2B32
+
+.l2B32
+  SEI
+  LDA #&49
+  STA &0314 ; ISR
+  LDA #&2B
+  STA &0315 ; ISR
+  LDA #&00
+  STA &2B48
+  STA &0B00
+  CLI
+  RTS
+
+.v2B47
+  EQUB 142
+.v2B48
+  EQUB 0
+
+  INC &2B47
+  LDA &2B47
+  AND #&07
+  CMP #&07
+  BEQ l2B58
+  JSR l0B01
+.l2B58
+  JMP &EA31 ; KERNAL ISR
+.l2B5B
+  STA &FB
+  STA &0340
+  STX &0345
+  LDA &033A
+  CMP #&5D
+  BCC l2B6B
+  RTS
+.l2B6B
+  JSR l3893
+  BCC l2B71
+  RTS
+.l2B71
+  STA &B5
+  LDA &033B
+  LSR  A
+  LSR  A
+  LSR  A
+  TAX
+  LDA &0340
+  CMP #&5B
+  BCC l2BAB
+  CMP #&60
+  BCS l2BAB
+  LDA &03DA
+  BEQ l2B8F
+  CMP &033A
+  BCC l2B95
+.l2B8F
+  LDA &033A
+  STA &03DA
+.l2B95
+  STX &03E0
+  LDA &033F
+  ORA #&10
+  STA &033F
+  LDA &033B
+  AND #&F8
+  STA &033B
+  JMP l2BD5
+.l2BAB
+  CMP #&73
+  BNE l2BD5
+  LDY &03DC
+  BEQ l2BD5
+  LDY &2B13
+  CPY #&0A
+  BCS l2BD5
+  LDA &033A
+  STA &2B14,Y
+  LDA &033B
+  STA &2B1E,Y
+  LDA &033C
+  ORA #&10
+  STA &2B28,Y
+  DEC &03BC
+  INC &2B13
+.l2BD5
+  LDA &189F,X
+  STA &FB
+  LDA &18B8,X
+  STA &FC
+  LDA &033B
+  AND #&07
+  CLC
+  ADC &FB
+  BCC l2BEB
+  INC &FC
+.l2BEB
+  SEC
+  SBC #&60
+  BCS l2BF2
+  DEC &FC
+.l2BF2
+  STA &FB
+  LDA &033A
+  AND #&FE
+  ASL  A
+  CLC
+  ASL  A
+  BCC l2C00
+  INC &FC
+.l2C00
+  CLC
+  ADC &FB
+  BCC l2C07
+  INC &FC
+.l2C07
+  STA &FB
+  LDA &033B
+  LSR  A
+  LSR  A
+  LSR  A
+  TAX
+  LDA &1828,X
+  SEC
+  SBC &03DC
+  STA &FE
+  LDA &180E,X
+  SEC
+  SBC #&0C
+  BCS l2C23
+  DEC &FE
+.l2C23
+  STA &FD
+  LDA &033A
+  LSR  A
+  CLC
+  ADC &FD
+  BCC l2C30
+  INC &FE
+.l2C30
+  STA &FD
+  STA &35
+  LDA &03DC
+  BNE l2C41
+  LDA &FE
+  SEC
+  SBC #&04
+  JMP l2C46
+.l2C41
+  LDA &FE
+  CLC
+  ADC #&54
+.l2C46
+  STA &36
+  LDY #&00
+  LDA (&B4),Y
+  STA &033D
+  LSR &033D
+  INY
+  LDA (&B4),Y
+  STA &033E
+  LDA &0340
+  CMP #&30
+  BCC l2C6D
+  CMP #&5B
+  BCS l2C6D
+  LDA #&01
+  STA &033D
+  LDA #&08
+  STA &033E
+.l2C6D
+  LDA &B4
+  CLC
+  ADC #&02
+  BCC l2C76
+  INC &B5
+.l2C76
+  STA &B4
+  JSR l2DCF
+  LDA &03E2
+  BNE l2C83
+  STA &03DF
+.l2C83
+  LDA #&00
+  STA &034A
+  LDA &033D
+  STA &034B
+  LDA &033A
+  AND #&FE
+  CMP #&22
+  BCS l2CA2
+  STA &FF
+  LDA #&22
+  SEC
+  SBC &FF
+  LSR  A
+  STA &034A
+.l2CA2
+  LDA &033A
+  AND #&FE
+  STA &FF
+  LDA #&5E
+  SEC
+  SBC &FF
+  LSR  A
+  CMP &034B
+  BCS l2CB7
+  STA &034B
+.l2CB7
+  LDA #&00
+  STA &0349
+.l2CBC
+  LDA &033B
+  CMP &03E3
+  BCS l2CC7
+  JMP l2D29
+.l2CC7
+  LDY #&00
+.l2CC9
+  LDA (&B4),Y
+  STA &2AF3,Y
+  INY
+  CPY &033D
+  BCC l2CC9
+  LDA &033C
+  AND #&80
+  BEQ l2CDE
+  JSR l2E2E
+.l2CDE
+  LDA &033A
+  AND #&01
+  BEQ l2CE8
+  JSR l2D95
+.l2CE8
+  LDX &034A
+.l2CEB
+  LDA &1877,X
+  TAY
+  LDA &2AF3,X
+  AND &03DF
+
+  ; Polymorphic code
+.v2CF5
+  NOP
+.v2CF6
+  NOP
+
+  STA (&FB),Y
+  LDA &0349
+  BNE l2D23
+  TXA
+  TAY
+  LDA &033F
+  AND #&08
+  BNE l2D1A
+  LDA &03E2
+  BEQ l2D0E
+  STA (&FD),Y
+.l2D0E
+  LDA (&35),Y
+  AND #&30
+  ORA &033F
+  STA (&35),Y
+  JMP l2D23
+.l2D1A
+  LDA (&35),Y
+  AND #&F0
+  ORA &033F
+  STA (&35),Y
+.l2D23
+  INX
+  CPX &034B
+  BCC l2CEB
+.l2D29
+  DEC &033E
+  BNE l2D46
+.l2D2E
+  LDX &0345
+  LDA #&FF
+  STA &03DF
+  LDA #&00
+  STA &03DC
+  LDA #&30
+  STA &03E3
+  LDA #&B8
+  STA &03E1
+  RTS
+.l2D46
+  INC &033B
+  LDA &033B
+  CMP &03E1
+  BCS l2D2E
+  LDA &B4
+  CLC
+  ADC &033D
+  BCC l2D5B
+  INC &B5
+.l2D5B
+  STA &B4
+  LDA &033B
+  AND #&07
+  BEQ l2D73
+  INC &0349
+  INC &FB
+  BEQ l2D6E
+  JMP l2CBC
+.l2D6E
+  INC &FC
+  JMP l2CBC
+.l2D73
+  INC &FC
+  STA &0349
+  LDA &FB
+  CLC
+  ADC #&39
+  BCC l2D81
+  INC &FC
+.l2D81
+  STA &FB
+  LDA &FD
+  CLC
+  ADC #&28
+  BCC l2D8E
+  INC &FE
+  INC &36
+.l2D8E
+  STA &FD
+  STA &35
+  JMP l2CBC
+.l2D95
+  LDX &033D
+  LDA #&00
+  STA &2AF3,X
+.l2D9D
+  LDA &2AF2,X
+  ASL  A
+  ASL  A
+  ASL  A
+  ASL  A
+  ORA &2AF3,X
+  STA &2AF3,X
+  LDA &2AF2,X
+  LSR  A
+  LSR  A
+  LSR  A
+  LSR  A
+  STA &2AF2,X
+  DEX
+  BNE l2D9D
+  LDA &033D
+  CMP &034B
+  BCC l2DCE
+  LDA &033A
+  LSR  A
+  CLC
+  ADC &033D
+  CMP #&2F
+  BCS l2DCE
+  INC &034B
+.l2DCE
+  RTS
+
+.l2DCF
+  LDA &033C
+  AND #&07
+  TAX
+  LDA &1897,X
+  STA &03E2
+  BEQ l2DEC
+  LDA &033A
+  AND #&01
+  BEQ l2DEC
+  LDA &033C
+  ORA #&10
+  STA &033C
+.l2DEC
+  LDA &033C
+  AND #&40
+  BEQ l2DF9
+  ORA &033F
+  STA &033F
+.l2DF9
+  LDA &033C
+  AND #&20
+  BEQ l2E08
+  LDA &033F
+  ORA #&80
+  STA &033F
+.l2E08
+  LDA &033C
+  AND #&18
+  LSR  A
+  LSR  A
+  LSR  A
+  BNE l2E1A
+  LDA #&EA ; NOP
+  STA &2CF6
+  JMP l2E2A
+.l2E1A
+  LDX #&FB ; ?? ISC ?? - undocumented opcode
+  STX &2CF6
+  CMP #&01
+  BNE l2E28
+  LDA #&51 ; EOR
+  JMP l2E2A
+.l2E28
+  LDA #&11 ; ORA
+.l2E2A
+  STA &2CF5
+  RTS
+
+.l2E2E
+  LDX &033D
+  DEX
+  STX &0346
+  LDX #&00
+  STX &0347
+.l2E3A
+  LDX &0347
+  CPX &0346
+  BEQ l2E6E
+  BCS l2E78
+  LDA &2AF3,X
+  TAY
+  LDA flip_lut,Y
+  STA &FF
+  LDX &0346
+  LDA &2AF3,X
+  TAY
+  LDA flip_lut,Y
+  LDX &0347
+  STA &2AF3,X
+  LDX &0346
+  LDA &FF
+  STA &2AF3,X
+  DEC &0346
+  INC &0347
+  JMP l2E3A
+.l2E6E
+  LDA &2AF3,X
+  TAY
+  LDA flip_lut,Y
+  STA &2AF3,X
+.l2E78
+  RTS
+
+.l2E79
+  STA &0340
+  CMP #&65
+  BCC l2E81
+  RTS
+.l2E81
+  LDA #&80
+  STA &FC
+  LDA &0340
+  CLC
+  ADC &0340
+  BCC l2E90
+  INC &FC
+.l2E90
+  STA &FB
+  LDA #&CC
+  STA &B0
+  STA &B2
+  LDA #&80
+  STA &B1
+  STA &B3
+  LDY #&01
+  LDA (&FB),Y
+  CLC
+  ADC &B1
+  STA &B1
+  DEY
+  LDA (&FB),Y
+  CLC
+  ADC &B0
+  BCC l2EB1
+  INC &B1
+.l2EB1
+  STA &B0
+  LDY #&03
+  LDA (&FB),Y
+  CLC
+  ADC &B3
+  STA &B3
+  DEY
+  LDA (&FB),Y
+  CLC
+  ADC &B2
+  BCC l2EC6
+  INC &B3
+.l2EC6
+  STA &B2
+.l2EC8
+  LDA &B0
+  CMP &B2
+  BNE l2ED5
+  LDA &B1
+  CMP &B3
+  BNE l2ED5
+  RTS
+.l2ED5
+  LDY #&01
+  LDA #&03
+  STA &0342
+  LDA (&B0),Y
+  AND #&80
+  BNE l2EEE
+  LDY #&03
+  INC &0342
+  LDA (&B0),Y
+  EOR #&40
+  STA &03BF
+.l2EEE
+  LDA &03BF
+  STA &033C
+  LDA #&00
+  STA &033F
+  LDY #&02
+  LDA (&B0),Y
+  STA &033B
+  DEY
+  LDA (&B0),Y
+  AND #&7F
+  STA &033A
+  DEY
+  LDA #&58
+  STA &03DC
+  LDA (&B0),Y
+  JSR l2B5B
+  LDA &B0
+  CLC
+  ADC &0342
+  BCC l2F1D
+  INC &B1
+.l2F1D
+  STA &B0
+  JMP l2EC8
+.l2F22
+  JSR l37D0
+  JSR l3814
+  LDA &C6A3
+  CMP #&FF
+  BEQ l2F39
+  LDA #&36
+  STA &C775
+  LDA #&0A
+  STA &C881
+.l2F39
+  LDA #&00
+  STA &03BB
+  STA SPR_ENABLE
+  STA &03E0
+  STA &03DA
+  LDA &03C4
+  AND #&F8
+  STA &03C4
+  LDA #&38
+  STA &C7FA
+  LDA #&0F
+  STA &03BC
+  LDA #&00
+  STA &2B13
+  LDX #&00
+.l2F60
+  STA &2B14,X
+  STA &2B1E,X
+  STA &2B28,X
+  INX
+  CPX #&0A
+  BCC l2F60
+  LDA &03E5
+  CMP #&28
+  BNE l2F7A
+  LDA #&0C
+  JMP l2F80
+.l2F7A
+  CMP #&36
+  BNE l2FAA
+  LDA #&0A
+.l2F80
+  STA &FF
+  LDX #&6C
+.l2F84
+  LDA &03E5
+  STA &C69E,X
+  LDA &FF
+  STA &C830,X
+  LDA &C50C,X
+  STA &C7AA,X
+  INX
+  CPX #&73
+  BCC l2F84
+  LDA #&0B
+  STA &03BC
+  LDA &C8A2
+  AND #&07
+  STA &C8A2
+  JMP l2FAF
+.l2FAA
+  LDA #&6D
+  STA &C928
+.l2FAF
+  LDA SPR_COLLISION2
+  LDA SPR_COLLISION2
+  LDA #&FF
+  STA &03DF
+  JSR l3023
+  LDA &03E5
+  JSR l2E79
+  LDA &03E5
+  CMP #&24
+  BNE l2FD9
+  LDA &C6B2
+  CMP #&FF
+  BEQ l2FE9
+  LDA #&02
+  JSR l2E79
+  JMP l2FE9
+.l2FD9
+  CMP #&3A
+  BNE l2FE9
+  LDA &C6A2
+  CMP #&FF
+  BNE l2FE9
+  LDA #&01
+  JSR l2E79
+.l2FE9
+  LDA &03E5
+  CMP #&33
+  BNE l300A
+  LDA #&60
+  STA &C7FE
+.l2FF5
+  LDX #&54
+  JSR l3306
+  LDA &C7FE
+  CMP #&88
+  BCS l300A
+  CLC
+  ADC #&04
+  STA &C7FE
+  JMP l2FF5
+.l300A
+  LDA #&FF
+  STA &03D5
+  LDA #&86
+  STA &03DD
+  JSR l3329
+  JSR l30CD
+  JSR l3090
+  LDA #&FF
+  STA SPR_ENABLE
+  RTS
+
+.l3023
+  LDA #&06
+  STA &033A
+.l3028
+  LDX &033A
+  LDA &18B8,X
+  STA &FC
+  LDA &189F,X
+  CLC
+  ADC #&28
+  BCC l303A
+  INC &FC
+.l303A
+  STA &FB
+  LDA &1828,X
+  STA &FE
+  LDA &180E,X
+  CLC
+  ADC #&05
+  BCC l304B
+  INC &FE
+.l304B
+  STA &FD
+  STA &B0
+  STA &B2
+  LDA &FE
+  SEC
+  SBC #&04
+  STA &B1
+  SEC
+  SBC #&54
+  STA &B3
+  LDY #&F0
+  LDA #&00
+.l3061
+  DEY
+  STA (&FB),Y
+  CPY #&00
+  BNE l3061
+  LDY #&1E
+.l306A
+  DEY
+  STA (&B0),Y
+  STA (&FD),Y
+  LDA #&10
+  STA (&B2),Y
+  LDA #&00
+  CPY #&00
+  BNE l306A
+  INC &033A
+  LDA &033A
+  CMP #&17
+  BCC l3028
+  LDA #&00
+  TAX
+.l3086
+  STA &5800,X
+  STA &5900,X
+  INX
+  BNE l3086
+  RTS
+
+.l3090
+  LDX #&06
+.l3092
+  LDA &1828,X
+  STA &FC
+  SEC
+  SBC #&04
+  STA &36
+  SEC
+  SBC #&54
+  STA &FE
+  LDA &180E,X
+  STA &FB
+  STA &FD
+  STA &35
+  LDY #&22
+.l30AC
+  LDA (&35),Y
+  AND #&07
+  BEQ l30BE
+  STX &0346
+  TAX
+  LDA &1897,X
+  LDX &0346
+  BNE l30C0
+.l30BE
+  LDA (&FD),Y
+.l30C0
+  STA (&FB),Y
+  DEY
+  CPY #&04
+  BNE l30AC
+  INX
+  CPX #&17
+  BCC l3092
+  RTS
+
+.l30CD
+  LDX #&00
+  LDA #&58
+  STA &03DC
+.l30D4
+  LDA &18E8,X
+  CMP &03E5
+  BNE l310F
+  LDA &C888,X
+  CMP #&07
+  BNE l310F
+  STX &03DB
+  TXA
+  ASL  A
+  CLC
+  ADC #&73
+  TAX
+  LDA &C50C,X
+  STA &C7AA,X
+  LDA &C50D,X
+  STA &C7AB,X
+.l30F8
+  JSR l3306
+  LDA &C7AB,X
+  LDY &03DB
+  CMP &18F4,Y
+  BCS l3117
+  INC &C7AA,X
+  INC &C7AB,X
+  JMP l30F8
+.l310F
+  INX
+  CPX #&04
+  BCC l30D4
+  JMP l311B
+.l3117
+  INX
+  JSR l3306
+.l311B
+  LDA &03E5
+  CMP #&5E
+  BNE l313E
+  LDA &C894
+  CMP #&05
+  BEQ l313E
+  LDX #&65
+  LDA &C50C,X
+  STA &C7AA,X
+.l3131
+  JSR l3306
+  INC &C7AA,X
+  LDA &C7AA,X
+  CMP #&67
+  BCC l3131
+.l313E
+  RTS
+
+.l313F
+  STX &034E
+  LDA #&00
+  STA &0352,X
+  STA &035C,X
+  STA &0370,X
+  STA &0366,X
+  JSR l31EE
+  RTS
+
+.l3154
+  LDA &0352
+  CLC
+  ADC &033A
+  STA &033C
+  DEC &033C
+  LDA &035C
+  CLC
+  ADC &033B
+  CLC
+  ADC #&28
+  STA &033D
+  DEC &033D
+  LDA &033D
+  LSR  A
+  LSR  A
+  LSR  A
+  TAX
+  LDA &189F,X
+  STA &FB
+  LDA &18B8,X
+  STA &FC
+  LDA &180E,X
+  STA &FD
+  LDA &1828,X
+  SEC
+  SBC #&04
+  STA &FE
+  LDA &033D
+  AND #&07
+  CLC
+  ADC &FB
+  CLC
+  ADC #&20
+  STA &FB
+  LDA &033C
+  LSR  A
+  CLC
+  ADC #&04
+  TAY
+  LDA (&FD),Y
+  STA &033F
+  LDA &033C
+  AND #&01
+  BEQ l31B5
+  LDA #&0F
+  JMP l31B7
+.l31B5
+  LDA #&F0
+.l31B7
+  STA &033E
+  LDA &033C
+  LSR  A
+  TAX
+  LDA &1877,X
+  TAY
+  LDA (&FB),Y
+  AND &033E
+  STA &033E
+  LDA &033F
+  AND #&40
+  CMP #&01
+  LDA &033E
+  RTS
+
+.l31D6
+  STA &0340
+  STX &0345
+.l31DC
+  LDX #&FF
+.l31DE
+  NOP
+  NOP
+  NOP
+  NOP
+  DEX
+  BNE l31DE
+  DEC &0340
+  BNE l31DC
+  LDX &0345
+  RTS
+
+.l31EE
+  STX &0345
+  STY &0347
+  LDY #&00
+  LDA #&01
+  STA &0342
+  LDX &034E
+.l31FE
+  CPX #&00
+  BEQ l320B
+  INY
+  INY
+  ASL &0342
+  DEX
+  JMP l31FE
+.l320B
+  LDX &034E
+  LDA &0352,X
+  CMP #&1C
+  BCC l321C
+  CMP #&91
+  BCS l321C
+  JMP l321E
+.l321C
+  LDA #&00
+.l321E
+  CLC
+  ROL  A
+  STA &D000,Y
+  BCC l3231
+  LDA SPR_MSB_X
+  ORA &0342
+  STA SPR_MSB_X
+  JMP l323C
+.l3231
+  LDA &0342
+  EOR #&FF
+  AND SPR_MSB_X
+  STA SPR_MSB_X
+.l323C
+  INY
+  LDA &035C,X
+  CMP #&4A
+  BCC l324B
+  CMP #&E6
+  BCS l324B
+  JMP l324D
+.l324B
+  LDA #&00
+.l324D
+  STA &D000,Y
+  LDX &0345
+  LDY &0347
+  RTS
+
+.l3257
+  STX &0345
+  INC &03C5
+  LDX &03C5
+  LDA &E290,X
+  STA &03C6
+  LDX &0345
+  RTS
+
+.l326A
+  STX &0346
+  INC &03C5
+  LDX &03C5
+  LDA &EA60,X
+  AND #&03
+  CLC
+  ADC #&01
+  STA &03C6
+  LDX &0346
+  RTS
+
+.l3282
+  STX &0345
+  STA &0340
+  LDX &034E
+  LDA &0340
+  AND #&03
+  BEQ l32AD
+  AND #&01
+  BEQ l32A3
+  LDA &035C,X
+  SEC
+  SBC &037A,X
+  STA &035C,X
+  JMP l32AD
+.l32A3
+  LDA &035C,X
+  CLC
+  ADC &037A,X
+  STA &035C,X
+.l32AD
+  LDA &0340
+  AND #&0C
+  BEQ l32CF
+  AND #&04
+  BEQ l32C5
+  LDA &0352,X
+  SEC
+  SBC &0384,X
+  STA &0352,X
+  JMP l32CF
+.l32C5
+  LDA &0352,X
+  CLC
+  ADC &0384,X
+  STA &0352,X
+.l32CF
+  LDA &0352,X
+  CMP #&E6
+  BCC l32E0
+  CMP #&F3
+  BCS l32E0
+.l32DA
+  JSR l313F
+  JMP l32E7
+.l32E0
+  LDA &035C,X
+  CMP #&08
+  BCC l32DA
+.l32E7
+  LDX &0345
+  RTS
+
+.l32EB
+  LDA &C724,X
+  STA &033A
+  LDA &C7AA,X
+  STA &033B
+  LDA #&00
+  STA &033C
+  STA &033F
+  LDA &C8B6,X
+  JSR l2B5B
+  RTS
+
+.l3306
+  LDA &C724,X
+  STA &033A
+  LDA &C7AA,X
+  STA &033B
+  LDA &C830,X
+  STA &033C
+  LDA #&00
+  STA &033F
+  LDA &C8B6,X
+  JSR l2B5B
+  LDA #&58
+  STA &03DC
+  RTS
+
+.l3329
+  LDX &03DD
+.l332C
+  CPX #&00
+  BNE l333B
+  LDA #&86
+  STA &03DD
+  LDA #&FF
+  STA &03D5
+  RTS
+.l333B
+  DEX
+  LDA &C69E,X
+  BEQ l332C
+  CMP &03E5
+  BNE l332C
+  LDA &C724,X
+  STA &033A
+  LDA &C7AA,X
+  STA &033B
+  LDA &C830,X
+  STA &033C
+  LDY #&00
+  CPX #&3F
+  BCS l3373
+  AND #&07
+  AND &03D5
+  ORA #&08
+  TAY
+  JSR l3384
+  LDA &033C
+  AND #&A7
+  ORA &FF
+  STA &033C
+.l3373
+  STY &033F
+  LDA #&58
+  STA &03DC
+  LDA &C8B6,X
+  JSR l2B5B
+  JMP l332C
+.l3384
+  LDA #&08
+  STA &FF
+  LDA &03D5
+  BEQ l33A9
+  LDA &C69E,X
+  CMP &C400,X
+  BNE l33A9
+  LDA &C724,X
+  CMP &C486,X
+  BNE l33A9
+  LDA &C7AA,X
+  CMP &C50C,X
+  BNE l33A9
+  LDA #&00
+  STA &FF
+.l33A9
+  RTS
+
+.l33AA
+  LDA CIA1_PRA ; Read inputs
+  EOR #&FF
+  AND #&1F
+  STA &03C0
+  JSR l3541
+  LDA &03D8
+  AND #&10 ; Joystick button pressed ?
+  AND &03C0
+  BEQ l33CA
+  LDA &03C0
+  AND #&0F
+  STA &03C0
+  RTS
+.l33CA
+  LDA &03C0
+  STA &03D8
+  RTS
+
+.l33D1
+  STA &033A
+  LDA &0352
+  ASL  A
+  CLC
+  ADC #&1C
+  STA &0352
+  LDA &035C
+  CLC
+  ADC #&5A
+  STA &035C
+  LDX #&02
+.l33E9
+  STX &034E
+  JSR l313F
+  LDA #&01 ; White
+  STA SPR_0_COLOUR,X
+  LDA #&33
+  STA &5FF8,X
+  LDA #&04
+  STA &0384,X
+  LDA #&02
+  STA &037A,X
+  INX
+  CPX #&06
+  BCC l33E9
+  LDA &0352
+  SEC
+  SBC &033A
+  STA &0354
+  STA &0355
+  LDA &0352
+  CLC
+  ADC &033A
+  STA &0356
+  STA &0357
+  LSR &033A
+  LDA &035C
+  SEC
+  SBC &033A
+  STA &035E
+  STA &0360
+  LDA &035C
+  CLC
+  ADC &033A
+  STA &035F
+  STA &0361
+  RTS
+
+.l3440
+  LDX #&05
+  STX &0346
+.l3445
+  LDX #&02
+.l3447
+  STX &034E
+  LDA &0352,X
+  BEQ l345B
+  LDA &0366,X
+  JSR l3282
+  JSR l31EE
+  LDX &034E
+.l345B
+  INX
+  CPX #&06
+  BCC l3447
+  LDA #&08
+  JSR l31D6
+  DEC &0346
+  BNE l3445
+  RTS
+
+.l346B
+  LDA &03D6
+  STA &0352
+  LDA &03D7
+  STA &035C
+  LDA #&3C
+  JSR l33D1
+  LDA #&37
+  STA &5FF8
+  LDX #&00
+  STX &034E
+  JSR l31EE
+  LDA #&0A
+  STA &0368
+  LDA #&09
+  STA &0369
+  LDA #&06
+  STA &036A
+  LDA #&05
+  STA &036B
+  LDY #&03
+.l349F
+  JSR l3440
+  DEC &5FF8
+  DEY
+  BNE l349F
+  LDA #&00
+  STA &03C8
+  STA &03C7
+  STA &03C9
+  STA &03C2
+  STA &5FF8
+  STA &03C1
+  LDX #&01
+.l34BE
+  STX &034E
+  JSR l313F
+  INX
+  CPX #&08
+  BCC l34BE
+  LDA &03D6
+  STA &0352
+  LDA &03D7
+  STA &035C
+  LDA SPR_COLLISION
+  LDA SPR_COLLISION2
+  LDA SPR_COLLISION
+  LDA SPR_COLLISION2
+  RTS
+
+.l34E2
+  NOP
+  LDA #&00
+  JSR l33D1
+  LDA #&34
+  STA &5FF8
+  LDX #&00
+  STX &034E
+  JSR l31EE
+  LDA #&04
+  STA &0B00
+  LDA #&05
+  STA &0368
+  LDA #&06
+  STA &0369
+  LDA #&09
+  STA &036A
+  LDA #&0A
+  STA &036B
+  LDY #&0A
+.l3510
+  JSR l3440
+  LDA &5FF8
+  CMP #&37
+  BCC l3522
+  LDA #&45
+  STA &5FF8
+  JMP l3525
+.l3522
+  INC &5FF8
+.l3525
+  DEY
+  BNE l3510
+  LDX #&00
+.l352A
+  STX &034E
+  JSR l313F
+  INX
+  CPX #&08
+  BCC l352A
+  LDA #&64
+  JSR l31D6
+  LDA &03B8
+  STA &03E5
+  RTS
+
+.l3541
+  LDY &C5
+  LDX &028D
+  LDA &03C0
+  CPY #&0C
+  BNE l3552
+  ORA #&04
+  JMP l3558
+.l3552
+  CPY #&17
+  BNE l3558
+  ORA #&08
+.l3558
+  CPX #&00
+  BEQ l355E
+  ORA #&01
+.l355E
+  CPY #&01
+  BNE l3564
+  ORA #&10
+.l3564
+  STA &03C0
+  RTS
+
+.l3568
+  SEI
+  LDA #&34
+  STA &01
+  LDY #&00
+  LDA (&05),Y
+  INC &05
+  BNE l3577
+  INC &06
+.l3577
+  LDY #&36
+  STY &01
+  CLI
+  RTS
+
+.l357D
+  STA &03DB
+  ASL  A
+  TAX
+  SEI
+  LDA #&34
+  STA &01
+  LDA &D148,X
+  STA &05
+  LDA &D149,X
+  STA &06
+  LDA #&36
+  STA &01
+  CLI
+.l3596
+  JSR l3568
+.l3599
+  CMP #&FB
+  BCC l359E
+  RTS
+.l359E
+  CMP #&FA
+  BNE l35A8
+  JSR l361D
+  JMP l3596
+.l35A8
+  CMP #&C8
+  BCC l35B5
+  SEC
+  SBC #&C8
+  STA &03BF
+  JMP l3596
+.l35B5
+  CMP #&64
+  BCC l35C8
+  SEC
+  SBC #&44
+  STA &039B
+  JSR l3568
+  STA &039C
+  JMP l3596
+.l35C8
+  CMP #&5F
+  BNE l35ED
+.l35CC
+  JSR l33AA
+  LDA &03C0
+  AND #&10
+  BNE l35CC
+.l35D6
+  JSR l33AA
+  AND #&10
+  BEQ l35D6
+  JSR l3568
+  CMP #&5F
+  BNE l3599
+  LDA &03DB
+  BEQ l35EC
+  JSR l2F39
+.l35EC
+  RTS
+.l35ED
+  CMP #&26
+  BCC l35F5
+  CMP #&5B
+  BCC l35F7
+.l35F5
+  LDA #&3A
+.l35F7
+  LDX &039B
+  STX &033A
+  LDX &039C
+  STX &033B
+  LDX &03BF
+  STX &033C
+  LDX #&00
+  STX &033F
+  STX &03DC
+  JSR l2B5B
+  INC &039B
+  INC &039B
+  JMP l3596
+.l361D
+  JSR l3568
+  STA &0398
+  JSR l3568
+  STA &0399
+  LDA #&00
+  STA SPR_ENABLE
+  LDA &039B
+  CLC
+  ADC #&02
+  STA &039A
+  LDA #&2C
+  JSR l36E3
+  LDA &0398
+  ASL  A
+  CLC
+  ADC &039A
+  STA &039A
+  LDA #&2C
+  JSR l36E3
+  JSR l3682
+.l364F
+  JSR l36B6
+  DEC &0399
+  BNE l364F
+  JSR l3682
+  LDA &039C
+  CLC
+  ADC #&08
+  STA &039C
+  LDA &039B
+  CLC
+  ADC #&02
+  STA &039A
+  LDA #&2D
+  JSR l36E3
+  LDA &0398
+  ASL  A
+  CLC
+  ADC &039A
+  STA &039A
+  LDA #&2D
+  JSR l36E3
+  RTS
+
+.l3682
+  LDA &039C
+  CLC
+  ADC #&08
+  STA &039C
+  LDA &039B
+  STA &039A
+  LDA #&2A
+  JSR l36E3
+  LDA #&2E
+  JSR l36E3
+  LDA &0398
+  STA &0344
+.l36A1
+  LDA #&28
+  JSR l36E3
+  DEC &0344
+  BNE l36A1
+  LDA #&2E
+  JSR l36E3
+  LDA #&2B
+  JSR l36E3
+  RTS
+
+.l36B6
+  LDA &039C
+  CLC
+  ADC #&08
+  STA &039C
+  LDA &039B
+  CLC
+  ADC #&02
+  STA &039A
+  LDA #&29
+  JSR l36E3
+  LDA &0398
+  STA &0344
+.l36D3
+  LDA #&3A
+  JSR l36E3
+  DEC &0344
+  BNE l36D3
+  LDA #&29
+  JSR l36E3
+  RTS
+
+.l36E3
+  LDX &039A
+  STX &033A
+  LDX &039C
+  STX &033B
+  LDX &03BF
+  STX &033C
+  LDX #&00
+  STX &033F
+  STX &03DC
+  JSR l2B5B
+  INC &039A
+  INC &039A
+  RTS
+
+.l3707
+  LDX &18D9
+  BNE l370D
+  RTS
+.l370D
+  ASL  A
+  TAX
+  SEI
+  LDA #&34
+  STA &01
+  CPX #&08
+  BNE l372A
+  LDA &C834
+  CMP #&01
+  BNE l372A
+  LDA &D1C0
+  STA &05
+  LDA &D1C1
+  JMP l3732
+.l372A
+  LDA &D0CA,X
+  STA &05
+  LDA &D0CB,X
+.l3732
+  STA &06
+  LDA #&36
+  STA &01
+  CLI
+  LDA &06
+  BEQ l374E
+.l373D
+  JSR l3568
+  CMP #&26
+  BCC l374E
+  CMP #&5B
+  BCS l374E
+  JSR l36E3
+  JMP l373D
+.l374E
+  RTS
+
+.l374F
+  LDA #&FF
+  LDX #&00
+.l3753
+  STA &18D9,X
+  INX
+  CPX #&05
+  BCC l3753
+  LDX #&01
+  LDY #&00
+.l375F
+  LDA &C69E,X
+  CMP #&04
+  BNE l376B
+  TXA
+  STA &18D9,Y
+  INY
+.l376B
+  INX
+  CPX #&3F
+  BCC l375F
+  LDA #&00
+  STA &18D9,Y
+  RTS
+
+.l3776
+  JSR l374F
+  LDX #&37
+  LDA &C69E
+  CMP #&04
+  BNE l3784
+  LDX #&38
+.l3784
+  TXA
+  JSR l357D
+  LDY #&58
+  LDA &C69E
+  CMP #&04
+  BNE l3793
+  LDY #&50
+.l3793
+  STY &039C
+  LDA #&00
+  STA &0344
+  LDA #&03
+  STA &03BF
+.l37A0
+  LDA #&2C
+  STA &039A
+  LDX &0344
+  LDA &18D9,X
+  JSR l3707
+  LDX &0344
+  LDA &18D9,X
+  BEQ l37C5
+  INC &0344
+  LDA &039C
+  CLC
+  ADC #&08
+  STA &039C
+  JMP l37A0
+.l37C5
+  LDA &18D9
+  BNE l37CF
+  LDA #&3B
+  JSR l357D
+.l37CF
+  RTS
+
+.l37D0
+  LDA &03E5
+  CMP #&65
+  BCS l37F6
+  ASL  A
+  TAX
+  SEI
+  LDA #&34
+  STA &01
+  LDA &D000,X
+  STA &05
+  LDA &D001,X
+  STA &06
+  LDA #&36
+  STA &01
+  CLI
+  LDX #&2C
+.l37EF
+  JSR l3568
+  CMP #&5F
+  BNE l37F7
+.l37F6
+  RTS
+.l37F7
+  STX &033A
+  LDY #&18
+  STY &033B
+  STY &03E3
+  LDY #&05
+  STY &033C
+  LDY #&00
+  STY &03DC
+  JSR l2B5B
+  INX
+  INX
+  JMP l37EF
+.l3814
+  LDA #&00
+  STA &03DB
+  LDX #&2E
+.l381B
+  STX &033A
+  LDA #&08
+  STA &033B
+  STA &03E3
+  LDY #&00
+  LDA &03DB
+  CMP &03B9
+  BCS l3832
+  LDY #&06
+.l3832
+  STY &033C
+  LDA #&00
+  STA &03DC
+  LDA #&2F
+  JSR l2B5B
+  INC &03DB
+  INX
+  INX
+  CPX #&32
+  BCC l381B
+  RTS
+
+.l3849
+  JSR l3023
+  LDA #&00
+  STA &03DB
+  LDA #&04
+  STA &0B00
+.l3856
+  JSR l3257
+  AND #&3F
+  CLC
+  ADC #&20
+  STA &033A
+  JSR l3257
+  AND #&7F
+  CLC
+  ADC #&30
+  STA &033B
+  LDA #&12
+  STA &033C
+  LDA #&00
+  STA &033F
+  STA &03DC
+  JSR l326A
+  CMP #&04
+  BNE l3882
+  LDA #&01
+.l3882
+  CLC
+  ADC #&1C
+  JSR l2B5B
+  LDA #&05
+  JSR l31D6
+  INC &03DB
+  BNE l3856
+  RTS
+
+.l3893
+  LDA #&A5
+  STA &FC
+  LDA &FB
+  CLC
+  ADC &FB
+  BCC l38A0
+  INC &FC
+.l38A0
+  STA &FB
+  LDY #&00
+  LDA (&FB),Y
+  STA &B4
+  INY
+  LDA (&FB),Y
+  CLC
+  ADC #&A7
+  STA &B5
+  RTS
+
+.l38B1
+  LDA &03C4
+  AND #&01
+  BNE l38BB
+  JMP l3931
+.l38BB
+  LDX &03E0
+  BNE l38C3
+  JMP l392A
+.l38C3
+  LDA &1828,X
+  SEC
+  SBC #&04
+  STA &B3
+  LDA &180E,X
+  STA &B2
+  LDA &03DA
+  SEC
+  SBC #&18
+  LSR  A
+  TAY
+  STY &03DB
+  JMP l38E4
+.l38DE
+  LDA (&B2),Y
+  AND #&10
+  BEQ l3920
+.l38E4
+  TYA
+  ASL  A
+  CLC
+  ADC #&18
+  STA &033A
+  LDA &03E0
+  ASL  A
+  ASL  A
+  ASL  A
+  STA &033B
+  LDA &03E5
+  CMP #&4D
+  BNE l3901
+  LDA #&0A
+  JMP l3903
+.l3901
+  LDA #&0F
+.l3903
+  STA &033C
+  LDA #&00
+  STA &033F
+  LDA &03C4
+  LSR  A
+  AND #&03
+  CLC
+  ADC #&5C
+  JSR l2B5B
+  INC &03DB
+  INC &03DB
+  INC &03DB
+.l3920
+  INC &03DB
+  LDY &03DB
+  CPY #&23
+  BCC l38DE
+.l392A
+  LDA #&0A
+  LDX #&02
+  JMP l3935
+.l3931
+  LDX #&00
+  LDA #&02
+.l3935
+  STA &03DB
+  STX &034E
+.l393B
+  LDA &2B14,X
+  STA &033A
+  LDA &2B1E,X
+  STA &033B
+  LDA #&00
+  STA &033C
+  STA &033F
+  STA &03DC
+  LDA #&73
+  JSR l2B5B
+  INX
+  CPX &03DB
+  BCS l3962
+  CPX &2B13
+  BCC l393B
+.l3962
+  LDX &034E
+.l3965
+  LDA &2B28,X
+  EOR #&80
+  STA &2B28,X
+  STA &033C
+  LDA &2B14,X
+  STA &033A
+  LDA &2B1E,X
+  STA &033B
+  LDA #&20
+  STA &033F
+  LDA #&00
+  STA &03DC
+  LDA #&73
+  JSR l2B5B
+  INX
+  CPX &03DB
+  BCS l3996
+  CPX &2B13
+  BCC l3965
+.l3996
+  RTS
+
+.l3997
+  LDX &18DE
+  CPX #&1A
+  BCC l39D3
+  CPX #&38
+  BCS l39D3
+  LDA #&FF
+  STA &C69E,X
+  STA &18DE
+  LDA &18E6
+  CLC
+  ADC #&01
+  CMP #&0A
+  BCC l39B9
+  INC &18E5
+  LDA #&00
+.l39B9
+  STA &18E6
+  LDA #&03
+  STA &0B00
+  JSR l3A30
+  LDA #&36
+  JSR l357D
+  LDA &2B48
+  BNE l39D3
+  LDA #&02
+  STA &0B00
+.l39D3
+  RTS
+
+.l39D4
+  LDA &C69E,X
+  CMP &03E5
+  BEQ l39DE
+.l39DC
+  CLC
+  RTS
+.l39DE
+  LDA &C8B6,X
+  STA &FB
+  JSR l3893
+  LDA &0352
+  CLC
+  ADC #&21
+  STA &033A
+  CLC
+  ADC #&04
+  STA &033C
+  LDA &035C
+  CLC
+  ADC #&2A
+  STA &033B
+  CLC
+  ADC #&15
+  STA &033D
+  LDA &C724,X
+  CMP &033C
+  BCS l39DC
+  LDY #&00
+  LDA (&B4),Y
+  CLC
+  ADC &C724,X
+  CMP &033A
+  BCC l39DC
+  BEQ l39DC
+  LDA &C7AA,X
+  CMP &033D
+  BCS l39DC
+  INY
+  CLC
+  ADC (&B4),Y
+  CMP &033B
+  BCC l39DC
+  BEQ l39DC
+  SEC
+  RTS
+
+.l3A30
+  LDA #&4E
+  STA &033A
+  LDA #&00
+  STA &03DC
+  LDA #&08
+  STA &033B
+  STA &03E3
+  LDA #&06
+  STA &033C
+  LDA &18E5
+  CLC
+  ADC #&30
+  JSR l2B5B
+  LDA #&50
+  STA &033A
+  LDA #&00
+  STA &03DC
+  LDA #&08
+  STA &033B
+  STA &03E3
+  LDA #&06
+  STA &033C
+  LDA &18E6
+  CLC
+  ADC #&30
+  JSR l2B5B
+  RTS
+
+.l3A71
+  TAX
+  LDA &1897,X
+  STA &033C
+  LDA #&0B
+  LDX &C69E
+  CPX #&04
+  BNE l3A83
+  LDA #&0A
+.l3A83
+  CLC
+  ADC &03D9
+  TAX
+  LDA &180E,X
+  STA &FB
+  LDA &1828,X
+  STA &FC
+  LDY #&09
+  LDA &033C
+.l3A97
+  STA (&FB),Y
+  INY
+  CPY #&1F
+  BCC l3A97
+  RTS
+
+.l3A9F
+  LDA &03BA
+  CLC
+  ADC #&08
+  STA &03DB
+  LDX &03BA
+.l3AAB
+  CPX #&32
+  BCC l3AD5
+  CPX #&44
+  BCS l3AD5
+  STX &033A
+  LDA &C81B
+  STA &033B
+  LDA #&06
+  CPX &03DB
+  BCC l3AC5
+  LDA #&00
+.l3AC5
+  STA &033C
+  LDA #&00
+  STA &033F
+  STA &03DC
+  LDA #&70
+  JSR l2B5B
+.l3AD5
+  INX
+  INX
+  CPX &03DB
+  BEQ l3AAB
+  BCC l3AAB
+  LDX #&72
+  LDA #&00
+  STA &03DC
+  JSR l3306
+  RTS
+
+.v3AE9
+.v3AF0
+
+ORG &3B00
+
+.l3B00
+  LDX #&00
+.l3B02
+  LDA &C5
+  CMP &3AE9,X
+  BEQ l3B0A
+  RTS
+.l3B0A
+  LDA &C5
+  CMP &3AE9,X
+  BEQ l3B0A
+  INX
+  CPX #&07
+  BCC l3B02
+  LDA #&00
+  STA SPR_ENABLE
+  LDA #&02
+  STA &03B9
+  JSR l3814
+.l3B23
+  LDA #&32
+  JSR l31D6
+  JSR l33AA
+  AND #&1F
+  CMP #&10
+  BCS l3B53
+  AND #&0F
+  TAX
+  LDA &3AF0,X
+  BEQ l3B23
+  CLC
+  ADC &03E5
+  CMP #&15
+  BCC l3B23
+  CMP #&A8
+  BCS l3B23
+  STA &03E5
+  JSR l2F22
+  LDA #&00
+  STA SPR_ENABLE
+  JMP l3B23
+.l3B53
+  LDA #&FF
+  STA SPR_ENABLE
+  RTS
+  LDA #&C7
+  STA CIA2_PRA
+  LDA #&1B
+  STA GFX_VICII_REG1
+  LDA #&15
+  STA GFX_MEM_PTR
+  LDA #&37
+  STA &01
+  RTS
+
+.l3B6D
+  LDA #&C6
+  STA CIA2_PRA
+  LDA #&3B
+  STA GFX_VICII_REG1
+  LDA #&78
+  STA GFX_MEM_PTR
+  LDA #&00
+  STA GFX_BORDER_COLOUR
+  LDA #&FF
+  STA &03DF
+  LDA #&B8
+  STA &03E1
+  LDA #&30
+  STA &03E3
+  LDA #&58
+  STA &03DC
+  RTS
+
+ORG &8000
+INCBIN "roomdata.bin"
+
+ORG &A400
+; Horizontal flip look up table
+.flip_lut
+  EQUB &00, &80, &40, &c0, &20, &a0, &60, &e0, &10, &90, &50, &d0, &30, &b0, &70, &f0
+  EQUB &08, &88, &48, &c8, &28, &a8, &68, &e8, &18, &98, &58, &d8, &38, &b8, &78, &f8
+  EQUB &04, &84, &44, &c4, &24, &a4, &64, &e4, &14, &94, &54, &d4, &34, &b4, &74, &f4
+  EQUB &0c, &8c, &4c, &cc, &2c, &ac, &6c, &ec, &1c, &9c, &5c, &dc, &3c, &bc, &7c, &fc
+  EQUB &02, &82, &42, &c2, &22, &a2, &62, &e2, &12, &92, &52, &d2, &32, &b2, &72, &f2
+  EQUB &0a, &8a, &4a, &ca, &2a, &aa, &6a, &ea, &1a, &9a, &5a, &da, &3a, &ba, &7a, &fa
+  EQUB &06, &86, &46, &c6, &26, &a6, &66, &e6, &16, &96, &56, &d6, &36, &b6, &76, &f6
+  EQUB &0e, &8e, &4e, &ce, &2e, &ae, &6e, &ee, &1e, &9e, &5e, &de, &3e, &be, &7e, &fe
+  EQUB &01, &81, &41, &c1, &21, &a1, &61, &e1, &11, &91, &51, &d1, &31, &b1, &71, &f1
+  EQUB &09, &89, &49, &c9, &29, &a9, &69, &e9, &19, &99, &59, &d9, &39, &b9, &79, &f9
+  EQUB &05, &85, &45, &c5, &25, &a5, &65, &e5, &15, &95, &55, &d5, &35, &b5, &75, &f5
+  EQUB &0d, &8d, &4d, &cd, &2d, &ad, &6d, &ed, &1d, &9d, &5d, &dd, &3d, &bd, &7d, &fd
+  EQUB &03, &83, &43, &c3, &23, &a3, &63, &e3, &13, &93, &53, &d3, &33, &b3, &73, &f3
+  EQUB &0b, &8b, &4b, &cb, &2b, &ab, &6b, &eb, &1b, &9b, &5b, &db, &3b, &bb, &7b, &fb
+  EQUB &07, &87, &47, &c7, &27, &a7, &67, &e7, &17, &97, &57, &d7, &37, &b7, &77, &f7
+  EQUB &0f, &8f, &4f, &cf, &2f, &af, &6f, &ef, &1f, &9f, &5f, &df, &3f, &bf, &7f, &ff
+
+ORG &A500
+INCBIN "frametable.bin"
+INCBIN "framedefs.bin"
+
+ORG &D000
+; String table pointers
+.roomnames
+  EQUW room0 ,room1 ,room2 ,room3 ,room4 ,room5 ,room6 ,room7
+  EQUW room8 ,room9 ,room10,room11,room12,room13,room14,room15
+  EQUW room16,room17,room18,room19,room20,room21,room22,room23
+  EQUW room24,room25,room26,room27,room28,room29,room30,room31
+  EQUW room32,room33,room34,room35,room36,room37,room38,room39
+  EQUW room40,room41,room42,room43,room44,room45,room46,room47
+  EQUW room48,room49,room50,room51,room52,room53,room54,room55
+  EQUW room56,room57,room58,room59,room60,room61,room62,room63
+  EQUW room64,room65,room66,room67,room68,room69,room70,room71
+  EQUW room72,room73,room74,room75,room76,room77,room78,room79
+  EQUW room80,room81,room82,room83,room84,room85,room86,room87
+  EQUW room88,room89,room90,room91,room92,room93,room94,room95
+  EQUW room96,room97,room98,room99,room100
+
+  EQUW bagmess
+  EQUW greenbeanmess
+
+  EQUW &0000
+
+  EQUW crowbarmess
+  EQUW mtbucketmess
+  EQUW bonemess
+  EQUW pigmycowmess
+
+  EQUW &0000
+
+  EQUW pickaxemess
+  EQUW goldeneggmess
+  EQUW blackholemess
+  EQUW rugmess
+  EQUW keymess, keymess, keymess, keymess
+  EQUW ropemess
+  EQUW sleeppotionmess
+  EQUW applemess
+  EQUW fullwhiskeymess
+  EQUW jugmess
+  EQUW loafmess
+  EQUW doorknockermess
+  EQUW rockmess, rockmess, rockmess
+
+  EQUW &0000, &0000, &0000, &0000, &0000, &0000, &0000, &0000
+  EQUW &0000, &0000, &0000, &0000, &0000, &0000, &0000, &0000
+  EQUW &0000, &0000, &0000, &0000, &0000, &0000, &0000, &0000
+  EQUW &0000, &0000, &0000, &0000, &0000, &0000
+
+  EQUW railingmess
+  EQUW leavesmess
+  EQUW railingmess, railingmess, railingmess
+  EQUW windowmess
+  EQUW leavesmess
+
+  EQUW startmess
+  EQUW trollgotapplemess
+  EQUW shopkeeperappearsmess
+  EQUW givingjunkmess
+
+  EQUW thanksforthecowmess
+  EQUW dozytalking
+  EQUW kickdozyagainmess
+  EQUW dylantalking
+  EQUW trancemess
+  EQUW denziltalking
+  EQUW stereoess
+  EQUW gottodaisymess
+  EQUW daisyrunsmess
+
+  EQUW notgotallcoins
+  EQUW gotallcoins
+
+  EQUW dougtalking
+  EQUW goonmysonmess
+
+  EQUW throwwateronfiremess
+  EQUW lookatpicturemess
+  EQUW throwwateronbeanmess
+  EQUW plantbeanmess
+  EQUW pickupmanuremess
+  EQUW throwswitchmess
+  EQUW fedarmorog
+  EQUW dragonasleepmess
+  EQUW croctiedmess
+  EQUW rockinwatermess
+  EQUW keyinmachine
+  EQUW fillbucketmess
+  EQUW thanksforloafmess
+  EQUW puteggbackmess
+  EQUW goawaymess
+  EQUW knockandentermess
+  EQUW usedoorknockermess
+  EQUW usecrowbarmess
+  EQUW usepickaxemess
+  EQUW obstructingliftmess
+  EQUW userugmess
+  EQUW getbackintheremess
+  EQUW holdingholemess
+  EQUW dropwhiskeymess
+
+  EQUW deadwindow
+  EQUW armorogkilledmess
+  EQUW killedbyportcullis
+  EQUW killedbyliftmess
+  EQUW dragonkilledmess
+  EQUW dragonflameskilledmess
+  EQUW killedbyflame
+  EQUW killedbywater
+  EQUW croceatenmess
+  EQUW killedbyhawk
+  EQUW ratgotyoumess
+  EQUW killedbyvolcano
+  EQUW killedbydaggersmess
+
+  EQUW youfoundcoinmess
+  EQUW inventory
+  EQUW inventorywithbag
+  EQUW selectitemmess
+  EQUW carryingtoomuchmess
+  EQUW nothingatallmess
+  EQUW fullbucketmess
+
+mplot   = 3
+mgosub  = 4
+mrep    = 5
+mendrep = 6
+nr      = 10
+
+mend    = 95  ; YES
+mxy     = 100 ; YES
+mend2   = 160
+mpen    = 200 ; YES
+drawbox = 250 ; YES
+
+.room0 EQUS "I>GRAY==OLIVER:TWINS",mend
+.room1 EQUS mend
+.room2 EQUS mend
+.room3 EQUS mend
+.room4 EQUS mend
+.room5 EQUS mend
+.room6 EQUS mend
+.room7 EQUS mend
+.room8 EQUS mend
+.room9 EQUS mend
+.room10 EQUS mend
+.room11 EQUS mend
+.room12 EQUS mend
+.room13 EQUS mend
+.room14 EQUS mend
+.room15 EQUS mend
+.room16 EQUS mend
+.room17 EQUS mend
+.room18 EQUS mend
+.room19 EQUS mend
+.room20 EQUS mend
+.room21 EQUS mend
+.room22 EQUS ":THE:MARKET:SQUARE::",mend
+.room23 EQUS "A:STRANGE:NEW:WORLD@",mend
+.room24 EQUS ":INSIDE:THE:CHURCH::",mend
+.room25 EQUS mend
+.room26 EQUS mend
+.room27 EQUS mend
+.room28 EQUS mend
+.room29 EQUS mend
+.room30 EQUS mend
+.room31 EQUS "THE:AMAZING:ILLUSION",mend
+.room32 EQUS mend
+.room33 EQUS mend
+.room34 EQUS mend
+.room35 EQUS ":SMUGGLER;S:HIDEOUT:",mend
+.room36 EQUS "THE:CASTLE;S:DUNGEON",mend
+.room37 EQUS mend
+.room38 EQUS mend
+.room39 EQUS "GOING:DOWN:THE:WELL@",mend
+.room40 EQUS ":THE:DRAGON;S:LAIR::",mend
+.room41 EQUS ":THE:DESERTED:MINES:",mend
+.room42 EQUS mend
+.room43 EQUS mend
+.room44 EQUS mend
+.room45 EQUS ":LOOKING:OUT:TO:SEA:",mend
+.room46 EQUS ":THE:DOCKS:AND:PIER:",mend
+.room47 EQUS ":FOURWAY:WAREHOUSE::",mend
+.room48 EQUS ":THE:BROKEN:BRIDGE::",mend
+.room49 EQUS "::THE:GUARD:HOUSE:::",mend
+.room50 EQUS ":::ARMOROG;S:DEN::::",mend
+.room51 EQUS "MOAT:AND:PORTCULLIS:",mend
+.room52 EQUS ":THE:ENTRANCE:HALL::",mend
+.room53 EQUS "THE:SNAP=HAPPY:GATOR",mend
+.room54 EQUS "THE:WIDE=EYED:DRAGON",mend
+.room55 EQUS "THE:BOTTOMLESS:WELL:",mend
+.room56 EQUS "THE:LIFT:CONTROL:HUT",mend
+.room57 EQUS ":BASE:OF:TREE:HOUSE:",mend
+.room58 EQUS "THE:SMELLY:ALLOTMENT",mend
+.room59 EQUS ":THE:LARGE:OAK:TREE:",mend
+.room60 EQUS "BASE:OF:THE:VOLCANO:",mend
+.room61 EQUS mend
+.room62 EQUS mend
+.room63 EQUS "::THE:CRAFTY:CLOUD::",mend
+.room64 EQUS mend
+.room65 EQUS mend
+.room66 EQUS mend
+.room67 EQUS ":::THE:WEST:WING::::",mend
+.room68 EQUS "THE:BANQUETING:HALL:",mend
+.room69 EQUS ":::THE:EAST:WING::::",mend
+.room70 EQUS "::::::::SKY:::::::::",mend
+.room71 EQUS "KEEP:OUT@:DOZY;S:HUT",mend
+.room72 EQUS "::::DENZIL;S:PAD::::",mend
+.room73 EQUS ":DAISY;S:EMPTY:HUT::",mend
+.room74 EQUS "THE:GIANT:BEANSTALK:",mend
+.room75 EQUS "COMPLEX:CLOUD:ROUTE:",mend
+.room76 EQUS "NEAR:THE:VOLCANO:TOP",mend
+.room77 EQUS ":THE:ACTIVE:VOLCANO:",mend
+.room78 EQUS mend
+.room79 EQUS mend
+.room80 EQUS mend
+.room81 EQUS mend
+.room82 EQUS mend
+.room83 EQUS ":::THE:WEST:TOWER:::",mend
+.room84 EQUS "THE:CASTLE:STAIRCASE",mend
+.room85 EQUS ":::THE:EAST:TOWER:::",mend
+.room86 EQUS ":THE:LONGJUMP:CLOUD:",mend
+.room87 EQUS "::THE:MEETING:HALL::",mend
+.room88 EQUS ":LIFT:TO:THE:ELDERS:",mend
+.room89 EQUS "DIZZY;S:PARENTS;:HUT",mend
+.room90 EQUS mend
+.room91 EQUS "::YET:MORE:CLOUDS:::",mend
+.room92 EQUS "MORE:;ORRIBLE:CLOUDS",mend
+.room93 EQUS ":THE:CLOUD:CASTLE:::",mend
+.room94 EQUS ":::DAISY;S:PRISON:::",mend
+.room95 EQUS mend
+.room96 EQUS mend
+.room97 EQUS mend
+.room98 EQUS mend
+.room99 EQUS mend
+.room100 EQUS ":::::THE:ATTIC::::::",mend
+
+.greenbeanmess   EQUS "A:SINGLE:GREEN:BEAN",mend
+.bonemess        EQUS "A:FRESH:MEATY:BONE",mend
+.goldeneggmess   EQUS "A:HEAVY:DRAGON:EGG",mend
+.blackholemess   EQUS "A:LARGE:ROUND:HOLE",mend
+.sleeppotionmess EQUS "SOME:SLEEPING:POTION",mend
+.applemess       EQUS "A:FRESH<:GREEN:APPLE",mend
+.jugmess         EQUS "A:JUG:OF:WATER",mend
+.loafmess        EQUS "STALE:LOAF:OF:BREAD",mend
+.fullwhiskeymess EQUS "A:BOTTLE:OF:WHISKY:",mend
+.ropemess        EQUS "A:PIECE:OF:ROPE",mend
+.rockmess        EQUS "A:HEAVY:BOULDER",mend
+;.fullwinemess    EQUS "A:BOTTLE:OF:WINE",mend
+;.emptybottlemess EQUS "AN:EMPTY:BOTTLE",mend
+.keymess         EQUS "A:SHINY:GOLD:KEY",mend
+.mtbucketmess    EQUS "AN:EMPTY:BUCKET",mend
+.fullbucketmess  EQUS "A:BUCKET:OF:WATER",mend
+.leavesmess      EQUS "A:CLUMP:OF:LEAVES",mend
+.pigmycowmess    EQUS "A:CUTE:PIGMY:COW",mend
+.railingmess     EQUS "A:PIECE:OF:RAILING",mend
+.doorknockermess EQUS "BRASS:DOOR:KNOCKER",mend
+.crowbarmess     EQUS "A:STRONG:CROWBAR",mend
+.pickaxemess     EQUS "A:RUSTY:PICKAXE",mend
+.rugmess         EQUS "AN:OLD<:THICK:RUG",mend
+.windowmess      EQUS "A:WINDOW:FRAME",mend
+.bagmess         EQUS "EXIT:AND:DON;T:DROP",mend
+
+.startmess
+  EQUS mxy+19,48,mpen+3,  "FANTASY:WORLD"
+  EQUS mxy+24,80,mpen+2,  "STARRING"
+  EQUS mxy+20,89,         "THE:YOLKFOLK"
+  EQUS mxy+20,108,mpen+5,"D",mxy+22,106,"I",mxy+24,104,"Z"
+  EQUS mxy+26,102,"Z",mxy+28,100,"Y"
+
+  EQUS mxy+35,100,"D",mxy+37,102,"A",mxy+39,104,"I"
+  EQUS mxy+41,106,"S",mxy+43,108,"Y"
+
+  EQUS mxy+9,142, "DENZIL:DYLAN"
+  EQUS mxy+35,136,"DOZY"
+  EQUS mxy+46,136,"GRAND"
+  EQUS mxy+46,144, "DIZZY"
+  EQUS mpen+6,":"
+  EQUS mend,mend
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;PEOPLE TALKING MESSAGES
+
+.trollgotapplemess
+  EQUS mpen+7,mxy+2,48,drawbox,13,5,mpen+3
+  EQUS mxy+11,72,"YOU:GIVE"
+  EQUS mxy+10,80,"THE:APPLE"
+  EQUS mxy+7,88,"T0:THE:TROLL",mend
+  EQUS mpen+5,mxy+16,80,drawbox,11,5,mpen+6
+  EQUS mxy+23,104,"&FOR:ME?"
+  EQUS mxy+22,112,"YOU;RE:SO"
+  EQUS mxy+22,120,"GENEROUS'",mend
+  EQUS mpen+5,mxy+8,48,drawbox,20,6,mpen+6
+  EQUS mxy+16,72,"&I;D:LIKE:TO:LET"
+  EQUS mxy+16,80,"YOU:PASS<:BUT:IF"
+  EQUS mxy+14,88,"THE:KING:FOUND:OUT"
+  EQUS mxy+15,96,"HE;D:TORTURE:ME@'",mend
+  EQUS mpen+5,mxy+6,112,drawbox,22,5,mpen+6
+  EQUS mxy+16,136,"&BUT:YOU:COULD"
+  EQUS mxy+14,144,"ESCAPE:THROUGH:THE"
+  EQUS mxy+11,152,"FIRE:USING:THE:WATER'",mend,mend
+
+.shopkeeperappearsmess
+  EQUS mpen+7,mxy+2,96,drawbox,20,5,mpen+3
+  EQUS mxy+10,120,"PING@:>>>:AND:AS"
+  EQUS mxy+10,128,"IF:BY:MAGIC<:THE"
+  EQUS mxy+8,136,"SHOPKEEPER:APPEARS",mend,mend
+
+.givingjunkmess
+  EQUS mpen+5,mxy+2,96,drawbox,25,4,mpen+6
+  EQUS mxy+10,120,"&THAT;S:NO:GOOD:TO:ME"
+  EQUS mxy+8,128,"GIVE:US:SOMETHIN;:ELSE'",mend,mend
+
+;.stopgivingjunkmess
+;  EQUS mpen+5,mxy+2,96,drawbox,19,4,mpen+6
+;  EQUS mxy+10,120,"&STOP:GIVIN;:US"
+;  EQUS mxy+11,128,"ALL:THAT:TRASH'",mend
+
+;shoptalk        defw beanhere+room
+
+.thanksforthecowmess
+  EQUS mpen+5,mxy+2,80,drawbox,26,4,mpen+6
+  EQUS mxy+8,104,"&G;DAY:DIZ<:AHH@:A:PIGMY"
+  EQUS mxy+9,112, "COW:THAT;S:INTERESTIN;'",mend
+.tencoinsmess
+  EQUS mpen+4,mxy+10,120,drawbox,22,4,mpen+3
+  EQUS mxy+20,144,"&WELL<:HOW:ABOUT"
+  EQUS mxy+15,152,"10:GOLD:COINS:FOR:IT?",mend
+.nottengoldcoins
+  EQUS mpen+5,mxy+18,48,drawbox,18,5,mpen+6
+  EQUS mxy+24,72,"&STREWTH MATE<:I"
+  EQUS mxy+24,80,"SAID:INTERESTIN;"
+  EQUS mxy+27,88,"NOT:VALUABLE'",mend
+.fivecoinsmess
+  EQUS mpen+4,mxy+2,104,drawbox,15,4,mpen+3
+  EQUS mxy+11,128,"&WELL<:OK<"
+  EQUS mxy+8,136,"5:GOLD:COINS'",mend
+.notfivegoldcoins
+  EQUS mpen+5,mxy+6,72,drawbox,24,5,mpen+6
+  EQUS mxy+13,96, "&BE:SERIOUS<:IT:AIN;T"
+  EQUS mxy+14,104,"WORTH:SPIT<:HERE;S:A"
+  EQUS mxy+12,112,"BEAN<:THAT;S:GENEROUS'",mend
+.erumbut
+  EQUS mpen+4,mxy+16,112,drawbox,10,4,mpen+3
+  EQUB &CC, &10, &70, &FA, &0A, &04, &CB ; ???????
+  EQUS mxy+22,136,"&ER<:UM<:"
+  EQUS mxy+22,144,"BUT:>>>'",mend
+.throwsbean
+  EQUS mpen+5,mxy+2,48,drawbox,11,5,mpen+6
+  EQUS mxy+8,72,"&NOW:STOP"
+  EQUS mxy+8,80,":WASTIN;"
+  EQUS mxy+7,88,"MY:TIME@'"
+  EQUS mpen+7,mxy+12,112,drawbox,15,5,mpen+3
+  EQUS mxy+18,136,"AND:HE:THROWS"
+  EQUS mxy+21,144,":THE:BEAN"
+  EQUS mxy+19,152,"ON:THE:CRATE",mend
+.letsfaceitmess
+  EQUS mpen+7,mxy+8,80,drawbox,20,5,mpen+3
+  EQUS mxy+15,104,"YOU:LEAVE:=:LET;S"
+  EQUS mxy+18,112,"FACE:IT:DIZZY<"
+  EQUS mxy+15,120,"YOU:CAN;T:BARTER@",mend,mend
+
+.dozytalking
+; EQUW sleepingpotionhere+room
+  EQUS mpen+4,mxy+30,48,drawbox,12,4,mpen+3
+  EQUS mxy+36,72, "&HEY@:DOZY"
+  EQUS mxy+38,80, "GET:UP@'",mend
+
+  EQUS mpen+7,mxy+2,80,drawbox,16,5,mpen+3
+  EQUS mxy+10,104,"YOU:KICK:THE"
+  EQUS mxy+8,112, "DECK:CHAIR:AND"
+  EQUS mxy+11,120,"HE:WAKES:UP",mend
+
+  EQUS mpen+5,mxy+12,112,drawbox,17,4,mpen+6
+  EQUS mxy+18,136,"&OH@:WHAT;S:THE"
+  EQUS mxy+20,144,"PROBLEM:DIZZY?'",mend
+
+  EQUS mpen+4,mxy+2,48,drawbox,26,7,mpen+3
+  EQUS mxy+9,72,  "&DAISY;S:BEEN:EGGNAPPED"
+  EQUS mxy+8,80,  "AND:IS:BEING:HELD:IN:THE"
+  EQUS mxy+10,88, "WIZARD;S:CLOUD:CASTLE<"
+  EQUS mxy+12,96, "AND:NOBODY:WILL:HELP"
+  EQUS mxy+17,104,"ME:RESCUE:HER@'",mend
+
+  EQUS mpen+5,mxy+2,88,drawbox,14,6,mpen+6
+  EQUS mxy+8 ,112,"&AHH<:THAT;S"
+  EQUS mxy+11,120,"BAD:LUCK>"
+  EQUS mxy+11,128,"I;LL:HELP"
+  EQUS mxy+9,136, "YOU<:DIZZY'",mend
+
+  EQUS mpen+5,mxy+18,112,drawbox,18,5,mpen+6
+  EQUS mxy+28,136,"&HERE;S:SOME"
+  EQUS mxy+24,144,"SLEEPING:POTION<"
+  EQUS mxy+23,152,"THAT:SHOULD:HELP'",mend
+
+  EQUS mpen+4,mxy+2,120,drawbox,17,4,mpen+3
+  EQUS mxy+10,144,"&BUT:I;D:LIKE"
+  EQUS mxy+8,152,"YOU:TO:HELP:ME'",mend
+
+  EQUS mpen+5,mxy+2,48,drawbox,16,7,mpen+6
+  EQUS mxy+9,72,"&SORRY:DIZZY<"
+  EQUS mxy+10,80,"LOVE:TO:BUT"
+  EQUS mxy+10,88,"IT;S:FAR:TOO"
+  EQUS mxy+9,96, "NICE:A:DAY:TO"
+  EQUS mxy+7,104,"RESCUE:MAIDENS'",mend
+
+  EQUS mpen+7,mxy+8,80,drawbox,20,5,mpen+3
+  EQUS mxy+14,104,"I:DON;T:THINK:HE;S"
+  EQUS mxy+14,112,"GOING:TO:HELP<:AND"
+  EQUS mxy+14,120,"HE;S:FALLEN:ASLEEP",mend,mend
+
+.kickdozyagainmess
+  EQUS mpen+7,mxy+10,80,drawbox,17,4,mpen+3
+  EQUS mxy+18,104,"YOU:KICK:DOZY"
+  EQUS mxy+16,112,"BUT:HE;S:ASLEEP",mend
+
+.pushdozymess
+  EQUS mpen+7,mxy+6,72,drawbox,22,6,mpen+3
+  EQUS mxy+14,96,"WHOOPS@:YOU:KICKED"
+  EQUS mxy+13,104,"TOO:HARD:AND:DOZY;S"
+  EQUS mxy+11,112,"FALLEN:IN:THE:WATER"
+  EQUS mxy+11,120,"AND:HE;S:STILL:ASLEEP",mend,mend
+
+;duffmem EQUW 0
+
+.dylantalking
+; EQUW duffmem ;;poked value,so must point somewhere
+  EQUS mpen+5,mxy+2,48,drawbox,18,4,mpen+6
+  EQUS mxy+10,72, "&HEY:MAN<:LIKE"
+  EQUS mxy+6,80, "WHAT;S:HAPPENIN:?'",mend
+
+  EQUS mpen+4,mxy+4,96,drawbox,24,6,mpen+3
+  EQUS mxy+10,120,"&PLEASE:HELP:ME:DYLAN<"
+  EQUS mxy+12,128,"I;M:TRYING:TO:RESCUE"
+  EQUS mxy+10,136,"DAISY:BUT:I:CAN;T:FIND"
+  EQUS mxy+14,144,"THE:CLOUD:CASTLE>'",mend
+
+  EQUS mpen+5,mxy+12,72,drawbox,19,5,mpen+6
+  EQUS mxy+18,96, "&IT;S:QUITE:EASY<"
+  EQUS mxy+18,104,"REMEMBER:HOW:JACK"
+  EQUS mxy+18,112,"FOUND:THE:CASTLE'"
+  EQUS mend,mend
+
+.trancemess
+  EQUS mpen+7,mxy+4,80,drawbox,24,4,mpen+3
+  EQUS mxy+18,104,"STRANGE<:DYLAN"
+  EQUS mxy+9,112,"SEEMS:TO:BE:IN:A:TRANCE",mend,mend
+
+.denziltalking
+; EQUW ropehere+room
+  EQUS mpen+4,mxy+2,96,drawbox,26,5,mpen+3
+  EQUS mxy+8,120,"&WHAT:ARE:YOU:DOING:HERE"
+  EQUS mxy+8,128, "DENZIL:=:DON;T:YOU:KNOW"
+  EQUS mxy+12,136, "IT;S:DANGEROUS?'",mend
+
+  EQUS mpen+5,mxy+2,48,drawbox,24,6,mpen+6
+  EQUS mxy+9,72,  "&HEY<:STAY:COOL<:DIZ>"
+  EQUS mxy+10,80, "I:SAW:THE:KING:LEAVE"
+  EQUS mxy+9,88,  "AND:THOUGHT:I;D:CHECK"
+  EQUS mxy+15,96,  "OUT:THE:CASTLE>'",mend
+
+  EQUS mpen+4,mxy+4,96,drawbox,24,7,mpen+3
+  EQUS mxy+10,120, "&BUT:DAISY:AND:I:WERE"
+  EQUS mxy+12,128, "CAUGHT>:I:WAS:THROWN"
+  EQUS mxy+13,136, "IN:THE:DUNGEONS:AND"
+  EQUS mxy+11,144, "DAISY;S:BEEN:TAKEN:TO"
+  EQUS mxy+12,152, "THE:WIZARD;S:CASTLE'",mend
+
+  EQUS mpen+5,mxy+2,48,drawbox,26,7,mpen+6
+  EQUS mxy+14,72,"&OH@:WE:WONDERED"
+  EQUS mxy+13,80, "WHERE:YOU:HAD:GONE>"
+  EQUS mxy+11,88,"I;M:TOO:BUSY:TO:HELP<"
+  EQUS mxy+12,96,"BUT:HERE;S:THE:ROPE"
+  EQUS mxy+9,104,"YOU:LENT:ME:LAST:WEEK>'"
+
+  EQUS mend,mend
+
+.stereoess
+  EQUS mpen+7,mxy+8,80,drawbox,19,5,mpen+3
+  EQUS mxy+13,104,"DENZIL;S:TURNED:UP"
+  EQUS mxy+16,112,"HIS:STEREO:AND"
+  EQUS mxy+16,120,"IS:IGNORING:YOU",mend,mend
+
+
+;daisytalking    ;;;;;;;;;;;;;defw beanhere+room
+;;;     EQUS mend,mend
+
+.gottodaisymess
+  EQUS mpen+5,mxy+2,48,drawbox,17,5,mpen+6
+  EQUS mxy+8,72,"&OH@:MY:HERO@:I"
+  EQUS mxy+8,80,"KNEW:YOU;D:COME"
+  EQUS mxy+8,88,"TO:MY:RECSUE@'",mend,mend
+.daisyrunsmess
+  EQUS mpen+7,mxy+4,64,drawbox,24,9,mpen+3
+  EQUS mxy+13,88, "WELL<:DAISY:DOESN;T"
+  EQUS mxy+10,96, "HANG:AROUND<:SHE;S:RUN"
+  EQUS mxy+11,104,"HOME:AND:WANTS:YOU:TO"
+  EQUS mxy+9,112, "BRING:HER:30:GOLD:COINS"
+  EQUS mxy+11,120,"SO:THAT:YOU:CAN:BUY:A"
+  EQUS mxy+10,128,"HOME:TOGETHER:AND:LIVE"
+  EQUS mxy+14,136,"HAPPILY:EVER:AFTER",mend,mend
+
+.notgotallcoins
+  EQUS mpen+5,mxy+2,48,drawbox,21,6,mpen+6
+  EQUS mxy+10,72, "&OH:DIZZY@:YOU;RE"
+  EQUS mxy+8,80,  "SO:BRAVE:AND:CLEVER"
+  EQUS mxy+9,88,  "AND:NOW:WE:CAN:BUY"
+  EQUS mxy+9,96,  "THAT:TREE:COTTAGE'",mend
+
+  EQUS mpen+4,mxy+6,112,drawbox,24,5,mpen+3
+  EQUS mxy+12,136, "&ER<:UM<:WELL:ACTUALLY"
+  EQUS mxy+13,144, "I:WAS:WONDERING:IF:WE"
+  EQUS mxy+12,152, "NEEDED:ALL:30:COINS?'",mend
+
+  EQUS mpen+5,mxy+6,64,drawbox,21,4,mpen+6
+  EQUS mxy+12,88,"&YOU:DISAPPOINT:ME<"
+  EQUS mxy+14,96, "OF:COURSE:WE:DO@'",mend
+
+  EQUS mpen+7,mxy+8,80,drawbox,21,5,mpen+3
+  EQUS mxy+15,104,"BACK:YOU:GO:DIZZY>"
+  EQUS mxy+15,112,"SHE;S:A:REAL:SLAVE"
+  EQUS mxy+13,120,"DRIVER<:BUT:WORTH:IT"
+  EQUS mend,mend
+
+.gotallcoins
+  EQUS mpen+5,mxy+2,48,drawbox,24,3,mpen+6
+  EQUS mxy+8,72, "&WOW@:YOU;VE:GOT:THEM'",mend
+
+  EQUS mpen+4,mxy+4,128,drawbox,24,3,mpen+3
+  EQUS mxy+10,152, "&WELL<:IT:WAS:NOTHING'",mend
+
+  EQUS mpen+7,mxy+20,88,drawbox,7,3,mpen+3,mpen+7
+  EQUS mxy+26,112,"LIAR@",mend
+
+  EQUS mpen+7,mxy+2,80,"H",drawbox,23,5,mpen+3
+  EQUS mxy+10,104,"AND:SO:WE:SAY:GOODBYE"
+  EQUS mxy+12,112,"TO:THE:HAPPY:COUPLE"
+  EQUS mxy+16,120,"UNTIL:>>>>>",mend
+
+  EQUS mpen+7,mxy+8,72,drawbox,20,10,mpen+3
+  EQUS mxy+13,96,"WELL<WHO:KNOWS:WHAT"
+  EQUS mxy+15,104,"MIGHT:HAPPEN:NEXT?",mpen+4
+  EQUS mxy+16,120,"WE:HOPE:YOU:HAVE"
+  EQUS mxy+15,128,"ENJOYED:THIS:GAME",mpen+2
+  EQUS mxy+14,140,"THAT;S:ALL:FOLKS@",mpen+5
+  EQUS mxy+16,152,"THE:OLIVER:TWINS", mpen+7
+  EQUS mxy+20,160,"AND:IAN:GRAY"
+
+  EQUS mend,mend
+
+.dougtalking
+;  EQUW crowbarhere+room
+  EQUS mpen+5,mxy+2,48,drawbox,25,6,mpen+6
+  EQUS mxy+9,7, "&AFTERNOON:YOUNG:DIZZY"
+  EQUS mxy+14,80,"YOU:LOOK:FRANTIC<"
+  EQUS mxy+8,88, "ANYTHING:YOUR:OLD:GRAND"
+  EQUS mxy+9,96, "DIZZY:CAN:DO:TO:HELP?'",mend
+
+  EQUS mpen+4,mxy+6,104,drawbox,24,6,mpen+3
+  EQUS mxy+15,128,"&HAVEN;T:YOU:HEARD?"
+  EQUS mxy+13,136,"DAISY;S:BEING:HELD:IN"
+  EQUS mxy+14,144,"THE:CLOUD:CASTLE:AND"
+  EQUS mxy+11,152,"I;M:TRYING:TO:SAVE:HER'",mend
+
+  EQUS mpen+5,mxy+12,48,drawbox,21,4,mpen+6
+  EQUS mxy+18,72,"&JUST:WAIT:HERE:AND"
+  EQUS mxy+21,80,"I;LL:GET:MY:HAT'",mend
+
+  EQUS mpen+4,mxy+2,96,drawbox,25,5,mpen+3
+  EQUS mxy+9,120,"&WHAT@:WELL:THANKS:FOR"
+  EQUS mxy+8,128,"OFFERING<:BUT:I:THINK"
+  EQUS mxy+8,136,"YOU:SHOULD:STAY:HERE>'",mend
+
+  EQUS mpen+5,mxy+4,64,drawbox,24,6,mpen+6
+  EQUS mxy+13,88, "&WELL<:IF:YOU:THINK"
+  EQUS mxy+10,96, "IT;S:BEST<:BUT:PLEASE"
+  EQUS mxy+14,104,"TAKE:THIS:CROWBAR>"
+  EQUS mxy+11,112,"I:REMEMBER:WHEN>>>>'",mend
+
+  EQUS mpen+7,mxy+6,80,drawbox,22,5,mpen+3
+  EQUS mxy+13,104,"YOU:DECIDE:TO:LEAVE"
+  EQUS mxy+12,112,"AS:HE:STARTS:TO:TELL"
+  EQUS mxy+12,120,"YOU:HIS:LIFE:STORY"
+
+  EQUS mend,mend
+
+.goonmysonmess
+  EQUS mpen+5,mxy+2,48,drawbox,21,5,mpen+6
+  EQUS mxy+10,72,"OH:NO@:HE;S:STILL"
+  EQUS mxy+10,80,"WAFFLING:ON:ABOUT"
+  EQUS mxy+8,88, "HIS:PAST:ADVENTURES",mend,mend
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;MESSAGES FOR DOING THINGS
+
+.throwwateronfiremess
+  EQUS mpen+7,mxy+2,48,drawbox,21,6,mpen+3
+  EQUS mxy+10,72, "YOU:THROW:THE:JUG"
+  EQUS mxy+10,80,"OF:WATER:ONTO:THE"
+  EQUS mxy+8,88, "FIRE:AND:THE:FLAMES"
+  EQUS mxy+7,96, "ARE:QUICKLY:QUENCHED",mend,mend
+
+.lookatpicturemess
+  EQUS mpen+7,mxy+2,96,drawbox,23,6,mpen+3
+  EQUS mxy+11,120, "YOU:LOOK:UP:AT:THE"
+  EQUS mxy+9,128,  "PICTURE=:IT;S:YOU:IN"
+  EQUS mxy+10,136, "YOUR:LAST:ADVENTURE",mpen+5
+  EQUS mxy+8,144,  "TREASURE:ISLAND:DIZZY",mend,mend
+
+.throwwateronbeanmess
+  EQUS mpen+7,mxy+2,48,drawbox,26,8,mpen+3
+  EQUS mxy+8,72,  "YOU:THROW:YOUR:BUCKET:OF"
+  EQUS mxy+13,80, "WATER:ONTO:THE:BEAN",mpen+5
+  EQUS mxy+11,88, "YOU:JUMP:CLEAR:AS:THE"
+  EQUS mxy+10,96, "GROUND:RUMBLES:AND:A"
+  EQUS mxy+12,104,"BEANSTALK:SPIRALS:UP"
+  EQUS mxy+14,112,"THROUGH:THE:CLOUDS",mend,mend
+
+.plantbeanmess
+  EQUS mpen+7,mxy+6,48,drawbox,22,5,mpen+3
+  EQUS mxy+12,72,"THIS:TIME:YOU:DECIDE"
+  EQUS mxy+15,80,"TO:PLANT:THE:BEAN"
+  EQUS mxy+15,88,"IN:THE:DRY:MANURE"
+  EQUS mpen+2,mxy+2,112,drawbox,16,4,mpen+6
+  EQUS mxy+8,136,":>>>:BUT:IT:IS"
+  EQUS mxy+8,144,"UNABLE:TO:GROW",mend,mend
+
+.pickupmanuremess
+  EQUS mpen+7,mxy+2,48,drawbox,26,5,mpen+3
+  EQUS mxy+6,72,"OH@:HOW:DISGUSTING@YOU:TRY"
+  EQUS mxy+7,80,"TO:PICK:UP:THE:MANURE:BUT"
+  EQUS mxy+8,88,"IT:SLIPS:FROM:YOUR:HANDS",mend,mend
+
+
+.throwswitchmess
+  EQUS mpen+7,mxy+2,48,drawbox,15,5,mpen+3
+  EQUS mxy+8,72,"YOU:THROW:THE"
+  EQUS mxy+8,80,"LEVER:TO:;ON;"
+  EQUS mxy+8,88,"BUT:IT:BREAKS",mend,mend
+
+.fedarmorog
+  EQUS mpen+7,mxy+2,48,drawbox,18,4,mpen+3
+  EQUS mxy+8,72,"THAT:BONE:SHOULD"
+  EQUS mxy+10,80,"KEEP:HIM:BUSY@",mend,mend
+
+.dragonasleepmess
+  EQUS mpen+7,mxy+2,48,drawbox,21,6,mpen+3
+  EQUS mxy+8,72,"YOU:SMASH:THE:FLASK"
+  EQUS mxy+10,80,"OF:POTION:AND:THE"
+  EQUS mxy+9,88,"DRAGON:INHALES:THE"
+  EQUS mxy+8,96,"INTOXICATING:VAPOUR",mend,mend
+
+
+.croctiedmess
+  EQUS mpen+7,mxy+2,48,drawbox,19,5,mpen+3
+  EQUS mxy+11,72,"YOU:NIMBLY:TIE"
+  EQUS mxy+10,80,"THE:ROPE:AROUND"
+  EQUS mxy+8,88, "THE:;GATOR;S:JAWS",mend,mend
+
+.rockinwatermess
+  EQUS mpen+7,mxy+2,112,drawbox,26,5,mpen+3
+  EQUS mxy+6,136,"YOU:PUSH:THE:ROCK:INTO:THE"
+  EQUS mxy+6,144,"RIVER:AND:IT:DISPLACES:THE"
+  EQUS mxy+8,152,"WATER<:RAISING:THE:LEVEL",mend,mend
+.keyinmachine
+  EQUS mpen+7,mxy+2,48,drawbox,24,5,mpen+3
+  EQUS mxy+8,72,"YOU:TRY:THE:KEY:IN:THE"
+  EQUS mxy+13,80,"LOCK:AND:IT:FITS@"
+  EQUS mxy+8,88,"SO:YOU:TURN:IT:TO:;ON;",mend,mend
+
+.fillbucketmess
+  EQUS mpen+7,mxy+2,48,drawbox,21,4,mpen+3
+  EQUS mxy+8,72,"YOU:FILL:YOUR:EMPTY"
+  EQUS mxy+10,80,"BUCKET:WITH:WATER",mend,mend
+
+.thanksforloafmess
+  EQUS mpen+7,mxy+2,48,drawbox,18,5,mpen+3
+  EQUS mxy+8,72, "THE:RAVENOUS:RAT"
+  EQUS mxy+11,80,"EATS:THE:LOAF"
+  EQUS mxy+11,88,"AND:RUNS:AWAY",mend,mend
+.puteggbackmess
+  EQUS mpen+7,mxy+2,48,drawbox,20,6,mpen+3
+  EQUS mxy+11,72,"YOU:PUT:THE:EGG"
+  EQUS mxy+8,80, "BACK:INTO:THE:NEST"
+  EQUS mxy+12,88,"AND:THE:DRAGON"
+  EQUS mxy+8,96, "ALLOWS:YOU:TO:PASS",mend,mend
+
+.goawaymess
+  EQUS mpen+5,mxy+2,48,drawbox,26,5,mpen+6
+  EQUS mxy+10,72,"&OH:NO@:NOT:YOU:AGAIN@"
+  EQUS mxy+12,80, "GO:AWAY@:I;M:HIDING<"
+  EQUS mxy+8,88, "AND:IT;S:ALL:YOUR:FAULT'",mend,mend
+
+
+.knockandentermess
+  EQUS mpen+2,mxy+2,96,drawbox,17,3,mpen+6
+  EQUS mxy+8,120, "KNOCK:AND:ENTER",mend,mend
+
+  EQUS mpen+7,mxy+6,40,drawbox,22,5,mpen+3
+  EQUS mxy+14,7, "THAT;S:EASIER:SAID"
+  EQUS mxy+11,80, "THAN:DONE:WHEN:YOU;RE"
+  EQUS mxy+11,88, "WEARING:BOXING:GLOVES",mend,mend
+
+.usedoorknockermess
+  EQUS mpen+7,mxy+2,48,drawbox,20,5,mpen+3
+  EQUS mxy+12,72,"USING:THE:DOOR"
+  EQUS mxy+8,80,"KNOCKER<:YOU:KNOCK"
+  EQUS mxy+8,88,"AND:THE:DOOR:OPENS",mend,mend
+
+.usecrowbarmess
+  EQUS mpen+7,mxy+2,48,drawbox,19,5,mpen+3
+  EQUS mxy+8,72,"USING:THE:CROWBAR"
+  EQUS mxy+8,80,"YOU:FORCE:THE:LID"
+  EQUS mxy+13,88,"OFF:THE:WELL",mend,mend
+.usepickaxemess
+  EQUS mpen+7,mxy+2,48,drawbox,22,4,mpen+3
+  EQUS mxy+9,72,"YOU:USE:THE:PICKAXE"
+  EQUS mxy+8,80,"TO:BREAK:UP:THE:ROCK",mend,mend
+
+.obstructingliftmess
+  EQUS mpen+2,mxy+14,80,drawbox,14,4,mpen+6
+  EQUS mxy+21,104,"STAND:CLEAR"
+  EQUS mxy+21,112,"OF:THE:LIFT",mend,mend
+
+.userugmess
+  EQUS mpen+7,mxy+10,80,drawbox,17,6,mpen+3
+  EQUS mxy+18,104,"YOU:THROW:THE"
+  EQUS mxy+17,112,"RUG:ACROSS:THE"
+  EQUS mxy+16,120,"DAGGERS<:MAKING"
+  EQUS mxy+22,128,"THEM:SAFE",mend,mend
+
+.getbackintheremess
+  EQUS mpen+5,mxy+2,48,drawbox,21,4,mpen+6
+  EQUS mxy+10,72,  "&OY@:WHERE:DO:YOU"
+  EQUS mxy+7,80,  "THINK:YOU;RE:GOING?'",mend,mend
+
+.holdingholemess
+  EQUS mpen+2,mxy+2,48,drawbox,16,7,mpen+6
+  EQUS mxy+8,72,"WHOOPS@:",mpen+4,"YOU;VE"
+  EQUS mxy+9,80,"GOT:A:HOLE:IN"
+  EQUS mxy+10,88,"YOUR:BAG:AND"
+  EQUS mxy+8,96,"EVERYTHING:HAS"
+  EQUS mxy+10,104,"DROPPED:OUT@",mend,mend
+
+.dropwhiskeymess
+  EQUS mpen+2,mxy+2,48,drawbox,14,7,6
+  EQUS mxy+8,72,  "YOU:FIND:THE"
+  EQUS mxy+9,80,  "WHISKY:TOO"
+  EQUS mxy+9,88,  "TEMPTING:TO"
+  EQUS mxy+9,96,  "DROP:AND:SO"
+  EQUS mxy+11,104,"DRINK:IT@",mend,mend
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;ALL DEAD MESSAGES
+
+.deadwindow
+  EQUS mpen+6,mxy+10,64,drawbox,18,6
+  EQUS mxy+16,112,mpen+2,"YOU:LOSE:A:LIFE@",mpen+5,mend+mend2
+.armorogkilledmess
+  EQUS mxy+18,88,"ARMOROG:CAUGHT"
+  EQUS mxy+17,100,"YOU:TRESPASSING"
+  EQUS mend+mend2
+
+.killedbyportcullis
+  EQUS mxy+16,88,"YOU:WERE:STABBED"
+  EQUS mxy+16,96,"BY:THE:SPIKES:OF"
+  EQUS mxy+18,104,"THE:PORTCULLIS"
+  EQUS mend+mend2
+
+.killedbyliftmess
+  EQUS mxy+17,88,"YOU:GOT:TRAPPED"
+  EQUS mxy+18,96,"IN:THE:COGS:ON"
+  EQUS mxy+17,104,"TOP:OF:THE:LIFT"
+  EQUS mend+mend2-1
+
+.dragonkilledmess
+  EQUS mxy+16,88, "THE:DRAGON:BITES"
+  EQUS mxy+16,96, "YOU:AND:YOU:KEEL"
+  EQUS mxy+20,104,"OVER:AND:DIE"
+  EQUS mend+mend2-1
+
+.dragonflameskilledmess
+  EQUS mxy+17,88, "YOU:ARE:ROASTED"
+  EQUS mxy+17,96, "BY:THE:DRAGON;S"
+  EQUS mxy+20,104,"FIREY:BREATH"
+  EQUS mend+mend2-1
+
+.killedbyflame
+  EQUS mxy+18,88,"YOU:WERE:BURNT"
+  EQUS mxy+19,100,"BY:THE:FLAMES"
+  EQUS mend+mend2-1
+
+.killedbywater
+  EQUS mxy+17,88, "YOU:FELL:IN:THE"
+  EQUS mxy+15,100,"WATER:AND:DROWNED"
+  EQUS mend+mend2-1
+
+.croceatenmess
+  EQUS mxy+19,88,"THE:GATOR:HAS"
+  EQUS mxy+19,96,"YOU:FOR:LUNCH"
+  EQUS mend+mend2-1
+
+.killedbyhawk
+  EQUS mxy+18,88,"THE:DIZZY=HAWK"
+  EQUS mxy+21,96,"SWOOPS:DOWN"
+  EQUS mxy+19,104,"AND:KILLS:YOU"
+  EQUS mend+mend2-1
+
+.ratgotyoumess
+  EQUS mxy+20,88,"THE:RAT:GOES"
+  EQUS mxy+20,96,"STRAIGHT:FOR"
+  EQUS mxy+23,104,"YOUR:NECK"
+  EQUS mend+mend2-1
+
+.killedbyvolcano
+  EQUS mxy+18,88, "YOU:WERE:BURNT"
+  EQUS mxy+17,96, "BY:THE:HOT:LAVA"
+  EQUS mxy+18,104,"IN:THE:VOLCANO"
+  EQUS mend+mend2-1
+
+.killedbydaggersmess
+  EQUS mxy+14,88, "YOU;RE:SKEWERED:BY"
+  EQUS mxy+15,100,"THE:SHARP:DAGGERS"
+  EQUS mend+mend2-1
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;ODD MESSAGES
+
+.youfoundcoinmess
+  EQUS mpen+5,mxy+16,64,drawbox,12,5,mpen+3
+  EQUS mxy+22,88,"WELL:DONE@",mpen+6
+  EQUS mxy+23,96,"YOU:FOUND"
+  EQUS mxy+26,104,"A:COIN",mend,mend
+
+.inventory
+  EQUS mpen+4,mxy+6,56,drawbox,22,6,mxy+16,76
+.carrymess
+  EQUS mpen+5,"YOU:ARE:CARRYING",mpen+2,mend+mend2-1
+.inventorywithbag
+  EQUS mpen+4,mxy+6,48,drawbox,22,8,mxy+16,68
+  EQUS mpen+5,"YOU:ARE:CARRYING",mpen+2,mend+mend2-1
+
+.selectitemmess
+  EQUS mpen+7,mxy+14,136,drawbox,14,2,mpen+5
+  EQUS mxy+18,152,"CHOOSE:ITEM:TO"
+  EQUS mxy+21,160,"USE:OR:DROP",mend+mend2-1
+
+.carryingtoomuchmess
+  EQUS mpen+7,mxy+12,136,drawbox,16,2,mpen+5
+  EQUS mxy+16,152,"YOU:ARE:CARRYING"
+  EQUS mxy+16,160,"TOO:MUCH:TO:HOLD",mend+mend2
+
+.nothingatallmess
+  EQUS mxy+26,96,mpen+7
+  EQUS "NOTHING", mend+mend2
+
+ORG &FFFF
+.c64end
+
+SAVE "c64_built", c64start, c64end
