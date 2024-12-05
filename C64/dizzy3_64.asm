@@ -137,12 +137,13 @@ ORG &0B00
   EQUB &FF
 
 .l0B01
-  LDA &0B00
+  LDA v0B00
   BNE l0B0F
   STA &116D
   JSR l0F78
 .l0B0C
   JMP l0F72
+
 .l0B0F
   CMP #&05
   BCS l0B50
@@ -176,6 +177,7 @@ ORG &0B00
   LDA #&01
   STA &116D
   JMP l0F72
+
 .l0B50
   LDA &116D
   BEQ l0B0C
@@ -197,6 +199,7 @@ ORG &0B00
   INC &1169,X
   JSR l0F83
   JMP l0EEC
+
 .l0B84
   LDA &11A0,X
   BEQ l0B95
@@ -204,8 +207,10 @@ ORG &0B00
   DEC &1169,X
   JSR l0F83
   JMP l0EEC
+
 .l0B95
   JMP l0CDD
+
 .l0B98
   LDA #&00
   LDY &118B,X
@@ -234,12 +239,14 @@ ORG &0B00
   LDA #&00
   STA &11C2
   JMP l0BBF
+
 .l0BD7
   CMP #&FE
   BNE l0BE3
   LDA #&00
-  STA &0B00
+  STA v0B00
   JMP l0B01
+
 .l0BE3
   CMP #&FD
   BNE l0BF4
@@ -292,6 +299,7 @@ ORG &0B00
   INY
   STA &1197,X
   JMP l0C4A
+
 .l0C40
   CMP #&7A
   BNE l0C4D
@@ -363,6 +371,7 @@ ORG &0B00
   TYA
   STA &11A6,X
   JMP l0EEC
+
 .l0CDD
   LDA &1169,X
   BEQ l0CEF
@@ -371,13 +380,16 @@ ORG &0B00
   AND #&08
   BEQ l0CF2
   JMP l0D57
+
 .l0CEF
   JMP l0EEC
+
 .l0CF2
   LDA &1254,Y
   AND #&04
   BEQ l0CFC
   JMP l0D73
+
 .l0CFC
   LDY &11C3,X
   LDA &1254,Y
@@ -416,8 +428,10 @@ ORG &0B00
   LDA #&00
   STA &D400,Y
   JMP l0EEC
+
 .l0D54
   JMP l0DA1
+
 .l0D57
   LDY &11C3,X
   LDA &11C9,X
@@ -430,6 +444,7 @@ ORG &0B00
   STA &D400,Y
   LDA #&81
   JMP l0D98
+
 .l0D73
   LDY &11C3,X
   LDA &11C9,X
@@ -442,6 +457,7 @@ ORG &0B00
   STA &D400,Y
   LDA #&11
   JMP l0D98
+
 .l0D8F
   JSR l0F83
   LDY &11C3,X
@@ -450,6 +466,7 @@ ORG &0B00
   LDY &11CC
   STA &D404,Y
   JMP l0EEC
+
 .l0DA1
   LDA &118B,X
   BNE l0DAE
@@ -458,6 +475,7 @@ ORG &0B00
   BNE l0DB1
 .l0DAE
   JMP l0E63
+
 .l0DB1
   PHA
   AND #&0F
@@ -482,6 +500,7 @@ ORG &0B00
   LSR &11BA
   ROR &11B9
   JMP l0DD5
+
 .l0DE3
   LDA &11AB,X
   BPL l0DF2
@@ -500,6 +519,7 @@ ORG &0B00
   BEQ l0E0B
   DEC &11B4,X
   JMP l0EEC
+
 .l0E0B
   LDA &1173,X
   STA &11B7
@@ -519,6 +539,7 @@ ORG &0B00
   SBC &11BA
   STA &11B8
   JMP l0E1C
+
 .l0E35
   LDY &11AE,X
 .l0E38
@@ -532,6 +553,7 @@ ORG &0B00
   ADC &11BA
   STA &11B8
   JMP l0E38
+
 .l0E51
   LDY &11CC
   LDA &11B7
@@ -539,6 +561,7 @@ ORG &0B00
   LDA &11B8
   STA &D401,Y
   JMP l0EEC
+
 .l0E63
   LDA &118E,X
   BEQ l0E9E
@@ -552,6 +575,7 @@ ORG &0B00
   LDA &115B,X
   STA &11A6,X
   JMP l0E6E
+
 .l0E81
   CLC
   ADC &1169,X
@@ -564,6 +588,7 @@ ORG &0B00
   LDX &116C
   INC &11A6,X
   JMP l0EEC
+
 .l0E9E
   LDA &1194,X
   BEQ l0EEC
@@ -638,6 +663,7 @@ ORG &0B00
   LDA #&01
   STA &11A3,X
   JMP l0F54
+
 .l0F37
   LDA &1179,X
   SEC
@@ -662,6 +688,7 @@ ORG &0B00
   DEC &116C
   BMI l0F67
   JMP l0B63
+
 .l0F67
   DEC &116F
   BPL l0F72
@@ -669,7 +696,7 @@ ORG &0B00
   STA &116F
 .l0F72
   LDA #&FF
-  STA &0B00
+  STA v0B00
   RTS
 
 .l0F78
@@ -735,6 +762,7 @@ ORG &0B00
   ADC #&40
   STA &1191,X
   JMP l0FCD
+
 .l0FEB
   ASL A
   TAY
@@ -763,6 +791,7 @@ ORG &0B00
   SBC &1085,Y
   STA &119B
   JMP l1048
+
 .l1028
   LDA #&38 ; SEC
   STA &0ED6
@@ -814,6 +843,7 @@ ORG &0B00
 
 .v1085
 .v1086
+
 .v10E6
 .v10E7
 
@@ -927,7 +957,7 @@ ORG &190E
   LDA #&36
   STA &01
   LDA #&0A
-  STA &0B00
+  STA v0B00
 .l1927
   LDA #&00
   STA GFX_BORDER_COLOUR
@@ -939,7 +969,7 @@ ORG &190E
   CPX #&08
   BCC l1931
   LDA #&01
-  STA &0B00
+  STA v0B00
   LDA #&00
   STA &033F
   JSR l3B6D
@@ -1001,7 +1031,7 @@ ORG &190E
   STA SPR_MULTICOLOUR
   STA &CFF8
   STA SPR_PRIORITY
-  STA &2B48
+  STA v2B48
   LDX #&86
 .l19DA
   DEX
@@ -1031,13 +1061,14 @@ ORG &190E
   JSR l2F22
   JSR l346B
   LDA #&02
-  STA &0B00
+  STA v0B00
 .l1A25
   NOP
   JSR l3541
   CPY #&3E
   BNE l1A30
   JMP l1927
+
 .l1A30
   CPY #&29
   BNE l1A45
@@ -1050,21 +1081,23 @@ ORG &190E
   CPY #&40
   BEQ l1A3B
   JMP l1A6C
+
 .l1A45
   CPY #&24
   BNE l1A6C
-  LDA &2B48
+  LDA v2B48
   BEQ l1A5B
   LDA #&00
-  STA &2B48
+  STA v2B48
   LDA #&02
-  STA &0B00
+  STA v0B00
   JMP l1A65
+
 .l1A5B
   LDA #&00
-  STA &0B00
+  STA v0B00
   LDA #&01
-  STA &2B48
+  STA v2B48
 .l1A65
   JSR l3541
   CPY #&24
@@ -1122,6 +1155,7 @@ ORG &190E
   LDA &03C9
   BEQ l1AE1
   JMP l1B95
+
 .l1AE1
   LDA #&16
   STA &033B
@@ -1138,6 +1172,7 @@ ORG &190E
   AND #&40
   BEQ l1AEB
   JMP l1B0C
+
 .l1B04
   LDA #&03
   STA &03C8
@@ -1168,6 +1203,7 @@ ORG &190E
   STA &03C8
   STA &03C7
   JMP l1B68
+
 .l1B48
   LDA #&01
   STA &03C8
@@ -1175,11 +1211,13 @@ ORG &190E
   STA &03C7
   LDA #&00
   JMP l1B68
+
 .l1B58
   DEC &0342
   LDA &0342
   BEQ l1B63
   JMP l1AD9
+
 .l1B63
   LDA #&00
   STA &03C0
@@ -1194,6 +1232,7 @@ ORG &190E
   AND #&08
   BNE l1B90
   JMP l1B95
+
 .l1B80
   LDA #&02
 .l1B82
@@ -1202,15 +1241,18 @@ ORG &190E
   LDA #&01
   STA &03C8
   JMP l1B95
+
 .l1B90
   LDA #&01
   JMP l1B82
+
 .l1B95
   LDA &03C8
   CMP #&03
   BNE l1B9F
 .l1B9C
   JMP l1C85
+
 .l1B9F
   CMP #&02
   BEQ l1BCD
@@ -1218,6 +1260,7 @@ ORG &190E
   AND #&01
   BNE l1BAD
   JMP l1B9C
+
 .l1BAD
   LDA &03C0
   AND #&0F
@@ -1255,6 +1298,7 @@ ORG &190E
   LDA #&02
   STA &03C1
   JMP l1C85
+
 .l1BFD
   DEC &035C
   DEC &0342
@@ -1265,6 +1309,7 @@ ORG &190E
   BCC l1C85
   DEC &03C3
   JMP l1C85
+
 .l1C15
   JSR l1C62
 .l1C18
@@ -1284,6 +1329,7 @@ ORG &190E
   BEQ l1C2A
   BCC l1C2A
   JMP l1C51
+
 .l1C3E
   INC &035C
   DEC &0342
@@ -1292,6 +1338,7 @@ ORG &190E
   LDA #&00
   STA &03C3
   JMP l1C85
+
 .l1C51
   LDA &03C9
   CMP #&11
@@ -1301,6 +1348,7 @@ ORG &190E
 .l1C5D
   LDA #&00
   JMP l1C85
+
 .l1C62
   LDA &03C9
   CMP #&07
@@ -1309,6 +1357,7 @@ ORG &190E
   BCS l1C72
   LDA #&02
   JMP l1C81
+
 .l1C72
   CMP #&02
   BCC l1C7F
@@ -1316,6 +1365,7 @@ ORG &190E
   BCS l1C7F
   LDA #&04
   JMP l1C81
+
 .l1C7F
   LDA #&06
 .l1C81
@@ -1330,6 +1380,7 @@ ORG &190E
   BEQ l1C96
   DEC &03C8
   JMP l1CA8
+
 .l1C96
   STA &03C8
   STA &03C7
@@ -1337,15 +1388,18 @@ ORG &190E
   STA &03C9
   STA &03C1
   JMP l1CB9
+
 .l1CA8
   LDA &03C7
   BNE l1CB0
   JMP l1CB9
+
 .l1CB0
   CMP #&01
   BEQ l1CCB
   LDA #&00
   JMP l1CCD
+
 .l1CB9
   LDA &03C1
   CMP #&01
@@ -1353,8 +1407,10 @@ ORG &190E
   LDA #&00
   STA &03C1
   JMP l1BDA
+
 .l1CC8
   JMP l1D41
+
 .l1CCB
   LDA #&07
 .l1CCD
@@ -1369,6 +1425,7 @@ ORG &190E
   LDA #&00
   STA &03C1
   JMP l1CF7
+
 .l1CE9
   LDA &03C3
   CMP #&0A
@@ -1409,9 +1466,11 @@ ORG &190E
   BNE l1D3B
   INC &0352
   JMP l1D41
+
 .l1D3B
   DEC &0352
   JMP l1D41
+
 .l1D41
   LDA &03C8
   CMP #&02
@@ -1454,6 +1513,7 @@ ORG &190E
   BEQ l1D86
   DEC &035C
   JMP l1D41
+
 .l1D9D
   DEC &033B
   LDA &033B
@@ -1466,6 +1526,7 @@ ORG &190E
   STA &0352
   INC &03E5
   JMP l1DFC
+
 .l1DB9
   CMP #&02
   BCS l1DC8
@@ -1473,6 +1534,7 @@ ORG &190E
   STA &0352
   DEC &03E5
   JMP l1DFC
+
 .l1DC8
   LDA &035C
   CMP #&80
@@ -1487,6 +1549,7 @@ ORG &190E
   STA &03E5
   JSR l2A01
   JMP l1DFC
+
 .l1DE7
   LDA &035C
   CMP #&C0
@@ -1526,6 +1589,7 @@ ORG &190E
   LDA SPR_MSB_X
   ORA #&01
   JMP l1E40
+
 .l1E3B
   LDA SPR_MSB_X
   AND #&FE
@@ -1538,6 +1602,7 @@ ORG &190E
   LDA &03C4
   AND #&01
   JMP l1E9E
+
 .l1E55
   CMP #&02
   BNE l1E7E
@@ -1545,11 +1610,13 @@ ORG &190E
   BNE l1E63
   LDA #&02
   JMP l1E6E
+
 .l1E63
   CMP #&01
   BNE l1E6C
   LDA #&1A
   JMP l1E6E
+
 .l1E6C
   LDA #&22
 .l1E6E
@@ -1561,6 +1628,7 @@ ORG &190E
   CLC
   ADC &FF
   JMP l1E9E
+
 .l1E7E
   LDA &03C2
   BEQ l1E9E
@@ -1570,6 +1638,7 @@ ORG &190E
   BNE l1E92
   LDA #&0A
   JMP l1E94
+
 .l1E92
   LDA #&12
 .l1E94
@@ -1597,6 +1666,7 @@ ORG &190E
   LDA #&05
   STA &03C0
   JMP l1B68
+
 .l1ECC
   LDX #&41
   JSR l39D4
@@ -1609,6 +1679,7 @@ ORG &190E
   LDA #&02
   JSR l357D
   JMP l1F33
+
 .l1EE8
   LDA &03E5
   CMP #&29
@@ -1640,6 +1711,7 @@ ORG &190E
   LDA #&24
   STA &C6D5
   JMP l1B68
+
 .l1F33
   LDA #&FF
   STA &03D9
@@ -1649,6 +1721,7 @@ ORG &190E
   LDA &03C8
   BNE l1F48
   JMP l1F50
+
 .l1F48
   LDA &03C0
   AND #&EF
@@ -1658,6 +1731,7 @@ ORG &190E
   AND #&10
   BNE l1F5A
   JMP l24A0
+
 .l1F5A
   LDX #&00
 .l1F5C
@@ -1694,6 +1768,7 @@ ORG &190E
   BCS l1FA9
   STX &18DE
   JMP l1FB3
+
 .l1FA9
   INX
   CPX #&3F
@@ -1715,6 +1790,7 @@ ORG &190E
   TYA
   JSR l357D
   JMP l24A0
+
 .l1FD1
   LDX #&55
   JSR l39D4
@@ -1722,6 +1798,7 @@ ORG &190E
   LDA #&12
   JSR l357D
   JMP l24A0
+
 .l1FE0
   LDX #&53
   JSR l39D4
@@ -1734,6 +1811,7 @@ ORG &190E
   LDA #&16
   JSR l357D
   JMP l24A0
+
 .l1FFB
   LDX #&4A
   JSR l39D4
@@ -1745,6 +1823,7 @@ ORG &190E
   STA &C6AF
   LDY #&05
   JMP l2024
+
 .l2013
   LDX #&4A
   JSR l32EB
@@ -1757,6 +1836,7 @@ ORG &190E
   TYA
   JSR l357D
   JMP l24A0
+
 .l202B
   LDA &03E5
   CMP #&54
@@ -1770,6 +1850,7 @@ ORG &190E
   LDA #&20
   JSR l357D
   JMP l24A0
+
 .l2048
   LDX #&63
   JSR l39D4
@@ -1785,6 +1866,7 @@ ORG &190E
   TYA
   JSR l357D
   JMP l24A0
+
 .l2066
   LDX #&5C
   JSR l39D4
@@ -1800,6 +1882,7 @@ ORG &190E
   TYA
   JSR l357D
   JMP l24A0
+
 .l2084
   LDX #&64
   JSR l39D4
@@ -1831,6 +1914,7 @@ ORG &190E
   CMP #&8B
   BCC l209A
   JMP l24A0
+
 .l20CE
   LDX #&46
   JSR l39D4
@@ -1840,8 +1924,10 @@ ORG &190E
   LDA #&FF
   STA &C6E4
   JMP l24A0
+
 .l20E2
   JMP l2A2E
+
 .l20E5
   LDX &18DE
   CPX #&00
@@ -1852,6 +1938,7 @@ ORG &190E
   LDA #&FF
   STA &18DE
   JMP l214C
+
 .l20F9
   CPX #&02
   BNE l2113
@@ -1865,6 +1952,7 @@ ORG &190E
 .l210E
   LDX #&03
   JMP l1F5C
+
 .l2113
   CPX #&0A
   BNE l214C
@@ -1893,6 +1981,7 @@ ORG &190E
   LDA #&FF
   STA &C6A8
   JMP l20F1
+
 .l214C
   LDX &18DE
   CPX #&1A
@@ -1901,6 +1990,7 @@ ORG &190E
   BCS l215D
   JSR l3997
   JMP l24A0
+
 .l215D
   CPX #&3F
   BCS l21A0
@@ -1948,6 +2038,7 @@ ORG &190E
   JSR l31D6
   JSR l2F39
   JMP l242D
+
 .l21C4
   LDA #&39
   JSR l357D
@@ -1958,6 +2049,7 @@ ORG &190E
   BEQ l21D4
   INX
   JMP l21CB
+
 .l21D4
   STX &03D9
 .l21D7
@@ -1980,6 +2072,7 @@ ORG &190E
   STA &03D9
   JSR l2F39
   JMP l222E
+
 .l2202
   LDA #&03
   JSR l3A71
@@ -1991,6 +2084,7 @@ ORG &190E
   CPX #&FA
   BCS l21C9
   JMP l21D7
+
 .l221B
   LDX &03D9
   INC &03D9
@@ -1999,6 +2093,7 @@ ORG &190E
   LDA #&00
   STA &03D9
   JMP l21D7
+
 .l222E
   LDX #&3F
   JSR l39D4
@@ -2009,6 +2104,7 @@ ORG &190E
   LDA #&03
   JSR l357D
   JMP l242D
+
 .l2244
   LDA #&16
   STA &C69F
@@ -2019,6 +2115,7 @@ ORG &190E
   LDA #&04
   JSR l357D
   JMP l242D
+
 .l225C
   LDA &03D9
   CMP #&12
@@ -2031,6 +2128,7 @@ ORG &190E
   JSR l357D
 .l2272
   JMP l242D
+
 .l2275
   CMP #&14
   BNE l2295
@@ -2045,6 +2143,7 @@ ORG &190E
   LDA #&24
   STA &C768
   JMP l242D
+
 .l2295
   CMP #&10
   BNE l22B0
@@ -2057,6 +2156,7 @@ ORG &190E
   LDA #&19
   JSR l357D
   JMP l242D
+
 .l22B0
   CMP #&17
   BCC l22E2
@@ -2079,6 +2179,7 @@ ORG &190E
   LDA #&1A
   JSR l357D
   JMP l242D
+
 .l22E2
   CMP #&16
   BNE l2307
@@ -2096,6 +2197,7 @@ ORG &190E
   JSR l357D
 .l2304
   JMP l242D
+
 .l2307
   CMP #&05
   BNE l2324
@@ -2109,6 +2211,7 @@ ORG &190E
   LDA #&FF
   STA &C6F0
   JMP l242D
+
 .l2324
   CMP #&03
   BNE l233F
@@ -2121,6 +2224,7 @@ ORG &190E
   LDA #&22
   JSR l357D
   JMP l242D
+
 .l233F
   CMP #&01
   BNE l2365
@@ -2131,6 +2235,7 @@ ORG &190E
   LDA #&14
   JSR l357D
   JMP l242D
+
 .l2355
   LDA #&00
   STA &03C7
@@ -2138,6 +2243,7 @@ ORG &190E
   LDA #&05
   STA &03C0
   JMP l1B68
+
 .l2365
   CMP #&04
   BNE l23A7
@@ -2156,6 +2262,7 @@ ORG &190E
   LDA #&13
   JSR l357D
   JMP l2355
+
 .l238E
   LDX #&5D
   JSR l39D4
@@ -2167,6 +2274,7 @@ ORG &190E
   LDA #&1C
   JSR l357D
   JMP l242D
+
 .l23A7
   CMP #&0C
   BCC l23C8
@@ -2184,6 +2292,7 @@ ORG &190E
   JSR l357D
 .l23C5
   JMP l242D
+
 .l23C8
   CMP #&09
   BNE l23E0
@@ -2195,6 +2304,7 @@ ORG &190E
   LDA #&86
   STA &C839
   JMP l242D
+
 .l23E0
   CMP #&08
   BNE l23FB
@@ -2207,6 +2317,7 @@ ORG &190E
   LDA #&23
   JSR l357D
   JMP l242D
+
 .l23FB
   CMP #&0B
   BNE l2417
@@ -2219,6 +2330,7 @@ ORG &190E
   LDA #&25
   JSR l357D
   JMP l242D
+
 .l2417
   CMP #&11
   BNE l242D
@@ -2229,6 +2341,7 @@ ORG &190E
   LDA #&18
   JSR l357D
   JMP l242D
+
 .l242D
   LDX #&73
   STX &03DB
@@ -2238,6 +2351,7 @@ ORG &190E
   LDX #&FF
   STX &03D9
   JMP l2449
+
 .l243F
   INC &03DB
   LDX &03DB
@@ -2251,6 +2365,7 @@ ORG &190E
   LDA #&28
   JSR l357D
   JMP l24A0
+
 .l245B
   CPX #&FF
   BEQ l24A0
@@ -2292,6 +2407,7 @@ ORG &190E
   LDX &03B7
   LDA &1903,X
   JMP l2572
+
 .l24B7
   INC &03B7
   LDX &03B7
@@ -2305,6 +2421,7 @@ ORG &190E
   BCC l24D4
   LDA #&31
   JMP l2572
+
 .l24D4
   LDA &03E5
   CMP #&28
@@ -2312,11 +2429,13 @@ ORG &190E
   CMP #&36
   BEQ l24EC
   JMP l2527
+
 .l24E2
   LDA &C839
   AND #&80
   BEQ l24F3
   JMP l24FF
+
 .l24EC
   LDA &C6AF
   CMP #&FF
@@ -2327,6 +2446,7 @@ ORG &190E
   BCC l24FF
   LDA #&2D
   JMP l2572
+
 .l24FF
   LDA &035C
   CMP #&58
@@ -2346,6 +2466,7 @@ ORG &190E
   BCS l2527
   LDA #&2E
   JMP l2572
+
 .l2527
   LDA #&02
   STA &033A
@@ -2372,6 +2493,7 @@ ORG &190E
   BEQ l2560
   LDA #&2F
   JMP l2572
+
 .l2560
   LDA &033F
   AND #&10
@@ -2392,9 +2514,10 @@ ORG &190E
   CMP #&FF
   BNE l258A
   JMP l25C7
+
 .l258A
   LDA #&04
-  STA &0B00
+  STA v0B00
   JSR l34E2
   LDA #&29
   JSR l357D
@@ -2410,14 +2533,15 @@ ORG &190E
   LDA &03B9
   BNE l25B4
   JMP l1927
+
 .l25B4
   DEC &03B9
   JSR l2F22
   JSR l346B
-  LDA &2B48
+  LDA v2B48
   BNE l25C7
   LDA #&02
-  STA &0B00
+  STA v0B00
 .l25C7
   LDA &03E5
   CMP #&24
@@ -2462,6 +2586,7 @@ ORG &190E
   STA &C6E3
 .l2629
   JMP l2650
+
 .l262C
   LDA &C769
   CMP #&4F
@@ -2471,6 +2596,7 @@ ORG &190E
   EOR #&80
   STA &C875
   JMP l2650
+
 .l263E
   LDX #&45
   JSR l32EB
@@ -2525,6 +2651,7 @@ ORG &190E
   LDX #&54
   JSR l29D3
   JMP l26BE
+
 .l26AE
   LDA &C7FE
   CMP #&88
@@ -2533,6 +2660,7 @@ ORG &190E
   ADC #&04
   STA &C7FE
   JMP l26A6
+
 .l26BE
   LDA &03E5
   CMP #&2D
@@ -2557,6 +2685,7 @@ ORG &190E
   LDA &03BE
   BEQ l26F2
   JMP l2767
+
 .l26F2
   LDA &18E8,X
   CMP &03E5
@@ -2591,6 +2720,7 @@ ORG &190E
   LDA #&10
   STA &03BE
   JMP l2767
+
 .l273F
   DEC &C7AA,X
   JSR l29D3
@@ -2605,6 +2735,7 @@ ORG &190E
   BEQ l272F
   BCC l272F
   JMP l2767
+
 .l2762
   INX
   CPX #&04
@@ -2614,6 +2745,7 @@ ORG &190E
   CMP #&31
   BEQ l2771
   JMP l2809
+
 .l2771
   LDX #&50
   JSR l3306
@@ -2636,6 +2768,7 @@ ORG &190E
   BNE l279E
 .l279B
   JMP l27DF
+
 .l279E
   LDA &C774
   CMP #&23
@@ -2653,6 +2786,7 @@ ORG &190E
   INC &C774
   INC &C774
   JMP l27C7
+
 .l27C1
   DEC &C774
   DEC &C774
@@ -2669,6 +2803,7 @@ ORG &190E
   STA &C906
   JSR l3306
   JMP l2809
+
 .l27DF
   LDA &C7FA
   CLC
@@ -2683,11 +2818,13 @@ ORG &190E
   AND #&7F
   STA &C880
   JMP l27B1
+
 .l27FE
   LDA &C880
   ORA #&80
   STA &C880
   JMP l27B1
+
 .l2809
   LDA &03E5
   CMP #&32
@@ -2712,6 +2849,7 @@ ORG &190E
   STA &03BD
 .l283A
   JMP l28B0
+
 .l283D
   LDA &03BD
   CMP #&28
@@ -2736,6 +2874,7 @@ ORG &190E
   INC &C775
   INC &C775
   JMP l2878
+
 .l2872
   DEC &C775
   DEC &C775
@@ -2774,6 +2913,7 @@ ORG &190E
   LDA #&00
   STA &03BA
   JMP l295E
+
 .l28C3
   LDA &C839
   CMP #&80
@@ -2781,6 +2921,7 @@ ORG &190E
   LDA &03BB
   BNE l28E1
   JMP l295E
+
 .l28D2
   LDA &C6AF
   CMP #&FF
@@ -2788,16 +2929,19 @@ ORG &190E
   LDA &03BB
   BNE l28E1
   JMP l2993
+
 .l28E1
   LDA &C928
   CMP #&6D
   BEQ l28EB
   JMP l295E
+
 .l28EB
   LDA &03C4
   AND #&01
   BEQ l28F5
   JMP l295E
+
 .l28F5
   LDX #&72
 .l28F7
@@ -2821,6 +2965,7 @@ ORG &190E
   DEC &C7AA,X
   DEC &C7AA,X
   JMP l2925
+
 .l291F
   INC &C7AA,X
   INC &C7AA,X
@@ -2840,6 +2985,7 @@ ORG &190E
   BCC l295E
   DEC &03BB
   JMP l2956
+
 .l2949
   DEC &03BB
   LDA &03BB
@@ -2858,6 +3004,7 @@ ORG &190E
   CMP #&FF
   BNE l2993
   JMP l297F
+
 .l296F
   CMP #&36
   BNE l2993
@@ -2890,12 +3037,14 @@ ORG &190E
   LDX #&72
   JSR l3306
   JMP l29BA
+
 .l29B7
   JSR l3A9F
 .l29BA
   NOP
   JSR l38B1
   JMP l1A25
+
 .l29C1
   STX &034E
   LDX &03D9
@@ -2956,6 +3105,7 @@ ORG &190E
   JSR l39D4
   BCS l2A38
   JMP l20E5
+
 .l2A38
   LDA &03E5
   CMP #&5E
@@ -2974,8 +3124,9 @@ ORG &190E
   LDA #&0C
   JSR l357D
   LDA #&02
-  STA &0B00
+  STA v0B00
   JMP l24A0
+
 .l2A68
   LDA &18E5
   CMP #&03
@@ -2983,10 +3134,12 @@ ORG &190E
   LDA #&0E
   JSR l357D
   JMP l1927
+
 .l2A77
   LDA #&0D
   JSR l357D
   JMP l24A0
+
 .l2A7F
   LDY &03E5
   CPY #&19
@@ -3024,7 +3177,7 @@ ORG &190E
   RTS
 
 .l2AB7
-  LDA &2B48
+  LDA v2B48
   BNE l2ABD
 .l2ABC
   RTS
@@ -3059,38 +3212,54 @@ ORG &190E
   ; No idea what this is
 .v2AF3
   EQUB &00, &00, &b8, &00, &00, &00, &81, &00, &80
+
 .v2B13
 .v2B14
+
 .v2B1E
+
 .v2B28
 
 ORG &2B32
 
 .l2B32
+{
   SEI
-  LDA #&49
+
+  LDA #lo(isr_routine)
   STA &0314 ; ISR
-  LDA #&2B
+  LDA #hi(isr_routine)
   STA &0315 ; ISR
+
   LDA #&00
-  STA &2B48
-  STA &0B00
+  STA v2B48
+  STA v0B00
+
   CLI
+
   RTS
+}
 
 .v2B47
   EQUB 142
 .v2B48
   EQUB 0
 
-  INC &2B47
-  LDA &2B47
+.isr_routine
+{
+  INC v2B47
+
+  LDA v2B47
   AND #&07
   CMP #&07
   BEQ l2B58
+
   JSR l0B01
+
 .l2B58
   JMP &EA31 ; KERNAL ISR
+}
+
 .l2B5B
   STA &FB
   STA &0340
@@ -3131,6 +3300,7 @@ ORG &2B32
   AND #&F8
   STA &033B
   JMP l2BD5
+
 .l2BAB
   CMP #&73
   BNE l2BD5
@@ -3211,6 +3381,7 @@ ORG &2B32
   SEC
   SBC #&04
   JMP l2C46
+
 .l2C41
   LDA &FE
   CLC
@@ -3279,6 +3450,7 @@ ORG &2B32
   CMP &03E3
   BCS l2CC7
   JMP l2D29
+
 .l2CC7
   LDY #&00
 .l2CC9
@@ -3287,6 +3459,7 @@ ORG &2B32
   INY
   CPY &033D
   BCC l2CC9
+
   LDA &033C
   AND #&80
   BEQ l2CDE
@@ -3327,6 +3500,7 @@ ORG &2B32
   ORA &033F
   STA (&35),Y
   JMP l2D23
+
 .l2D1A
   LDA (&35),Y
   AND #&F0
@@ -3369,9 +3543,11 @@ ORG &2B32
   INC &FB
   BEQ l2D6E
   JMP l2CBC
+
 .l2D6E
   INC &FC
   JMP l2CBC
+
 .l2D73
   INC &FC
   STA &0349
@@ -3392,6 +3568,7 @@ ORG &2B32
   STA &FD
   STA &35
   JMP l2CBC
+
 .l2D95
   LDX &033D
   LDA #&00
@@ -3461,6 +3638,7 @@ ORG &2B32
   LDA #&EA ; NOP
   STA &2CF6
   JMP l2E2A
+
 .l2E1A
   LDX #&FB ; ?? ISC ?? - undocumented opcode
   STX &2CF6
@@ -3468,6 +3646,7 @@ ORG &2B32
   BNE l2E28
   LDA #&51 ; EOR
   JMP l2E2A
+
 .l2E28
   LDA #&11 ; ORA
 .l2E2A
@@ -3501,6 +3680,7 @@ ORG &2B32
   DEC &0346
   INC &0347
   JMP l2E3A
+
 .l2E6E
   LDA &2AF3,X
   TAY
@@ -3601,6 +3781,7 @@ ORG &2B32
 .l2F1D
   STA &B0
   JMP l2EC8
+
 .l2F22
   JSR l37D0
   JSR l3814
@@ -3639,6 +3820,7 @@ ORG &2B32
   BNE l2F7A
   LDA #&0C
   JMP l2F80
+
 .l2F7A
   CMP #&36
   BNE l2FAA
@@ -3662,6 +3844,7 @@ ORG &2B32
   AND #&07
   STA &C8A2
   JMP l2FAF
+
 .l2FAA
   LDA #&6D
   STA &C928
@@ -3682,6 +3865,7 @@ ORG &2B32
   LDA #&02
   JSR l2E79
   JMP l2FE9
+
 .l2FD9
   CMP #&3A
   BNE l2FE9
@@ -3706,6 +3890,7 @@ ORG &2B32
   ADC #&04
   STA &C7FE
   JMP l2FF5
+
 .l300A
   LDA #&FF
   STA &03D5
@@ -3847,11 +4032,13 @@ ORG &2B32
   INC &C7AA,X
   INC &C7AB,X
   JMP l30F8
+
 .l310F
   INX
   CPX #&04
   BCC l30D4
   JMP l311B
+
 .l3117
   INX
   JSR l3306
@@ -3931,6 +4118,7 @@ ORG &2B32
   BEQ l31B5
   LDA #&0F
   JMP l31B7
+
 .l31B5
   LDA #&F0
 .l31B7
@@ -3981,6 +4169,7 @@ ORG &2B32
   ASL &0342
   DEX
   JMP l31FE
+
 .l320B
   LDX &034E
   LDA &0352,X
@@ -3989,6 +4178,7 @@ ORG &2B32
   CMP #&91
   BCS l321C
   JMP l321E
+
 .l321C
   LDA #&00
 .l321E
@@ -4000,6 +4190,7 @@ ORG &2B32
   ORA &0342
   STA SPR_MSB_X
   JMP l323C
+
 .l3231
   LDA &0342
   EOR #&FF
@@ -4013,6 +4204,7 @@ ORG &2B32
   CMP #&E6
   BCS l324B
   JMP l324D
+
 .l324B
   LDA #&00
 .l324D
@@ -4056,6 +4248,7 @@ ORG &2B32
   SBC &037A,X
   STA &035C,X
   JMP l32AD
+
 .l32A3
   LDA &035C,X
   CLC
@@ -4072,6 +4265,7 @@ ORG &2B32
   SBC &0384,X
   STA &0352,X
   JMP l32CF
+
 .l32C5
   LDA &0352,X
   CLC
@@ -4086,6 +4280,7 @@ ORG &2B32
 .l32DA
   JSR l313F
   JMP l32E7
+
 .l32E0
   LDA &035C,X
   CMP #&08
@@ -4162,6 +4357,7 @@ ORG &2B32
   LDA &C8B6,X
   JSR l2B5B
   JMP l332C
+
 .l3384
   LDA #&08
   STA &FF
@@ -4331,16 +4527,13 @@ ORG &2B32
   LDX #&00
   STX &034E
   JSR l31EE
-  LDA #&04
-  STA &0B00
-  LDA #&05
-  STA &0368
-  LDA #&06
-  STA &0369
-  LDA #&09
-  STA &036A
-  LDA #&0A
-  STA &036B
+
+  LDA #&04:STA v0B00
+  LDA #&05:STA &0368
+  LDA #&06:STA &0369
+  LDA #&09:STA &036A
+  LDA #&0A:STA &036B
+
   LDY #&0A
 .l3510
   JSR l3440
@@ -4350,6 +4543,7 @@ ORG &2B32
   LDA #&45
   STA &5FF8
   JMP l3525
+
 .l3522
   INC &5FF8
 .l3525
@@ -4376,6 +4570,7 @@ ORG &2B32
   BNE l3552
   ORA #&04
   JMP l3558
+
 .l3552
   CPY #&17
   BNE l3558
@@ -4432,6 +4627,7 @@ ORG &2B32
   BNE l35A8
   JSR l361D
   JMP l3596
+
 .l35A8
   CMP #&C8
   BCC l35B5
@@ -4439,6 +4635,7 @@ ORG &2B32
   SBC #&C8
   STA &03BF
   JMP l3596
+
 .l35B5
   CMP #&64
   BCC l35C8
@@ -4448,6 +4645,7 @@ ORG &2B32
   JSR l3568
   STA &039C
   JMP l3596
+
 .l35C8
   CMP #&5F
   BNE l35ED
@@ -4489,6 +4687,7 @@ ORG &2B32
   INC &039B
   INC &039B
   JMP l3596
+
 .l361D
   JSR l3568
   STA &0398
@@ -4614,6 +4813,7 @@ ORG &2B32
   STA &05
   LDA &D1C1
   JMP l3732
+
 .l372A
   LDA &D0CA,X
   STA &05
@@ -4633,6 +4833,7 @@ ORG &2B32
   BCS l374E
   JSR l36E3
   JMP l373D
+
 .l374E
   RTS
 
@@ -4697,6 +4898,7 @@ ORG &2B32
   ADC #&08
   STA &039C
   JMP l37A0
+
 .l37C5
   LDA &18D9
   BNE l37CF
@@ -4741,6 +4943,7 @@ ORG &2B32
   INX
   INX
   JMP l37EF
+
 .l3814
   LDA #&00
   STA &03DB
@@ -4773,7 +4976,7 @@ ORG &2B32
   LDA #&00
   STA &03DB
   LDA #&04
-  STA &0B00
+  STA v0B00
 .l3856
   JSR l3257
   AND #&3F
@@ -4829,10 +5032,12 @@ ORG &2B32
   AND #&01
   BNE l38BB
   JMP l3931
+
 .l38BB
   LDX &03E0
   BNE l38C3
   JMP l392A
+
 .l38C3
   LDA &1828,X
   SEC
@@ -4847,6 +5052,7 @@ ORG &2B32
   TAY
   STY &03DB
   JMP l38E4
+
 .l38DE
   LDA (&B2),Y
   AND #&10
@@ -4867,6 +5073,7 @@ ORG &2B32
   BNE l3901
   LDA #&0A
   JMP l3903
+
 .l3901
   LDA #&0F
 .l3903
@@ -4891,6 +5098,7 @@ ORG &2B32
   LDA #&0A
   LDX #&02
   JMP l3935
+
 .l3931
   LDX #&00
   LDA #&02
@@ -4957,14 +5165,14 @@ ORG &2B32
 .l39B9
   STA &18E6
   LDA #&03
-  STA &0B00
+  STA v0B00
   JSR l3A30
   LDA #&36
   JSR l357D
-  LDA &2B48
+  LDA v2B48
   BNE l39D3
   LDA #&02
-  STA &0B00
+  STA v0B00
 .l39D3
   RTS
 
@@ -5153,6 +5361,7 @@ ORG &3B00
   LDA #&00
   STA SPR_ENABLE
   JMP l3B23
+
 .l3B53
   LDA #&FF
   STA SPR_ENABLE
