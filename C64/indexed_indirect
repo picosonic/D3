@@ -1,0 +1,67 @@
+Indexed indrect (zp),Y
+Values taken from snapshot
+
+($05),Y
+** PTR INC **
+** PTR set from $D000,X and $D001,X **
+** PTR set from $D0CA,X and $D0CB,X **
+** PTR set from $D148,X and $D149,X **
+= string area
+0005	1C
+0006	D8
+
+($35),Y
+** MODIFIED **
+0035	F0
+0036	5A
+
+($A7),Y
+** PTR set from $117F,X and $1182,X **
+00A7	97
+00A8	13
+
+($A9),Y
+** PTR set from $11BC,X and $11BF,X **
+00A9	0F
+00AA	13
+
+($B0),Y
+** MODIFIED **
+** PTR reset to $80CC **
+= room data
+00B0	77
+00B1	81
+
+($B2),Y
+** MODIFIED **
+** PTR reset to $80CC **
+= room data
+00B2	77
+00B3	81
+
+($B4),Y
+** PTR set from ($FB),Y **
+= frame defs
+00B4	79
+00B5	A7
+
+($FB),Y
+** PTR INC **
+** PTR INC by $28 **
+** PTR INC by $40 **
+** PTR set from $189F,X and $18B8,X **
+** PTR set from $180E,X and $1828,X **
+** PTR reset to $A5xx ** = frames
+** PTR reset to $C8B6,X **
+** MODIFIED **
+00FB	87
+00FC	77
+
+($FD),Y
+** PTR INC by $05 **
+** PTR INC by $28 **
+** PTR DEC by $0C **
+** PTR set from $180E,X **
+** MODIFIED **
+00FD	F0
+00FE	5E

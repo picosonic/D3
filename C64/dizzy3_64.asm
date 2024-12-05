@@ -33,6 +33,27 @@ ORG &00
 .c64start
 
 ; Variables
+.v0001
+.v0005
+.v0006
+.v0035
+.v0036
+.v00A7
+.v00A8
+.v00A9
+.v00AA
+.v00B0
+.v00B1
+.v00B2
+.v00B3
+.v00B4
+.v00B5
+.v00C5
+.v00FB
+.v00FC
+.v00FD
+.v00FE
+.v00FF
 .v0314
 .v0315
 .v0339
@@ -126,9 +147,9 @@ ORG &0B00
   CMP #&05
   BCS l0B50
   SBC #&00
-  ASL  A
+  ASL A
   STA &0B1B
-  ASL  A
+  ASL A
   ADC #&00
   TAY
   LDX #&00
@@ -240,9 +261,9 @@ ORG &0B00
   CMP #&C0
   BCC l0C0F
   AND #&1F
-  ASL  A
-  ASL  A
-  ASL  A
+  ASL A
+  ASL A
+  ASL A
   STA &11C3,X
   LDA (&A7),Y
   INY
@@ -366,8 +387,8 @@ ORG &0B00
   LDY &11C3,X
   LDA &1251,Y
   AND #&0F
-  ASL  A
-  ASL  A
+  ASL A
+  ASL A
   TAY
   LDA &11ED,Y
   STA &0D36
@@ -442,10 +463,10 @@ ORG &0B00
   AND #&0F
   STA &11AA
   PLA
-  LSR  A
-  LSR  A
-  LSR  A
-  LSR  A
+  LSR A
+  LSR A
+  LSR A
+  LSR A
   STA &11A9
   LDY &1169,X
   LDA &10E7,Y
@@ -485,7 +506,7 @@ ORG &0B00
   LDA &1176,X
   STA &11B8
   LDA &11A9
-  LSR  A
+  LSR A
   TAY
 .l0E1C
   DEY
@@ -553,10 +574,10 @@ ORG &0B00
   STA &0EC1
   STA &104F
   PLA
-  LSR  A
-  LSR  A
-  LSR  A
-  LSR  A
+  LSR A
+  LSR A
+  LSR A
+  LSR A
   CLC
   ADC &1188,X
   CMP &1185,X
@@ -584,17 +605,17 @@ ORG &0B00
 .l0EEC
   LDA &1185,X
   BEQ l0F0A
-  LSR  A
+  LSR A
   CMP &1188,X
   BNE l0F0A
   LDY &11C3,X
   LDA &124D,Y
   AND #&0F
   CLC
-  ROL  A
-  ROL  A
-  ROL  A
-  ROL  A
+  ROL A
+  ROL A
+  ROL A
+  ROL A
   LDY &11CC
   STA &D404,Y
 .l0F0A
@@ -715,7 +736,7 @@ ORG &0B00
   STA &1191,X
   JMP l0FCD
 .l0FEB
-  ASL  A
+  ASL A
   TAY
   LDA &12DD,Y
   STA &117F,X
@@ -770,7 +791,7 @@ ORG &0B00
 .l105B
   ROL &119A
   ROL &119B
-  ROL  A
+  ROL A
   BCS l1069
   CMP &119C
   BCC l106D
@@ -782,7 +803,7 @@ ORG &0B00
   BNE l105B
   ROL &119A
   ROL &119B
-  ASL  A
+  ASL A
   CMP &119C
   BCC l1084
   INC &119A
@@ -1088,7 +1109,7 @@ ORG &190E
   ORA &03C0
   STA &03C0
   JSR l326A
-  ASL  A
+  ASL A
   AND #&0C
   ORA &03C0
   STA &03C0
@@ -1496,8 +1517,8 @@ ORG &190E
   ADC #&5A
   STA &D001
   LDA &0352
-  ASL  A
-  ASL  A
+  ASL A
+  ASL A
   CLC
   ADC #&38
   STA &D000
@@ -2466,8 +2487,8 @@ ORG &190E
   CMP #&FF
   BEQ l267A
   LDA &03C4
-  LSR  A
-  LSR  A
+  LSR A
+  LSR A
   AND #&07
   CMP #&06
   BCC l266B
@@ -2545,7 +2566,7 @@ ORG &190E
   BNE l2762
   STX &03B7
   TXA
-  ASL  A
+  ASL A
   CLC
   ADC #&73
   TAX
@@ -2637,7 +2658,7 @@ ORG &190E
   DEC &C774
 .l27C7
   LDA &03C4
-  LSR  A
+  LSR A
   AND #&03
   CMP #&03
   BNE l27D3
@@ -2701,7 +2722,7 @@ ORG &190E
   STA &03DC
   JSR l3306
   LDA &03C4
-  LSR  A
+  LSR A
   AND #&01
   CLC
   ADC #&66
@@ -2977,7 +2998,7 @@ ORG &190E
   LDX #&06
 .l2A8D
   CLC
-  ROL  A
+  ROL A
   ROL &FC
   DEX
   BNE l2A8D
@@ -3021,7 +3042,7 @@ ORG &190E
   STA &D418
   LDA &03C4
   AND #&02
-  ASL  A
+  ASL A
   CLC
   ADC #&06
   STA &D401
@@ -3085,9 +3106,9 @@ ORG &2B32
 .l2B71
   STA &B5
   LDA &033B
-  LSR  A
-  LSR  A
-  LSR  A
+  LSR A
+  LSR A
+  LSR A
   TAX
   LDA &0340
   CMP #&5B
@@ -3147,9 +3168,9 @@ ORG &2B32
   STA &FB
   LDA &033A
   AND #&FE
-  ASL  A
+  ASL A
   CLC
-  ASL  A
+  ASL A
   BCC l2C00
   INC &FC
 .l2C00
@@ -3160,9 +3181,9 @@ ORG &2B32
 .l2C07
   STA &FB
   LDA &033B
-  LSR  A
-  LSR  A
-  LSR  A
+  LSR A
+  LSR A
+  LSR A
   TAX
   LDA &1828,X
   SEC
@@ -3176,7 +3197,7 @@ ORG &2B32
 .l2C23
   STA &FD
   LDA &033A
-  LSR  A
+  LSR A
   CLC
   ADC &FD
   BCC l2C30
@@ -3237,7 +3258,7 @@ ORG &2B32
   LDA #&22
   SEC
   SBC &FF
-  LSR  A
+  LSR A
   STA &034A
 .l2CA2
   LDA &033A
@@ -3246,7 +3267,7 @@ ORG &2B32
   LDA #&5E
   SEC
   SBC &FF
-  LSR  A
+  LSR A
   CMP &034B
   BCS l2CB7
   STA &034B
@@ -3377,17 +3398,17 @@ ORG &2B32
   STA &2AF3,X
 .l2D9D
   LDA &2AF2,X
-  ASL  A
-  ASL  A
-  ASL  A
-  ASL  A
+  ASL A
+  ASL A
+  ASL A
+  ASL A
   ORA &2AF3,X
   STA &2AF3,X
   LDA &2AF2,X
-  LSR  A
-  LSR  A
-  LSR  A
-  LSR  A
+  LSR A
+  LSR A
+  LSR A
+  LSR A
   STA &2AF2,X
   DEX
   BNE l2D9D
@@ -3395,7 +3416,7 @@ ORG &2B32
   CMP &034B
   BCC l2DCE
   LDA &033A
-  LSR  A
+  LSR A
   CLC
   ADC &033D
   CMP #&2F
@@ -3433,9 +3454,9 @@ ORG &2B32
 .l2E08
   LDA &033C
   AND #&18
-  LSR  A
-  LSR  A
-  LSR  A
+  LSR A
+  LSR A
+  LSR A
   BNE l2E1A
   LDA #&EA ; NOP
   STA &2CF6
@@ -3809,7 +3830,7 @@ ORG &2B32
   BNE l310F
   STX &03DB
   TXA
-  ASL  A
+  ASL A
   CLC
   ADC #&73
   TAX
@@ -3877,9 +3898,9 @@ ORG &2B32
   STA &033D
   DEC &033D
   LDA &033D
-  LSR  A
-  LSR  A
-  LSR  A
+  LSR A
+  LSR A
+  LSR A
   TAX
   LDA &189F,X
   STA &FB
@@ -3899,7 +3920,7 @@ ORG &2B32
   ADC #&20
   STA &FB
   LDA &033C
-  LSR  A
+  LSR A
   CLC
   ADC #&04
   TAY
@@ -3915,7 +3936,7 @@ ORG &2B32
 .l31B7
   STA &033E
   LDA &033C
-  LSR  A
+  LSR A
   TAX
   LDA &1877,X
   TAY
@@ -3972,7 +3993,7 @@ ORG &2B32
   LDA #&00
 .l321E
   CLC
-  ROL  A
+  ROL A
   STA &D000,Y
   BCC l3231
   LDA SPR_MSB_X
@@ -4182,7 +4203,7 @@ ORG &2B32
 .l33D1
   STA &033A
   LDA &0352
-  ASL  A
+  ASL A
   CLC
   ADC #&1C
   STA &0352
@@ -4388,7 +4409,7 @@ ORG &2B32
 
 .l357D
   STA &03DB
-  ASL  A
+  ASL A
   TAX
   SEI
   LDA #&34
@@ -4482,7 +4503,7 @@ ORG &2B32
   LDA #&2C
   JSR l36E3
   LDA &0398
-  ASL  A
+  ASL A
   CLC
   ADC &039A
   STA &039A
@@ -4505,7 +4526,7 @@ ORG &2B32
   LDA #&2D
   JSR l36E3
   LDA &0398
-  ASL  A
+  ASL A
   CLC
   ADC &039A
   STA &039A
@@ -4579,7 +4600,7 @@ ORG &2B32
   BNE l370D
   RTS
 .l370D
-  ASL  A
+  ASL A
   TAX
   SEI
   LDA #&34
@@ -4688,7 +4709,7 @@ ORG &2B32
   LDA &03E5
   CMP #&65
   BCS l37F6
-  ASL  A
+  ASL A
   TAX
   SEI
   LDA #&34
@@ -4822,7 +4843,7 @@ ORG &2B32
   LDA &03DA
   SEC
   SBC #&18
-  LSR  A
+  LSR A
   TAY
   STY &03DB
   JMP l38E4
@@ -4832,14 +4853,14 @@ ORG &2B32
   BEQ l3920
 .l38E4
   TYA
-  ASL  A
+  ASL A
   CLC
   ADC #&18
   STA &033A
   LDA &03E0
-  ASL  A
-  ASL  A
-  ASL  A
+  ASL A
+  ASL A
+  ASL A
   STA &033B
   LDA &03E5
   CMP #&4D
@@ -4853,7 +4874,7 @@ ORG &2B32
   LDA #&00
   STA &033F
   LDA &03C4
-  LSR  A
+  LSR A
   AND #&03
   CLC
   ADC #&5C
@@ -5188,9 +5209,109 @@ ORG &A400
   EQUB &07, &87, &47, &c7, &27, &a7, &67, &e7, &17, &97, &57, &d7, &37, &b7, &77, &f7
   EQUB &0f, &8f, &4f, &cf, &2f, &af, &6f, &ef, &1f, &9f, &5f, &df, &3f, &bf, &7f, &ff
 
+.v4A80
+.v5800
+.v58C8
+.v5900
+.v5990
+.v5A58
+.v5B20
+.v5FF8
+.vA400
+
 ORG &A500
 INCBIN "frametable.bin"
 INCBIN "framedefs.bin"
+
+.vC400
+.vC486
+.vC50C
+.vC50D
+.vC592
+.vC618
+.vC696
+.vC69E
+.vC69F
+.vC6A1
+.vC6A2
+.vC6A3
+.vC6A5
+.vC6A8
+.vC6A9
+.vC6AE
+.vC6AF
+.vC6B1
+.vC6B2
+.vC6B3
+.vC6B4
+.vC6D5
+.vC6DD
+.vC6DE
+.vC6DF
+.vC6E0
+.vC6E1
+.vC6E2
+.vC6E3
+.vC6E4
+.vC6E6
+.vC6F0
+.vC6F5
+.vC700
+.vC705
+.vC708
+.vC709
+.vC721
+.vC724
+.vC735
+.vC739
+.vC766
+.vC768
+.vC769
+.vC76E
+.vC774
+.vC775
+.vC78B
+.vC7AA
+.vC7AB
+.vC7BB
+.vC7BF
+.vC7EC
+.vC7F4
+.vC7F5
+.vC7F6
+.vC7F7
+.vC7F8
+.vC7FA
+.vC7FE
+.vC80F
+.vC810
+.vC811
+.vC81B
+.vC830
+.vC831
+.vC832
+.vC834
+.vC835
+.vC839
+.vC872
+.vC875
+.vC880
+.vC881
+.vC883
+.vC884
+.vC888
+.vC88C
+.vC894
+.vC897
+.vC89C
+.vC8A2
+.vC8B6
+.vC906
+.vC907
+.vC90C
+.vC928
+.vCFF8
+
 
 ORG &D000
 ; String table pointers

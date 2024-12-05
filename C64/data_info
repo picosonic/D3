@@ -1,0 +1,21 @@
+; Ian Gray did the C64 port of 5x Dizzy games, published via Codemasters
+;
+; 1988 - Dizzy
+; 1989 - Treasure Island
+; 1990 - Fantasy World Dizzy
+; 1990 - Magic Land
+; 1992 - Prince of the YolkFolk
+
+$8000 .. $80CB = roomtable
+$80CC .. $A3D6 = roomdata
+
+$A500 .. $A6FF = frmtable
+$A700 .. $C387 = frmdefs
+
+$D000 .. $D0C9 = roomnametable
+
+????? .. ????? = stringstable
+
+$D1C2 .. $D60D = roomnames
+
+$D81D .. $F006 = messages (up to "NOTHING")
