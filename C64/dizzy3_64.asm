@@ -1,3 +1,5 @@
+INCLUDE "consts.asm"
+
 ; VIC-II = &D000 .. &D3FF
 
 SPR_MSB_X = &D010
@@ -97,7 +99,7 @@ ORG &00
 .v039B
 .v039C
 .v03B7
-.v03B8 ; roomno ?
+.v03B8 ; roomno related ?
 .v03B9
 .v03BA
 .v03BB
@@ -129,7 +131,7 @@ ORG &00
 .v03E1
 .v03E2
 .v03E3
-.v03E5 ; roomno ?
+roomno = &03E5
 
 ORG &0B00
 
@@ -976,8 +978,8 @@ ORG &190E
   JSR l3023
   LDA #&58
   STA &03DC
-  LDA #&00
-  STA &03E5
+  LDA #TITLEROOM
+  STA roomno
   JSR l2E79
   JSR l3090
   JSR l3A30
@@ -1019,9 +1021,9 @@ ORG &190E
   INX
   CPX #&04
   BCC l19A9
-  LDA #&24
+  LDA #GAMESTARTROOM
   STA &03B8
-  STA &03E5
+  STA roomno
   LDA #&01 ; White
   STA SPR_0_COLOUR
   JSR l3A30
@@ -1124,8 +1126,8 @@ ORG &190E
   BEQ l1A9E
   DEC &03BE
 .l1A9E
-  LDA &03E5
-  CMP #&19
+  LDA roomno
+  CMP #&19 ; ?? No room #25
   BCS l1AD2
   LDA &03C0
   AND #&0C
@@ -1524,7 +1526,7 @@ ORG &190E
   BCC l1DB9
   LDA #&02
   STA &0352
-  INC &03E5
+  INC roomno ; Go right
   JMP l1DFC
 
 .l1DB9
@@ -1532,7 +1534,7 @@ ORG &190E
   BCS l1DC8
   LDA #&38
   STA &0352
-  DEC &03E5
+  DEC roomno ; Go left
   JMP l1DFC
 
 .l1DC8
@@ -1543,10 +1545,7 @@ ORG &190E
   BCS l1DE7
   LDA #&00
   STA &035C
-  LDA &03E5
-  SEC
-  SBC #&10
-  STA &03E5
+  LDA roomno:SEC:SBC #16:STA roomno ; Go down
   JSR l2A01
   JMP l1DFC
 
@@ -1556,13 +1555,11 @@ ORG &190E
   BCC l1E1D
   LDA #&72
   STA &035C
-  LDA &03E5
-  CLC
-  ADC #&10
-  STA &03E5
+  LDA roomno:CLC:ADC #&10:STA roomno ; Go up
+
 .l1DFC
-  LDA &03E5
-  CMP #&45
+  LDA roomno
+  CMP #EASTWINGROOM
   BEQ l1E12
   STA &03B8
   LDA &0352
@@ -1572,7 +1569,7 @@ ORG &190E
 .l1E12
   LDA #&00
   STA &03E0
-  LDA &03E5
+  LDA roomno
   JSR l2F22
 .l1E1D
   LDA &035C
@@ -1681,8 +1678,8 @@ ORG &190E
   JMP l1F33
 
 .l1EE8
-  LDA &03E5
-  CMP #&29
+  LDA roomno
+  CMP #MINESROOM
   BNE l1F33
   LDA &0352
   CMP #&34
@@ -1751,7 +1748,7 @@ ORG &190E
   STA &033D
 .l1F7A
   LDA &C69E,X
-  CMP &03E5
+  CMP roomno
   BNE l1FA9
   LDA &C830,X
   AND #&80
@@ -1838,8 +1835,8 @@ ORG &190E
   JMP l24A0
 
 .l202B
-  LDA &03E5
-  CMP #&54
+  LDA roomno
+  CMP #CASTLESTAIRCASEROOM
   BNE l2048
   LDA &C6B4
   CMP #&04
@@ -1961,7 +1958,7 @@ ORG &190E
   LDA &C69E,X
   CMP #&04
   BNE l213A
-  LDA &03E5
+  LDA roomno
   STA &C69E,X
   LDA &0352
   CLC
@@ -2001,7 +1998,7 @@ ORG &190E
   LDA &C696,X
   CMP #&65
   BNE l2177
-  LDA &03E5
+  LDA roomno
   STA &C696,X
 .l2177
   JSR l374F
@@ -2183,8 +2180,8 @@ ORG &190E
 .l22E2
   CMP #&16
   BNE l2307
-  LDX &03E5
-  CPX #&54
+  LDX roomno
+  CPX #CASTLESTAIRCASEROOM
   BNE l2307
   LDX #&44
   JSR l39D4
@@ -2321,8 +2318,8 @@ ORG &190E
 .l23FB
   CMP #&0B
   BNE l2417
-  LDA #&5E
-  CMP &03E5
+  LDA #DAISYSPRISONROOM
+  CMP roomno
   BNE l23C5
   STA &C708
   STA &C709
@@ -2334,8 +2331,8 @@ ORG &190E
 .l2417
   CMP #&11
   BNE l242D
-  LDA #&36
-  CMP &03E5
+  LDA #WIDEEYEDDRAGONROOM
+  CMP roomno
   BNE l242D
   JSR l29C1
   LDA #&18
@@ -2379,7 +2376,7 @@ ORG &190E
   BCC l2469
   JSR l3329
   LDX &03D9
-  LDA &03E5
+  LDA roomno
   STA &C69E,X
   LDA &0352
   CLC
@@ -2423,10 +2420,10 @@ ORG &190E
   JMP l2572
 
 .l24D4
-  LDA &03E5
-  CMP #&28
+  LDA roomno
+  CMP #DRAGONSLAIRROOM
   BEQ l24E2
-  CMP #&36
+  CMP #WIDEEYEDDRAGONROOM
   BEQ l24EC
   JMP l2527
 
@@ -2499,16 +2496,16 @@ ORG &190E
   AND #&10
   BEQ l25C7
   LDA #&34
-  LDY &03E5
-  CPY #&4D
+  LDY roomno
+  CPY #ACTIVEVOLCANOROOM
   BEQ l2572
   LDA #&30
 .l2572
   STA &03B7
   CMP #&35
   BNE l258A
-  LDA &03E5
-  CMP #&5E
+  LDA roomno
+  CMP #DAISYSPRISONROOM
   BNE l258A
   LDA &C6A9
   CMP #&FF
@@ -2543,13 +2540,13 @@ ORG &190E
   LDA #&02
   STA v0B00
 .l25C7
-  LDA &03E5
-  CMP #&24
+  LDA roomno
+  CMP #CASTLEDUNGEONROOM
   BNE l2629
   LDA &C6E3
   CMP #&FF
   BEQ l2629
-  LDA &03E5
+  LDA roomno
   CMP &C6B3
   BNE l2601
   LDA &C7BF
@@ -2606,8 +2603,8 @@ ORG &190E
   CMP #&2F
   BCC l2633
 .l2650
-  LDA &03E5
-  CMP #&35
+  LDA roomno
+  CMP #GATORROOM
   BNE l267A
   LDA &C6AE
   CMP #&FF
@@ -2628,8 +2625,8 @@ ORG &190E
   LDX #&56
   JSR l29D3
 .l267A
-  LDA &03E5
-  CMP #&33
+  LDA roomno
+  CMP #MOATROOM
   BNE l26BE
   LDA &C883
   CMP #&05
@@ -2662,8 +2659,8 @@ ORG &190E
   JMP l26A6
 
 .l26BE
-  LDA &03E5
-  CMP #&2D
+  LDA roomno
+  CMP #OUTTOSEAROOM
   BNE l26E8
   LDA &C76E
   CMP #&46
@@ -2688,7 +2685,7 @@ ORG &190E
 
 .l26F2
   LDA &18E8,X
-  CMP &03E5
+  CMP roomno
   BNE l2762
   LDA &C888,X
   CMP #&07
@@ -2741,8 +2738,8 @@ ORG &190E
   CPX #&04
   BCC l26F2
 .l2767
-  LDA &03E5
-  CMP #&31
+  LDA roomno
+  CMP #GUARDHOUSEROOM
   BEQ l2771
   JMP l2809
 
@@ -2826,8 +2823,8 @@ ORG &190E
   JMP l27B1
 
 .l2809
-  LDA &03E5
-  CMP #&32
+  LDA roomno
+  CMP #ARMOROGROOM
   BNE l283A
   LDA &03C4
   AND #&01
@@ -2905,10 +2902,10 @@ ORG &190E
   STA &03DC
   JSR l3306
 .l28B0
-  LDA &03E5
-  CMP #&28
+  LDA roomno
+  CMP #DRAGONSLAIRROOM
   BEQ l28C3
-  CMP #&36
+  CMP #WIDEEYEDDRAGONROOM
   BEQ l28D2
   LDA #&00
   STA &03BA
@@ -2997,8 +2994,8 @@ ORG &190E
   EOR #&20
   STA &C89C
 .l295E
-  LDA &03E5
-  CMP #&28
+  LDA roomno
+  CMP #DRAGONSLAIRROOM
   BNE l296F
   LDA &C6E4
   CMP #&FF
@@ -3006,7 +3003,7 @@ ORG &190E
   JMP l297F
 
 .l296F
-  CMP #&36
+  CMP #WIDEEYEDDRAGONROOM
   BNE l2993
   LDA &03BB
   BNE l2993
@@ -3078,13 +3075,13 @@ ORG &190E
   RTS
 
 .l2A01
-  LDA &03E5
-  CMP #&17
+  LDA roomno
+  CMP #STRANGENEWROOM
   BEQ l2A11
-  CMP #&07
+  CMP #UNDERAUSROOM
   BNE l2A2D
-  LDA #&37
-  STA &03E5
+  LDA #TOPWELLROOM
+  STA roomno
 .l2A11
   LDA #&72
   STA &035C
@@ -3107,8 +3104,8 @@ ORG &190E
   JMP l20E5
 
 .l2A38
-  LDA &03E5
-  CMP #&5E
+  LDA roomno
+  CMP #DAISYSPRISONROOM
   BNE l2A68
   LDA #&0B
   JSR l357D
@@ -3141,8 +3138,8 @@ ORG &190E
   JMP l24A0
 
 .l2A7F
-  LDY &03E5
-  CPY #&19
+  LDY roomno
+  CPY #&19 ; No room #25 ???
   BCC l2A87
   RTS
 .l2A87
@@ -3815,8 +3812,8 @@ ORG &2B32
   INX
   CPX #&0A
   BCC l2F60
-  LDA &03E5
-  CMP #&28
+  LDA roomno
+  CMP #DRAGONSLAIRROOM
   BNE l2F7A
   LDA #&0C
   JMP l2F80
@@ -3829,7 +3826,7 @@ ORG &2B32
   STA &FF
   LDX #&6C
 .l2F84
-  LDA &03E5
+  LDA roomno
   STA &C69E,X
   LDA &FF
   STA &C830,X
@@ -3854,10 +3851,10 @@ ORG &2B32
   LDA #&FF
   STA &03DF
   JSR l3023
-  LDA &03E5
+  LDA roomno
   JSR l2E79
-  LDA &03E5
-  CMP #&24
+  LDA roomno
+  CMP #CASTLEDUNGEONROOM
   BNE l2FD9
   LDA &C6B2
   CMP #&FF
@@ -3875,8 +3872,8 @@ ORG &2B32
   LDA #&01
   JSR l2E79
 .l2FE9
-  LDA &03E5
-  CMP #&33
+  LDA roomno
+  CMP #MOATROOM
   BNE l300A
   LDA #&60
   STA &C7FE
@@ -4008,7 +4005,7 @@ ORG &2B32
   STA &03DC
 .l30D4
   LDA &18E8,X
-  CMP &03E5
+  CMP roomno
   BNE l310F
   LDA &C888,X
   CMP #&07
@@ -4043,8 +4040,8 @@ ORG &2B32
   INX
   JSR l3306
 .l311B
-  LDA &03E5
-  CMP #&5E
+  LDA roomno
+  CMP #DAISYSPRISONROOM
   BNE l313E
   LDA &C894
   CMP #&05
@@ -4330,7 +4327,7 @@ ORG &2B32
   DEX
   LDA &C69E,X
   BEQ l332C
-  CMP &03E5
+  CMP roomno
   BNE l332C
   LDA &C724,X
   STA &033A
@@ -4559,7 +4556,7 @@ ORG &2B32
   LDA #&64
   JSR l31D6
   LDA &03B8
-  STA &03E5
+  STA roomno
   RTS
 
 .l3541
@@ -4908,8 +4905,8 @@ ORG &2B32
   RTS
 
 .l37D0
-  LDA &03E5
-  CMP #&65
+  LDA roomno
+  CMP #ATTICROOM+1
   BCS l37F6
   ASL A
   TAX
@@ -5068,8 +5065,8 @@ ORG &2B32
   ASL A
   ASL A
   STA &033B
-  LDA &03E5
-  CMP #&4D
+  LDA roomno
+  CMP #ACTIVEVOLCANOROOM
   BNE l3901
   LDA #&0A
   JMP l3903
@@ -5178,7 +5175,7 @@ ORG &2B32
 
 .l39D4
   LDA &C69E,X
-  CMP &03E5
+  CMP roomno
   BEQ l39DE
 .l39DC
   CLC
@@ -5351,12 +5348,12 @@ ORG &3B00
   LDA &3AF0,X
   BEQ l3B23
   CLC
-  ADC &03E5
+  ADC roomno
   CMP #&15
   BCC l3B23
   CMP #&A8
   BCS l3B23
-  STA &03E5
+  STA roomno
   JSR l2F22
   LDA #&00
   STA SPR_ENABLE
