@@ -96,7 +96,7 @@ ORG &00
 .v039A
 .v039B
 .v039C
-.v03B7
+.v03B7 ; roomno ?
 .v03B8
 .v03B9
 .v03BA
