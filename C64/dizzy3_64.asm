@@ -96,8 +96,8 @@ ORG &00
 .v039A
 .v039B
 .v039C
-.v03B7 ; roomno ?
-.v03B8
+.v03B7
+.v03B8 ; roomno ?
 .v03B9
 .v03BA
 .v03BB
@@ -129,7 +129,7 @@ ORG &00
 .v03E1
 .v03E2
 .v03E3
-.v03E5
+.v03E5 ; roomno ?
 
 ORG &0B00
 
