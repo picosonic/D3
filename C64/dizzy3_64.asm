@@ -100,7 +100,7 @@ ORG &00
 .v039C
 .v03B7
 .v03B8 ; roomno related ?
-.v03B9
+lives = &03B9
 .v03BA
 .v03BB
 .v03BC
@@ -937,7 +937,7 @@ ORG &1147
 .v18D9
 .v18DE
 .v18E5
-.v18E6
+coins = &18E6
 .v18E7
 .v18E8
 .v18EC
@@ -963,7 +963,8 @@ ORG &190E
 .l1927
   LDA #&00
   STA GFX_BORDER_COLOUR
-  STA &03B9
+  STA lives
+
   LDX #&00
 .l1931
   JSR l313F
@@ -1008,12 +1009,14 @@ ORG &190E
   INX
   CPX #&C8
   BCC l1983
+
   LDA #&00
   STA &18E5
-  STA &18E6
+  STA coins
   STA &18E7
-  LDA #&02
-  STA &03B9
+
+  LDA #&02:STA lives
+
   LDX #&00
 .l19A9
   LDA &18EC,X
@@ -2527,12 +2530,15 @@ ORG &190E
   JSR l31D6
   DEC &03B7
   BNE l25A2
-  LDA &03B9
+
+  LDA lives
   BNE l25B4
-  JMP l1927
+
+  JMP l1927 ; No lives left
 
 .l25B4
-  DEC &03B9
+  DEC lives ; lose a life
+
   JSR l2F22
   JSR l346B
   LDA v2B48
@@ -4952,7 +4958,7 @@ ORG &2B32
   STA &03E3
   LDY #&00
   LDA &03DB
-  CMP &03B9
+  CMP lives
   BCS l3832
   LDY #&06
 .l3832
@@ -5143,6 +5149,7 @@ ORG &2B32
 .l3996
   RTS
 
+; Collecting a coin
 .l3997
   LDX &18DE
   CPX #&1A
@@ -5152,7 +5159,7 @@ ORG &2B32
   LDA #&FF
   STA &C69E,X
   STA &18DE
-  LDA &18E6
+  LDA coins
   CLC
   ADC #&01
   CMP #&0A
@@ -5160,7 +5167,7 @@ ORG &2B32
   INC &18E5
   LDA #&00
 .l39B9
-  STA &18E6
+  STA coins
   LDA #&03
   STA v0B00
   JSR l3A30
@@ -5243,7 +5250,7 @@ ORG &2B32
   STA &03E3
   LDA #&06
   STA &033C
-  LDA &18E6
+  LDA coins
   CLC
   ADC #&30
   JSR l2B5B
@@ -5333,8 +5340,9 @@ ORG &3B00
   BCC l3B02
   LDA #&00
   STA SPR_ENABLE
-  LDA #&02
-  STA &03B9
+
+  LDA #&02:STA lives
+
   JSR l3814
 .l3B23
   LDA #&32
