@@ -1,4 +1,5 @@
 INCLUDE "consts.asm"
+INCLUDE "sprites.asm"
 
 ; VIC-II = &D000 .. &D3FF
 
@@ -936,7 +937,7 @@ ORG &1147
 .v18B8
 .v18D9
 .v18DE
-.v18E5
+coins_tens = &18E5
 coins = &18E6
 .v18E7
 .v18E8
@@ -984,20 +985,22 @@ ORG &190E
   JSR l2E79
   JSR l3090
   JSR l3A30
-  LDA #&3A
-  STA &033A
-  LDA #&39
-  STA &033B
-  LDA #&04
-  STA &033C
-  LDA #&00
-  STA &03DC
-  LDA #&1B
+
+  LDA #&3A:STA &033A
+  LDA #&39:STA &033B
+  LDA #&04:STA &033C
+  LDA #&00:STA &03DC
+
+  LDA #SPR_DIZZYLOGO
   JSR l2B5B
+
   JSR l37D0
+
   LDA #&00
   JSR l357D
+
   JSR l3023
+
   LDX #&00
   TXA
 .l1983
@@ -1011,7 +1014,7 @@ ORG &190E
   BCC l1983
 
   LDA #&00
-  STA &18E5
+  STA coins_tens
   STA coins
   STA &18E7
 
@@ -3131,7 +3134,7 @@ ORG &190E
   JMP l24A0
 
 .l2A68
-  LDA &18E5
+  LDA coins_tens
   CMP #&03
   BNE l2A77
   LDA #&0E
@@ -3263,6 +3266,7 @@ ORG &2B32
   JMP &EA31 ; KERNAL ISR
 }
 
+; Draw sprite
 .l2B5B
   STA &FB
   STA &0340
@@ -4669,24 +4673,25 @@ ORG &2B32
   JSR l2F39
 .l35EC
   RTS
+
 .l35ED
   CMP #&26
   BCC l35F5
   CMP #&5B
   BCC l35F7
 .l35F5
-  LDA #&3A
+  LDA #':'
 .l35F7
-  LDX &039B
-  STX &033A
-  LDX &039C
-  STX &033B
-  LDX &03BF
-  STX &033C
+  LDX &039B:STX &033A
+  LDX &039C:STX &033B
+  LDX &03BF:STX &033C
+
   LDX #&00
   STX &033F
   STX &03DC
+
   JSR l2B5B
+
   INC &039B
   INC &039B
   JMP l3596
@@ -4769,16 +4774,16 @@ ORG &2B32
   CLC
   ADC #&02
   STA &039A
-  LDA #&29
+  LDA #SPR_FRAMEVERT
   JSR l36E3
   LDA &0398
   STA &0344
 .l36D3
-  LDA #&3A
+  LDA #':'
   JSR l36E3
   DEC &0344
   BNE l36D3
-  LDA #&29
+  LDA #SPR_FRAMEVERT
   JSR l36E3
   RTS
 
@@ -4933,16 +4938,18 @@ ORG &2B32
   BNE l37F7
 .l37F6
   RTS
+
 .l37F7
   STX &033A
+
   LDY #&18
   STY &033B
   STY &03E3
-  LDY #&05
-  STY &033C
-  LDY #&00
-  STY &03DC
+
+  LDY #&05:STY &033C
+  LDY #&00:STY &03DC
   JSR l2B5B
+
   INX
   INX
   JMP l37EF
@@ -4963,10 +4970,11 @@ ORG &2B32
   LDY #&06
 .l3832
   STY &033C
-  LDA #&00
-  STA &03DC
-  LDA #&2F
+
+  LDA #&00:STA &03DC
+  LDA #SPR_EGG
   JSR l2B5B
+
   INC &03DB
   INX
   INX
@@ -5002,7 +5010,7 @@ ORG &2B32
   LDA #&01
 .l3882
   CLC
-  ADC #&1C
+  ADC #SPR_HEARTNULL
   JSR l2B5B
   LDA #&05
   JSR l31D6
@@ -5083,12 +5091,14 @@ ORG &2B32
   STA &033C
   LDA #&00
   STA &033F
+
   LDA &03C4
   LSR A
   AND #&03
   CLC
-  ADC #&5C
+  ADC #SPR_WATER0
   JSR l2B5B
+
   INC &03DB
   INC &03DB
   INC &03DB
@@ -5117,7 +5127,7 @@ ORG &2B32
   STA &033C
   STA &033F
   STA &03DC
-  LDA #&73
+  LDA #SPR_FLAME
   JSR l2B5B
   INX
   CPX &03DB
@@ -5139,7 +5149,7 @@ ORG &2B32
   STA &033F
   LDA #&00
   STA &03DC
-  LDA #&73
+  LDA #SPR_FLAME
   JSR l2B5B
   INX
   CPX &03DB
@@ -5159,12 +5169,13 @@ ORG &2B32
   LDA #&FF
   STA &C69E,X
   STA &18DE
+
   LDA coins
   CLC
   ADC #&01
   CMP #&0A
   BCC l39B9
-  INC &18E5
+  INC coins_tens
   LDA #&00
 .l39B9
   STA coins
@@ -5227,34 +5238,41 @@ ORG &2B32
   SEC
   RTS
 
+; Print coins to screen
 .l3A30
-  LDA #&4E
-  STA &033A
-  LDA #&00
-  STA &03DC
+{
+  LDA #&4E:STA &033A
+  LDA #&00:STA &03DC
+
   LDA #&08
   STA &033B
   STA &03E3
-  LDA #&06
-  STA &033C
-  LDA &18E5
-  CLC
-  ADC #&30
+
+  LDA #&06:STA &033C
+
+  ; Convert tens to ASCII
+  LDA coins_tens
+  CLC:ADC #'0'
+
   JSR l2B5B
-  LDA #&50
-  STA &033A
-  LDA #&00
-  STA &03DC
+
+  LDA #&50:STA &033A
+  LDA #&00:STA &03DC
+
   LDA #&08
   STA &033B
   STA &03E3
-  LDA #&06
-  STA &033C
+
+  LDA #&06:STA &033C
+
+  ; Convert units to ASCII
   LDA coins
-  CLC
-  ADC #&30
+  CLC:ADC #'0'
+
   JSR l2B5B
+
   RTS
+}
 
 .l3A71
   TAX
@@ -5305,7 +5323,7 @@ ORG &2B32
   LDA #&00
   STA &033F
   STA &03DC
-  LDA #&70
+  LDA #SPR_DRAGONFIRE
   JSR l2B5B
 .l3AD5
   INX
