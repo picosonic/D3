@@ -3116,27 +3116,27 @@ ORG &190E
   LDA roomno
   CMP #DAISYSPRISONROOM
   BNE l2A68
+
   LDA #&0B
   JSR l357D
-  LDA #&49
-  STA &C705
-  LDA #&32
-  STA &C78B
-  LDA #&4D
-  STA &C811
-  LDA #&00
-  STA SPR_ENABLE
-  JSR l3849
+
+  LDA #&49:STA &C705
+  LDA #&32:STA &C78B
+  LDA #&4D:STA &C811
+  LDA #&00:STA SPR_ENABLE
+  JSR heartdemo
+
   LDA #&0C
   JSR l357D
-  LDA #&02
-  STA v0B00
+
+  LDA #&02:STA v0B00
   JMP l24A0
 
 .l2A68
   LDA coins_tens
   CMP #&03
   BNE l2A77
+
   LDA #&0E
   JSR l357D
   JMP l1927
@@ -3151,6 +3151,7 @@ ORG &190E
   CPY #&19 ; No room #25 ???
   BCC l2A87
   RTS
+
 .l2A87
   LDY #&00
   STY &FC
@@ -4221,15 +4222,18 @@ ORG &2B32
   RTS
 
 .l3257
+{
   STX &0345
   INC &03C5
   LDX &03C5
-  LDA &E290,X
-  STA &03C6
+  LDA &E290,X:STA &03C6
   LDX &0345
+
   RTS
+}
 
 .l326A
+{
   STX &0346
   INC &03C5
   LDX &03C5
@@ -4239,7 +4243,9 @@ ORG &2B32
   ADC #&01
   STA &03C6
   LDX &0346
+
   RTS
+}
 
 .l3282
   STX &0345
@@ -4982,41 +4988,52 @@ ORG &2B32
   BCC l381B
   RTS
 
-.l3849
+.heartdemo
+{
   JSR l3023
-  LDA #&00
-  STA &03DB
-  LDA #&04
-  STA v0B00
-.l3856
+
+  LDA #&00:STA &03DB
+  LDA #&04:STA v0B00
+
+.loop
   JSR l3257
+
   AND #&3F
   CLC
   ADC #&20
   STA &033A
   JSR l3257
+
   AND #&7F
   CLC
   ADC #&30
   STA &033B
-  LDA #&12
-  STA &033C
+
+  LDA #&12:STA &033C
+
   LDA #&00
   STA &033F
   STA &03DC
+
   JSR l326A
+
   CMP #&04
   BNE l3882
+
   LDA #&01
 .l3882
   CLC
   ADC #SPR_HEARTNULL
   JSR l2B5B
+
   LDA #&05
   JSR l31D6
+
   INC &03DB
-  BNE l3856
+  BNE loop
+
   RTS
+}
 
 .l3893
   LDA #&A5
