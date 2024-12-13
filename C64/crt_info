@@ -30,9 +30,18 @@ Cartridge name = FANTASY WORLD DIZZY
 00000020  46 41 4e 54 41 53 59 20  57 4f 52 4c 44 20 44 49  |FANTASY WORLD DI|
 00000030  5a 5a 59 00 00 00 00 00  00 00 00 00 00 00 00 00  |ZZY.............|
 
+CHIP #0 ROM 8000-2000
+CHIP #1 ROM 8000-2000
+CHIP #2 ROM 8000-2000
+CHIP #3 ROM 8000-2000
+CHIP #4 ROM 8000-2000
+CHIP #5 ROM 8000-2000
+CHIP #6 ROM 8000-2000
+CHIP #7 ROM 8000-2000
+
 ------------------------------------------------------------------------------
 
-Chip contents
+Chip #0 contents
 Contained ROM signature = "CHIP
 00000000  43 48 49 50
 
