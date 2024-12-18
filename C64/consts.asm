@@ -1,3 +1,14 @@
+; Graphics related
+
+PAL_BLACK = 0
+PAL_BLUE = 1
+PAL_RED = 2
+PAL_MAGENTA = 3
+PAL_GREEN = 4
+PAL_CYAN = 5
+PAL_YELLOW = 6
+PAL_WHITE = 7
+
 ; Room related
 
 TITLEROOM = 0
