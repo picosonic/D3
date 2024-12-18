@@ -78,12 +78,14 @@ ORG &00
 .v034A
 .v034B
 .v034E
-.v0352
+ORG &0352
+.v0352 ; Dizzy X position ?
 .v0354
 .v0355
 .v0356
 .v0357
-.v035C
+ORG &035C
+.v035C ; Dizzy Y position ?
 .v035E
 .v035F
 .v0360
@@ -1118,10 +1120,10 @@ ORG &190E
   LDX #&86
 .l19DA
   DEX
-  LDA &C400,X:STA &C69E,X
-  LDA &C486,X:STA &C724,X
-  LDA &C50C,X:STA &C7AA,X
-  LDA &C592,X:STA &C830,X
+  LDA &C400,X:STA &C69E,X ; room
+  LDA &C486,X:STA &C724,X ; X
+  LDA &C50C,X:STA &C7AA,X ; Y
+  LDA &C592,X:STA &C830,X ; attrib
   LDA &C618,X:STA &C8B6,X
 
   CPX #&00
@@ -1131,11 +1133,11 @@ ORG &190E
 
   LDA #&1C
   STA &03D6
-  STA &0352
+  STA &0352 ; Dizzy starting X position
 
   LDA #&64
   STA &03D7
-  STA &035C
+  STA &035C ; Dizzy starting Y position
 
   LDA #&FF:STA &03DF
 
@@ -1597,11 +1599,11 @@ ORG &190E
   CMP #&01
   BNE l1D3B
 
-  INC &0352
+  INC &0352 ; Move Dizzy right ?
   JMP l1D41
 
 .l1D3B
-  DEC &0352
+  DEC &0352 ; Move Dizzy left ?
   JMP l1D41
 
 .l1D41
@@ -1657,11 +1659,12 @@ ORG &190E
   CMP #&12
   BCS l1D81
 
+  ; Check Dizzy X position
   LDA &0352
   CMP #&39
   BCC l1DB9
 
-  LDA #&02:STA &0352
+  LDA #&02:STA &0352 ; Set Dizzy position to far left
   INC roomno ; Go right
   JMP l1DFC
 
@@ -1669,7 +1672,7 @@ ORG &190E
   CMP #&02
   BCS l1DC8
 
-  LDA #&38:STA &0352
+  LDA #&38:STA &0352 ; Set Dizzy position to far right
   DEC roomno ; Go left
   JMP l1DFC
 
@@ -1829,6 +1832,7 @@ ORG &190E
   CMP #MINESROOM
   BNE l1F33
 
+  ; Check Dizzy X position against far right
   LDA &0352
   CMP #&34
   BCC l1F33
@@ -2128,12 +2132,13 @@ ORG &190E
   CMP #&04
   BNE l213A
 
-  LDA roomno:STA &C69E,X
+  LDA roomno:STA &C69E,X ; place object in current room
+
   LDA &0352
   CLC
   ADC #&21
   AND #&FE
-  STA &C724,X
+  STA &C724,X ; Update X position of object based on Dizzy X position
 
   LDA &035C:CLC:ADC #&2D:STA &C7AA,X
 .l213A
@@ -2189,7 +2194,7 @@ ORG &190E
 
   LDX &18D9
   STX &03D9
-  LDA #&FF:STA &C69E,X
+  LDA #OFFMAP:STA &C69E,X
   LDA #&3A
   JSR l357D
 .l21A0
@@ -3323,7 +3328,7 @@ ORG &190E
   STX &034E
   LDX &03D9
 
-  LDA #&FF
+  LDA #OFFMAP
   STA &C69E,X
   STA &03D9
 
@@ -4711,6 +4716,7 @@ ORG &2B32
   LDA &03D5
   BEQ l33A9
 
+  ; See if this object is in the room it started in
   LDA &C69E,X
   CMP &C400,X
   BNE l33A9
@@ -5612,7 +5618,7 @@ ORG &2B32
   CPX #&38
   BCS l39D3
 
-  LDA #&FF
+  LDA #OFFMAP
   STA &C69E,X
   STA &18DE
 

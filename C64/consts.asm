@@ -11,6 +11,8 @@ PAL_WHITE = 7
 
 ; Room related
 
+OFFMAP = 255
+
 TITLEROOM = 0
 BEANSTALKROOM = 1
 FIREROOM = 2
