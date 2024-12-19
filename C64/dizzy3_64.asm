@@ -78,14 +78,12 @@ ORG &00
 .v034A
 .v034B
 .v034E
-ORG &0352
-.v0352 ; Dizzy X position ?
+dizzyx = &0352
 .v0354
 .v0355
 .v0356
 .v0357
-ORG &035C
-.v035C ; Dizzy Y position ?
+dizzyy = &035C
 .v035E
 .v035F
 .v0360
@@ -123,8 +121,8 @@ lives = &03B9
 .v03C8
 .v03C9
 .v03D5 ; set to &FF and &00
-.v03D6
-.v03D7
+.v03D6 ; dizzyx related ?
+.v03D7 ; dizzyy related ?
 .v03D8
 .v03D9
 .v03DA
@@ -1133,11 +1131,11 @@ ORG &190E
 
   LDA #&1C
   STA &03D6
-  STA &0352 ; Dizzy starting X position
+  STA dizzyx ; Dizzy starting X position
 
   LDA #&64
   STA &03D7
-  STA &035C ; Dizzy starting Y position
+  STA dizzyy ; Dizzy starting Y position
 
   LDA #&FF:STA &03DF
 
@@ -1202,8 +1200,10 @@ ORG &190E
   LDA &03BC
   JSR l31D6
   INC &03C4
+
+  ; Check brandy bottle
   LDA &C6B1
-  CMP #&FF
+  CMP #OFFMAP
   BNE l1A96
 
   LDA &03C4
@@ -1280,7 +1280,7 @@ ORG &190E
 .l1B04
   LDA #&03:STA &03C8
 
-  INC &035C
+  INC dizzyy
 .l1B0C
   LDA &03C8
   CMP #&03
@@ -1412,7 +1412,7 @@ ORG &190E
   JMP l1C85
 
 .l1BFD
-  DEC &035C
+  DEC dizzyy
   DEC &0342
   LDA &0342
   BNE l1BDA
@@ -1447,7 +1447,7 @@ ORG &190E
   JMP l1C51
 
 .l1C3E
-  INC &035C
+  INC dizzyy
   DEC &0342
   LDA &0342
   BNE l1C18
@@ -1599,11 +1599,11 @@ ORG &190E
   CMP #&01
   BNE l1D3B
 
-  INC &0352 ; Move Dizzy right ?
+  INC dizzyx ; Move Dizzy right ?
   JMP l1D41
 
 .l1D3B
-  DEC &0352 ; Move Dizzy left ?
+  DEC dizzyx ; Move Dizzy left ?
   JMP l1D41
 
 .l1D41
@@ -1650,7 +1650,7 @@ ORG &190E
   BCC l1D86
   BEQ l1D86
 
-  DEC &035C
+  DEC dizzyy
   JMP l1D41
 
 .l1D9D
@@ -1660,11 +1660,11 @@ ORG &190E
   BCS l1D81
 
   ; Check Dizzy X position
-  LDA &0352
+  LDA dizzyx
   CMP #&39
   BCC l1DB9
 
-  LDA #&02:STA &0352 ; Set Dizzy position to far left
+  LDA #&02:STA dizzyx ; Set Dizzy position to far left
   INC roomno ; Go right
   JMP l1DFC
 
@@ -1672,30 +1672,30 @@ ORG &190E
   CMP #&02
   BCS l1DC8
 
-  LDA #&38:STA &0352 ; Set Dizzy position to far right
+  LDA #&38:STA dizzyx ; Set Dizzy position to far right
   DEC roomno ; Go left
   JMP l1DFC
 
 .l1DC8
-  LDA &035C
+  LDA dizzyy
   CMP #&80
   BCC l1E1D
 
   CMP #&C0
   BCS l1DE7
 
-  LDA #&00:STA &035C
+  LDA #&00:STA dizzyy
   LDA roomno:SEC:SBC #16:STA roomno ; Go down
 
   JSR l2A01
   JMP l1DFC
 
 .l1DE7
-  LDA &035C
+  LDA dizzyy
   CMP #&C0
   BCC l1E1D
 
-  LDA #&72:STA &035C
+  LDA #&72:STA dizzyy
   LDA roomno:CLC:ADC #&10:STA roomno ; Go up
 
 .l1DFC
@@ -1704,16 +1704,16 @@ ORG &190E
   BEQ l1E12
 
   STA &03B8
-  LDA &0352:STA &03D6
-  LDA &035C:STA &03D7
+  LDA dizzyx:STA &03D6
+  LDA dizzyy:STA &03D7
 .l1E12
   LDA #&00:STA &03E0
   LDA roomno
   JSR l2F22
 .l1E1D
-  LDA &035C:CLC:ADC #&5A:STA &D001
+  LDA dizzyy:CLC:ADC #&5A:STA &D001
 
-  LDA &0352
+  LDA dizzyx
   ASL A
   ASL A
   CLC
@@ -1817,11 +1817,12 @@ ORG &190E
   JSR l39D4
   BCC l1EE8
 
-  LDA #&16
+  ; Make shopkeeper appear
+  LDA #MARKETSQUAREROOM
   STA &C6DD
   STA &C6DE
 
-  LDA #&FF:STA &C6DF
+  LDA #OFFMAP:STA &C6DF
 
   LDA #&02
   JSR l357D
@@ -1833,19 +1834,22 @@ ORG &190E
   BNE l1F33
 
   ; Check Dizzy X position against far right
-  LDA &0352
+  LDA dizzyx
   CMP #&34
   BCC l1F33
 
-  LDA #&29
+  ; Check for troll
+  LDA #MINESROOM
   CMP &C6E0
   BEQ l1F33
 
+  ; Put troll in mine
   STA &C6E0
+
   LDA #&5A:STA &C766
   LDA #&78:STA &C7EC
   LDA #&44:STA &C872
-  LDA #&FF:STA &C6E1
+  LDA #OFFMAP:STA &C6E1
   LDX #&42
 
   JSR l29D3
@@ -1857,7 +1861,7 @@ ORG &190E
   STA &03C8
 
   LDA #&05:STA &03C0
-  LDA #&24:STA &C6D5
+  LDA #CASTLEDUNGEONROOM:STA &C6D5
   JMP l1B68
 
 .l1F33
@@ -1887,14 +1891,14 @@ ORG &190E
 .l1F5A
   LDX #&00
 .l1F5C
-  LDA &0352
+  LDA dizzyx
   CLC
   ADC #&1E
   STA &033A
   CLC
   ADC #&08
   STA &033C
-  LDA &035C
+  LDA dizzyy
   CLC
   ADC #&1A
   STA &033B
@@ -1939,13 +1943,15 @@ ORG &190E
   JSR l39D4
   BCC l1FD1
 
+  ; Check rope
   LDY #&0A
   LDA &C6AE
   CMP #&65
   BNE l1FCA
 
-  LDA #&44
-  STA &C6AE
+  ; Make rope appear
+  LDA #BANQUETHALLROOM:STA &C6AE
+
   LDY #&09
 .l1FCA
   TYA
@@ -1980,11 +1986,14 @@ ORG &190E
   JSR l39D4
   BCC l202B
 
+  ; Check sleeping potion
   LDA &C6AF
   CMP #&65
   BNE l2013
 
-  LDA #&2D:STA &C6AF
+  ; Make sleeping potion appear
+  LDA #OUTTOSEAROOM:STA &C6AF
+
   LDY #&05
   JMP l2024
 
@@ -2004,8 +2013,9 @@ ORG &190E
   CMP #CASTLESTAIRCASEROOM
   BNE l2048
 
+  ; Check for doorknocker
   LDA &C6B4
-  CMP #&04
+  CMP #&04 ; ?? room 4 ??
   BEQ l2048
 
   LDX #&44
@@ -2026,7 +2036,7 @@ ORG &190E
   CMP #&65
   BNE l205F
 
-  LDA #&58:STA &C6A1
+  LDA #LIFTTOELDERSROOM:STA &C6A1
   LDY #&0F
 .l205F
   TYA
@@ -2090,7 +2100,10 @@ ORG &190E
 
   LDX #&46
   JSR l32EB
-  LDA #&FF:STA &C6E4
+
+  ; Remove golden egg
+  LDA #OFFMAP:STA &C6E4
+
   JMP l24A0
 
 .l20E2
@@ -2134,13 +2147,13 @@ ORG &190E
 
   LDA roomno:STA &C69E,X ; place object in current room
 
-  LDA &0352
+  LDA dizzyx
   CLC
   ADC #&21
   AND #&FE
   STA &C724,X ; Update X position of object based on Dizzy X position
 
-  LDA &035C:CLC:ADC #&2D:STA &C7AA,X
+  LDA dizzyy:CLC:ADC #&2D:STA &C7AA,X
 .l213A
   INX
   CPX #&3F
@@ -2148,7 +2161,7 @@ ORG &190E
 
   LDA #&27
   JSR l357D
-  LDA #&FF:STA &C6A8
+  LDA #OFFMAP:STA &C6A8 ; Remove blackhole
   JMP l20F1
 
 .l214C
@@ -2291,10 +2304,11 @@ ORG &190E
   JMP l242D
 
 .l2244
-  LDA #&16:STA &C69F
+  LDA #MARKETSQUAREROOM:STA &C69F
   JSR l29C1
 
-  LDA #&FF
+  ; Hide shopkeeper
+  LDA #OFFMAP
   STA &C6DD
   STA &C6DE
 
@@ -2328,8 +2342,10 @@ ORG &190E
   JSR l29C1
   LDA #&11
   JSR l357D
-  LDA #&54:STA &C6E2
+
+  LDA #CASTLESTAIRCASEROOM:STA &C6E2
   LDA #&24:STA &C768
+
   JMP l242D
 
 .l2295
@@ -2386,7 +2402,8 @@ ORG &190E
 
   JSR l29C1
 
-  LDA #&FF
+  ; Remove plank and (egg?)
+  LDA #OFFMAP
   STA &C700
   STA &C6E2
 
@@ -2406,7 +2423,7 @@ ORG &190E
   LDA #&17
   JSR l357D
   LDA #&87:STA &C835
-  LDA #&FF:STA &C6F0
+  LDA #OFFMAP:STA &C6F0
   JMP l242D
 
 .l2324
@@ -2418,7 +2435,7 @@ ORG &190E
   BCC l2304
 
   JSR l29C1
-  LDA #&FF:STA &C6F5
+  LDA #OFFMAP:STA &C6F5
   LDA #&22
   JSR l357D
   JMP l242D
@@ -2453,7 +2470,7 @@ ORG &190E
   BNE l238E
 
   LDA &C69F
-  CMP #&FF
+  CMP #OFFMAP
   BNE l23C5
 
   LDX #&02
@@ -2461,7 +2478,10 @@ ORG &190E
   BCC l23C5
 
   JSR l29C1
-  LDA #&3A:STA &C721
+
+  ; ?? put beanstalk in allotment ??
+  LDA #ALLOTMENTROOM:STA &C721
+
   LDA #&13
   JSR l357D
   JMP l2355
@@ -2519,7 +2539,9 @@ ORG &190E
   BCC l23C5
 
   JSR l29C1
-  LDA #&FF:STA &C6E6
+
+  LDA #OFFMAP:STA &C6E6
+
   LDA #&23
   JSR l357D
   JMP l242D
@@ -2595,8 +2617,8 @@ ORG &190E
   LDX &03D9
   LDA roomno:STA &C69E,X
 
-  LDA &0352:CLC:ADC #&21:AND #&FE:STA &C724,X
-  LDA &035C:CLC:ADC #&2D:STA &C7AA,X
+  LDA dizzyx:CLC:ADC #&21:AND #&FE:STA &C724,X
+  LDA dizzyy:CLC:ADC #&2D:STA &C7AA,X
 
   LDA #&3F:STA &03DD
   LDA #&FF:STA &03D5
@@ -2650,8 +2672,9 @@ ORG &190E
   JMP l24FF
 
 .l24EC
+  ; Check sleeping potion
   LDA &C6AF
-  CMP #&FF
+  CMP #OFFMAP
   BEQ l24FF
 
 .l24F3
@@ -2663,14 +2686,14 @@ ORG &190E
   JMP l2572
 
 .l24FF
-  LDA &035C
+  LDA dizzyy
   CMP #&58
   BCC l2527
 
   LDA &03BA
   BEQ l2527
 
-  LDA &0352
+  LDA dizzyx
   CLC
   ADC #&23
   CMP #&31
@@ -2737,8 +2760,9 @@ ORG &190E
   CMP #DAISYSPRISONROOM
   BNE l258A
 
+  ; Check for rug
   LDA &C6A9
-  CMP #&FF
+  CMP #OFFMAP
   BNE l258A
 
   JMP l25C7
@@ -2776,10 +2800,12 @@ ORG &190E
   CMP #CASTLEDUNGEONROOM
   BNE l2629
 
+  ; Check for rat
   LDA &C6E3
-  CMP #&FF
+  CMP #OFFMAP
   BEQ l2629
 
+  ; Check if bread is in this room
   LDA roomno
   CMP &C6B3
   BNE l2601
@@ -2794,7 +2820,8 @@ ORG &190E
   CMP &C769
   BCC l2601
 
-  LDA #&FF:STA &C6B3
+  LDA #OFFMAP:STA &C6B3 ; Remove bread
+
   LDA &C875:ORA #&80:STA &C875 ; Set top bit
 
   LDA #&1D
@@ -2808,8 +2835,10 @@ ORG &190E
   JSR l32EB
   INC &C769
   JSR l3306
+
+  ; Check for bread
   LDA &C6B3
-  CMP #&FF
+  CMP #OFFMAP
   BNE l262C
 
   LDA &C769
@@ -2817,7 +2846,9 @@ ORG &190E
   BCC l2650
 
   JSR l32EB
-  LDA #&FF:STA &C6E3
+
+  ; Remove rat
+  LDA #OFFMAP:STA &C6E3
 .l2629
   JMP l2650
 
@@ -2845,8 +2876,9 @@ ORG &190E
   CMP #GATORROOM
   BNE l267A
 
+  ; Check rope
   LDA &C6AE
-  CMP #&FF
+  CMP #OFFMAP
   BEQ l267A
 
   LDA &03C4
@@ -3004,7 +3036,7 @@ ORG &190E
   CMP #&2E
   BCC l279E
 
-  LDA &0352
+  LDA dizzyx
   CLC
   ADC #&1C
   CMP &C774
@@ -3061,7 +3093,7 @@ ORG &190E
   CLC
   ADC #&08
   STA &C7FA
-  LDA &0352
+  LDA dizzyx
   CLC
   ADC #&1C
   CMP &C774
@@ -3084,16 +3116,16 @@ ORG &190E
   BEQ l283A
 
   LDA &C6A3
-  CMP #&FF
+  CMP #OFFMAP
   BEQ l283A
 
   LDX #&51
-  LDA &035C
+  LDA dizzyy
   CMP #&68
   BCS l283D
 
   LDA &C6F0
-  CMP #&FF
+  CMP #OFFMAP
   BEQ l283D
 
   LDA &C775
@@ -3155,7 +3187,7 @@ ORG &190E
   AND #&80
   BEQ l28A8
 
-  LDA #&FF:STA &C6A3
+  LDA #OFFMAP:STA &C6A3 ; Remove bone
   LDA #&92:STA &C881
 
   LDX #&51
@@ -3186,8 +3218,9 @@ ORG &190E
   JMP l295E
 
 .l28D2
+  ; Check sleeping potion
   LDA &C6AF
-  CMP #&FF
+  CMP #OFFMAP
   BNE l28E1
 
   LDA &03BB
@@ -3273,8 +3306,9 @@ ORG &190E
   CMP #DRAGONSLAIRROOM
   BNE l296F
 
+  ; Check golden egg
   LDA &C6E4
-  CMP #&FF
+  CMP #OFFMAP
   BNE l2993
 
   JMP l297F
@@ -3347,7 +3381,7 @@ ORG &190E
 .l29E4
   LDA #&80:STA &C7BB
   LDA #&52:STA &C735
-  LDA #&FF:STA &C6A5
+  LDA #OFFMAP:STA &C6A5
 
   LDA #&0F
   STA &C875
@@ -3367,7 +3401,7 @@ ORG &190E
   LDA #TOPWELLROOM:STA roomno
 
 .l2A11
-  LDA #&72:STA &035C
+  LDA #&72:STA dizzyy
 
   LDA #&01
   STA &03C7
@@ -3395,7 +3429,9 @@ ORG &190E
   LDA #&0B
   JSR l357D
 
-  LDA #&49:STA &C705
+  ; Put Daisy in her hut
+  LDA #DAISYSHUTROOM:STA &C705
+
   LDA #&32:STA &C78B
   LDA #&4D:STA &C811
   LDA #&00:STA SPR_ENABLE
@@ -4099,7 +4135,7 @@ ORG &2B32
   JSR l3814
 
   LDA &C6A3
-  CMP #&FF
+  CMP #OFFMAP
   BEQ l2F39
 
   LDA #&36:STA &C775
@@ -4171,8 +4207,9 @@ ORG &2B32
   CMP #CASTLEDUNGEONROOM
   BNE l2FD9
 
+  ; Check jug of water
   LDA &C6B2
-  CMP #&FF
+  CMP #OFFMAP
   BEQ l2FE9
 
   LDA #&02
@@ -4185,7 +4222,7 @@ ORG &2B32
   BNE l2FE9
 
   LDA &C6A2
-  CMP #&FF
+  CMP #OFFMAP
   BNE l2FE9
 
   LDA #&01
@@ -4403,8 +4440,8 @@ ORG &2B32
   STX &034E
 
   LDA #&00
-  STA &0352,X
-  STA &035C,X
+  STA dizzyx,X
+  STA dizzyy,X
   STA &0370,X
   STA &0366,X
 
@@ -4413,14 +4450,14 @@ ORG &2B32
   RTS
 
 .l3154
-  LDA &0352
+  LDA dizzyx
   CLC
   ADC &033A
   STA &033C
 
   DEC &033C
 
-  LDA &035C
+  LDA dizzyy
   CLC
   ADC &033B
   CLC
@@ -4519,7 +4556,7 @@ ORG &2B32
 
 .l320B
   LDX &034E
-  LDA &0352,X
+  LDA dizzyx,X
   CMP #&1C
   BCC l321C
 
@@ -4543,7 +4580,7 @@ ORG &2B32
   LDA &0342:EOR #&FF:AND SPR_MSB_X:STA SPR_MSB_X
 .l323C
   INY
-  LDA &035C,X
+  LDA dizzyy,X
   CMP #&4A
   BCC l324B
 
@@ -4587,6 +4624,7 @@ ORG &2B32
 }
 
 .l3282
+{
   STX &0345
   STA &0340
   LDX &034E
@@ -4597,12 +4635,12 @@ ORG &2B32
   AND #&01
   BEQ l32A3
 
-  LDA &035C,X:SEC:SBC &037A,X:STA &035C,X
+  LDA dizzyy,X:SEC:SBC &037A,X:STA dizzyy,X
 
   JMP l32AD
 
 .l32A3
-  LDA &035C,X:CLC:ADC &037A,X:STA &035C,X
+  LDA dizzyy,X:CLC:ADC &037A,X:STA dizzyy,X
 .l32AD
   LDA &0340
   AND #&0C
@@ -4611,18 +4649,18 @@ ORG &2B32
   AND #&04
   BEQ l32C5
 
-  LDA &0352,X:SEC:SBC &0384,X:STA &0352,X
+  LDA dizzyx,X:SEC:SBC &0384,X:STA dizzyx,X
 
   JMP l32CF
 
 .l32C5
-  LDA &0352,X
+  LDA dizzyx,X
   CLC
   ADC &0384,X
-  STA &0352,X
+  STA dizzyx,X
 
 .l32CF
-  LDA &0352,X
+  LDA dizzyx,X
   CMP #&E6
   BCC l32E0
 
@@ -4634,28 +4672,33 @@ ORG &2B32
   JMP l32E7
 
 .l32E0
-  LDA &035C,X
+  LDA dizzyy,X
   CMP #&08
   BCC l32DA
 
 .l32E7
   LDX &0345
+
   RTS
+}
 
 .l32EB
-  LDA &C724,X:STA &033A
-  LDA &C7AA,X:STA &033B
+{
+  LDA &C724,X:STA &033A ; X position
+  LDA &C7AA,X:STA &033B ; Y position
 
   LDA #&00
-  STA &033C
+  STA &033C ; attrib
   STA &033F
 
   LDA &C8B6,X
 
   JSR frame
   RTS
+}
 
 .l3306
+{
   LDA &C724,X:STA &033A ; X position
   LDA &C7AA,X:STA &033B ; Y position
   LDA &C830,X:STA &033C ; attrib
@@ -4665,6 +4708,7 @@ ORG &2B32
 
   LDA #&58:STA &03DC
   RTS
+}
 
 ; Draw objects ??
 .l3329
@@ -4714,28 +4758,30 @@ ORG &2B32
 .l3384
   LDA #&08:STA &FF
   LDA &03D5
-  BEQ l33A9
+  BEQ done
 
   ; See if this object is in the room it started in
   LDA &C69E,X
   CMP &C400,X
-  BNE l33A9
+  BNE done
 
   LDA &C724,X
   CMP &C486,X
-  BNE l33A9
+  BNE done
 
   LDA &C7AA,X
   CMP &C50C,X
-  BNE l33A9
+  BNE done
 
   LDA #&00
   STA &FF
-.l33A9
+
+.done
   RTS
 }
 
 .l33AA
+{
   LDA CIA1_PRA ; Read inputs
   EOR #&FF
   AND #&1F
@@ -4753,14 +4799,17 @@ ORG &2B32
 
 .l33CA
   LDA &03C0:STA &03D8
+
   RTS
+}
 
 .l33D1
+{
   STA &033A
 
-  LDA &0352:ASL A:CLC:ADC #&1C:STA &0352
+  LDA dizzyx:ASL A:CLC:ADC #&1C:STA dizzyx
 
-  LDA &035C:CLC:ADC #&5A:STA &035C
+  LDA dizzyy:CLC:ADC #&5A:STA dizzyy
 
   LDX #&02
 .l33E9
@@ -4777,13 +4826,13 @@ ORG &2B32
   CPX #&06
   BCC l33E9
 
-  LDA &0352
+  LDA dizzyx
   SEC
   SBC &033A
   STA &0354
   STA &0355
 
-  LDA &0352
+  LDA dizzyx
   CLC
   ADC &033A
   STA &0356
@@ -4791,28 +4840,30 @@ ORG &2B32
 
   LSR &033A
 
-  LDA &035C
+  LDA dizzyy
   SEC
   SBC &033A
   STA &035E
   STA &0360
 
-  LDA &035C
+  LDA dizzyy
   CLC
   ADC &033A
   STA &035F
   STA &0361
 
   RTS
+}
 
 .l3440
+{
   LDX #&05:STX &0346
 .l3445
   LDX #&02
 .l3447
   STX &034E
 
-  LDA &0352,X
+  LDA dizzyx,X
   BEQ l345B
 
   LDA &0366,X
@@ -4832,12 +4883,14 @@ ORG &2B32
   BNE l3445
 
   RTS
+}
 
 .l346B
-  LDA &03D6:STA &0352
-  LDA &03D7:STA &035C
-  LDA #&3C
+{
+  LDA &03D6:STA dizzyx
+  LDA &03D7:STA dizzyy
 
+  LDA #&3C
   JSR l33D1
 
   LDA #&37:STA &5FF8
@@ -4874,16 +4927,18 @@ ORG &2B32
   CPX #&08
   BCC l34BE
 
-  LDA &03D6:STA &0352
-  LDA &03D7:STA &035C
+  LDA &03D6:STA dizzyx
+  LDA &03D7:STA dizzyy
   LDA SPR_COLLISION
   LDA SPR_COLLISION2
   LDA SPR_COLLISION
   LDA SPR_COLLISION2
 
   RTS
+}
 
 .l34E2
+{
   NOP
 
   LDA #&00
@@ -4929,9 +4984,12 @@ ORG &2B32
   JSR l31D6
 
   LDA &03B8:STA roomno
+
   RTS
+}
 
 .l3541
+{
   LDY &C5
   LDX &028D
   LDA &03C0
@@ -4958,7 +5016,9 @@ ORG &2B32
   ORA #&10
 .l3564
   STA &03C0
+
   RTS
+}
 
 ; Get byte at (&05) and advance pointer
 .l3568
@@ -5480,6 +5540,7 @@ ORG &2B32
 }
 
 .l38B1
+{
   LDA &03C4
   AND #&01
   BNE l38BB
@@ -5505,6 +5566,7 @@ ORG &2B32
   STY &03DB
 
   JMP l38E4
+}
 
 .l38DE
   LDA (&B2),Y
@@ -5611,12 +5673,13 @@ ORG &2B32
 
 ; Collecting a coin
 .l3997
+{
   LDX &18DE
   CPX #&1A
-  BCC l39D3
+  BCC done
 
   CPX #&38
-  BCS l39D3
+  BCS done
 
   LDA #OFFMAP
   STA &C69E,X
@@ -5640,14 +5703,16 @@ ORG &2B32
   JSR l357D
 
   LDA v2B48
-  BNE l39D3
+  BNE done
 
   LDA #&02:STA v0B00
 
-.l39D3
+.done
   RTS
+}
 
 .l39D4
+{
   LDA &C69E,X
   CMP roomno
   BEQ l39DE
@@ -5660,11 +5725,11 @@ ORG &2B32
   LDA &C8B6,X:STA &FB
   JSR l3893
 
-  LDA &0352:CLC:ADC #&21:STA &033A
+  LDA dizzyx:CLC:ADC #&21:STA &033A
 
   CLC:ADC #&04:STA &033C
 
-  LDA &035C:CLC:ADC #&2A:STA &033B
+  LDA dizzyy:CLC:ADC #&2A:STA &033B
 
   CLC:ADC #&15:STA &033D
 
@@ -5695,8 +5760,9 @@ ORG &2B32
   SEC
 
   RTS
+}
 
-; Print coins to screen
+; Print coins collected counter to screen
 .l3A30
 {
   LDA #&4E:STA &033A
@@ -5733,6 +5799,7 @@ ORG &2B32
 }
 
 .l3A71
+{
   TAX
   LDA &1897,X:STA &033C
 
@@ -5757,8 +5824,10 @@ ORG &2B32
   BCC l3A97
 
   RTS
+}
 
 .l3A9F
+{
   LDA &03BA:CLC:ADC #&08:STA &03DB
 
   LDX &03BA
@@ -5799,6 +5868,7 @@ ORG &2B32
   LDA #&00:STA &03DC
   JSR l3306
   RTS
+}
 
 .v3AE9
 .v3AF0
@@ -5867,6 +5937,7 @@ ORG &3B00
   RTS
 
 .l3B6D
+{
   LDA #&C6:STA CIA2_PRA
   LDA #&3B:STA GFX_VICII_REG1
   LDA #&78:STA GFX_MEM_PTR
@@ -5875,7 +5946,9 @@ ORG &3B00
   LDA #&B8:STA &03E1
   LDA #&30:STA &03E3
   LDA #&58:STA &03DC
+
   RTS
+}
 
 ORG &8000
 INCBIN "roomdata.bin"
@@ -5915,107 +5988,183 @@ INCBIN "frametable.bin"
 INCBIN "framedefs.bin"
 
 ORG &C400
-
 ; static set of objects
 .vC400 ; rooms
-  EQUB &37, &65, &3a, &65, &53, &64, &3a, &4d, &57, &5d, &48, &28, &55, &18, &3c, &30
-  EQUB &65, &65, &04, &35, &24, &24, &59, &35, &23, &32, &16, &18, &1f, &28, &29, &2e
-  EQUB &31, &33, &39, &3f, &43, &44, &45, &4b, &4c, &4d, &54, &56, &57, &59, &5c, &5e
-  EQUB &65, &65, &65, &65, &65, &65, &65, &65, &34, &37, &37, &38, &48, &49, &3b, &65
-  EQUB &65, &16, &24, &24, &24, &24, &28, &28, &29, &29, &2d, &30, &30, &30, &30, &30
-  EQUB &31, &32, &32, &33, &33, &34, &35, &37, &38, &38, &38, &38, &3b, &3c, &44, &45
-  EQUB &47, &47, &54, &58, &5e, &5e, &5e, &5e, &5e, &5e, &65, &65, &36, &36, &36, &36
-  EQUB &36, &36, &36, &47, &47, &28, &28, &58, &58, &38, &38, &43, &45, &48, &59, &3b
-  EQUB &2f, &57, &49, &65, &23, &58
+  EQUB &37, &65, &3a, &65, &53 ; 0
+  EQUB &64, &3a, &4d, &57, &5d ; 5
+  EQUB &48, &28, &55, &18, &3c ; 10
+  EQUB &30, &65, &65, &04, &35 ; 15
+  EQUB &24, &24, &59, &35, &23 ; 20
+  EQUB &32, &16, &18, &1f, &28 ; 25
+  EQUB &29, &2e, &31, &33, &39 ; 30
+  EQUB &3f, &43, &44, &45, &4b ; 35
+  EQUB &4c, &4d, &54, &56, &57 ; 40
+  EQUB &59, &5c, &5e, &65, &65 ; 45
+  EQUB &65, &65, &65, &65, &65 ; 50
+  EQUB &65, &34, &37, &37, &38 ; 55
+  EQUB &48, &49, &3b, &65, &65 ; 60
+  EQUB &16, &24, &24, &24, &24 ; 65
+  EQUB &28, &28, &29, &29, &2d ; 70
+  EQUB &30, &30, &30, &30, &30 ; 75
+  EQUB &31, &32, &32, &33, &33 ; 80
+  EQUB &34, &35, &37, &38, &38 ; 85
+  EQUB &38, &38, &3b, &3c, &44 ; 90
+  EQUB &45, &47, &47, &54, &58 ; 95
+  EQUB &5e, &5e, &5e, &5e, &5e ; 100
+  EQUB &5e, &65, &65, &36, &36 ; 105
+  EQUB &36, &36, &36, &36, &36 ; 110
+  EQUB &47, &47, &28, &28, &58 ; 115
+  EQUB &58, &38, &38, &43, &45 ; 120
+  EQUB &48, &59, &3b, &2f, &57 ; 125
+  EQUB &49, &65, &23, &58      ; 130
 .vC486 ; Xs
-  EQUB &30, &40, &48, &36, &50, &34, &3c, &38, &54, &50, &3c, &34, &2a, &50, &3c, &28
-  EQUB &46, &56, &00, &30, &44, &48, &32, &5a, &3a, &56, &24, &2a, &26, &32, &2c, &56
-  EQUB &3c, &58, &48, &3c, &3e, &54, &28, &36, &46, &34, &3c, &52, &58, &2c, &40, &3c
-  EQUB &56, &3a, &4c, &54, &4c, &38, &34, &52, &56, &3a, &4c, &54, &4c, &38, &34, &42
-  EQUB &46, &40, &4e, &50, &28, &50, &3c, &36, &24, &2a, &4a, &34, &3c, &44, &3c, &4a
-  EQUB &2c, &36, &52, &42, &4c, &40, &46, &2e, &32, &48, &34, &46, &48, &2f, &50, &28
-  EQUB &34, &3c, &22, &2a, &3e, &4a, &4a, &4a, &2a, &32, &28, &2e, &4c, &4b, &4a, &49
-  EQUB &48, &47, &44, &34, &34, &28, &28, &3a, &3a, &3c, &3c, &54, &2e, &22, &3e, &40
-  EQUB &44, &3c, &3e, &43, &5a, &3a
+  EQUB &30, &40, &48, &36, &50 ; 0
+  EQUB &34, &3c, &38, &54, &50 ; 5
+  EQUB &3c, &34, &2a, &50, &3c ; 10
+  EQUB &28, &46, &56, &00, &30 ; 15
+  EQUB &44, &48, &32, &5a, &3a ; 20
+  EQUB &56, &24, &2a, &26, &32 ; 25
+  EQUB &2c, &56, &3c, &58, &48 ; 30
+  EQUB &3c, &3e, &54, &28, &36 ; 35
+  EQUB &46, &34, &3c, &52, &58 ; 40
+  EQUB &2c, &40, &3c, &56, &3a ; 45
+  EQUB &4c, &54, &4c, &38, &34 ; 50
+  EQUB &52, &56, &3a, &4c, &54 ; 55
+  EQUB &4c, &38, &34, &42, &46 ; 60
+  EQUB &40, &4e, &50, &28, &50 ; 65
+  EQUB &3c, &36, &24, &2a, &4a ; 70
+  EQUB &34, &3c, &44, &3c, &4a ; 75
+  EQUB &2c, &36, &52, &42, &4c ; 80
+  EQUB &40, &46, &2e, &32, &48 ; 85
+  EQUB &34, &46, &48, &2f, &50 ; 90
+  EQUB &28, &34, &3c, &22, &2a ; 95
+  EQUB &3e, &4a, &4a, &4a, &2a ; 100
+  EQUB &32, &28, &2e, &4c, &4b ; 105
+  EQUB &4a, &49, &48, &47, &44 ; 110
+  EQUB &34, &34, &28, &28, &3a ; 115
+  EQUB &3a, &3c, &3c, &54, &2e ; 120
+  EQUB &22, &3e, &40, &44, &3c ; 125
+  EQUB &3e, &43, &5a, &3a      ; 130
 .vC50C ; Ys
-  EQUB &90, &90, &aa, &50, &90, &a0, &98, &70, &50, &98, &80, &70, &70, &88, &78, &60
-  EQUB &84, &68, &00, &88, &90, &90, &88, &90, &88, &a0, &68, &98, &78, &48, &40, &80
-  EQUB &a0, &98, &a0, &96, &70, &70, &a0, &50, &38, &70, &60, &96, &a0, &60, &50, &98
-  EQUB &58, &88, &80, &80, &50, &48, &68, &a0, &58, &88, &80, &80, &50, &48, &68, &88
-  EQUB &88, &98, &88, &a0, &a0, &49, &98, &a0, &65, &68, &74, &ac, &ac, &ac, &a3, &68
-  EQUB &38, &9c, &a0, &4e, &88, &68, &98, &a0, &74, &74, &9c, &9c, &93, &90, &9b, &70
-  EQUB &30, &30, &90, &4c, &46, &30, &54, &40, &98, &98, &98, &98, &98, &98, &98, &98
-  EQUB &98, &98, &96, &38, &60, &38, &58, &30, &60, &68, &88, &70, &b0, &60, &48, &80
-  EQUB &50, &40, &40, &72, &80, &b0
+  EQUB &90, &90, &aa, &50, &90 ; 0
+  EQUB &a0, &98, &70, &50, &98 ; 5
+  EQUB &80, &70, &70, &88, &78 ; 10
+  EQUB &60, &84, &68, &00, &88 ; 15
+  EQUB &90, &90, &88, &90, &88 ; 20
+  EQUB &a0, &68, &98, &78, &48 ; 25
+  EQUB &40, &80, &a0, &98, &a0 ; 30
+  EQUB &96, &70, &70, &a0, &50 ; 35
+  EQUB &38, &70, &60, &96, &a0 ; 40
+  EQUB &60, &50, &98, &58, &88 ; 45
+  EQUB &80, &80, &50, &48, &68 ; 50
+  EQUB &a0, &58, &88, &80, &80 ; 55
+  EQUB &50, &48, &68, &88, &88 ; 60
+  EQUB &98, &88, &a0, &a0, &49 ; 65
+  EQUB &98, &a0, &65, &68, &74 ; 70
+  EQUB &ac, &ac, &ac, &a3, &68 ; 75
+  EQUB &38, &9c, &a0, &4e, &88 ; 80
+  EQUB &68, &98, &a0, &74, &74 ; 85
+  EQUB &9c, &9c, &93, &90, &9b ; 90
+  EQUB &70, &30, &30, &90, &4c ; 95
+  EQUB &46, &30, &54, &40, &98 ; 100
+  EQUB &98, &98, &98, &98, &98 ; 105
+  EQUB &98, &98, &98, &98, &96 ; 110
+  EQUB &38, &60, &38, &58, &30 ; 115
+  EQUB &60, &68, &88, &70, &b0 ; 120
+  EQUB &60, &48, &80, &50, &40 ; 125
+  EQUB &40, &72, &80, &b0      ; 130
 .vC592 ; attribs
-  EQUB &02, &04, &02, &05, &05, &07, &07, &03, &02, &06, &07, &02, &06, &06, &06, &06
-  EQUB &07, &04, &04, &06, &05, &06, &06, &02, &02, &02, &06, &06, &06, &06, &06, &06
-  EQUB &06, &06, &06, &06, &06, &06, &06, &06, &06, &06, &06, &06, &06, &06, &06, &06
-  EQUB &06, &06, &06, &06, &06, &06, &06, &06, &07, &04, &02, &02, &02, &04, &04, &07
-  EQUB &87, &20, &04, &20, &00, &07, &06, &00, &52, &10, &07, &07, &07, &07, &42, &00
-  EQUB &07, &02, &00, &05, &47, &00, &44, &42, &05, &05, &05, &05, &07, &00, &07, &07
-  EQUB &02, &02, &42, &07, &05, &07, &47, &07, &17, &17, &42, &42, &0a, &0a, &0a, &0a
-  EQUB &0a, &0a, &02, &07, &47, &07, &47, &07, &47, &07, &47, &00, &42, &44, &54, &52
-  EQUB &52, &44, &54, &c4, &42, &42
+  EQUB &02, &04, &02, &05, &05 ; 0
+  EQUB &07, &07, &03, &02, &06 ; 5
+  EQUB &07, &02, &06, &06, &06 ; 10
+  EQUB &06, &07, &04, &04, &06 ; 15
+  EQUB &05, &06, &06, &02, &02 ; 20
+  EQUB &02, &06, &06, &06, &06 ; 25
+  EQUB &06, &06, &06, &06, &06 ; 30
+  EQUB &06, &06, &06, &06, &06 ; 35
+  EQUB &06, &06, &06, &06, &06 ; 40
+  EQUB &06, &06, &06, &06, &06 ; 45
+  EQUB &06, &06, &06, &06, &06 ; 50
+  EQUB &06, &07, &04, &02, &02 ; 55
+  EQUB &02, &04, &04, &07, &87 ; 60
+  EQUB &20, &04, &20, &00, &07 ; 65
+  EQUB &06, &00, &52, &10, &07 ; 70
+  EQUB &07, &07, &07, &42, &00 ; 75
+  EQUB &07, &02, &00, &05, &47 ; 80
+  EQUB &00, &44, &42, &05, &05 ; 85
+  EQUB &05, &05, &07, &00, &07 ; 90
+  EQUB &07, &02, &02, &42, &07 ; 95
+  EQUB &05, &07, &47, &07, &17 ; 100
+  EQUB &17, &42, &42, &0a, &0a ; 105
+  EQUB &0a, &0a, &0a, &0a, &02 ; 110
+  EQUB &07, &47, &07, &47, &07 ; 115
+  EQUB &47, &07, &47, &00, &42 ; 120
+  EQUB &44, &54, &52, &52, &44 ; 125
+  EQUB &54, &c4, &42, &42      ; 130
 .vC618 ; frames
-  EQUB SPR_BAG, SPR_BEAN, SPR_MANURE, SPR_CROWBAR, SPR_BUCKET, SPR_BONE, SPR_COW
-  EQUB SPR_HAPPYDUST, SPR_PICKAXE, SPR_GOLDENEGG, SPR_BLACKHOLE, SPR_THICKRUG, SPR_KEY
-  EQUB SPR_KEY, SPR_KEY, SPR_KEY, SPR_ROPE, SPR_SLEEPINGPOTION, SPR_APPLE
-  EQUB SPR_BRANDYBOTTLE, SPR_JUGOFWATER, SPR_BREAD, SPR_DOORKNOCKER, SPR_SMALLSTONE5
-  EQUB SPR_SMALLSTONE3, SPR_SMALLSTONE2, SPR_COIN, SPR_COIN, SPR_COIN, SPR_COIN
-  EQUB SPR_COIN, SPR_COIN, SPR_COIN, SPR_COIN, SPR_COIN, SPR_COIN, SPR_COIN, SPR_COIN
-  EQUB SPR_COIN, SPR_COIN, SPR_COIN, SPR_COIN, SPR_COIN, SPR_COIN, SPR_COIN, SPR_COIN
-  EQUB SPR_COIN, SPR_COIN, SPR_COIN, SPR_COIN, SPR_COIN, SPR_COIN, SPR_COIN, SPR_COIN
-  EQUB SPR_COIN, SPR_COIN, SPR_WOODENRAIL, SPR_LEAFYBIT1, SPR_WOODENRAIL
-  EQUB SPR_WOODENRAIL, SPR_WOODENRAIL, SPR_WINDOW, SPR_LEAFYBIT1, SPR_SHOPKEEPER
-  EQUB SPR_SHOPKEEPER, SPR_EGG, SPR_TROLL, SPR_EGG, SPR_EGG, SPR_RAT, SPR_GOLDENEGG
-  EQUB SPR_EGG, SPR_LARGESTONE2, SPR_EGG, SPR_DOZY, SPR_WATER, SPR_WATER, SPR_WATER
-  EQUB SPR_WOOD0, SPR_EGG, SPR_HAWK0, SPR_GRUNT0, SPR_EGG, SPR_SWITCH, SPR_PORTCULLIS
-  EQUB SPR_EGG, SPR_CROCCLOSED, SPR_WOOD0, SPR_MACHINE, SPR_MACHINE, SPR_MACHINE
-  EQUB SPR_MACHINE, SPR_DYLAN, SPR_EGG, SPR_DENZIL, SPR_DAGGERBLADE, SPR_WOOD0
-  EQUB SPR_WOOD0, SPR_PLANKOFWOOD, SPR_GRANDDIZZY, SPR_SWITCH, SPR_LIFTTOP
-  EQUB SPR_LIFTBOTTOM, SPR_DAISY, SPR_DAGGERBLADE, SPR_DAGGERBLADE, SPR_GROUND
-  EQUB SPR_GROUND, SPR_DRAGONNECK, SPR_DRAGONNECK, SPR_DRAGONNECK, SPR_DRAGONNECK
-  EQUB SPR_DRAGONNECK, SPR_DRAGONNECK, SPR_DRAGONHEADCLOSED, SPR_LIFTTOP
-  EQUB SPR_LIFTBOTTOM, SPR_LIFTTOP, SPR_LIFTBOTTOM, SPR_LIFTTOP, SPR_LIFTBOTTOM
-  EQUB SPR_LIFTTOP, SPR_LIFTBOTTOM, SPR_FRAMERIGHT, SPR_STONEBLOCK4, SPR_LEAFYBIT1
+  EQUB SPR_BAG,         SPR_BEAN,       SPR_MANURE,         SPR_CROWBAR,     SPR_BUCKET           ; 0
+  EQUB SPR_BONE,        SPR_COW,        SPR_HAPPYDUST,      SPR_PICKAXE,     SPR_GOLDENEGG        ; 5
+  EQUB SPR_BLACKHOLE,   SPR_THICKRUG,   SPR_KEY,            SPR_KEY,         SPR_KEY              ; 10
+  EQUB SPR_KEY,         SPR_ROPE,       SPR_SLEEPINGPOTION, SPR_APPLE,       SPR_BRANDYBOTTLE     ; 15
+  EQUB SPR_JUGOFWATER,  SPR_BREAD,      SPR_DOORKNOCKER,    SPR_SMALLSTONE5, SPR_SMALLSTONE3      ; 20
+  EQUB SPR_SMALLSTONE2, SPR_COIN,       SPR_COIN,           SPR_COIN,        SPR_COIN             ; 25
+  EQUB SPR_COIN,        SPR_COIN,       SPR_COIN,           SPR_COIN,        SPR_COIN             ; 30
+  EQUB SPR_COIN,        SPR_COIN,       SPR_COIN,           SPR_COIN,        SPR_COIN             ; 35
+  EQUB SPR_COIN,        SPR_COIN,       SPR_COIN,           SPR_COIN,        SPR_COIN             ; 40
+  EQUB SPR_COIN,        SPR_COIN,       SPR_COIN,           SPR_COIN,        SPR_COIN             ; 45
+  EQUB SPR_COIN,        SPR_COIN,       SPR_COIN,           SPR_COIN,        SPR_COIN             ; 50
+  EQUB SPR_COIN,        SPR_WOODENRAIL, SPR_LEAFYBIT1,      SPR_WOODENRAIL,  SPR_WOODENRAIL       ; 55
+  EQUB SPR_WOODENRAIL,  SPR_WINDOW,     SPR_LEAFYBIT1,      SPR_SHOPKEEPER,  SPR_SHOPKEEPER       ; 60
+  EQUB SPR_EGG,         SPR_TROLL,      SPR_EGG,            SPR_EGG,         SPR_RAT              ; 65
+  EQUB SPR_GOLDENEGG,   SPR_EGG,        SPR_LARGESTONE2,    SPR_EGG,         SPR_DOZY             ; 70
+  EQUB SPR_WATER,       SPR_WATER,      SPR_WATER,          SPR_WOOD0,       SPR_EGG              ; 75
+  EQUB SPR_HAWK0,       SPR_GRUNT0,     SPR_EGG,            SPR_SWITCH,      SPR_PORTCULLIS       ; 80
+  EQUB SPR_EGG,         SPR_CROCCLOSED, SPR_WOOD0,          SPR_MACHINE,     SPR_MACHINE          ; 85
+  EQUB SPR_MACHINE,     SPR_MACHINE,    SPR_DYLAN,          SPR_EGG,         SPR_DENZIL           ; 90
+  EQUB SPR_DAGGERBLADE, SPR_WOOD0,      SPR_WOOD0,          SPR_PLANKOFWOOD, SPR_GRANDDIZZY       ; 95
+  EQUB SPR_SWITCH,      SPR_LIFTTOP,    SPR_LIFTBOTTOM,     SPR_DAISY,       SPR_DAGGERBLADE      ; 100
+  EQUB SPR_DAGGERBLADE, SPR_GROUND,     SPR_GROUND,         SPR_DRAGONNECK,  SPR_DRAGONNECK       ; 105
+  EQUB SPR_DRAGONNECK,  SPR_DRAGONNECK, SPR_DRAGONNECK,     SPR_DRAGONNECK,  SPR_DRAGONHEADCLOSED ; 110
+  EQUB SPR_LIFTTOP,     SPR_LIFTBOTTOM, SPR_LIFTTOP,        SPR_LIFTBOTTOM,  SPR_LIFTTOP          ; 115
+  EQUB SPR_LIFTBOTTOM,  SPR_LIFTTOP,    SPR_LIFTBOTTOM,     SPR_FRAMERIGHT,  SPR_STONEBLOCK4      ; 120
+  EQUB SPR_LEAFYBIT1
 .vC696
-  EQUB SPR_LEAFYBIT, SPR_BRANCH2, SPR_HYPHEN, SPR_LEAFYBIT1, SPR_LEAFYBIT1, SPR_LEAF0
-  EQUB SPR_STONEBLOCK3, SPR_WOOD0
+  EQUB                  SPR_LEAFYBIT,   SPR_BRANCH2,        SPR_HYPHEN,      SPR_LEAFYBIT1        ; 125
+  EQUB SPR_LEAFYBIT1,   SPR_LEAF0,      SPR_STONEBLOCK3,    SPR_WOOD0                             ; 130
 
 ; Live set of objects (copied from C400)
 ; room[] array
-.vC69E
-.vC69F
-.vC6A1
-.vC6A2
-.vC6A3
-.vC6A5
-.vC6A8
-.vC6A9
-.vC6AE
-.vC6AF
-.vC6B1
-.vC6B2
-.vC6B3
-.vC6B4
-.vC6D5
-.vC6DD
-.vC6DE
-.vC6DF
-.vC6E0
-.vC6E1
-.vC6E2
-.vC6E3
-.vC6E4
-.vC6E6
-.vC6F0
-.vC6F5
-.vC700
-.vC705
-.vC708
-.vC709
-.vC721
+.vC69E ; bag
+.vC69F ; bean
+.vC6A1 ; crowbar
+.vC6A2 ; bucket
+.vC6A3 ; bone
+.vC6A5 ; happydust
+.vC6A8 ; blackhole
+.vC6A9 ; rug
+.vC6AE ; rope
+.vC6AF ; sleepingpotion
+.vC6B1 ; brandy
+.vC6B2 ; jugofwater
+.vC6B3 ; bread
+.vC6B4 ; doorknocker
+.vC6D5 ; (last coin)
+.vC6DD ; shopkeeper
+.vC6DE ; shopkeeper
+.vC6DF ; egg
+.vC6E0 ; troll
+.vC6E1 ; egg
+.vC6E2 ; egg
+.vC6E3 ; rat
+.vC6E4 ; goldenegg
+.vC6E6 ; largestone
+.vC6F0 ; egg
+.vC6F5 ; wood
+.vC700 ; plank
+.vC705 ; daisy
+.vC708 ; ground
+.vC709 ; ground
+.vC721 ; leaf
 
 ; X[] array
 .vC724
