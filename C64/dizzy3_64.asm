@@ -1155,13 +1155,13 @@ ORG &190E
   STA v2B48
 
   ; Copy &C400..&C69D to &C69E..&C93B
-  LDX #&86
+  LDX #noofmoving
 .l19DA
   DEX
-  LDA &C400,X:STA &C69E,X ; room
-  LDA &C486,X:STA &C724,X ; X
-  LDA &C50C,X:STA &C7AA,X ; Y
-  LDA &C592,X:STA &C830,X ; attrib
+  LDA &C400,X:STA objs_rooms,X ; room
+  LDA &C486,X:STA objs_xlocs,X ; X
+  LDA &C50C,X:STA objs_ylocs,X ; Y
+  LDA &C592,X:STA objs_attrs,X ; attrib
   LDA &C618,X:STA &C8B6,X
 
   CPX #&00
@@ -1242,7 +1242,7 @@ ORG &190E
   INC &03C4
 
   ; Check brandy bottle
-  LDA &C6B1
+  LDA objs_rooms+obj_brandy
   CMP #OFFMAP
   BNE l1A96
 
@@ -1883,11 +1883,11 @@ ORG &190E
 
   ; Check for troll
   LDA #MINESROOM
-  CMP &C6E0
+  CMP objs_rooms+obj_troll
   BEQ l1F33
 
   ; Put troll in mine
-  STA &C6E0
+  STA objs_rooms+obj_troll
 
   LDA #&5A:STA &C766
   LDA #&78:STA &C7EC
@@ -1949,22 +1949,22 @@ ORG &190E
   ADC #&22
   STA &033D
 .l1F7A
-  LDA &C69E,X
+  LDA objs_rooms,X
   CMP roomno
   BNE l1FA9
 
-  LDA &C830,X
+  LDA objs_attrs,X
   AND #&80
   BNE l1FA9
 
-  LDA &C724,X
+  LDA objs_xlocs,X
   CMP &033A
   BCC l1FA9
 
   CMP &033C
   BCS l1FA9
 
-  LDA &C7AA,X
+  LDA objs_ylocs,X
   CMP &033B
   BCC l1FA9
 
@@ -1988,12 +1988,12 @@ ORG &190E
 
   ; Check rope
   LDY #&0A
-  LDA &C6AE
+  LDA objs_rooms+obj_rope
   CMP #&65
   BNE l1FCA
 
   ; Make rope appear
-  LDA #BANQUETHALLROOM:STA &C6AE
+  LDA #BANQUETHALLROOM:STA objs_rooms+obj_rope
 
   LDY #&09
 .l1FCA
@@ -2030,12 +2030,12 @@ ORG &190E
   BCC l202B
 
   ; Check sleeping potion
-  LDA &C6AF
+  LDA objs_rooms+obj_sleepingpotion
   CMP #&65
   BNE l2013
 
   ; Make sleeping potion appear
-  LDA #OUTTOSEAROOM:STA &C6AF
+  LDA #OUTTOSEAROOM:STA objs_rooms+obj_sleepingpotion
 
   LDY #&05
   JMP l2024
@@ -2057,7 +2057,7 @@ ORG &190E
   BNE l2048
 
   ; Check for doorknocker
-  LDA &C6B4
+  LDA objs_rooms+obj_doorknocker
   CMP #&04 ; ?? room 4 ??
   BEQ l2048
 
@@ -2075,11 +2075,11 @@ ORG &190E
   BCC l2066
 
   LDY #&10
-  LDA &C6A1
+  LDA objs_rooms+obj_crowbar
   CMP #&65
   BNE l205F
 
-  LDA #LIFTTOELDERSROOM:STA &C6A1
+  LDA #LIFTTOELDERSROOM:STA objs_rooms+obj_crowbar
   LDY #&0F
 .l205F
   TYA
@@ -2145,7 +2145,7 @@ ORG &190E
   JSR l32EB
 
   ; Remove golden egg
-  LDA #OFFMAP:STA &C6E4
+  LDA #OFFMAP:STA objs_rooms+obj_goldenegg
 
   JMP l24A0
 
@@ -2157,7 +2157,7 @@ ORG &190E
   CPX #&00
   BNE l20F9
 
-  LDA #&04:STA &C69E
+  LDA #&04:STA objs_rooms+obj_bag
 .l20F1
   LDA #&FF:STA &18DE
   JMP l214C
@@ -2184,19 +2184,19 @@ ORG &190E
 
   LDX #&01
 .l2119
-  LDA &C69E,X
+  LDA objs_rooms,X
   CMP #&04
   BNE l213A
 
-  LDA roomno:STA &C69E,X ; place object in current room
+  LDA roomno:STA objs_rooms,X ; place object in current room
 
   LDA dizzyx
   CLC
   ADC #&21
   AND #&FE
-  STA &C724,X ; Update X position of object based on Dizzy X position
+  STA objs_xlocs,X ; Update X position of object based on Dizzy X position
 
-  LDA dizzyy:CLC:ADC #&2D:STA &C7AA,X
+  LDA dizzyy:CLC:ADC #&2D:STA objs_ylocs,X
 .l213A
   INX
   CPX #&3F
@@ -2204,7 +2204,7 @@ ORG &190E
 
   LDA #&27
   JSR l357D
-  LDA #OFFMAP:STA &C6A8 ; Remove blackhole
+  LDA #OFFMAP:STA objs_rooms+obj_blackhole ; Remove blackhole
   JMP l20F1
 
 .l214C
@@ -2223,7 +2223,7 @@ ORG &190E
   BCS l21A0
 
   LDA #&04
-  STA &C69E,X
+  STA objs_rooms,X
   CPX #&38
   BCC l2177
 
@@ -2234,7 +2234,7 @@ ORG &190E
   LDA roomno:STA &C696,X
 .l2177
   JSR l374F
-  LDA &C69E
+  LDA objs_rooms+obj_bag
   LDX #&02
   CMP #&04
   BNE l2185
@@ -2250,7 +2250,7 @@ ORG &190E
 
   LDX &18D9
   STX &03D9
-  LDA #OFFMAP:STA &C69E,X
+  LDA #OFFMAP:STA objs_rooms,X
   LDA #&3A
   JSR l357D
 .l21A0
@@ -2347,7 +2347,7 @@ ORG &190E
   JMP l242D
 
 .l2244
-  LDA #MARKETSQUAREROOM:STA &C69F
+  LDA #MARKETSQUAREROOM:STA objs_rooms+obj_bean
   JSR l29C1
 
   ; Hide shopkeeper
@@ -2512,7 +2512,7 @@ ORG &190E
   CMP #&01
   BNE l238E
 
-  LDA &C69F
+  LDA objs_rooms+obj_bean
   CMP #OFFMAP
   BNE l23C5
 
@@ -2553,7 +2553,7 @@ ORG &190E
   JSR l39D4
   BCC l23C5
 
-  LDA #&07:STA &C830,X
+  LDA #&07:STA objs_attrs,X
   JSR l29C1
   LDA #&1B
   JSR l357D
@@ -2658,10 +2658,10 @@ ORG &190E
 
   JSR l3329
   LDX &03D9
-  LDA roomno:STA &C69E,X
+  LDA roomno:STA objs_rooms,X
 
-  LDA dizzyx:CLC:ADC #&21:AND #&FE:STA &C724,X
-  LDA dizzyy:CLC:ADC #&2D:STA &C7AA,X
+  LDA dizzyx:CLC:ADC #&21:AND #&FE:STA objs_xlocs,X
+  LDA dizzyy:CLC:ADC #&2D:STA objs_ylocs,X
 
   LDA #&3F:STA &03DD
   LDA #&FF:STA &03D5
@@ -2716,7 +2716,7 @@ ORG &190E
 
 .l24EC
   ; Check sleeping potion
-  LDA &C6AF
+  LDA objs_rooms+obj_sleepingpotion
   CMP #OFFMAP
   BEQ l24FF
 
@@ -2804,7 +2804,7 @@ ORG &190E
   BNE l258A
 
   ; Check for rug
-  LDA &C6A9
+  LDA objs_rooms+obj_rug
   CMP #OFFMAP
   BNE l258A
 
@@ -2844,13 +2844,13 @@ ORG &190E
   BNE l2629
 
   ; Check for rat
-  LDA &C6E3
+  LDA objs_rooms+obj_rat
   CMP #OFFMAP
   BEQ l2629
 
   ; Check if bread is in this room
   LDA roomno
-  CMP &C6B3
+  CMP objs_rooms+obj_bread
   BNE l2601
 
   LDA &C7BF
@@ -2863,7 +2863,7 @@ ORG &190E
   CMP &C769
   BCC l2601
 
-  LDA #OFFMAP:STA &C6B3 ; Remove bread
+  LDA #OFFMAP:STA objs_rooms+obj_bread ; Remove bread
 
   LDA &C875:ORA #&80:STA &C875 ; Set top bit
 
@@ -2880,7 +2880,7 @@ ORG &190E
   JSR l3306
 
   ; Check for bread
-  LDA &C6B3
+  LDA objs_rooms+obj_bread
   CMP #OFFMAP
   BNE l262C
 
@@ -2891,7 +2891,7 @@ ORG &190E
   JSR l32EB
 
   ; Remove rat
-  LDA #OFFMAP:STA &C6E3
+  LDA #OFFMAP:STA objs_rooms+obj_rat
 .l2629
   JMP l2650
 
@@ -2920,7 +2920,7 @@ ORG &190E
   BNE l267A
 
   ; Check rope
-  LDA &C6AE
+  LDA objs_rooms+obj_rope
   CMP #OFFMAP
   BEQ l267A
 
@@ -3022,31 +3022,31 @@ ORG &190E
   AND #&80
   BNE l273F
 
-  INC &C7AA,X
+  INC objs_ylocs,X
   JSR l29D3
   INX
   JSR l32EB
-  INC &C7AA,X
+  INC objs_ylocs,X
   JSR l29D3
   LDY &03B7
-  LDA &C7AA,X:STA &18F4,Y
+  LDA objs_ylocs,X:STA &18F4,Y
   CMP &18F0,Y
   BCC l2767
 
 .l272F
-  LDA &C830,X:EOR #&80:STA &C830,X
+  LDA objs_attrs,X:EOR #&80:STA objs_attrs,X ; flip top bit
   LDA #&10:STA &03BE
   JMP l2767
 
 .l273F
-  DEC &C7AA,X
+  DEC objs_ylocs,X
   JSR l29D3
   INX
   JSR l32EB
-  DEC &C7AA,X
+  DEC objs_ylocs,X
   JSR l29D3
   LDY &03B7
-  LDA &C7AA,X:STA &18F4,Y
+  LDA objs_ylocs,X:STA &18F4,Y
   CMP &18EC,Y
   BEQ l272F
   BCC l272F
@@ -3158,7 +3158,7 @@ ORG &190E
   AND #&01
   BEQ l283A
 
-  LDA &C6A3
+  LDA objs_rooms+obj_bone
   CMP #OFFMAP
   BEQ l283A
 
@@ -3230,7 +3230,7 @@ ORG &190E
   AND #&80
   BEQ l28A8
 
-  LDA #OFFMAP:STA &C6A3 ; Remove bone
+  LDA #OFFMAP:STA objs_rooms+obj_bone ; Remove bone
   LDA #&92:STA &C881
 
   LDX #&51
@@ -3262,7 +3262,7 @@ ORG &190E
 
 .l28D2
   ; Check sleeping potion
-  LDA &C6AF
+  LDA objs_rooms+obj_sleepingpotion
   CMP #OFFMAP
   BNE l28E1
 
@@ -3307,14 +3307,14 @@ ORG &190E
   AND #&20
   BNE l291F
 
-  DEC &C7AA,X
-  DEC &C7AA,X
+  DEC objs_ylocs,X
+  DEC objs_ylocs,X
 
   JMP l2925
 
 .l291F
-  INC &C7AA,X
-  INC &C7AA,X
+  INC objs_ylocs,X
+  INC objs_ylocs,X
 .l2925
   LDA #&00:STA &03DC
 
@@ -3350,7 +3350,7 @@ ORG &190E
   BNE l296F
 
   ; Check golden egg
-  LDA &C6E4
+  LDA objs_rooms+obj_goldenegg
   CMP #OFFMAP
   BNE l2993
 
@@ -3407,7 +3407,7 @@ ORG &190E
   LDX &03D9
 
   LDA #OFFMAP
-  STA &C69E,X
+  STA objs_rooms,X
   STA &03D9
 
   LDX &034E
@@ -4203,7 +4203,7 @@ ORG &2B32
   JSR printroomname
   JSR l3814
 
-  LDA &C6A3
+  LDA objs_rooms+obj_bone
   CMP #OFFMAP
   BEQ l2F39
 
@@ -4253,10 +4253,10 @@ ORG &2B32
 
   LDX #&6C
 .l2F84
-  LDA roomno:STA &C69E,X
+  LDA roomno:STA objs_rooms,X
 
-  LDA &FF:STA &C830,X
-  LDA &C50C,X:STA &C7AA,X
+  LDA &FF:STA objs_attrs,X
+  LDA &C50C,X:STA objs_ylocs,X
 
   INX
   CPX #&73
@@ -4282,7 +4282,7 @@ ORG &2B32
   BNE l2FD9
 
   ; Check jug of water
-  LDA &C6B2
+  LDA objs_rooms+obj_jugofwater
   CMP #OFFMAP
   BEQ l2FE9
 
@@ -4295,7 +4295,7 @@ ORG &2B32
   CMP #&3A
   BNE l2FE9
 
-  LDA &C6A2
+  LDA objs_rooms+obj_bucket
   CMP #OFFMAP
   BNE l2FE9
 
@@ -4469,18 +4469,18 @@ ORG &2B32
   CLC
   ADC #&73
   TAX
-  LDA &C50C,X:STA &C7AA,X
-  LDA &C50C+1,X:STA &C7AB,X
+  LDA &C50C,X:STA objs_ylocs,X
+  LDA &C50C+1,X:STA objs_ylocs+1,X
 .l30F8
   JSR l3306
 
-  LDA &C7AB,X
+  LDA objs_ylocs+1,X
   LDY &03DB
   CMP &18F4,Y
   BCS l3117
 
-  INC &C7AA,X
-  INC &C7AB,X
+  INC objs_ylocs,X
+  INC objs_ylocs+1,X
 
   JMP l30F8
 
@@ -4505,12 +4505,12 @@ ORG &2B32
   BEQ done
 
   LDX #&65
-  LDA &C50C,X:STA &C7AA,X
+  LDA &C50C,X:STA objs_ylocs,X
 .l3131
   JSR l3306
 
-  INC &C7AA,X
-  LDA &C7AA,X
+  INC objs_ylocs,X
+  LDA objs_ylocs,X
   CMP #&67
   BCC l3131
 
@@ -4777,8 +4777,8 @@ ORG &2B32
 
 .l32EB
 {
-  LDA &C724,X:STA &033A ; X position
-  LDA &C7AA,X:STA &033B ; Y position
+  LDA objs_xlocs,X:STA &033A ; X position
+  LDA objs_ylocs,X:STA &033B ; Y position
 
   LDA #&00
   STA &033C ; attrib
@@ -4793,9 +4793,9 @@ ORG &2B32
 
 .l3306
 {
-  LDA &C724,X:STA &033A ; X position
-  LDA &C7AA,X:STA &033B ; Y position
-  LDA &C830,X:STA &033C ; attrib
+  LDA objs_xlocs,X:STA &033A ; X position
+  LDA objs_ylocs,X:STA &033B ; Y position
+  LDA objs_attrs,X:STA &033C ; attrib
   LDA #&00:STA &033F
   LDA &C8B6,X
   JSR frame
@@ -4820,15 +4820,15 @@ ORG &2B32
 
 .l333B
   DEX
-  LDA &C69E,X
+  LDA objs_rooms,X
   BEQ l332C
 
   CMP roomno
   BNE l332C
 
-  LDA &C724,X:STA &033A ; X position
-  LDA &C7AA,X:STA &033B ; Y position
-  LDA &C830,X:STA &033C ; attrib
+  LDA objs_xlocs,X:STA &033A ; X position
+  LDA objs_ylocs,X:STA &033B ; Y position
+  LDA objs_attrs,X:STA &033C ; attrib
 
   LDY #&00
   CPX #&3F
@@ -4858,15 +4858,15 @@ ORG &2B32
   BEQ done
 
   ; See if this object is in the room it started in
-  LDA &C69E,X
+  LDA objs_rooms,X
   CMP &C400,X
   BNE done
 
-  LDA &C724,X
+  LDA objs_xlocs,X
   CMP &C486,X
   BNE done
 
-  LDA &C7AA,X
+  LDA objs_ylocs,X
   CMP &C50C,X
   BNE done
 
@@ -5422,7 +5422,7 @@ ORG &2B32
   LDX #&01
   LDY #&00
 .l375F
-  LDA &C69E,X
+  LDA objs_rooms,X
   CMP #&04
   BNE l376B
 
@@ -5781,7 +5781,7 @@ ORG &2B32
   BCS done
 
   LDA #OFFMAP
-  STA &C69E,X
+  STA objs_rooms,X
   STA &18DE
 
   LDA coins
@@ -5812,7 +5812,7 @@ ORG &2B32
 
 .l39D4
 {
-  LDA &C69E,X
+  LDA objs_rooms,X
   CMP roomno
   BEQ l39DE
 
@@ -5832,19 +5832,19 @@ ORG &2B32
 
   CLC:ADC #&15:STA &033D
 
-  LDA &C724,X
+  LDA objs_xlocs,X
   CMP &033C
   BCS l39DC
 
   LDY #&00
   LDA (&B4),Y
   CLC
-  ADC &C724,X
+  ADC objs_xlocs,X
   CMP &033A
   BCC l39DC
 
   BEQ l39DC
-  LDA &C7AA,X
+  LDA objs_ylocs,X
   CMP &033D
   BCS l39DC
 
@@ -6091,6 +6091,9 @@ INCBIN "frametable.bin"
 INCBIN "framedefs.bin"
 
 ORG &C400
+
+.movingdata
+
 ; static set of objects
 .vC400 ; rooms
   EQUB &37, &65, &3a, &65, &53 ; 0
@@ -6235,31 +6238,64 @@ ORG &C400
   EQUB                  SPR_LEAFYBIT,   SPR_BRANCH2,        SPR_HYPHEN,      SPR_LEAFYBIT1        ; 125
   EQUB SPR_LEAFYBIT1,   SPR_LEAF0,      SPR_STONEBLOCK3,    SPR_WOOD0                             ; 130
 
+.endofmovingdata
+
+movingsize = 5
+noofmoving = (((endofmovingdata-movingdata)/movingsize) AND &FF)
+
+IF (endofmovingdata-movingdata) <> (noofmoving*movingsize)
+  ERROR "moving data typed in wrong"
+ENDIF
+
+; object arrays
+objs_rooms = &C69E
+objs_xlocs = &C724
+objs_ylocs = &C7AA
+objs_attrs = &C830
+
+; object offsets
+obj_bag            = 0
+obj_bean           = 1
+obj_crowbar        = 3
+obj_bucket         = 4
+obj_bone           = 5
+obj_blackhole      = 10
+obj_rug            = 11
+obj_rope           = 16
+obj_sleepingpotion = 17
+obj_brandy         = 19
+obj_jugofwater     = 20
+obj_bread          = 21
+obj_doorknocker    = 22
+obj_troll          = 66
+obj_rat            = 69
+obj_goldenegg      = 70
+
 ; Live set of objects (copied from C400)
 ; room[] array
-.vC69E ; bag
-.vC69F ; bean
-.vC6A1 ; crowbar
-.vC6A2 ; bucket
-.vC6A3 ; bone
+;.vC69E ; bag
+;.vC69F ; bean
+;.vC6A1 ; crowbar
+;.vC6A2 ; bucket
+;.vC6A3 ; bone
 .vC6A5 ; happydust
-.vC6A8 ; blackhole
-.vC6A9 ; rug
-.vC6AE ; rope
-.vC6AF ; sleepingpotion
-.vC6B1 ; brandy
-.vC6B2 ; jugofwater
-.vC6B3 ; bread
-.vC6B4 ; doorknocker
+;.vC6A8 ; blackhole
+;.vC6A9 ; rug
+;.vC6AE ; rope
+;.vC6AF ; sleepingpotion
+;.vC6B1 ; brandy
+;.vC6B2 ; jugofwater
+;.vC6B3 ; bread
+;.vC6B4 ; doorknocker
 .vC6D5 ; (last coin)
 .vC6DD ; shopkeeper
 .vC6DE ; shopkeeper
 .vC6DF ; egg
-.vC6E0 ; troll
+;.vC6E0 ; troll
 .vC6E1 ; egg
 .vC6E2 ; egg
-.vC6E3 ; rat
-.vC6E4 ; goldenegg
+;.vC6E3 ; rat
+;.vC6E4 ; goldenegg
 .vC6E6 ; largestone
 .vC6F0 ; egg
 .vC6F5 ; wood
@@ -6283,7 +6319,6 @@ ORG &C400
 
 ; Y[] array
 .vC7AA
-.vC7AB
 .vC7BB
 .vC7BF
 .vC7EC
