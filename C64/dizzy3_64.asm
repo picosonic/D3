@@ -142,6 +142,7 @@ ORG &0B00
   EQUB &FF
 
 .l0B01
+{
   LDA v0B00
   BNE l0B0F
 
@@ -195,7 +196,8 @@ ORG &0B00
   INC &11CB
 
   LDX #&02:STX &116C
-.l0B63
+
+.^l0B63
   LDX &116C
   LDA &1158,X:STA &11CC
   LDA &116F
@@ -205,7 +207,7 @@ ORG &0B00
   BMI l0B98
 
   LDA &119D,X
-  BEQ l0B95
+  BEQ done
 
   INC &1169,X
   JSR l0F83
@@ -213,7 +215,7 @@ ORG &0B00
 
 .l0B84
   LDA &11A0,X
-  BEQ l0B95
+  BEQ done
 
   DEC &11A0,X
   DEC &1169,X
@@ -221,10 +223,12 @@ ORG &0B00
   JSR l0F83
   JMP l0EEC
 
-.l0B95
+.done
   JMP l0CDD
+}
 
 .l0B98
+{
   LDA #&00
   LDY &118B,X
   CPY #&02
@@ -350,6 +354,7 @@ ORG &0B00
   BEQ l0C76
 
   STA &118E,X
+
 .l0C76
   JSR l0F83
 
@@ -396,8 +401,10 @@ ORG &0B00
   STA &11A6,X
 
   JMP l0EEC
+}
 
 .l0CDD
+{
   LDA &1169,X
   BEQ l0CEF
 
@@ -423,7 +430,7 @@ ORG &0B00
   LDA &1254,Y
   LDY &11CC
   AND #&01
-  BEQ l0D54
+  BEQ done
 
   LDY &11C3,X
   LDA &1251,Y
@@ -437,7 +444,7 @@ ORG &0B00
   LDA &11F0,Y:STA &0D42
   LDA &11C9,X
   CMP #&1F
-  BCS l0D54
+  BCS done
 
   PHA
   TAY
@@ -455,10 +462,12 @@ ORG &0B00
   LDA #&00:STA &D400,Y
   JMP l0EEC
 
-.l0D54
+.done
   JMP l0DA1
+}
 
 .l0D57
+{
   LDY &11C3,X
   LDA &11C9,X
   CMP #&01
@@ -471,7 +480,7 @@ ORG &0B00
   LDA #&81
   JMP l0D98
 
-.l0D73
+.^l0D73
   LDY &11C3,X
   LDA &11C9,X
   CMP #&01
@@ -492,8 +501,10 @@ ORG &0B00
   LDY &11CC
   STA &D404,Y
   JMP l0EEC
+}
 
 .l0DA1
+{
   LDA &118B,X
   BNE l0DAE
   LDY &11C3,X
@@ -598,8 +609,10 @@ ORG &0B00
   LDA &11B8:STA &D401,Y
 
   JMP l0EEC
+}
 
 .l0E63
+{
   LDA &118E,X
   BEQ l0E9E
 
@@ -671,7 +684,8 @@ ORG &0B00
   ADC &119B
   STA &1176,X
   STA &D401,Y
-.l0EEC
+
+.^l0EEC
   LDA &1185,X
   BEQ l0F0A
 
@@ -747,21 +761,33 @@ ORG &0B00
   BPL l0F72
 
   LDA &116E:STA &116F
-.l0F72
-  LDA #&FF:STA v0B00
-  RTS
+}
 
+; Fall through
+
+.l0F72
+{
+  LDA #&FF:STA v0B00
+
+  RTS
+}
+
+; Reset audio ??
 .l0F78
+{
   LDY #&18
   LDA #&00
-.l0F7C
+
+.loop
   STA &D400,Y
   DEY
-  BPL l0F7C
+  BPL loop
 
   RTS
+}
 
 .l0F83
+{
   LDY &1169,X
   LDA &10E6,Y:STA &1173,X
 
@@ -772,13 +798,16 @@ ORG &0B00
   PLA
 
   STA &D400,Y
+
   RTS
+}
 
 .l0F9E
-  LDY &115B,X
-  INY
+{
+  LDY &115B,X:INY
+
   LDX #&00
-.l0FA4
+.loop
   ROR &11BB
   BCC l0FB0
 
@@ -787,16 +816,20 @@ ORG &0B00
 .l0FB0
   INX
   CPX #&08
-  BNE l0FA4
+  BNE loop
 
   LDX &116C
   LDA #&FF:STA &11CD,Y
   LDA #&00:STA &1194,X
+
   RTS
+}
 
 .l0FC3
+{
   LDA &11BC,X:STA &A9
   LDA &11BF,X:STA &AA
+
 .l0FCD
   LDY &1170,X
   INC &1170,X
@@ -827,8 +860,10 @@ ORG &0B00
   STA &A8
 
   RTS
+}
 
 .l0FFE
+{
   LDX #&00
   CPY &0FFF
   BCS l1028
@@ -901,14 +936,16 @@ ORG &0B00
   ROL &119B
   ASL A
   CMP &119C
-  BCC l1084
+  BCC done
 
   INC &119A
-  BNE l1084
+  BNE done
 
   INC &119B
-.l1084
+
+.done
   RTS
+}
 
 .v1085
 .v1086
@@ -1017,8 +1054,11 @@ coins = &18E6
 .v18F8
 .v1903
 
+; Entry point ??
+
 ORG &190E
 
+.l190E
   JSR l2B32
   LDX #&C6
   LDA #&00
@@ -1468,6 +1508,7 @@ ORG &190E
   JMP l1C85
 
 .l1C62
+{
   LDA &03C9
   CMP #&07
   BCC l1C72
@@ -1492,7 +1533,9 @@ ORG &190E
   LDA #&06
 .l1C81
   STA &0342
+
   RTS
+}
 
 .l1C85
   LDA &03C8
@@ -3359,6 +3402,7 @@ ORG &190E
   JMP l1A25
 
 .l29C1
+{
   STX &034E
   LDX &03D9
 
@@ -3367,9 +3411,12 @@ ORG &190E
   STA &03D9
 
   LDX &034E
+
   RTS
+}
 
 .l29D3
+{
   LDA #&58:STA &03DC
   JSR l3306
 
@@ -3377,8 +3424,10 @@ ORG &190E
   JSR l3306
 
   RTS
+}
 
 .l29E4
+{
   LDA #&80:STA &C7BB
   LDA #&52:STA &C735
   LDA #OFFMAP:STA &C6A5
@@ -3388,15 +3437,18 @@ ORG &190E
   STA &C880
 
   LDA #&0A:STA &C881
+
   RTS
+}
 
 .l2A01
+{
   LDA roomno
   CMP #STRANGENEWROOM
   BEQ l2A11
 
   CMP #UNDERAUSROOM
-  BNE l2A2D
+  BNE done
 
   LDA #TOPWELLROOM:STA roomno
 
@@ -3411,8 +3463,9 @@ ORG &190E
   LDA #&01:STA &03C9
   LDA #&11:STA &03C3
 
-.l2A2D
+.done
   RTS
+}
 
 .l2A2E
   LDX #&67
@@ -3458,6 +3511,7 @@ ORG &190E
   JMP l24A0
 
 .l2A7F
+{
   LDY roomno
   CPY #&19 ; No room #25 ???
   BCC l2A87
@@ -3496,8 +3550,10 @@ ORG &190E
   LDA #&2A
 
   RTS
+}
 
 .l2AB7
+{
   LDA v2B48
   BNE l2ABD
 
@@ -3526,8 +3582,9 @@ ORG &190E
 
 .v2AF2
   RTS
+}
 
-  ; No idea what this is
+  ; No idea what this is, used by l2D95
 .v2AF3
   EQUB &00, &00, &b8, &00, &00, &00, &81, &00, &80
 
@@ -3570,11 +3627,11 @@ ORG &2B32
   LDA v2B47
   AND #&07
   CMP #&07
-  BEQ l2B58
+  BEQ done
 
   JSR l0B01
 
-.l2B58
+.done
   JMP &EA31 ; KERNAL ISR
 }
 
@@ -3899,6 +3956,7 @@ ORG &2B32
   JMP l2CBC
 
 .l2D95
+{
   LDX &033D
   LDA #&00:STA &2AF3,X
 .l2D9D
@@ -3922,20 +3980,23 @@ ORG &2B32
 
   LDA &033D
   CMP &034B
-  BCC l2DCE
+  BCC done
 
   LDA &033A
   LSR A
   CLC
   ADC &033D
   CMP #&2F
-  BCS l2DCE
+  BCS done
 
   INC &034B
-.l2DCE
+
+.done
   RTS
+}
 
 .l2DCF
+{
   LDA &033C
   AND #&07
   TAX
@@ -3989,8 +4050,10 @@ ORG &2B32
   STA &2CF5
 
   RTS
+}
 
 .l2E2E
+{
   LDX &033D:DEX:STX &0346
 
   LDX #&00:STX &0347
@@ -3999,7 +4062,7 @@ ORG &2B32
   CPX &0346
   BEQ l2E6E
 
-  BCS l2E78
+  BCS done
 
   LDA &2AF3,X
   TAY
@@ -4022,10 +4085,13 @@ ORG &2B32
   TAY
   LDA flip_lut,Y
   STA &2AF3,X
-.l2E78
+
+.done
   RTS
+}
 
 .l2E79
+{
   STA &0340
   CMP #&65
   BCC l2E81
@@ -4128,9 +4194,12 @@ ORG &2B32
   INC &B1
 .l2F1D
   STA &B0
+
   JMP l2EC8
+}
 
 .l2F22
+{
   JSR printroomname
   JSR l3814
 
@@ -4140,7 +4209,12 @@ ORG &2B32
 
   LDA #&36:STA &C775
   LDA #&0A:STA &C881
+}
+
+; Fall through
+
 .l2F39
+{
   LDA #&00
   STA &03BB
   STA SPR_ENABLE
@@ -4256,9 +4330,12 @@ ORG &2B32
   JSR l3090
 
   LDA #&FF:STA SPR_ENABLE
+
   RTS
+}
 
 .l3023
+{
   LDA #&06:STA &033A
 .l3028
   LDX &033A
@@ -4324,8 +4401,10 @@ ORG &2B32
   BNE l3086
 
   RTS
+}
 
 .l3090
+{
   LDX #&06
 .l3092
   LDA &1828,X:STA &FC
@@ -4369,8 +4448,10 @@ ORG &2B32
   BCC l3092
 
   RTS
+}
 
 .l30CD
+{
   LDX #&00
   LDA #&58:STA &03DC
 .l30D4
@@ -4417,11 +4498,11 @@ ORG &2B32
 .l311B
   LDA roomno
   CMP #DAISYSPRISONROOM
-  BNE l313E
+  BNE done
 
   LDA &C894
   CMP #&05
-  BEQ l313E
+  BEQ done
 
   LDX #&65
   LDA &C50C,X:STA &C7AA,X
@@ -4433,10 +4514,12 @@ ORG &2B32
   CMP #&67
   BCC l3131
 
-.l313E
+.done
   RTS
+}
 
 .l313F
+{
   STX &034E
 
   LDA #&00
@@ -4448,8 +4531,10 @@ ORG &2B32
   JSR l31EE
 
   RTS
+}
 
 .l3154
+{
   LDA dizzyx
   CLC
   ADC &033A
@@ -4517,9 +4602,12 @@ ORG &2B32
   AND #&40
   CMP #&01
   LDA &033E
+
   RTS
+}
 
 .l31D6
+{
   STA &0340
   STX &0345
 .l31DC
@@ -4536,9 +4624,12 @@ ORG &2B32
   BNE l31DC
 
   LDX &0345
+
   RTS
+}
 
 .l31EE
+{
   STX &0345
   STY &0347
   LDY #&00
@@ -4595,7 +4686,9 @@ ORG &2B32
   STA &D000,Y
   LDX &0345
   LDY &0347
+
   RTS
+}
 
 .l3257
 {
@@ -4694,6 +4787,7 @@ ORG &2B32
   LDA &C8B6,X
 
   JSR frame
+
   RTS
 }
 
@@ -4707,6 +4801,7 @@ ORG &2B32
   JSR frame
 
   LDA #&58:STA &03DC
+
   RTS
 }
 
@@ -4754,8 +4849,10 @@ ORG &2B32
   JSR frame
 
   JMP l332C
+}
 
 .l3384
+{
   LDA #&08:STA &FF
   LDA &03D5
   BEQ done
@@ -5141,6 +5238,7 @@ ORG &2B32
 
   INC &039B
   INC &039B
+
   JMP l3596
 }
 
@@ -5337,6 +5435,7 @@ ORG &2B32
   BCC l375F
 
   LDA #&00:STA &18D9,Y
+
   RTS
 }
 
@@ -5566,7 +5665,6 @@ ORG &2B32
   STY &03DB
 
   JMP l38E4
-}
 
 .l38DE
   LDA (&B2),Y
@@ -5663,13 +5761,14 @@ ORG &2B32
 
   INX
   CPX &03DB
-  BCS l3996
+  BCS done
 
   CPX &2B13
   BCC l3965
 
-.l3996
+.done
   RTS
+}
 
 ; Collecting a coin
 .l3997
@@ -5867,6 +5966,7 @@ ORG &2B32
   LDX #&72
   LDA #&00:STA &03DC
   JSR l3306
+
   RTS
 }
 
@@ -5876,6 +5976,7 @@ ORG &2B32
 ORG &3B00
 
 .l3B00
+{
   LDX #&00
 .l3B02
   LDA &C5
@@ -5934,7 +6035,9 @@ ORG &3B00
   LDA #&1B:STA GFX_VICII_REG1
   LDA #&15:STA GFX_MEM_PTR
   LDA #&37:STA &01
+
   RTS
+}
 
 .l3B6D
 {
