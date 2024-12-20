@@ -2145,7 +2145,7 @@ ORG &190E
   JSR l32EB
 
   ; Remove golden egg
-  LDA #OFFMAP:STA objs_rooms+obj_goldenegg
+  LDA #OFFMAP:STA objs_rooms+obj_goldenegg2
 
   JMP l24A0
 
@@ -2447,7 +2447,7 @@ ORG &190E
 
   ; Remove plank and (egg?)
   LDA #OFFMAP
-  STA &C700
+  STA objs_rooms+obj_plank
   STA &C6E2
 
   LDA #&21
@@ -2478,7 +2478,7 @@ ORG &190E
   BCC l2304
 
   JSR l29C1
-  LDA #OFFMAP:STA &C6F5
+  LDA #OFFMAP:STA objs_rooms+obj_wood
   LDA #&22
   JSR l357D
   JMP l242D
@@ -3350,7 +3350,7 @@ ORG &190E
   BNE l296F
 
   ; Check golden egg
-  LDA objs_rooms+obj_goldenegg
+  LDA objs_rooms+obj_goldenegg2
   CMP #OFFMAP
   BNE l2993
 
@@ -6256,9 +6256,11 @@ objs_attrs = &C830
 ; object offsets
 obj_bag            = 0
 obj_bean           = 1
+obj_manure         = 2
 obj_crowbar        = 3
 obj_bucket         = 4
 obj_bone           = 5
+obj_goldenegg      = 9
 obj_blackhole      = 10
 obj_rug            = 11
 obj_rope           = 16
@@ -6269,7 +6271,20 @@ obj_bread          = 21
 obj_doorknocker    = 22
 obj_troll          = 66
 obj_rat            = 69
-obj_goldenegg      = 70
+obj_goldenegg2     = 70
+obj_hawk           = 80
+obj_grunt          = 81
+obj_switch         = 83
+obj_portcullis     = 84
+obj_croc           = 86
+obj_wood           = 87
+obj_dylan          = 92
+obj_plank          = 98
+obj_switch2        = 100
+obj_lifttop        = 101
+obj_liftbottom     = 102
+obj_daisy          = 103
+obj_dragonhead     = 114
 
 ; Live set of objects (copied from C400)
 ; room[] array
@@ -6295,71 +6310,71 @@ obj_goldenegg      = 70
 .vC6E1 ; egg
 .vC6E2 ; egg
 ;.vC6E3 ; rat
-;.vC6E4 ; goldenegg
+;.vC6E4 ; goldenegg2
 .vC6E6 ; largestone
 .vC6F0 ; egg
-.vC6F5 ; wood
-.vC700 ; plank
+;.vC6F5 ; wood
+;.vC700 ; plank
 .vC705 ; daisy
 .vC708 ; ground
 .vC709 ; ground
 .vC721 ; leaf
 
 ; X[] array
-.vC724
-.vC735
-.vC739
-.vC766
-.vC768
-.vC769
-.vC76E
-.vC774
-.vC775
-.vC78B
+.vC724 ; bag
+.vC735 ; sleepingpotion
+.vC739 ; bread
+.vC766 ; troll
+.vC768 ; 68 ? egg
+.vC769 ; rat
+.vC76E ; dozy
+.vC774 ; hawk
+.vC775 ; grunt
+.vC78B ; daisy
 
 ; Y[] array
-.vC7AA
-.vC7BB
-.vC7BF
-.vC7EC
-.vC7F4
-.vC7F5
-.vC7F6
-.vC7F7
-.vC7F8
-.vC7FA
-.vC7FE
-.vC80F
-.vC810
-.vC811
-.vC81B
+.vC7AA ; bag
+.vC7BB ; sleepingpotion
+.vC7BF ; bread
+.vC7EC ; troll
+.vC7F4 ; dozy
+.vC7F5 ; 75 these 3 are "water" ?
+.vC7F6 ; 76
+.vC7F7 ; 77
+.vC7F8 ; wood2
+.vC7FA ; hawk
+.vC7FE ; portcullis
+.vC80F ; lifttop
+.vC810 ; liftbottom
+.vC811 ; daisy
+.vC81B ; 113 ? dragonneck
 
 ; attrib[] array
-.vC830
-.vC831
-.vC832
-.vC834
-.vC835
-.vC839
-.vC872
-.vC875
-.vC880
-.vC881
-.vC883
-.vC884
-.vC888
-.vC88C
-.vC894
-.vC897
-.vC89C
-.vC8A2
+.vC830 ; bag
+.vC831 ; bean
+.vC832 ; manure
+.vC834 ; bucket
+.vC835 ; bone
+.vC839 ; goldenegg
+.vC872 ; troll
+.vC875 ; rat
+.vC880 ; hawk
+.vC881 ; grunt
+.vC883 ; switch
+.vC884 ; portcullis
+.vC888 ; machines
+.vC88C ; dylan
+.vC894 ; switch2
+.vC897 ; daisy
+.vC89C ; 108 ? dragonneck
+.vC8A2 ; dragonhead
 
 ; frame[] array
-.vC8B6
-.vC906
-.vC907
-.vC90C
-.vC928
+.vC8B6 ; bag
+.vC906 ; hawk
+.vC907 ; grunt
+.vC90C ; croc
+.vC928 ; dragonhead
 
 .vCFF8
 
