@@ -1162,7 +1162,7 @@ ORG &190E
   LDA &C486,X:STA objs_xlocs,X ; X
   LDA &C50C,X:STA objs_ylocs,X ; Y
   LDA &C592,X:STA objs_attrs,X ; attrib
-  LDA &C618,X:STA &C8B6,X
+  LDA &C618,X:STA objs_frames, X ; frame
 
   CPX #&00
   BNE l19DA
@@ -2400,7 +2400,8 @@ ORG &190E
   BCC l2272
 
   JSR l29C1
-  LDA #&7B:STA &C90C
+  ; Update crocodile animation frame
+  LDA #SPR_CROCCLOSED:STA objs_frames+obj_croc
   LDA #&19
   JSR l357D
   JMP l242D
@@ -2686,8 +2687,9 @@ ORG &190E
   CPX #&0B
   BCC l24A5
 
-  LDA &C90C
-  CMP #&7C
+  ; Check if crocodile's mouth is open
+  LDA objs_frames+obj_croc
+  CMP #SPR_CROCOPEN
   BNE l24D4
 
   LDX #&56
@@ -2936,8 +2938,9 @@ ORG &190E
   AND #&01
   EOR #&01
   CLC
-  ADC #&7B
-  STA &C90C
+  ADC #SPR_CROCCLOSED
+  STA objs_frames+obj_croc
+
   LDX #&56
   JSR l29D3
 .l267A
@@ -3126,8 +3129,9 @@ ORG &190E
   LDA #&01
 .l27D3
   CLC
-  ADC #&61
-  STA &C906
+  ADC #SPR_HAWK0
+  ; Update hawk animation frame
+  STA objs_frames+obj_hawk
   JSR l3306
   JMP l2809
 
@@ -3193,8 +3197,9 @@ ORG &190E
   LSR A
   AND #&01
   CLC
-  ADC #&66
-  STA &C907
+  ADC #SPR_GRUNT0
+  ; Update grunt (Armorog) animation frame
+  STA objs_frames+obj_grunt
 
   LDA &03BD
   CMP #&20
@@ -3272,8 +3277,9 @@ ORG &190E
   JMP l2993
 
 .l28E1
-  LDA &C928
-  CMP #&6D
+  ; Check state of dragon's head
+  LDA objs_frames+obj_dragonhead
+  CMP #SPR_DRAGONHEADCLOSED
   BEQ l28EB
 
   JMP l295E
@@ -3372,7 +3378,8 @@ ORG &190E
   BNE l2993
 
   LDA #&42:STA &03BA
-  LDA #&6E:STA &C928
+  ; Set dragon's head to mouth open
+  LDA #SPR_DRAGONHEADOPEN:STA objs_frames+obj_dragonhead
 
   LDX #&72
   JSR l3306
@@ -3388,7 +3395,8 @@ ORG &190E
   BCS l29B7
 
   LDA #&00:STA &03BA
-  LDA #&6D:STA &C928
+  ; Set dragon's head to mouth closed
+  LDA #SPR_DRAGONHEADCLOSED:STA objs_frames+obj_dragonhead
 
   LDX #&72
   JSR l3306
@@ -4267,7 +4275,8 @@ ORG &2B32
   JMP l2FAF
 
 .l2FAA
-  LDA #&6D:STA &C928
+  ; Set dragon's head to mouth closed
+  LDA #SPR_DRAGONHEADCLOSED:STA objs_frames+obj_dragonhead
 .l2FAF
   LDA SPR_COLLISION2
   LDA SPR_COLLISION2
@@ -4784,7 +4793,7 @@ ORG &2B32
   STA &033C ; attrib
   STA &033F
 
-  LDA &C8B6,X
+  LDA objs_frames, X
 
   JSR frame
 
@@ -4797,7 +4806,7 @@ ORG &2B32
   LDA objs_ylocs,X:STA &033B ; Y position
   LDA objs_attrs,X:STA &033C ; attrib
   LDA #&00:STA &033F
-  LDA &C8B6,X
+  LDA objs_frames,X ; attirb
   JSR frame
 
   LDA #&58:STA &03DC
@@ -4844,7 +4853,7 @@ ORG &2B32
 .l3373
   STY &033F
   LDA #&58:STA &03DC
-  LDA &C8B6,X
+  LDA objs_frames,X
 
   JSR frame
 
@@ -5821,7 +5830,7 @@ ORG &2B32
   RTS
 
 .l39DE
-  LDA &C8B6,X:STA &FB
+  LDA objs_frames,X:STA &FB
   JSR l3893
 
   LDA dizzyx:CLC:ADC #&21:STA &033A
@@ -6248,10 +6257,11 @@ IF (endofmovingdata-movingdata) <> (noofmoving*movingsize)
 ENDIF
 
 ; object arrays
-objs_rooms = &C69E
-objs_xlocs = &C724
-objs_ylocs = &C7AA
-objs_attrs = &C830
+objs_rooms  = &C69E
+objs_xlocs  = &C724
+objs_ylocs  = &C7AA
+objs_attrs  = &C830
+objs_frames = &C8B6
 
 ; object offsets
 obj_bag            = 0
@@ -6371,10 +6381,10 @@ obj_dragonhead     = 114
 
 ; frame[] array
 .vC8B6 ; bag
-.vC906 ; hawk
-.vC907 ; grunt
-.vC90C ; croc
-.vC928 ; dragonhead
+;.vC906 ; hawk
+;.vC907 ; grunt
+;.vC90C ; croc
+;.vC928 ; dragonhead
 
 .vCFF8
 
