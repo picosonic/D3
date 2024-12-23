@@ -1881,7 +1881,7 @@ ORG &190E
   CMP #&34
   BCC l1F33
 
-  ; Check for troll
+  ; Check where troll is
   LDA #MINESROOM
   CMP objs_rooms+obj_troll
   BEQ l1F33
@@ -2015,10 +2015,12 @@ ORG &190E
   JSR l39D4
   BCC l1FFB
 
+  ; Check if portcullis switch has been activated
   LDA objs_attrs+obj_switch
   CMP #PAL_CYAN
   BNE l1FFB
 
+  ; Activate portcullis switch
   LDA #ATTR_REVERSE+PAL_WHITE:STA objs_attrs+obj_switch
   LDA #&16
   JSR l357D
@@ -2043,8 +2045,10 @@ ORG &190E
 .l2013
   LDX #&4A
   JSR l32EB
+
+  ; Position Dozy
   LDA #&3C:STA objs_xlocs+obj_dozy
-  LDA #&86:STA &C7F4
+  LDA #&86:STA objs_ylocs+obj_dozy
   LDY #&06
 .l2024
   TYA
@@ -2074,11 +2078,13 @@ ORG &190E
   JSR l39D4
   BCC l2066
 
+  ; Check crowbar
   LDY #&10
   LDA objs_rooms+obj_crowbar
   CMP #&65
   BNE l205F
 
+  ; Make crowbar appear
   LDA #LIFTTOELDERSROOM:STA objs_rooms+obj_crowbar
   LDY #&0F
 .l205F
@@ -2091,11 +2097,13 @@ ORG &190E
   JSR l39D4
   BCC l2084
 
+  ; Check Dylan orientation
   LDY #&08
   LDA objs_attrs+obj_dylan
   CMP #PAL_WHITE
   BNE l207D
 
+  ; Make Dylan face the other way
   LDA #ATTR_REVERSE+PAL_WHITE:STA objs_attrs+obj_dylan
   LDY #&07
 .l207D
@@ -2108,10 +2116,12 @@ ORG &190E
   JSR l39D4
   BCC l20CE
 
+  ; Check switch in Daisy's prison
   LDA #ATTR_REVERSE+PAL_WHITE
   CMP objs_attrs+obj_switch2
   BEQ l20CE
 
+  ; Activate switch in Daisy's prison
   STA objs_attrs+obj_switch2
   LDX #&64
   JSR l29D3
@@ -2157,6 +2167,7 @@ ORG &190E
   CPX #&00
   BNE l20F9
 
+  ; Change bag room to 4 ?
   LDA #&04:STA objs_rooms+obj_bag
 .l20F1
   LDA #&FF:STA &18DE
@@ -2166,10 +2177,12 @@ ORG &190E
   CPX #&02
   BNE l2113
 
+  ; Check manure orientation
   LDA objs_attrs+obj_manure
   CMP #ATTR_REVERSE
   BCS l210E
 
+  ; Add reverse flag
   ORA #ATTR_REVERSE
   STA objs_attrs+obj_manure
   LDA #&15
@@ -2234,6 +2247,8 @@ ORG &190E
   LDA roomno:STA &C696,X
 .l2177
   JSR l374F
+
+  ; Check bag is in room #4 ?
   LDA objs_rooms+obj_bag
   LDX #&02
   CMP #&04
@@ -2347,6 +2362,7 @@ ORG &190E
   JMP l242D
 
 .l2244
+  ; Make bean appear
   LDA #MARKETSQUAREROOM:STA objs_rooms+obj_bean
   JSR l29C1
 
@@ -2509,10 +2525,12 @@ ORG &190E
   CMP #&04
   BNE l23A7
 
+  ; Check colour of bucket
   LDA objs_attrs+obj_bucket
   CMP #PAL_BLUE
   BNE l238E
 
+  ; Check bean
   LDA objs_rooms+obj_bean
   CMP #OFFMAP
   BNE l23C5
@@ -2535,8 +2553,10 @@ ORG &190E
   JSR l39D4
   BCC l23C5
 
+  ; Set colour of bucket to blue
   LDA #PAL_BLUE:STA objs_attrs+obj_bucket
   LDA #&FF:STA &03D9
+
   LDA #&1C
   JSR l357D
   JMP l242D
@@ -2571,6 +2591,8 @@ ORG &190E
 
   LDA #&1E
   JSR l357D
+
+  ; Flip golden egg
   LDA #ATTR_REVERSE+PAL_YELLOW:STA objs_attrs+obj_goldenegg
   JMP l242D
 
@@ -2859,6 +2881,7 @@ ORG &190E
   CMP #&64
   BCS l2601
 
+  ; See if rat's X position is less than the bread - i.e. it ate it
   LDA objs_xlocs+obj_bread
   CLC
   ADC #&04
@@ -2867,25 +2890,30 @@ ORG &190E
 
   LDA #OFFMAP:STA objs_rooms+obj_bread ; Remove bread
 
+  ; Flip rat to go back to it's nest
   LDA objs_attrs+obj_rat:ORA #ATTR_REVERSE:STA objs_attrs+obj_rat ; Set top bit
 
   LDA #&1D
   JSR l357D
 .l2601
   LDX #&45
+
+  ; Check rat direction
   LDA objs_attrs+obj_rat
   AND #ATTR_REVERSE
   BEQ l263E
 
+  ; Move rat right
   JSR l32EB
   INC objs_xlocs+obj_rat
   JSR l3306
 
-  ; Check for bread
+  ; Check for bread being in room
   LDA objs_rooms+obj_bread
   CMP #OFFMAP
   BNE l262C
 
+  ; Chek rat position
   LDA objs_xlocs+obj_rat
   CMP #&60
   BCC l2650
@@ -2898,20 +2926,25 @@ ORG &190E
   JMP l2650
 
 .l262C
+  ; Check rat position
   LDA objs_xlocs+obj_rat
   CMP #&4F
   BCC l2650
 
 .l2633
+  ; Flip rat direction
   LDA objs_attrs+obj_rat:EOR #ATTR_REVERSE:STA objs_attrs+obj_rat ; flip top bit
 
   JMP l2650
 
 .l263E
+  ; Move rat left
   LDX #&45
   JSR l32EB
   DEC objs_xlocs+obj_rat
   JSR l3306
+
+  ; Check rat position
   LDA objs_xlocs+obj_rat
   CMP #&2F
   BCC l2633
@@ -2948,14 +2981,17 @@ ORG &190E
   CMP #MOATROOM
   BNE l26BE
 
+  ; Check if portcullis switch is active
   LDA objs_attrs+obj_switch
   CMP #PAL_CYAN
   BEQ l26BE
 
+  ; Check portcullis orientation
   LDA objs_attrs+obj_portcullis
   AND #ATTR_REVERSE
   BNE l26AE
 
+  ; Move portcullis up
   LDX #&54
   JSR l32EB
   DEC objs_ylocs+obj_portcullis
@@ -2964,6 +3000,7 @@ ORG &190E
   BCS l26A6
 
 .l269E
+  ; Flip portcullis orientation
   LDA objs_attrs+obj_portcullis:EOR #ATTR_REVERSE:STA objs_attrs+obj_portcullis
 .l26A6
   LDX #&54
@@ -2971,10 +3008,12 @@ ORG &190E
   JMP l26BE
 
 .l26AE
+  ; Check portcullis height
   LDA objs_ylocs+obj_portcullis
   CMP #&88
   BCS l269E
 
+  ; Move portcullis down
   CLC:ADC #&04:STA objs_ylocs+obj_portcullis
   JMP l26A6
 
@@ -2983,6 +3022,7 @@ ORG &190E
   CMP #OUTTOSEAROOM
   BNE l26E8
 
+  ; Check Dozy position
   LDA objs_xlocs+obj_dozy
   CMP #&46
   BCS l26E8
@@ -2990,13 +3030,15 @@ ORG &190E
   LDA &03C4
   AND #&03
   BNE l26E8
+
+  ; Update Dozy Y position
   LDX #&4A
   JSR l32EB
   LDA &03C4
   AND #&04
   CLC
   ADC #&86
-  STA &C7F4
+  STA objs_ylocs+obj_dozy
   LDX #&4A
   JSR l29D3
 .l26E8
@@ -3011,6 +3053,7 @@ ORG &190E
   CMP roomno
   BNE l2762
 
+  ; Check if machine[x] is active
   LDA objs_attrs+obj_machines,X
   CMP #PAL_WHITE
   BNE l2762
@@ -3071,23 +3114,29 @@ ORG &190E
 .l2771
   LDX #&50
   JSR l3306
+
+  ; Check hawk Y position
   LDA objs_ylocs+obj_hawk
   CMP #&38
   BNE l279B
 
+  ; Check hawk X position > 61
   LDA objs_xlocs+obj_hawk
   CMP #&3D
   BCS l279E
 
+  ; Check hawk X position < 46
   CMP #&2E
   BCC l279E
 
+  ; See if Dizzy is directly below hawk
   LDA dizzyx
   CLC
   ADC #&1C
   CMP objs_xlocs+obj_hawk
   BEQ l279B
 
+  ; Update hawk X position
   CLC
   ADC #&01
   CMP objs_xlocs+obj_hawk
@@ -3097,26 +3146,32 @@ ORG &190E
   JMP l27DF
 
 .l279E
+  ; Check hawk X position < 35
   LDA objs_xlocs+obj_hawk
   CMP #&23
   BCC l27A9
 
+  ; Check hawk X position < 80
   CMP #&50
   BCC l27B1
 
 .l27A9
+  ; Flip hawk direction
   LDA objs_attrs+obj_hawk:EOR #ATTR_REVERSE:STA objs_attrs+obj_hawk
 .l27B1
+  ; Check hawk direction
   LDA objs_attrs+obj_hawk
   AND #ATTR_REVERSE
   BNE l27C1
 
+  ; Move hawk right
   INC objs_xlocs+obj_hawk
   INC objs_xlocs+obj_hawk
 
   JMP l27C7
 
 .l27C1
+  ; Move hawk left
   DEC objs_xlocs+obj_hawk
   DEC objs_xlocs+obj_hawk
 .l27C7
@@ -3136,10 +3191,13 @@ ORG &190E
   JMP l2809
 
 .l27DF
+  ; Hawk is diving, so move downwards
   LDA objs_ylocs+obj_hawk
   CLC
   ADC #&08
   STA objs_ylocs+obj_hawk
+
+  ; Keep hawk moving towards Dizzy
   LDA dizzyx
   CLC
   ADC #&1C
@@ -3162,10 +3220,12 @@ ORG &190E
   AND #&01
   BEQ l283A
 
+  ; Check bone
   LDA objs_rooms+obj_bone
   CMP #OFFMAP
   BEQ l283A
 
+  ; Check Dizzy Y position > 104 (on lower ground)
   LDX #&51
   LDA dizzyy
   CMP #&68
@@ -3175,6 +3235,7 @@ ORG &190E
   CMP #OFFMAP
   BEQ l283D
 
+  ; Check grunt (Armorog) position > 55
   LDA objs_xlocs+obj_grunt
   CMP #&37
   BCS l2847
@@ -3205,32 +3266,42 @@ ORG &190E
   CMP #&20
   BCC l28A8
 
+  ; Check which way grunt is facing
   LDA objs_attrs+obj_grunt
   AND #ATTR_REVERSE
   BNE l2872
 
+  ; Move grunt right
   INC objs_xlocs+obj_grunt
   INC objs_xlocs+obj_grunt
 
   JMP l2878
 
 .l2872
+  ; Move grunt left
   DEC objs_xlocs+obj_grunt
   DEC objs_xlocs+obj_grunt
+
 .l2878
+  ; Check grunt X position < 55
   LDA objs_xlocs+obj_grunt
   CMP #&37
   BCC l2883
 
+  ; Check grunt X position < 78
   CMP #&4E
   BCC l28A8
 
 .l2883
-  LDA objs_attrs+obj_grunt:EOR #ATTR_REVERSE:STA objs_attrs+obj_grunt ; Flip top bit
+  ; Switch grunt direction
+  LDA objs_attrs+obj_grunt:EOR #ATTR_REVERSE:STA objs_attrs+obj_grunt
+
+  ; Check if grunt X position is 78
   LDA objs_xlocs+obj_grunt
   CMP #&4E
   BNE l28A8
 
+  ; Check bone orientation
   LDA objs_attrs+obj_bone
   AND #ATTR_REVERSE
   BEQ l28A8
@@ -3256,6 +3327,7 @@ ORG &190E
   JMP l295E
 
 .l28C3
+  ; Check goldenegg orientation
   LDA objs_attrs+obj_goldenegg
   CMP #ATTR_REVERSE
   BCC l28E1
@@ -3355,7 +3427,7 @@ ORG &190E
   CMP #DRAGONSLAIRROOM
   BNE l296F
 
-  ; Check golden egg
+  ; Check second golden egg
   LDA objs_rooms+obj_goldenegg2
   CMP #OFFMAP
   BNE l2993
@@ -3436,9 +3508,11 @@ ORG &190E
 
 .l29E4
 {
+  ; Move sleeping potion
   LDA #&80:STA objs_ylocs+obj_sleepingpotion
   LDA #&52:STA objs_xlocs+obj_sleepingpotion
-  LDA #OFFMAP:STA &C6A5
+
+  LDA #OFFMAP:STA &C6A5 ; happy dust?
 
   LDA #ATTR_GRID+PAL_WHITE
   STA objs_attrs+obj_rat
@@ -3492,9 +3566,9 @@ ORG &190E
 
   ; Put Daisy in her hut
   LDA #DAISYSHUTROOM:STA objs_rooms+obj_daisy
-
   LDA #&32:STA objs_xlocs+obj_daisy
   LDA #&4D:STA objs_ylocs+obj_daisy
+
   LDA #&00:STA SPR_ENABLE
   JSR heartdemo
 
@@ -4211,10 +4285,12 @@ ORG &2B32
   JSR printroomname
   JSR l3814
 
+  ; Check bone
   LDA objs_rooms+obj_bone
   CMP #OFFMAP
   BEQ l2F39
 
+  ; Position grunt
   LDA #&36:STA objs_xlocs+obj_grunt
   LDA #ATTR_GRID+PAL_RED:STA objs_attrs+obj_grunt
 }
@@ -4271,7 +4347,7 @@ ORG &2B32
   BCC l2F84
 
   LDA #&0B:STA &03BC
-  LDA &C8A2:AND #&07:STA &C8A2
+  LDA objs_attrs+obj_dragonhead:AND #&07:STA objs_attrs+obj_dragonhead
   JMP l2FAF
 
 .l2FAA
@@ -4304,6 +4380,7 @@ ORG &2B32
   CMP #&3A
   BNE l2FE9
 
+  ; Check bucket
   LDA objs_rooms+obj_bucket
   CMP #OFFMAP
   BNE l2FE9
@@ -4311,19 +4388,23 @@ ORG &2B32
   LDA #&01
   JSR l2E79
 .l2FE9
+  ; See if Dizzy is in the moat room
   LDA roomno
   CMP #MOATROOM
   BNE l300A
 
+  ; Set portcullis height
   LDA #&60:STA objs_ylocs+obj_portcullis
 .l2FF5
   LDX #&54
   JSR l3306
 
+  ; Check portcullis height > 136
   LDA objs_ylocs+obj_portcullis
   CMP #&88
   BCS l300A
 
+  ; Move portcullis down
   CLC
   ADC #&04
   STA objs_ylocs+obj_portcullis
@@ -4468,6 +4549,7 @@ ORG &2B32
   CMP roomno
   BNE l310F
 
+  ; Check if machine[x] is activated
   LDA objs_attrs+obj_machines,X
   CMP #PAL_WHITE
   BNE l310F
@@ -4509,6 +4591,7 @@ ORG &2B32
   CMP #DAISYSPRISONROOM
   BNE done
 
+  ; Check if switch in Daisy's prison is activated
   LDA objs_attrs+obj_switch2
   CMP #PAL_CYAN
   BEQ done
@@ -5381,6 +5464,7 @@ ORG &2B32
   CPX #&08
   BNE l372A
 
+  ; Check if bucket is blue
   LDA objs_attrs+obj_bucket
   CMP #PAL_BLUE
   BNE l372A
@@ -6189,33 +6273,33 @@ ORG &C400
   EQUB &60, &48, &80, &50, &40 ; 125
   EQUB &40, &72, &80, &b0      ; 130
 .vC592 ; attribs
-  EQUB &02, &04, &02, &05, &05 ; 0
-  EQUB &07, &07, &03, &02, &06 ; 5
-  EQUB &07, &02, &06, &06, &06 ; 10
-  EQUB &06, &07, &04, &04, &06 ; 15
-  EQUB &05, &06, &06, &02, &02 ; 20
-  EQUB &02, &06, &06, &06, &06 ; 25
-  EQUB &06, &06, &06, &06, &06 ; 30
-  EQUB &06, &06, &06, &06, &06 ; 35
-  EQUB &06, &06, &06, &06, &06 ; 40
-  EQUB &06, &06, &06, &06, &06 ; 45
-  EQUB &06, &06, &06, &06, &06 ; 50
-  EQUB &06, &07, &04, &02, &02 ; 55
-  EQUB &02, &04, &04, &07, &87 ; 60
-  EQUB &20, &04, &20, &00, &07 ; 65
-  EQUB &06, &00, &52, &10, &07 ; 70
-  EQUB &07, &07, &07, &42, &00 ; 75
-  EQUB &07, &02, &00, &05, &47 ; 80
-  EQUB &00, &44, &42, &05, &05 ; 85
-  EQUB &05, &05, &07, &00, &07 ; 90
-  EQUB &07, &02, &02, &42, &07 ; 95
-  EQUB &05, &07, &47, &07, &17 ; 100
-  EQUB &17, &42, &42, &0a, &0a ; 105
-  EQUB &0a, &0a, &0a, &0a, &02 ; 110
-  EQUB &07, &47, &07, &47, &07 ; 115
-  EQUB &47, &07, &47, &00, &42 ; 120
-  EQUB &44, &54, &52, &52, &44 ; 125
-  EQUB &54, &c4, &42, &42      ; 130
+  EQUB PAL_RED,                 PAL_GREEN,               PAL_RED,                 PAL_CYAN,                PAL_CYAN                ; 0
+  EQUB PAL_WHITE,               PAL_WHITE,               PAL_MAGENTA,             PAL_RED,                 PAL_YELLOW              ; 5
+  EQUB PAL_WHITE,               PAL_RED,                 PAL_YELLOW,              PAL_YELLOW,              PAL_YELLOW              ; 10
+  EQUB PAL_YELLOW,              PAL_WHITE,               PAL_GREEN,               PAL_GREEN,               PAL_YELLOW              ; 15
+  EQUB PAL_CYAN,                PAL_YELLOW,              PAL_YELLOW,              PAL_RED,                 PAL_RED                 ; 20
+  EQUB PAL_RED,                 PAL_YELLOW,              PAL_YELLOW,              PAL_YELLOW,              PAL_YELLOW              ; 25
+  EQUB PAL_YELLOW,              PAL_YELLOW,              PAL_YELLOW,              PAL_YELLOW,              PAL_YELLOW              ; 30
+  EQUB PAL_YELLOW,              PAL_YELLOW,              PAL_YELLOW,              PAL_YELLOW,              PAL_YELLOW              ; 35
+  EQUB PAL_YELLOW,              PAL_YELLOW,              PAL_YELLOW,              PAL_YELLOW,              PAL_YELLOW              ; 40
+  EQUB PAL_YELLOW,              PAL_YELLOW,              PAL_YELLOW,              PAL_YELLOW,              PAL_YELLOW              ; 45
+  EQUB PAL_YELLOW,              PAL_YELLOW,              PAL_YELLOW,              PAL_YELLOW,              PAL_YELLOW              ; 50
+  EQUB PAL_YELLOW,              PAL_WHITE,               PAL_GREEN,               PAL_RED,                 PAL_RED                 ; 55
+  EQUB PAL_RED,                 PAL_GREEN,               PAL_GREEN,               PAL_WHITE,               ATTR_REVERSE+PAL_WHITE  ; 60
+  EQUB &20,                     PAL_GREEN,               &20,                     PAL_BLACK,               PAL_WHITE               ; 65
+  EQUB PAL_YELLOW,              PAL_BLACK,               PLOT_XOR+ATTR_NOTSOLID+PAL_RED, &10,              PAL_WHITE               ; 70
+  EQUB PAL_WHITE,               PAL_WHITE,               PAL_WHITE,               ATTR_NOTSOLID+PAL_RED,   PAL_BLACK               ; 75
+  EQUB PAL_WHITE,               PAL_RED,                 PAL_BLACK,               PAL_CYAN,                ATTR_NOTSOLID+PAL_WHITE ; 80
+  EQUB PAL_BLACK,               ATTR_NOTSOLID+PAL_GREEN, ATTR_NOTSOLID+PAL_RED,   PAL_CYAN,                PAL_CYAN                ; 85
+  EQUB PAL_CYAN,                PAL_CYAN,                PAL_WHITE,               PAL_BLACK,               PAL_WHITE               ; 90
+  EQUB PAL_WHITE,               PAL_RED,                 PAL_RED,                 ATTR_NOTSOLID+PAL_RED,   PAL_WHITE               ; 95
+  EQUB PAL_CYAN,                PAL_WHITE,               ATTR_NOTSOLID+PAL_WHITE, PAL_WHITE,               PLOT_XOR+PAL_WHITE      ; 100
+  EQUB PLOT_XOR+PAL_WHITE,      ATTR_NOTSOLID+PAL_RED,   ATTR_NOTSOLID+PAL_RED,   ATTR_GRID+PAL_RED,       ATTR_GRID+PAL_RED       ; 105
+  EQUB ATTR_GRID+PAL_RED,       ATTR_GRID+PAL_RED,       ATTR_GRID+PAL_RED,       ATTR_GRID+PAL_RED,       PAL_RED                 ; 110
+  EQUB PAL_WHITE,               ATTR_NOTSOLID+PAL_WHITE, PAL_WHITE,               ATTR_NOTSOLID+PAL_WHITE, PAL_WHITE               ; 115
+  EQUB ATTR_NOTSOLID+PAL_WHITE, PAL_WHITE,               ATTR_NOTSOLID+PAL_WHITE, PAL_BLACK,               ATTR_NOTSOLID+PAL_RED   ; 120
+  EQUB ATTR_NOTSOLID+PAL_GREEN, ATTR_NOTSOLID+PLOT_XOR+PAL_GREEN, ATTR_NOTSOLID+PLOT_XOR+PAL_RED, ATTR_NOTSOLID+PLOT_XOR+PAL_RED, ATTR_NOTSOLID+PAL_GREEN ; 125
+  EQUB ATTR_NOTSOLID+PLOT_XOR+PAL_GREEN, ATTR_REVERSE+ATTR_NOTSOLID+PAL_GREEN,         ATTR_NOTSOLID+PAL_RED,   ATTR_NOTSOLID+PAL_RED   ; 130
 .vC618 ; frames
   EQUB SPR_BAG,         SPR_BEAN,       SPR_MANURE,         SPR_CROWBAR,     SPR_BUCKET           ; 0
   EQUB SPR_BONE,        SPR_COW,        SPR_HAPPYDUST,      SPR_PICKAXE,     SPR_GOLDENEGG        ; 5
@@ -6349,7 +6433,7 @@ obj_dragonhead     = 114
 ;.vC7BB ; sleepingpotion
 ;.vC7BF ; bread
 ;.vC7EC ; troll
-.vC7F4 ; dozy
+;.vC7F4 ; dozy
 .vC7F5 ; 75 these 3 are "water" ?
 .vC7F6 ; 76
 .vC7F7 ; 77
@@ -6379,7 +6463,7 @@ obj_dragonhead     = 114
 ;.vC894 ; switch2
 ;.vC897 ; daisy
 .vC89C ; 108 ? dragonneck
-.vC8A2 ; dragonhead
+;.vC8A2 ; dragonhead
 
 ; frame[] array
 ;.vC8B6 ; bag

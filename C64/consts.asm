@@ -15,6 +15,12 @@ ATTR_GRID = 8
 ATTR_NOTSOLID = &40 ; Set means not solid
 ATTR_REVERSE = &80 ; Set means h-flip
 
+; Frame plotting modes
+PLOT_AND = &00
+PLOT_OR = &08
+PLOT_XOR = &10
+PLOT_NULL = &18 ; Invalid - don't plot
+
 ; Room related
 
 OFFMAP = 255
