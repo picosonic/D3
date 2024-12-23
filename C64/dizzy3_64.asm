@@ -1889,9 +1889,9 @@ ORG &190E
   ; Put troll in mine
   STA objs_rooms+obj_troll
 
-  LDA #&5A:STA &C766
-  LDA #&78:STA &C7EC
-  LDA #&44:STA &C872
+  LDA #&5A:STA objs_xlocs+obj_troll
+  LDA #&78:STA objs_ylocs+obj_troll
+  LDA #&44:STA objs_attrs+obj_troll
   LDA #OFFMAP:STA &C6E1
   LDX #&42
 
@@ -2015,11 +2015,11 @@ ORG &190E
   JSR l39D4
   BCC l1FFB
 
-  LDA &C883
+  LDA objs_attrs+obj_switch
   CMP #&05
   BNE l1FFB
 
-  LDA #&87:STA &C883
+  LDA #&87:STA objs_attrs+obj_switch
   LDA #&16
   JSR l357D
   JMP l24A0
@@ -2092,11 +2092,11 @@ ORG &190E
   BCC l2084
 
   LDY #&08
-  LDA &C88C
+  LDA objs_attrs+obj_dylan
   CMP #&07
   BNE l207D
 
-  LDA #&87:STA &C88C
+  LDA #&87:STA objs_attrs+obj_dylan
   LDY #&07
 .l207D
   TYA
@@ -2109,28 +2109,28 @@ ORG &190E
   BCC l20CE
 
   LDA #&87
-  CMP &C894
+  CMP objs_attrs+obj_switch2
   BEQ l20CE
 
-  STA &C894
+  STA objs_attrs+obj_switch2
   LDX #&64
   JSR l29D3
 .l209A
   LDX #&66
   JSR l32EB
-  INC &C810
+  INC objs_ylocs+obj_liftbottom
   JSR l29D3
   INX
   JSR l32EB
-  INC &C811
-  LDA &C897:EOR #&80:STA &C897
+  INC objs_ylocs+obj_daisy
+  LDA objs_attrs+obj_daisy:EOR #&80:STA objs_attrs+obj_daisy
   JSR l29D3
   LDX #&65
-  INC &C80F
+  INC objs_ylocs+obj_lifttop
   JSR l29D3
   LDA #&0A
   JSR l31D6
-  LDA &C810
+  LDA objs_ylocs+obj_liftbottom
   CMP #&8B
   BCC l209A
 
@@ -2166,12 +2166,12 @@ ORG &190E
   CPX #&02
   BNE l2113
 
-  LDA &C832
+  LDA objs_attrs+obj_manure
   CMP #&80
   BCS l210E
 
   ORA #&80
-  STA &C832
+  STA objs_attrs+obj_manure
   LDA #&15
   JSR l357D
 .l210E
@@ -2466,7 +2466,7 @@ ORG &190E
 
   LDA #&17
   JSR l357D
-  LDA #&87:STA &C835
+  LDA #&87:STA objs_attrs+obj_bone
   LDA #OFFMAP:STA &C6F0
   JMP l242D
 
@@ -2509,7 +2509,7 @@ ORG &190E
   CMP #&04
   BNE l23A7
 
-  LDA &C834
+  LDA objs_attrs+obj_bucket
   CMP #&01
   BNE l238E
 
@@ -2535,7 +2535,7 @@ ORG &190E
   JSR l39D4
   BCC l23C5
 
-  LDA #&01:STA &C834
+  LDA #&01:STA objs_attrs+obj_bucket
   LDA #&FF:STA &03D9
   LDA #&1C
   JSR l357D
@@ -2571,7 +2571,7 @@ ORG &190E
 
   LDA #&1E
   JSR l357D
-  LDA #&86:STA &C839
+  LDA #&86:STA objs_attrs+obj_goldenegg
   JMP l242D
 
 .l23E0
@@ -2710,7 +2710,7 @@ ORG &190E
   JMP l2527
 
 .l24E2
-  LDA &C839
+  LDA objs_attrs+obj_goldenegg
   AND #&80
   BEQ l24F3
 
@@ -2855,30 +2855,30 @@ ORG &190E
   CMP objs_rooms+obj_bread
   BNE l2601
 
-  LDA &C7BF
+  LDA objs_ylocs+obj_bread
   CMP #&64
   BCS l2601
 
-  LDA &C739
+  LDA objs_xlocs+obj_bread
   CLC
   ADC #&04
-  CMP &C769
+  CMP objs_xlocs+obj_rat
   BCC l2601
 
   LDA #OFFMAP:STA objs_rooms+obj_bread ; Remove bread
 
-  LDA &C875:ORA #&80:STA &C875 ; Set top bit
+  LDA objs_attrs+obj_rat:ORA #&80:STA objs_attrs+obj_rat ; Set top bit
 
   LDA #&1D
   JSR l357D
 .l2601
   LDX #&45
-  LDA &C875
+  LDA objs_attrs+obj_rat
   AND #&80
   BEQ l263E
 
   JSR l32EB
-  INC &C769
+  INC objs_xlocs+obj_rat
   JSR l3306
 
   ; Check for bread
@@ -2886,7 +2886,7 @@ ORG &190E
   CMP #OFFMAP
   BNE l262C
 
-  LDA &C769
+  LDA objs_xlocs+obj_rat
   CMP #&60
   BCC l2650
 
@@ -2898,21 +2898,21 @@ ORG &190E
   JMP l2650
 
 .l262C
-  LDA &C769
+  LDA objs_xlocs+obj_rat
   CMP #&4F
   BCC l2650
 
 .l2633
-  LDA &C875:EOR #&80:STA &C875 ; flip top bit
+  LDA objs_attrs+obj_rat:EOR #&80:STA objs_attrs+obj_rat ; flip top bit
 
   JMP l2650
 
 .l263E
   LDX #&45
   JSR l32EB
-  DEC &C769
+  DEC objs_xlocs+obj_rat
   JSR l3306
-  LDA &C769
+  LDA objs_xlocs+obj_rat
   CMP #&2F
   BCC l2633
 
@@ -2948,34 +2948,34 @@ ORG &190E
   CMP #MOATROOM
   BNE l26BE
 
-  LDA &C883
+  LDA objs_attrs+obj_switch
   CMP #&05
   BEQ l26BE
 
-  LDA &C884
+  LDA objs_attrs+obj_portcullis
   AND #&80
   BNE l26AE
 
   LDX #&54
   JSR l32EB
-  DEC &C7FE
-  LDA &C7FE
+  DEC objs_ylocs+obj_portcullis
+  LDA objs_ylocs+obj_portcullis
   CMP #&61
   BCS l26A6
 
 .l269E
-  LDA &C884:EOR #&80:STA &C884
+  LDA objs_attrs+obj_portcullis:EOR #&80:STA objs_attrs+obj_portcullis
 .l26A6
   LDX #&54
   JSR l29D3
   JMP l26BE
 
 .l26AE
-  LDA &C7FE
+  LDA objs_ylocs+obj_portcullis
   CMP #&88
   BCS l269E
 
-  CLC:ADC #&04:STA &C7FE
+  CLC:ADC #&04:STA objs_ylocs+obj_portcullis
   JMP l26A6
 
 .l26BE
@@ -3021,7 +3021,7 @@ ORG &190E
   CLC
   ADC #&73
   TAX
-  LDA &C831,X
+  LDA objs_attrs+obj_bean,X
   AND #&80
   BNE l273F
 
@@ -3071,11 +3071,11 @@ ORG &190E
 .l2771
   LDX #&50
   JSR l3306
-  LDA &C7FA
+  LDA objs_ylocs+obj_hawk
   CMP #&38
   BNE l279B
 
-  LDA &C774
+  LDA objs_xlocs+obj_hawk
   CMP #&3D
   BCS l279E
 
@@ -3085,19 +3085,19 @@ ORG &190E
   LDA dizzyx
   CLC
   ADC #&1C
-  CMP &C774
+  CMP objs_xlocs+obj_hawk
   BEQ l279B
 
   CLC
   ADC #&01
-  CMP &C774
+  CMP objs_xlocs+obj_hawk
   BNE l279E
 
 .l279B
   JMP l27DF
 
 .l279E
-  LDA &C774
+  LDA objs_xlocs+obj_hawk
   CMP #&23
   BCC l27A9
 
@@ -3105,20 +3105,20 @@ ORG &190E
   BCC l27B1
 
 .l27A9
-  LDA &C880:EOR #&80:STA &C880
+  LDA objs_attrs+obj_hawk:EOR #&80:STA objs_attrs+obj_hawk
 .l27B1
-  LDA &C880
+  LDA objs_attrs+obj_hawk
   AND #&80
   BNE l27C1
 
-  INC &C774
-  INC &C774
+  INC objs_xlocs+obj_hawk
+  INC objs_xlocs+obj_hawk
 
   JMP l27C7
 
 .l27C1
-  DEC &C774
-  DEC &C774
+  DEC objs_xlocs+obj_hawk
+  DEC objs_xlocs+obj_hawk
 .l27C7
   LDA &03C4
   LSR A
@@ -3136,21 +3136,21 @@ ORG &190E
   JMP l2809
 
 .l27DF
-  LDA &C7FA
+  LDA objs_ylocs+obj_hawk
   CLC
   ADC #&08
-  STA &C7FA
+  STA objs_ylocs+obj_hawk
   LDA dizzyx
   CLC
   ADC #&1C
-  CMP &C774
+  CMP objs_xlocs+obj_hawk
   BCC l27FE
 
-  LDA &C880:AND #&7F:STA &C880
+  LDA objs_attrs+obj_hawk:AND #&7F:STA objs_attrs+obj_hawk
   JMP l27B1
 
 .l27FE
-  LDA &C880:ORA #&80:STA &C880 ; Set top bit
+  LDA objs_attrs+obj_hawk:ORA #&80:STA objs_attrs+obj_hawk ; Set top bit
   JMP l27B1
 
 .l2809
@@ -3175,7 +3175,7 @@ ORG &190E
   CMP #OFFMAP
   BEQ l283D
 
-  LDA &C775
+  LDA objs_xlocs+obj_grunt
   CMP #&37
   BCS l2847
 
@@ -3205,20 +3205,20 @@ ORG &190E
   CMP #&20
   BCC l28A8
 
-  LDA &C881
+  LDA objs_attrs+obj_grunt
   AND #&80
   BNE l2872
 
-  INC &C775
-  INC &C775
+  INC objs_xlocs+obj_grunt
+  INC objs_xlocs+obj_grunt
 
   JMP l2878
 
 .l2872
-  DEC &C775
-  DEC &C775
+  DEC objs_xlocs+obj_grunt
+  DEC objs_xlocs+obj_grunt
 .l2878
-  LDA &C775
+  LDA objs_xlocs+obj_grunt
   CMP #&37
   BCC l2883
 
@@ -3226,17 +3226,17 @@ ORG &190E
   BCC l28A8
 
 .l2883
-  LDA &C881:EOR #&80:STA &C881 ; Flip top bit
-  LDA &C775
+  LDA objs_attrs+obj_grunt:EOR #&80:STA objs_attrs+obj_grunt ; Flip top bit
+  LDA objs_xlocs+obj_grunt
   CMP #&4E
   BNE l28A8
 
-  LDA &C835
+  LDA objs_attrs+obj_bone
   AND #&80
   BEQ l28A8
 
   LDA #OFFMAP:STA objs_rooms+obj_bone ; Remove bone
-  LDA #&92:STA &C881
+  LDA #&92:STA objs_attrs+obj_grunt
 
   LDX #&51
   JSR l32EB
@@ -3256,7 +3256,7 @@ ORG &190E
   JMP l295E
 
 .l28C3
-  LDA &C839
+  LDA objs_attrs+obj_goldenegg
   CMP #&80
   BCC l28E1
 
@@ -3436,15 +3436,15 @@ ORG &190E
 
 .l29E4
 {
-  LDA #&80:STA &C7BB
-  LDA #&52:STA &C735
+  LDA #&80:STA objs_ylocs+obj_sleepingpotion
+  LDA #&52:STA objs_xlocs+obj_sleepingpotion
   LDA #OFFMAP:STA &C6A5
 
   LDA #&0F
-  STA &C875
-  STA &C880
+  STA objs_attrs+obj_rat
+  STA objs_attrs+obj_hawk
 
-  LDA #&0A:STA &C881
+  LDA #&0A:STA objs_attrs+obj_grunt
 
   RTS
 }
@@ -3493,8 +3493,8 @@ ORG &190E
   ; Put Daisy in her hut
   LDA #DAISYSHUTROOM:STA &C705
 
-  LDA #&32:STA &C78B
-  LDA #&4D:STA &C811
+  LDA #&32:STA objs_xlocs+obj_daisy
+  LDA #&4D:STA objs_ylocs+obj_daisy
   LDA #&00:STA SPR_ENABLE
   JSR heartdemo
 
@@ -4215,8 +4215,8 @@ ORG &2B32
   CMP #OFFMAP
   BEQ l2F39
 
-  LDA #&36:STA &C775
-  LDA #&0A:STA &C881
+  LDA #&36:STA objs_xlocs+obj_grunt
+  LDA #&0A:STA objs_attrs+obj_grunt
 }
 
 ; Fall through
@@ -4231,7 +4231,7 @@ ORG &2B32
 
   LDA &03C4:AND #&F8:STA &03C4
 
-  LDA #&38:STA &C7FA
+  LDA #&38:STA objs_ylocs+obj_hawk
   LDA #&0F:STA &03BC
   LDA #&00:STA &2B13
 
@@ -4315,18 +4315,18 @@ ORG &2B32
   CMP #MOATROOM
   BNE l300A
 
-  LDA #&60:STA &C7FE
+  LDA #&60:STA objs_ylocs+obj_portcullis
 .l2FF5
   LDX #&54
   JSR l3306
 
-  LDA &C7FE
+  LDA objs_ylocs+obj_portcullis
   CMP #&88
   BCS l300A
 
   CLC
   ADC #&04
-  STA &C7FE
+  STA objs_ylocs+obj_portcullis
 
   JMP l2FF5
 
@@ -4509,7 +4509,7 @@ ORG &2B32
   CMP #DAISYSPRISONROOM
   BNE done
 
-  LDA &C894
+  LDA objs_attrs+obj_switch2
   CMP #&05
   BEQ done
 
@@ -5381,7 +5381,7 @@ ORG &2B32
   CPX #&08
   BNE l372A
 
-  LDA &C834
+  LDA objs_attrs+obj_bucket
   CMP #&01
   BNE l372A
 
@@ -6332,50 +6332,50 @@ obj_dragonhead     = 114
 
 ; X[] array
 .vC724 ; bag
-.vC735 ; sleepingpotion
-.vC739 ; bread
-.vC766 ; troll
+;.vC735 ; sleepingpotion
+;.vC739 ; bread
+;.vC766 ; troll
 .vC768 ; 68 ? egg
-.vC769 ; rat
+;.vC769 ; rat
 .vC76E ; dozy
-.vC774 ; hawk
-.vC775 ; grunt
-.vC78B ; daisy
+;.vC774 ; hawk
+;.vC775 ; grunt
+;.vC78B ; daisy
 
 ; Y[] array
 .vC7AA ; bag
-.vC7BB ; sleepingpotion
-.vC7BF ; bread
-.vC7EC ; troll
+;.vC7BB ; sleepingpotion
+;.vC7BF ; bread
+;.vC7EC ; troll
 .vC7F4 ; dozy
 .vC7F5 ; 75 these 3 are "water" ?
 .vC7F6 ; 76
 .vC7F7 ; 77
 .vC7F8 ; wood2
-.vC7FA ; hawk
-.vC7FE ; portcullis
-.vC80F ; lifttop
-.vC810 ; liftbottom
-.vC811 ; daisy
+;.vC7FA ; hawk
+;.vC7FE ; portcullis
+;.vC80F ; lifttop
+;.vC810 ; liftbottom
+;.vC811 ; daisy
 .vC81B ; 113 ? dragonneck
 
 ; attrib[] array
 .vC830 ; bag
-.vC831 ; bean
-.vC832 ; manure
-.vC834 ; bucket
-.vC835 ; bone
-.vC839 ; goldenegg
-.vC872 ; troll
-.vC875 ; rat
-.vC880 ; hawk
-.vC881 ; grunt
-.vC883 ; switch
-.vC884 ; portcullis
+;.vC831 ; bean
+;.vC832 ; manure
+;.vC834 ; bucket
+;.vC835 ; bone
+;.vC839 ; goldenegg
+;.vC872 ; troll
+;.vC875 ; rat
+;.vC880 ; hawk
+;.vC881 ; grunt
+;.vC883 ; switch
+;.vC884 ; portcullis
 .vC888 ; machines
-.vC88C ; dylan
-.vC894 ; switch2
-.vC897 ; daisy
+;.vC88C ; dylan
+;.vC894 ; switch2
+;.vC897 ; daisy
 .vC89C ; 108 ? dragonneck
 .vC8A2 ; dragonhead
 
