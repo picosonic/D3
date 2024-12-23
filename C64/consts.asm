@@ -9,6 +9,12 @@ PAL_CYAN = 5
 PAL_YELLOW = 6
 PAL_WHITE = 7
 
+; Attribute related
+ATTR_GRID = 8
+
+ATTR_NOTSOLID = &40 ; Set means not solid
+ATTR_REVERSE = &80 ; Set means h-flip
+
 ; Room related
 
 OFFMAP = 255
