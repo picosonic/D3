@@ -36,39 +36,45 @@ ORG &00
 .c64start
 
 ; Variables
-.v0001
-.v0005
+.v0001 ; processor port (mem config)
+
+.v0005 ; int to float routine
 .v0006
-.v0035
+
+.v0035 ; pointer to string memory
 .v0036
+
 .v00A7
 .v00A8
 .v00A9
 .v00AA
+
 .v00B0
 .v00B1
 .v00B2
 .v00B3
 .v00B4
 .v00B5
-.v00C5
+
+.v00C5 ; previously pressed key
+
 .v00FB
 .v00FC
 .v00FD
 .v00FE
 .v00FF
-.v0314
-.v0315
-.v0339
 
+.v0314 ; ISR lo
+.v0315 ; ISR hi
+
+.v0339
 .v033A ; X
 .v033B ; Y
 .v033C ; attrib
-
 .v033D
 .v033E
 .v033F
-.v0340
+.v0340 ; frame
 .v0342
 .v0344
 .v0345
@@ -110,7 +116,7 @@ lives = &03B9
 .v03BD
 .v03BE
 .v03BF
-.v03C0
+.v03C0 ; input bitfield ?
 .v03C1
 .v03C2
 .v03C3
@@ -5179,30 +5185,31 @@ ORG &2B32
 
 .l3541
 {
+  ; check last pressed key
   LDY &C5
   LDX &028D
   LDA &03C0
-  CPY #&0C
+  CPY #&0C ; matrix code for 'Z'
   BNE l3552
 
-  ORA #&04
+  ORA #&04 ; Set bit 2
   JMP l3558
 
 .l3552
-  CPY #&17
+  CPY #&17 ; matrix code for 'X'
   BNE l3558
 
-  ORA #&08
+  ORA #&08 ; Set bit 3
 .l3558
   CPX #&00
   BEQ l355E
 
-  ORA #&01
+  ORA #&01 ; Set bit 0
 .l355E
-  CPY #&01
+  CPY #&01 ; matrix code for 'Return'
   BNE l3564
 
-  ORA #&10
+  ORA #&10 ; Set bit 4
 .l3564
   STA &03C0
 
@@ -6072,6 +6079,7 @@ ORG &3B00
 {
   LDX #&00
 .l3B02
+  ; check last key pressed
   LDA &C5
   CMP &3AE9,X
   BEQ l3B0A
@@ -6079,6 +6087,7 @@ ORG &3B00
   RTS
 
 .l3B0A
+  ; check last key pressed
   LDA &C5
   CMP &3AE9,X
   BEQ l3B0A
@@ -6149,7 +6158,11 @@ ORG &3B00
 ORG &8000
 INCBIN "roomdata.bin"
 
-ORG &A400
+  EQUB &00, &00, &00, &00, &00, &00, &00, &00, &00
+  EQUB &00, &00, &00, &00, &00, &00, &00, &00, &00, &00, &00, &00, &00, &00, &00, &00
+  EQUB &00, &00, &dd, &8e, &18, &d4, &ca, &8e, &02, &dc, &a9, &07, &8d, &00, &dd, &a9
+
+; &A400
 ; Horizontal flip look up table
 .flip_lut
   EQUB &00, &80, &40, &c0, &20, &a0, &60, &e0, &10, &90, &50, &d0, &30, &b0, &70, &f0
