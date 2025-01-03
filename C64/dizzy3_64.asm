@@ -6134,7 +6134,7 @@ ORG &3B00
   RTS
 
   LDA #&C7:STA CIA2_PRA
-  LDA #&1B:STA GFX_VICII_REG1
+  LDA #&1B:STA GFX_VICII_REG1 ; rst8|ecm|bmm|DEN|RSEL|YSCROLL - Bitmap
   LDA #&15:STA GFX_MEM_PTR
   LDA #&37:STA &01
 
@@ -6144,13 +6144,118 @@ ORG &3B00
 .l3B6D
 {
   LDA #&C6:STA CIA2_PRA
-  LDA #&3B:STA GFX_VICII_REG1
+  LDA #&3B:STA GFX_VICII_REG1 ; rst8|ecm|BMM|DEN|RSEL|YSCROLL - Character
   LDA #&78:STA GFX_MEM_PTR
   LDA #&00:STA GFX_BORDER_COLOUR
+
   LDA #&FF:STA &03DF
   LDA #&B8:STA &03E1
   LDA #&30:STA &03E3
   LDA #&58:STA &03DC
+
+  RTS
+}
+
+ORG &4000
+; Dizzy sprite bitmaps are here, 3 bytes (24px) wide, 21 bytes high
+.s4000 ; Forwards, hands up
+.s4040 ; Forwards, hands down
+.s4080 ; Jump vert
+.s40C0
+.s4100
+.s4140
+.s4180
+.s41C0
+.s4200 ; Walk right
+.s4240
+.s4280
+.s42C0
+.s4300
+.s4340
+.s4380
+.s43C0
+.s4400
+.s4440
+.s4480 ; Walk left
+.s44C0
+.s4500
+.s4540
+.s4580
+.s45C0
+.s4600
+.s4640
+.s4680 ; Jump right
+.s46C0
+.s4700
+.s4740
+.s4780
+.s47C0
+.s4800
+.s4840
+.s4880 ; Jump left
+.s48C0
+.s4900
+.s4940
+.s4980
+.s49C0
+.s4A00
+.s4A40
+; End of Dizzy sprites
+
+.v4A80 ; Other sprites (from Dizzy2 - fish, jellyfish, crab, e.t.c.)
+.s4A80
+
+.s4AC0
+.s4B00
+.s4B40 ; Jellyfish top
+.s4B80 ; Jellyfish tentacles
+.s4BC0 ; Jellyfish tentacles 2
+.s4C00 ; Crab
+.s4C40 ; Crab 2
+
+.s4C80 ; Small egg
+
+.s4CC0 ; Ball
+
+.s4D00 ; Death anim
+.s4D40 ; Death anim 2
+.s4D80 ; Death anim 3
+.s4DC0 ; Death anim 4
+
+.s4E00 ; Squid right
+.s4E40 ; Squid right 2
+.s4E80 ; Squid right 3
+.s4EC0 ; Squid left
+.s4F00 ; Squid left 2
+.s4F40 ; Squid left 3
+.s4F80 ; School of fish left
+.s4FC0 ; School of fish left 2
+.s5000 ; School of fish right
+.s5040 ; School of fish right 2
+.s5080 ; Apple
+.s50C0 ; Apple squash
+.s5100 ; Apple squash 2
+.s5140 ; Blank
+
+; &5180 - end of sprite bitmaps
+
+.v5800
+.v58C8
+.v5900
+.v5990
+.v5A58
+.v5B20
+.v5FF8
+
+; &6000..&7F3F = screen RAM (320x200 hires bitmap mode, $d011=$3b, $d016=8)
+
+ORG &7F40
+.l7F40
+{
+  LDA #&C6:STA CIA2_PRA
+  LDA #&3B:STA GFX_VICII_REG1 ; rst8|ecm|BMM|DEN|RSEL|YSCROLL - Character
+  LDA #&78:STA GFX_MEM_PTR
+  LDA #&00:STA GFX_BORDER_COLOUR
 
   RTS
 }
@@ -6181,16 +6286,6 @@ INCBIN "roomdata.bin"
   EQUB &0b, &8b, &4b, &cb, &2b, &ab, &6b, &eb, &1b, &9b, &5b, &db, &3b, &bb, &7b, &fb
   EQUB &07, &87, &47, &c7, &27, &a7, &67, &e7, &17, &97, &57, &d7, &37, &b7, &77, &f7
   EQUB &0f, &8f, &4f, &cf, &2f, &af, &6f, &ef, &1f, &9f, &5f, &df, &3f, &bf, &7f, &ff
-
-.v4A80
-.v5800
-.v58C8
-.v5900
-.v5990
-.v5A58
-.v5B20
-.v5FF8
-.vA400
 
 ORG &A500
 INCBIN "frametable.bin"
