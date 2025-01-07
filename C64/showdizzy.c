@@ -13,6 +13,8 @@
 
 #define NUMFRAMES 70
 
+//#define ASMOUT 1
+
 void drawbin(const unsigned char *data)
 {
   unsigned char mask=0x80;
@@ -82,6 +84,14 @@ int main()
       {
         printf("|");
 
+#ifdef ASMOUT
+        fprintf(stderr, "EQUB ");
+        hexbin(&framedata[start+offs]);
+        hexbin(&framedata[start+offs+1]);
+        hexbin(&framedata[start+offs+2]);
+        fprintf(stderr, "\n");
+#endif
+
         drawbin(&framedata[start+offs]);
         drawbin(&framedata[start+offs+1]);
         drawbin(&framedata[start+offs+2]);
@@ -92,6 +102,11 @@ int main()
       }
 
       printf("\n");
+
+#ifdef ASMOUT
+      fprintf(stderr, "EQUB &%.2X\n", (unsigned char)framedata[start+offs]);
+      fprintf(stderr, "\n");
+#endif
 
       start+=offs+1;
     }
