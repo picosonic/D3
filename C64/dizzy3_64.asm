@@ -44,22 +44,26 @@ ORG &00
 .v0035 ; pointer to string memory
 .v0036
 
-.v00A7
+.v00A7 ; pointer
 .v00A8
-.v00A9
+
+.v00A9 ; pointer
 .v00AA
 
-.v00B0
+.v00B0 ; pointer
 .v00B1
-.v00B2
+
+.v00B2 ; pointer
 .v00B3
-.v00B4
+
+.v00B4 ; pointer
 .v00B5
 
 .v00C5 ; previously pressed key
 
-.v00FB
+.v00FB ; pointer
 .v00FC
+
 .v00FD
 .v00FE
 .v00FF
@@ -77,7 +81,7 @@ ORG &00
 .v0340 ; frame
 .v0342
 .v0344
-.v0345
+.v0345 ; cache for X reg
 .v0346
 .v0347
 .v0349
@@ -1102,9 +1106,9 @@ ORG &190E
   JSR l3090
   JSR l3A30
 
-  LDA #&3A:STA &033A
-  LDA #&39:STA &033B
-  LDA #PAL_GREEN:STA &033C
+  LDA #&3A:STA &033A ; X
+  LDA #&39:STA &033B ; Y
+  LDA #PAL_GREEN:STA &033C ; attrib
   LDA #&00:STA &03DC
 
   LDA #SPR_DIZZYLOGO
@@ -1943,14 +1947,14 @@ ORG &190E
   LDA dizzyx
   CLC
   ADC #&1E
-  STA &033A
+  STA &033A ; X
   CLC
   ADC #&08
   STA &033C
   LDA dizzyy
   CLC
   ADC #&1A
-  STA &033B
+  STA &033B ; Y
   CLC
   ADC #&22
   STA &033D
@@ -4197,6 +4201,7 @@ ORG &2B32
 .l2E90
   STA &FB
 
+  ; Set up pointers (B0 and B2) to room data
   LDA #&CC
   STA &B0
   STA &B2
