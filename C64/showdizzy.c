@@ -101,7 +101,7 @@ int main()
         offs+=3;
       }
 
-      printf("\n");
+      printf("(%.2x)\n\n", (unsigned char)framedata[start+offs]);
 
 #ifdef ASMOUT
       fprintf(stderr, "EQUB &%.2X\n", (unsigned char)framedata[start+offs]);
