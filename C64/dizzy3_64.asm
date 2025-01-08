@@ -41,31 +41,32 @@ ORG &00
 .v0005 ; int to float routine
 .v0006
 
-.v0035 ; pointer to string memory
+.v0035 ; pointer to string memory (5A77 / 5A4D / 5A5D / 581C / 5AF0)
 .v0036
 
-.v00A7 ; pointer
+.v00A7 ; pointer (148D / 14EB / 1502 / 1397 / 14F2 / 14FE)
 .v00A8
 
-.v00A9 ; pointer
+.v00A9 ; pointer (149F / 130F)
 .v00AA
 
-.v00B0 ; pointer
+.v00B0 ; pointer (8EB7 / 81B0 / 8678 / 8177 / 8FD8) - ROOMDATA
 .v00B1
 
-.v00B2 ; pointer
+.v00B2 ; pointer (5B48 / 81B0 / 5B20 / 8177 / 8FD8 / 5B48) - ROOMDATA + ?OTHER?
 .v00B3
 
-.v00B4 ; pointer
+.v00B4 ; pointer (BA83 / A779 / BA81) - FRAMEDATA
 .v00B5
 
 .v00C5 ; previously pressed key
 
-.v00FB ; pointer
+.v00FB ; pointer (73BE / 726E / 60E4 / 7787 / 72ED) - SCREEN RAM
 .v00FC
 
-.v00FD
+.v00FD ; pointer (5E77 / 5E4D / 5C1C / 5EF0 / 5E5D)
 .v00FE
+
 .v00FF
 
 .v0314 ; ISR lo
@@ -1050,8 +1051,21 @@ ORG &1147
 .v1828
 .v1877
 .v1897
-.v189F
-.v18B8
+
+ORG &189F
+; Lookup table for screen offsets
+.screentable_lo
+  EQUB &00, &40, &80, &C0, &00, &40, &80, &C0
+  EQUB &00, &40, &80, &C0, &00, &40, &80, &C0
+  EQUB &00, &40, &80, &C0, &00, &40, &80, &C0
+  EQUB &00
+
+.screentable_hi
+  EQUB &60, &61, &62, &63, &65, &66, &67, &68
+  EQUB &6A, &6B, &6C, &6D, &6F, &70, &71, &72
+  EQUB &74, &75, &76, &77, &79, &7A, &7B, &7C
+  EQUB &7E
+
 .v18D9
 .v18DE
 coins_tens = &18E5
@@ -3793,8 +3807,8 @@ ORG &2B32
   DEC &03BC
   INC &2B13
 .l2BD5
-  LDA &189F,X:STA &FB
-  LDA &18B8,X:STA &FC
+  LDA screentable_lo,X:STA &FB
+  LDA screentable_hi,X:STA &FC
   LDA &033B
   AND #&07
   CLC
@@ -4440,8 +4454,8 @@ ORG &2B32
   LDA #&06:STA &033A
 .l3028
   LDX &033A
-  LDA &18B8,X:STA &FC
-  LDA &189F,X
+  LDA screentable_hi,X:STA &FC
+  LDA screentable_lo,X
   CLC
   ADC #&28
   BCC l303A
@@ -4658,8 +4672,8 @@ ORG &2B32
   LSR A
   LSR A
   TAX
-  LDA &189F,X:STA &FB
-  LDA &18B8,X:STA &FC
+  LDA screentable_lo,X:STA &FB
+  LDA screentable_hi,X:STA &FC
   LDA &180E,X:STA &FD
   LDA &1828,X:SEC:SBC #&04:STA &FE
 
