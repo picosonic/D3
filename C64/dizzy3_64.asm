@@ -7866,8 +7866,10 @@ ORG &4000
 .v58C8
 .v5900
 .v5990
+.s5A00 ; to ???? = solidity bitmap ????
 .v5A58
 .v5B20
+.s5C00 ; to 5FE7 = 8x8 screen colour attribs
 .v5FF8
 
 ; &6000..&7F3F = screen RAM (320x200 hires bitmap mode, $d011=$3b, $d016=8)
