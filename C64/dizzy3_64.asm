@@ -6180,7 +6180,9 @@ ORG &3B00
   LDA #&FF:STA SPR_ENABLE
   RTS
 
+  ; $DD00 = %xxxxxx11 -> Bank0: $0000-$3FFF
   LDA #&C7:STA CIA2_PRA
+
   LDA #&1B:STA GFX_VICII_REG1 ; rst8|ecm|bmm|DEN|RSEL|YSCROLL - Bitmap
   LDA #&15:STA GFX_MEM_PTR
   LDA #&37:STA &01
@@ -6190,9 +6192,15 @@ ORG &3B00
 
 .l3B6D
 {
+  ; $DD00 = %xxxxxx10 -> Bank1: $4000-$7FFF
   LDA #&C6:STA CIA2_PRA
+
   LDA #&3B:STA GFX_VICII_REG1 ; rst8|ecm|BMM|DEN|RSEL|YSCROLL - Character
+
+  ; $D018 = %xxxx100x -> CharMem is at $2000 (#8192)
+  ; $D018 = %0111xxxx -> ScreenMem is at $1c00 (#7168)
   LDA #&78:STA GFX_MEM_PTR
+
   LDA #&00:STA GFX_BORDER_COLOUR
 
   LDA #&FF:STA &03DF
@@ -7894,8 +7902,10 @@ ORG &4000
 .v58C8
 .v5900
 .v5990
+.s5A00 ; to ???? = solidity bitmap ????
 .v5A58
 .v5B20
+.s5C00 ; to 5FE7 = 8x8 screen colour attribs
 .v5FF8
 
 ; &6000..&7F3F = screen RAM (320x200 hires bitmap mode, $d011=$3b, $d016=8)
@@ -7903,9 +7913,15 @@ ORG &4000
 ORG &7F40
 .l7F40
 {
+  ; $DD00 = %xxxxxx10 -> Bank1: $4000-$7FFF
   LDA #&C6:STA CIA2_PRA
+
   LDA #&3B:STA GFX_VICII_REG1 ; rst8|ecm|BMM|DEN|RSEL|YSCROLL - Character
+
+  ; $D018 = %xxxx100x -> CharMem is at $2000 (#8192)
+  ; $D018 = %0111xxxx -> ScreenMem is at $1c00 (#7168)
   LDA #&78:STA GFX_MEM_PTR
+
   LDA #&00:STA GFX_BORDER_COLOUR
 
   RTS
