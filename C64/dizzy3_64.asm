@@ -1344,7 +1344,7 @@ ORG &190E
 .l1B04
   LDA #&03:STA &03C8
 
-  INC dizzyy
+  INC dizzyy ; apply gravity whilst walking left and right
 .l1B0C
   LDA &03C8
   CMP #&03
@@ -1476,7 +1476,7 @@ ORG &190E
   JMP l1C85
 
 .l1BFD
-  DEC dizzyy
+  DEC dizzyy ; go up due to jumping
   DEC &0342
   LDA &0342
   BNE l1BDA
@@ -1511,7 +1511,7 @@ ORG &190E
   JMP l1C51
 
 .l1C3E
-  INC dizzyy
+  INC dizzyy ; apply gravity whilst jumping/rolling
   DEC &0342
   LDA &0342
   BNE l1C18
@@ -1666,11 +1666,11 @@ ORG &190E
   CMP #&01
   BNE l1D3B
 
-  INC dizzyx ; Move Dizzy right ?
+  INC dizzyx ; Move Dizzy right
   JMP l1D41
 
 .l1D3B
-  DEC dizzyx ; Move Dizzy left ?
+  DEC dizzyx ; Move Dizzy left
   JMP l1D41
 
 .l1D41
@@ -1717,7 +1717,7 @@ ORG &190E
   BCC l1D86
   BEQ l1D86
 
-  DEC dizzyy
+  DEC dizzyy ; go up due to stairs
   JMP l1D41
 
 .l1D9D
@@ -1726,7 +1726,7 @@ ORG &190E
   CMP #&12
   BCS l1D81
 
-  ; Check Dizzy X position
+  ; Check Dizzy X position < 57 (not gone off screen to right)
   LDA dizzyx
   CMP #&39
   BCC l1DB9
@@ -1736,6 +1736,7 @@ ORG &190E
   JMP l1DFC
 
 .l1DB9
+  ; Check Dizzy X position >= 2 (not gone off screen to left)
   CMP #&02
   BCS l1DC8
 
@@ -1744,10 +1745,12 @@ ORG &190E
   JMP l1DFC
 
 .l1DC8
+  ; Check Dizzy Y position < 50
   LDA dizzyy
   CMP #&80
   BCC l1E1D
 
+  ; Check Dizzy Y position >= 192
   CMP #&C0
   BCS l1DE7
 
@@ -1758,6 +1761,7 @@ ORG &190E
   JMP l1DFC
 
 .l1DE7
+  ; Check Dizzy Y position < 192
   LDA dizzyy
   CMP #&C0
   BCC l1E1D
@@ -1917,9 +1921,10 @@ ORG &190E
   LDA #&78:STA objs_ylocs+obj_troll
   LDA #ATTR_NOTSOLID+PAL_GREEN:STA objs_attrs+obj_troll
   LDA #OFFMAP:STA &C6E1
-  LDX #&42
 
+  LDX #obj_troll
   JSR l29D3
+
   LDA #&1F
   JSR l357D
 
@@ -2067,7 +2072,7 @@ ORG &190E
   JMP l2024
 
 .l2013
-  LDX #&4A
+  LDX #obj_dozy
   JSR l32EB
 
   ; Position Dozy
@@ -2147,21 +2152,28 @@ ORG &190E
 
   ; Activate switch in Daisy's prison
   STA objs_attrs+obj_switch2
-  LDX #&64
+
+  LDX #obj_switch2
   JSR l29D3
+
 .l209A
-  LDX #&66
+  LDX #obj_liftbottom
   JSR l32EB
+
   INC objs_ylocs+obj_liftbottom
   JSR l29D3
-  INX
+
+  INX ; switch from liftbottom to daisy
   JSR l32EB
+
   INC objs_ylocs+obj_daisy
   LDA objs_attrs+obj_daisy:EOR #ATTR_REVERSE:STA objs_attrs+obj_daisy
   JSR l29D3
-  LDX #&65
+
+  LDX #obj_lifttop
   INC objs_ylocs+obj_lifttop
   JSR l29D3
+
   LDA #&0A
   JSR l31D6
   LDA objs_ylocs+obj_liftbottom
@@ -2175,7 +2187,7 @@ ORG &190E
   JSR l39D4
   BCC l20E2
 
-  LDX #&46
+  LDX #obj_goldenegg2
   JSR l32EB
 
   ; Remove golden egg
@@ -2920,7 +2932,7 @@ ORG &190E
   LDA #&1D
   JSR l357D
 .l2601
-  LDX #&45
+  LDX #obj_rat
 
   ; Check rat direction
   LDA objs_attrs+obj_rat
@@ -2929,6 +2941,7 @@ ORG &190E
 
   ; Move rat right
   JSR l32EB
+
   INC objs_xlocs+obj_rat
   JSR l3306
 
@@ -2963,8 +2976,9 @@ ORG &190E
 
 .l263E
   ; Move rat left
-  LDX #&45
+  LDX #obj_rat
   JSR l32EB
+
   DEC objs_xlocs+obj_rat
   JSR l3306
 
@@ -2998,8 +3012,9 @@ ORG &190E
   ADC #SPR_CROCCLOSED
   STA objs_frames+obj_croc
 
-  LDX #&56
+  LDX #obj_croc
   JSR l29D3
+
 .l267A
   LDA roomno
   CMP #MOATROOM
@@ -3016,8 +3031,9 @@ ORG &190E
   BNE l26AE
 
   ; Move portcullis up
-  LDX #&54
+  LDX #obj_portcullis
   JSR l32EB
+
   DEC objs_ylocs+obj_portcullis
   LDA objs_ylocs+obj_portcullis
   CMP #&61
@@ -3027,8 +3043,9 @@ ORG &190E
   ; Flip portcullis orientation
   LDA objs_attrs+obj_portcullis:EOR #ATTR_REVERSE:STA objs_attrs+obj_portcullis
 .l26A6
-  LDX #&54
+  LDX #obj_portcullis
   JSR l29D3
+
   JMP l26BE
 
 .l26AE
@@ -3056,15 +3073,18 @@ ORG &190E
   BNE l26E8
 
   ; Update Dozy Y position
-  LDX #&4A
+  LDX #obj_dozy
   JSR l32EB
+
   LDA &03C4
   AND #&04
   CLC
   ADC #&86
   STA objs_ylocs+obj_dozy
-  LDX #&4A
+
+  LDX #obj_dozy
   JSR l29D3
+
 .l26E8
   LDX #&00
   LDA &03BE
@@ -3094,10 +3114,13 @@ ORG &190E
 
   INC objs_ylocs,X
   JSR l29D3
+
   INX
   JSR l32EB
+
   INC objs_ylocs,X
   JSR l29D3
+
   LDY &03B7
   LDA objs_ylocs,X:STA &18F4,Y
   CMP &18F0,Y
@@ -3111,10 +3134,13 @@ ORG &190E
 .l273F
   DEC objs_ylocs,X
   JSR l29D3
+
   INX
   JSR l32EB
+
   DEC objs_ylocs,X
   JSR l29D3
+
   LDY &03B7
   LDA objs_ylocs,X:STA &18F4,Y
   CMP &18EC,Y
@@ -3136,7 +3162,7 @@ ORG &190E
   JMP l2809
 
 .l2771
-  LDX #&50
+  LDX #obj_hawk
   JSR l3306
 
   ; Check hawk Y position
@@ -3249,8 +3275,8 @@ ORG &190E
   CMP #OFFMAP
   BEQ l283A
 
-  ; Check Dizzy Y position > 104 (on lower ground)
-  LDX #&51
+  ; Check Dizzy Y position >= 104 (on lower ground)
+  LDX #obj_grunt
   LDA dizzyy
   CMP #&68
   BCS l283D
@@ -3259,7 +3285,7 @@ ORG &190E
   CMP #OFFMAP
   BEQ l283D
 
-  ; Check grunt (Armorog) position > 55
+  ; Check grunt (Armorog) position >= 55
   LDA objs_xlocs+obj_grunt
   CMP #&37
   BCS l2847
@@ -3333,8 +3359,9 @@ ORG &190E
   LDA #OFFMAP:STA objs_rooms+obj_bone ; Remove bone
   LDA #&92:STA objs_attrs+obj_grunt
 
-  LDX #&51
+  LDX #obj_grunt
   JSR l32EB
+
 .l28A8
   LDA #&00:STA &03DC
 
@@ -3388,9 +3415,10 @@ ORG &190E
   JMP l295E
 
 .l28F5
-  LDX #&72
+  LDX #obj_dragonhead
 .l28F7
   JSR l32EB
+
   DEX
   CPX #&6C
   BCS l28F7
@@ -3477,7 +3505,7 @@ ORG &190E
   ; Set dragon's head to mouth open
   LDA #SPR_DRAGONHEADOPEN:STA objs_frames+obj_dragonhead
 
-  LDX #&72
+  LDX #obj_dragonhead
   JSR l3306
 .l2993
   LDA &03BA
@@ -3494,7 +3522,7 @@ ORG &190E
   ; Set dragon's head to mouth closed
   LDA #SPR_DRAGONHEADCLOSED:STA objs_frames+obj_dragonhead
 
-  LDX #&72
+  LDX #obj_dragonhead
   JSR l3306
   JMP l29BA
 
@@ -4421,7 +4449,7 @@ ORG &2B32
   ; Set portcullis height
   LDA #&60:STA objs_ylocs+obj_portcullis
 .l2FF5
-  LDX #&54
+  LDX #obj_portcullis
   JSR l3306
 
   ; Check portcullis height > 136
@@ -4621,7 +4649,7 @@ ORG &2B32
   CMP #PAL_CYAN
   BEQ done
 
-  LDX #&65
+  LDX #obj_lifttop
   LDA &C50C,X:STA objs_ylocs,X
 .l3131
   JSR l3306
@@ -4914,7 +4942,7 @@ ORG &2B32
   LDA objs_ylocs,X:STA &033B ; Y position
   LDA objs_attrs,X:STA &033C ; attrib
   LDA #&00:STA &033F
-  LDA objs_frames,X ; attirb
+  LDA objs_frames,X ; attrib
   JSR frame
 
   LDA #&58:STA &03DC
@@ -6082,7 +6110,7 @@ ORG &2B32
 
   BCC l3AAB
 
-  LDX #&72
+  LDX #obj_dragonhead
   LDA #&00:STA &03DC
   JSR l3306
 
