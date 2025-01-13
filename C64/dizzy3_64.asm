@@ -73,8 +73,8 @@ ORG &00
 .v0315 ; ISR hi
 
 .v0339
-.v033A ; X
-.v033B ; Y
+.v033A ; X position
+.v033B ; Y position
 .v033C ; attrib
 .v033D
 .v033E
@@ -1120,12 +1120,12 @@ ORG &190E
   JSR l3090
   JSR l3A30
 
-  LDA #&3A:STA &033A ; X
-  LDA #&39:STA &033B ; Y
+  LDA #&3A:STA &033A ; X position
+  LDA #&39:STA &033B ; Y position
   LDA #PAL_GREEN:STA &033C ; attrib
   LDA #&00:STA &03DC
 
-  LDA #SPR_DIZZYLOGO
+  LDA #SPR_DIZZYLOGO ; frame
   JSR frame
 
   JSR printroomname
@@ -1183,8 +1183,8 @@ ORG &190E
 .l19DA
   DEX
   LDA &C400,X:STA objs_rooms,X ; room
-  LDA &C486,X:STA objs_xlocs,X ; X
-  LDA &C50C,X:STA objs_ylocs,X ; Y
+  LDA &C486,X:STA objs_xlocs,X ; X position
+  LDA &C50C,X:STA objs_ylocs,X ; Y position
   LDA &C592,X:STA objs_attrs,X ; attrib
   LDA &C618,X:STA objs_frames, X ; frame
 
@@ -1966,14 +1966,14 @@ ORG &190E
   LDA dizzyx
   CLC
   ADC #&1E
-  STA &033A ; X
+  STA &033A ; X position
   CLC
   ADC #&08
   STA &033C
   LDA dizzyy
   CLC
   ADC #&1A
-  STA &033B ; Y
+  STA &033B ; Y position
   CLC
   ADC #&22
   STA &033D
@@ -4305,20 +4305,20 @@ ORG &2B32
   INC &0342
   LDA (&B0),Y:EOR #&40:STA &03BF
 .l2EEE
-  LDA &03BF:STA &033C
+  LDA &03BF:STA &033C ; attrib
   LDA #&00:STA &033F
 
   LDY #&02
-  LDA (&B0),Y:STA &033B
+  LDA (&B0),Y:STA &033B ; Y position
 
   DEY
   LDA (&B0),Y
   AND #&7F
-  STA &033A
+  STA &033A ; X position
 
   DEY
   LDA #&58:STA &03DC
-  LDA (&B0),Y
+  LDA (&B0),Y ; frame
   JSR frame
 
   LDA &B0
@@ -4929,8 +4929,7 @@ ORG &2B32
   STA &033C ; attrib
   STA &033F
 
-  LDA objs_frames, X
-
+  LDA objs_frames, X ; frame
   JSR frame
 
   RTS
@@ -4940,9 +4939,11 @@ ORG &2B32
 {
   LDA objs_xlocs,X:STA &033A ; X position
   LDA objs_ylocs,X:STA &033B ; Y position
+
   LDA objs_attrs,X:STA &033C ; attrib
   LDA #&00:STA &033F
-  LDA objs_frames,X ; attrib
+
+  LDA objs_frames,X ; frame
   JSR frame
 
   LDA #&58:STA &03DC
@@ -4985,11 +4986,11 @@ ORG &2B32
   TAY
   JSR l3384
 
-  LDA &033C:AND #&A7:ORA &FF:STA &033C
+  LDA &033C:AND #&A7:ORA &FF:STA &033C ; attrib
 .l3373
   STY &033F
   LDA #&58:STA &03DC
-  LDA objs_frames,X
+  LDA objs_frames,X ; frame
 
   JSR frame
 
@@ -5690,10 +5691,10 @@ ORG &2B32
 
   LDX #&2E
 .loop
-  STX &033A
+  STX &033A ; X position
 
   LDA #&08
-  STA &033B
+  STA &033B ; Y position
   STA &03E3
 
   LDY #&00
@@ -5703,10 +5704,11 @@ ORG &2B32
 
   LDY #&06
 .l3832
-  STY &033C
+  STY &033C ; attrib
 
   LDA #&00:STA &03DC
-  LDA #SPR_EGG
+
+  LDA #SPR_EGG ; frame
   JSR frame
 
   INC &03DB
@@ -5731,15 +5733,16 @@ ORG &2B32
   AND #&3F
   CLC
   ADC #&20
-  STA &033A
+  STA &033A ; X position
+
   JSR l3257
 
   AND #&7F
   CLC
   ADC #&30
-  STA &033B
+  STA &033B ; Y position
 
-  LDA #&12:STA &033C
+  LDA #&12:STA &033C ; attrib
 
   LDA #&00
   STA &033F
@@ -5753,7 +5756,7 @@ ORG &2B32
   LDA #&01
 .l3882
   CLC
-  ADC #SPR_HEARTNULL
+  ADC #SPR_HEARTNULL ; frame
   JSR frame
 
   LDA #&05
@@ -5823,13 +5826,13 @@ ORG &2B32
   ASL A
   CLC
   ADC #&18
-  STA &033A
+  STA &033A ; X position
 
   LDA &03E0
   ASL A
   ASL A
   ASL A
-  STA &033B
+  STA &033B ; Y position
 
   LDA roomno
   CMP #ACTIVEVOLCANOROOM
@@ -5841,7 +5844,7 @@ ORG &2B32
 .l3901
   LDA #&0F
 .l3903
-  STA &033C
+  STA &033C ; attrib
 
   LDA #&00:STA &033F
 
@@ -5849,7 +5852,7 @@ ORG &2B32
   LSR A
   AND #&03
   CLC
-  ADC #SPR_WATER0
+  ADC #SPR_WATER0 ; frame
   JSR frame
 
   INC &03DB
@@ -5873,15 +5876,15 @@ ORG &2B32
   STA &03DB
   STX &034E
 .l393B
-  LDA &2B14,X:STA &033A
-  LDA &2B1E,X:STA &033B
+  LDA &2B14,X:STA &033A ; X position
+  LDA &2B1E,X:STA &033B ; Y position
 
   LDA #&00
-  STA &033C
+  STA &033C ; attrib
   STA &033F
   STA &03DC
 
-  LDA #SPR_FLAME
+  LDA #SPR_FLAME ; frame
   JSR frame
 
   INX
@@ -5897,13 +5900,13 @@ ORG &2B32
   LDA &2B28,X
   EOR #&80
   STA &2B28,X
-  STA &033C
+  STA &033C ; attrib
 
-  LDA &2B14,X:STA &033A
-  LDA &2B1E,X:STA &033B
+  LDA &2B14,X:STA &033A ; X position
+  LDA &2B1E,X:STA &033B ; Y position
   LDA #&20:STA &033F
   LDA #&00:STA &03DC
-  LDA #SPR_FLAME
+  LDA #SPR_FLAME ; frame
   JSR frame
 
   INX
@@ -6011,14 +6014,14 @@ ORG &2B32
 ; Print coins collected counter to screen
 .l3A30
 {
-  LDA #&4E:STA &033A
+  LDA #&4E:STA &033A ; X position
   LDA #&00:STA &03DC
 
   LDA #&08
-  STA &033B
+  STA &033B ; Y position
   STA &03E3
 
-  LDA #&06:STA &033C
+  LDA #&06:STA &033C ; attrib
 
   ; Convert tens to ASCII
   LDA coins_tens
@@ -6026,18 +6029,17 @@ ORG &2B32
 
   JSR frame
 
-  LDA #&50:STA &033A
+  LDA #&50:STA &033A ; X position
   LDA #&00:STA &03DC
 
   LDA #&08
-  STA &033B
+  STA &033B ; Y position
   STA &03E3
 
-  LDA #&06:STA &033C
+  LDA #&06:STA &033C ; attrib
 
   ; Convert units to ASCII
-  LDA coins
-  CLC:ADC #'0'
+  LDA coins:CLC:ADC #'0' ; frame
 
   JSR frame
 
@@ -6084,22 +6086,22 @@ ORG &2B32
   CPX #&44
   BCS l3AD5
 
-  STX &033A
+  STX &033A ; X position
 
-  LDA &C81B:STA &033B
+  LDA &C81B:STA &033B ; Y position
   LDA #&06
   CPX &03DB
   BCC l3AC5
 
   LDA #&00
 .l3AC5
-  STA &033C
+  STA &033C ; attrib
 
   LDA #&00
   STA &033F
   STA &03DC
 
-  LDA #SPR_DRAGONFIRE
+  LDA #SPR_DRAGONFIRE ; frame
   JSR frame
 
 .l3AD5
