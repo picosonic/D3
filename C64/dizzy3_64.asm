@@ -163,6 +163,7 @@ ORG &0B00
   JMP l0F72
 
 .l0B0F
+  ; Is it >= 5
   CMP #&05
   BCS l0B50
 
@@ -288,6 +289,7 @@ ORG &0B00
   BEQ l0BBF
 
 .l0BF4
+  ; Is it < 240
   CMP #&F0
   BCC l0C00
 
@@ -296,6 +298,7 @@ ORG &0B00
   LDA (&A7),Y
   INY
 .l0C00
+  ; Is it < 192
   CMP #&C0
   BCC l0C0F
 
@@ -307,6 +310,7 @@ ORG &0B00
   LDA (&A7),Y
   INY
 .l0C0F
+  ; Is it < 128
   CMP #&80
   BCC l0C1B
 
@@ -315,6 +319,7 @@ ORG &0B00
   LDA (&A7),Y
   INY
 .l0C1B
+  ; Is it < 96
   CMP #&60
   BCC l0C4D
 
@@ -453,6 +458,8 @@ ORG &0B00
   LDA &11EE,Y:STA &0D37
   LDA &11EF,Y:STA &0D41
   LDA &11F0,Y:STA &0D42
+
+  ; Is it >= 31
   LDA &11C9,X
   CMP #&1F
   BCS done
@@ -480,6 +487,8 @@ ORG &0B00
 .l0D57
 {
   LDY &11C3,X
+
+  ; Is it >=1
   LDA &11C9,X
   CMP #&01
   BCS l0D8F
@@ -493,6 +502,8 @@ ORG &0B00
 
 .^l0D73
   LDY &11C3,X
+
+  ; Is it >= 1
   LDA &11C9,X
   CMP #&01
   BCS l0D8F
@@ -733,6 +744,7 @@ ORG &0B00
   STA &117C,X
   PHA
 
+  ; Is it < 15
   CMP #&0F
   BCC l0F54
 
@@ -750,6 +762,8 @@ ORG &0B00
   SBC #&00
   STA &117C,X
   PHA
+
+  ; Is it >= 8
   CMP #&08
   BCS l0F54
 
@@ -1104,6 +1118,7 @@ ORG &190E
   JSR l313F
 
   INX
+  ; Is it < 8
   CPX #&08
   BCC l1931
 
@@ -1145,6 +1160,7 @@ ORG &190E
   STA &5B20,X
 
   INX
+  ; Is it < 200
   CPX #&C8
   BCC l1983
 
@@ -1158,7 +1174,9 @@ ORG &190E
   LDX #&00
 .l19A9
   LDA &18EC,X:STA &18F4,X
+
   INX
+  ; Is it < 4
   CPX #&04
   BCC l19A9
 
@@ -1284,8 +1302,9 @@ ORG &190E
 
   DEC &03BE
 .l1A9E
+  ; Is it >= 25 (therefore invalid)
   LDA roomno
-  CMP #&19 ; ?? No room #25
+  CMP #&19
   BCS l1AD2
 
   LDA &03C0
@@ -1298,6 +1317,7 @@ ORG &190E
 .l1AB4
   JSR l3257
 
+  ; Is it < 250
   CMP #&FA
   BCC l1AD2
 
@@ -1327,6 +1347,8 @@ ORG &190E
   LDA #&01:STA &033A
 .l1AEB
   INC &033A
+
+  ; Is it >= 6
   LDA &033A
   CMP #&06
   BCS l1B04
@@ -1354,6 +1376,8 @@ ORG &190E
   LDA #&01:STA &033A
 .l1B1D
   INC &033A
+
+  ; Is it >= 6
   LDA &033A
   CMP #&06
   BCS l1B58
@@ -1394,6 +1418,7 @@ ORG &190E
 .l1B63
   LDA #&00:STA &03C0
 .l1B68
+  ; Is it >= 2
   LDA &03C8
   CMP #&02
   BCS l1B95
@@ -1455,6 +1480,8 @@ ORG &190E
   LDA #&11:STA &03C3
 .l1BCD
   INC &03C9
+
+  ; Is it >= 9
   LDA &03C9
   CMP #&09
   BCS l1C15
@@ -1465,9 +1492,12 @@ ORG &190E
   LDA #&01:STA &033A
 .l1BE4
   INC &033A
+
+  ; Is it >= 6
   LDA &033A
   CMP #&06
   BCS l1BFD
+
   JSR l3154
   BEQ l1BE4
   BCC l1BE4
@@ -1482,6 +1512,7 @@ ORG &190E
   BNE l1BDA
 
   LDA &03C3
+  ; Is it < 10
   CMP #&0A
   BCC l1C85
 
@@ -1501,9 +1532,12 @@ ORG &190E
 
 .l1C2A
   INC &033A
+
+  ; Is it >= 6
   LDA &033A
   CMP #&06
   BCS l1C3E
+
   JSR l3154
   BEQ l1C2A
   BCC l1C2A
@@ -1521,6 +1555,7 @@ ORG &190E
   JMP l1C85
 
 .l1C51
+  ; Is it >= 17
   LDA &03C9
   CMP #&11
   BCS l1C5D
@@ -1533,10 +1568,12 @@ ORG &190E
 
 .l1C62
 {
+  ; Is it < 7
   LDA &03C9
   CMP #&07
   BCC l1C72
 
+  ; Is it >= 11
   CMP #&0B
   BCS l1C72
 
@@ -1544,9 +1581,11 @@ ORG &190E
   JMP l1C81
 
 .l1C72
+  ; Is it < 2
   CMP #&02
   BCC l1C7F
 
+  ; Is it >= 16
   CMP #&10
   BCS l1C7F
 
@@ -1562,6 +1601,7 @@ ORG &190E
 }
 
 .l1C85
+  ; Is it >= 2
   LDA &03C8
   CMP #&02
   BCS l1CA8
@@ -1623,10 +1663,12 @@ ORG &190E
 
 .l1CE9
   LDA &03C3
+  ; Is it < 10
   CMP #&0A
   BCC l1CB9
 
   LDA &03C9
+  ; Is it < 9
   CMP #&09
   BCC l1CB9
 
@@ -1654,6 +1696,7 @@ ORG &190E
   LDA &03C9
   BEQ l1D2E
 
+  ; Is it >= 9
   CMP #&09
   BCS l1D2E
 
@@ -1679,6 +1722,7 @@ ORG &190E
   BNE l1D7C
 
   LDA &03C9
+  ; Is it < 9
   CMP #&09
   BCC l1D7C
 
@@ -1689,6 +1733,8 @@ ORG &190E
   LDA #&00:STA &033A
 .l1D5D
   INC &033A
+
+  ; Is it >= 6
   LDA &033A
   CMP #&06
   BCS l1D7C
@@ -1708,6 +1754,8 @@ ORG &190E
   LDA #&01:STA &033A
 .l1D86
   INC &033A
+
+  ; Is it >= 6
   LDA &033A
   CMP #&06
   BCS l1D9D
@@ -1722,6 +1770,8 @@ ORG &190E
 
 .l1D9D
   DEC &033B
+
+  ; IS it >= 18
   LDA &033B
   CMP #&12
   BCS l1D81
@@ -1904,7 +1954,7 @@ ORG &190E
   CMP #MINESROOM
   BNE l1F33
 
-  ; Check Dizzy X position against far right
+  ; Check Dizzy X position < 52 (far right)
   LDA dizzyx
   CMP #&34
   BCC l1F33
@@ -2005,6 +2055,7 @@ ORG &190E
 
 .l1FA9
   INX
+  ; Is it < 63
   CPX #&3F
   BCC l1F7A
 
@@ -2177,6 +2228,7 @@ ORG &190E
   LDA #&0A
   JSR l31D6
   LDA objs_ylocs+obj_liftbottom
+  ; Is it < 139
   CMP #&8B
   BCC l209A
 
@@ -2248,6 +2300,7 @@ ORG &190E
   LDA dizzyy:CLC:ADC #&2D:STA objs_ylocs,X
 .l213A
   INX
+  ; Is it < 63
   CPX #&3F
   BCC l2119
 
@@ -2257,10 +2310,12 @@ ORG &190E
   JMP l20F1
 
 .l214C
+  ; Is it < 26
   LDX &18DE
   CPX #&1A
   BCC l215D
 
+  ; Is it >= 56
   CPX #&38
   BCS l215D
 
@@ -2268,12 +2323,13 @@ ORG &190E
   JMP l24A0
 
 .l215D
+  ; Is it >= 63
   CPX #&3F
   BCS l21A0
 
   LDA #&04
   STA objs_rooms,X
-  CPX #&38
+  CPX #LIFTCONTROLROOM
   BCC l2177
 
   LDA &C696,X
@@ -2369,6 +2425,8 @@ ORG &190E
   BEQ l221B
 
   DEC &03D9
+
+  ; Is it >= 250
   LDX &03D9
   CPX #&FA
   BCS l21C9
@@ -2459,9 +2517,11 @@ ORG &190E
   JMP l242D
 
 .l22B0
+  ; Is it < 23
   CMP #&17
   BCC l22E2
 
+  ; Is it >= 26
   CMP #&1A
   BCS l22E2
 
@@ -2598,9 +2658,11 @@ ORG &190E
   JMP l242D
 
 .l23A7
+  ; Is it < 12
   CMP #&0C
   BCC l23C8
 
+  ; Is it >= 16
   CMP #&10
   BCS l23C8
 
@@ -2689,6 +2751,7 @@ ORG &190E
 .l243F
   INC &03DB
   LDX &03DB
+  ; Is it < 123
   CPX #&7B
   BCC l2432
 
@@ -2712,6 +2775,7 @@ ORG &190E
   ; Wait until raster line >= 250
 .l2469
   LDA GFX_RASTER_LINE
+  ; Is it < 250
   CMP #&FA
   BCC l2469
 
@@ -2742,6 +2806,7 @@ ORG &190E
 .l24B7
   INC &03B7
   LDX &03B7
+  ; Is it < 11
   CPX #&0B
   BCC l24A5
 
@@ -2790,6 +2855,7 @@ ORG &190E
 
 .l24FF
   LDA dizzyy
+  ; Is it < 88
   CMP #&58
   BCC l2527
 
@@ -2799,6 +2865,7 @@ ORG &190E
   LDA dizzyx
   CLC
   ADC #&23
+  ; Is it < 49
   CMP #&31
   BCC l2527
 
@@ -2832,6 +2899,7 @@ ORG &190E
 
   INC &033A
   LDA &033A
+  ; Is it < 6
   CMP #&06
   BCC l252C
 
@@ -2913,6 +2981,7 @@ ORG &190E
   CMP objs_rooms+obj_bread
   BNE l2601
 
+  ; Check Y position of bread >= 100 (not near rat)
   LDA objs_ylocs+obj_bread
   CMP #&64
   BCS l2601
@@ -2950,7 +3019,7 @@ ORG &190E
   CMP #OFFMAP
   BNE l262C
 
-  ; Chek rat position
+  ; Check rat X position < 96
   LDA objs_xlocs+obj_rat
   CMP #&60
   BCC l2650
@@ -2963,7 +3032,7 @@ ORG &190E
   JMP l2650
 
 .l262C
-  ; Check rat position
+  ; Check rat X position < 79
   LDA objs_xlocs+obj_rat
   CMP #&4F
   BCC l2650
@@ -2982,7 +3051,7 @@ ORG &190E
   DEC objs_xlocs+obj_rat
   JSR l3306
 
-  ; Check rat position
+  ; Check rat X position < 47
   LDA objs_xlocs+obj_rat
   CMP #&2F
   BCC l2633
@@ -3001,6 +3070,7 @@ ORG &190E
   LSR A
   LSR A
   AND #&07
+  ; Is it < 6
   CMP #&06
   BCC l266B
 
@@ -3035,6 +3105,8 @@ ORG &190E
   JSR l32EB
 
   DEC objs_ylocs+obj_portcullis
+
+  ; Is Y position >= 97
   LDA objs_ylocs+obj_portcullis
   CMP #&61
   BCS l26A6
@@ -3049,7 +3121,7 @@ ORG &190E
   JMP l26BE
 
 .l26AE
-  ; Check portcullis height
+  ; Check portcullis height >= 136
   LDA objs_ylocs+obj_portcullis
   CMP #&88
   BCS l269E
@@ -3063,7 +3135,7 @@ ORG &190E
   CMP #OUTTOSEAROOM
   BNE l26E8
 
-  ; Check Dozy position
+  ; Check Dozy X position >= 70
   LDA objs_xlocs+obj_dozy
   CMP #&46
   BCS l26E8
@@ -3151,6 +3223,8 @@ ORG &190E
 
 .l2762
   INX
+
+  ; Is it < 4
   CPX #&04
   BCC l26F2
 
@@ -3165,7 +3239,7 @@ ORG &190E
   LDX #obj_hawk
   JSR l3306
 
-  ; Check hawk Y position
+  ; Check hawk Y position == 56
   LDA objs_ylocs+obj_hawk
   CMP #&38
   BNE l279B
@@ -3285,7 +3359,7 @@ ORG &190E
   CMP #OFFMAP
   BEQ l283D
 
-  ; Check grunt (Armorog) position >= 55
+  ; Check grunt (Armorog) X position >= 55
   LDA objs_xlocs+obj_grunt
   CMP #&37
   BCS l2847
@@ -3295,6 +3369,7 @@ ORG &190E
   JMP l28B0
 
 .l283D
+  ; Is it >= 40
   LDA &03BD
   CMP #&28
   BCS l2847
@@ -3312,6 +3387,7 @@ ORG &190E
   ; Update grunt (Armorog) animation frame
   STA objs_frames+obj_grunt
 
+  ; Is it < 32
   LDA &03BD
   CMP #&20
   BCC l28A8
@@ -3420,6 +3496,7 @@ ORG &190E
   JSR l32EB
 
   DEX
+  ; loop while >= 108
   CPX #&6C
   BCS l28F7
 
@@ -3437,12 +3514,14 @@ ORG &190E
   AND #&20
   BNE l291F
 
+  ; Move object up
   DEC objs_ylocs,X
   DEC objs_ylocs,X
 
   JMP l2925
 
 .l291F
+  ; Move object down
   INC objs_ylocs,X
   INC objs_ylocs,X
 .l2925
@@ -3450,6 +3529,7 @@ ORG &190E
 
   JSR l3306
   DEX
+  ; Loop while >=108
   CPX #&6C
   BCS l2901
 
@@ -3458,6 +3538,7 @@ ORG &190E
   BNE l2949
 
   INC &03BB
+  ; Is it < 7
   LDA &03BB
   CMP #&07
   BCC l295E
@@ -3514,6 +3595,7 @@ ORG &190E
   DEC &03BA
   DEC &03BA
 
+  ; Is it >= 42
   LDA &03BA
   CMP #&2A
   BCS l29B7
@@ -3538,6 +3620,7 @@ ORG &190E
   STX &034E
   LDX &03D9
 
+  ; Set objects[X] as hidden
   LDA #OFFMAP
   STA objs_rooms,X
   STA &03D9
@@ -3699,6 +3782,7 @@ ORG &190E
   AND #&01
   BEQ l2ABC
 
+  ; Is it >= 2
   LDA &03C8
   CMP #&02
   BCS l2ABC
@@ -3778,7 +3862,9 @@ ORG &2B32
   STA &FB
   STA &0340
   STX &0345
+
   LDA &033A
+  ; Is it < 93
   CMP #&5D
   BCC l2B6B
 
@@ -3797,10 +3883,13 @@ ORG &2B32
   LSR A
   LSR A
   TAX
+
+  ; Is it < 91
   LDA &0340
   CMP #&5B
   BCC l2BAB
 
+  ; Is it >= 96
   CMP #&60
   BCS l2BAB
 
@@ -3825,6 +3914,7 @@ ORG &2B32
   LDY &03DC
   BEQ l2BD5
 
+  ; Is it >= 10
   LDY &2B13
   CPY #&0A
   BCS l2BD5
@@ -3912,10 +4002,13 @@ ORG &2B32
   LSR &033D
   INY
   LDA (&B4),Y:STA &033E
+
+  ; Is it < 48
   LDA &0340
   CMP #&30
   BCC l2C6D
 
+  ; Is it >= 91
   CMP #&5B
   BCS l2C6D
 
@@ -3938,6 +4031,8 @@ ORG &2B32
 .l2C83
   LDA #&00:STA &034A
   LDA &033D:STA &034B
+
+  ; Is it >= 34
   LDA &033A
   AND #&FE
   CMP #&22
@@ -3951,6 +4046,7 @@ ORG &2B32
   STA &034A
 .l2CA2
   LDA &033A:AND #&FE:STA &FF
+
   LDA #&5E
   SEC
   SBC &FF
@@ -4116,6 +4212,7 @@ ORG &2B32
   CMP &034B
   BCC done
 
+  ; Is it >= 47
   LDA &033A
   LSR A
   CLC
@@ -4227,6 +4324,7 @@ ORG &2B32
 .l2E79
 {
   STA &0340
+  ; Is it < 101
   CMP #&65
   BCC l2E81
 
@@ -4369,7 +4467,9 @@ ORG &2B32
   STA &2B14,X
   STA &2B1E,X
   STA &2B28,X
+
   INX
+  ; Is it < 10
   CPX #&0A
   BCC l2F60
 
@@ -4396,6 +4496,7 @@ ORG &2B32
   LDA &C50C,X:STA objs_ylocs,X
 
   INX
+  ; Is it < 115
   CPX #&73
   BCC l2F84
 
@@ -4531,6 +4632,7 @@ ORG &2B32
   INC &033A
 
   LDA &033A
+  ; Is it < 23
   CMP #&17
   BCC l3028
 
@@ -4587,6 +4689,7 @@ ORG &2B32
   BNE l30AC
 
   INX
+  ; Is it < 23
   CPX #&17
   BCC l3092
 
@@ -4597,7 +4700,7 @@ ORG &2B32
 {
   LDX #&00
   LDA #&58:STA &03DC
-.l30D4
+.loop
   LDA &18E8,X
   CMP roomno
   BNE l310F
@@ -4631,7 +4734,8 @@ ORG &2B32
 .l310F
   INX
   CPX #&04
-  BCC l30D4
+  ; Is it < 4
+  BCC loop
 
   JMP l311B
 
@@ -4656,6 +4760,7 @@ ORG &2B32
 
   INC objs_ylocs,X
   LDA objs_ylocs,X
+  ; Is it < 103
   CMP #&67
   BCC l3131
 
@@ -4792,10 +4897,13 @@ ORG &2B32
 
 .l320B
   LDX &034E
+
+  ; Is it < 28
   LDA dizzyx,X
   CMP #&1C
   BCC l321C
 
+  ; Is it >= 145
   CMP #&91
   BCS l321C
 
@@ -4816,10 +4924,13 @@ ORG &2B32
   LDA &0342:EOR #&FF:AND SPR_MSB_X:STA SPR_MSB_X
 .l323C
   INY
+
+  ; Is it < 74
   LDA dizzyy,X
   CMP #&4A
   BCC l324B
 
+  ; Is it >= 230
   CMP #&E6
   BCS l324B
 
@@ -4898,10 +5009,12 @@ ORG &2B32
   STA dizzyx,X
 
 .l32CF
+  ; Is it < 230
   LDA dizzyx,X
   CMP #&E6
   BCC l32E0
 
+  ; Is it >= 243
   CMP #&F3
   BCS l32E0
 
@@ -4910,6 +5023,7 @@ ORG &2B32
   JMP l32E7
 
 .l32E0
+  ; Is it < 8
   LDA dizzyy,X
   CMP #&08
   BCC l32DA
@@ -4984,9 +5098,11 @@ ORG &2B32
   AND &03D5
   ORA #&08
   TAY
-  JSR l3384
 
+  ; Change plot style if this object has moved from it's initial position
+  JSR l3384
   LDA &033C:AND #&A7:ORA &FF:STA &033C ; attrib
+
 .l3373
   STY &033F
   LDA #&58:STA &03DC
@@ -4999,25 +5115,29 @@ ORG &2B32
 
 .l3384
 {
-  LDA #&08:STA &FF
+  ; Set PLOT_OR - object having been moved
+  LDA #PLOT_OR:STA &FF
+
   LDA &03D5
   BEQ done
 
-  ; See if this object is in the room it started in
+  ; See if this object is in the room it started in...
   LDA objs_rooms,X
   CMP &C400,X
   BNE done
 
+  ; ...and in the same X position...
   LDA objs_xlocs,X
   CMP &C486,X
   BNE done
 
+  ; ...and in the same Y position
   LDA objs_ylocs,X
   CMP &C50C,X
   BNE done
 
-  LDA #&00
-  STA &FF
+  ; It has been moved, so switch to PLOT_AND
+  LDA #PLOT_AND:STA &FF
 
 .done
   RTS
@@ -5055,7 +5175,7 @@ ORG &2B32
   LDA dizzyy:CLC:ADC #&5A:STA dizzyy
 
   LDX #&02
-.l33E9
+.loop
   STX &034E
   JSR l313F
 
@@ -5066,8 +5186,9 @@ ORG &2B32
   LDA #&02:STA &037A,X
 
   INX
+  ; Is it < 6
   CPX #&06
-  BCC l33E9
+  BCC loop
 
   LDA dizzyx
   SEC
@@ -5103,7 +5224,7 @@ ORG &2B32
   LDX #&05:STX &0346
 .l3445
   LDX #&02
-.l3447
+.loop
   STX &034E
 
   LDA dizzyx,X
@@ -5117,8 +5238,9 @@ ORG &2B32
   LDX &034E
 .l345B
   INX
+  ; Is it < 6
   CPX #&06
-  BCC l3447
+  BCC loop
 
   LDA #&08
   JSR l31D6
@@ -5162,13 +5284,14 @@ ORG &2B32
   STA &03C1
 
   LDX #&01
-.l34BE
+.loop
   STX &034E
   JSR l313F
 
   INX
+  ; Is it < 8
   CPX #&08
-  BCC l34BE
+  BCC loop
 
   LDA &03D6:STA dizzyx
   LDA &03D7:STA dizzyy
@@ -5202,6 +5325,7 @@ ORG &2B32
   JSR l3440
 
   LDA &5FF8
+  ; Is it < 55
   CMP #&37
   BCC l3522
 
@@ -5220,6 +5344,7 @@ ORG &2B32
   JSR l313F
 
   INX
+  ; Is it < 8
   CPX #&08
   BCC l352A
 
@@ -5299,6 +5424,7 @@ ORG &2B32
 .l3596
   JSR l3568
 .l3599
+  ; Is it < 251
   CMP #&FB
   BCC l359E
 
@@ -5313,6 +5439,7 @@ ORG &2B32
 
 .l35A8
   CMP #&C8
+  ; Is it < 200
   BCC l35B5
 
   SEC
@@ -5323,6 +5450,7 @@ ORG &2B32
 
 .l35B5
   CMP #&64
+  ; Is it < 100
   BCC l35C8
 
   SEC
@@ -5364,9 +5492,11 @@ ORG &2B32
   RTS
 
 .l35ED
+  ; Is it < 38
   CMP #&26
   BCC l35F5
 
+  ; Is it < 91
   CMP #&5B
   BCC l35F7
 
@@ -5544,9 +5674,11 @@ ORG &2B32
 .l373D
   JSR l3568
 
+  ; Is it < 38
   CMP #&26
   BCC done
 
+  ; IS it >= 91
   CMP #&5B
   BCS done
 
@@ -5560,12 +5692,14 @@ ORG &2B32
 .l374F
 {
   LDA #&FF
+
   LDX #&00
-.l3753
+.loop
   STA &18D9,X
   INX
+  ; Loop while it is < 5
   CPX #&05
-  BCC l3753
+  BCC loop
 
   LDX #&01
   LDY #&00
@@ -5579,6 +5713,7 @@ ORG &2B32
   INY
 .l376B
   INX
+  ; Is it < 63
   CPX #&3F
   BCC l375F
 
@@ -5714,6 +5849,7 @@ ORG &2B32
   INC &03DB
   INX
   INX
+  ; Is it < 50
   CPX #&32
   BCC loop
 
@@ -5860,6 +5996,7 @@ ORG &2B32
   INC &03DB
 .l3920
   INC &03DB
+  ; Is it < 35
   LDY &03DB
   CPY #&23
   BCC l38DE
@@ -5924,9 +6061,11 @@ ORG &2B32
 .l3997
 {
   LDX &18DE
+  ; Is it < 26
   CPX #&1A
   BCC done
 
+  ; Is it >= 56
   CPX #&38
   BCS done
 
@@ -5934,13 +6073,18 @@ ORG &2B32
   STA objs_rooms,X
   STA &18DE
 
+  ; Is it < 10
   LDA coins
   CLC
   ADC #&01
+  ; Is it < 10
   CMP #&0A
   BCC l39B9
 
+  ; >= 10 so increment tens
   INC coins_tens
+
+  ; Set units to zero
   LDA #&00
 .l39B9
   STA coins
@@ -6068,6 +6212,7 @@ ORG &2B32
 .l3A97
   STA (&FB),Y
   INY
+  ; Is it < 31
   CPY #&1F
   BCC l3A97
 
@@ -6080,9 +6225,11 @@ ORG &2B32
 
   LDX &03BA
 .l3AAB
+  ; Is it < 50
   CPX #&32
   BCC l3AD5
 
+  ; Is it >= 68
   CPX #&44
   BCS l3AD5
 
@@ -6142,6 +6289,7 @@ ORG &3B00
   BEQ l3B0A
 
   INX
+  ; Is it < 7
   CPX #&07
   BCC l3B02
 
@@ -6155,6 +6303,7 @@ ORG &3B00
   JSR l33AA
 
   AND #&1F
+  ; Is it >= 16
   CMP #&10
   BCS l3B53
 
@@ -6165,9 +6314,11 @@ ORG &3B00
 
   CLC
   ADC roomno
+  ; Is it < 21
   CMP #&15
   BCC l3B23
 
+  ; Is it >= 168
   CMP #&A8
   BCS l3B23
 
