@@ -72,7 +72,7 @@ ORG &00
 .v0314 ; ISR lo
 .v0315 ; ISR hi
 
-.v0339
+.v0339 ; []
 .v033A ; X position
 .v033B ; Y position
 .v033C ; attrib
@@ -99,14 +99,14 @@ dizzyy = &035C
 .v035F
 .v0360
 .v0361
-.v0366
+.v0366 ; []
 .v0368
 .v0369
 .v036A
 .v036B
-.v0370
-.v037A
-.v0384
+.v0370 ; []
+.v037A ; []
+.v0384 ; []
 .v0398
 .v0399
 .v039A
@@ -972,11 +972,11 @@ ORG &0B00
   RTS
 }
 
-.v1085
-.v1086
+.v1085 ; []
+.v1086 ; []
 
-.v10E6
-.v10E7
+.v10E6 ; []
+.v10E7 ; []
 
 ORG &1147
 
@@ -993,78 +993,78 @@ ORG &1147
   RTS
 }
 
-.v1158
-.v115B
-.v115E
-.v1166
-.v1169
+.v1158 ; []
+.v115B ; []
+.v115E ; []
+.v1166 ; []
+.v1169 ; []
 .v116C
 .v116D
 .v116E
 .v116F
-.v1170
-.v1173
-.v1176
-.v1179
-.v117C
-.v117F
-.v1182
-.v1185
-.v1188
-.v118B
-.v118E
-.v1191
-.v1194
-.v1197
+.v1170 ; []
+.v1173 ; []
+.v1176 ; []
+.v1179 ; []
+.v117C ; []
+.v117F ; []
+.v1182 ; []
+.v1185 ; []
+.v1188 ; []
+.v118B ; []
+.v118E ; []
+.v1191 ; []
+.v1194 ; []
+.v1197 ; []
 .v119A
 .v119B
 .v119C
-.v119D
-.v11A0
-.v11A3
-.v11A6
+.v119D ; []
+.v11A0 ; []
+.v11A3 ; []
+.v11A6 ; []
 .v11A9
 .v11AA
-.v11AB
-.v11AE
-.v11B1
-.v11B4
+.v11AB ; []
+.v11AE ; []
+.v11B1 ; []
+.v11B4 ; []
 .v11B7
 .v11B8
 .v11B9
 .v11BA
 .v11BB
-.v11BC
-.v11BF
+.v11BC ; []
+.v11BF ; []
 .v11C2
-.v11C3
-.v11C6
-.v11C9
+.v11C3 ; []
+.v11C6 ; []
+.v11C9 ; []
 .v11CA
 .v11CB
 .v11CC
-.v11CD
-.v11ED
-.v11EE
-.v11EF
-.v11F0
-.v1215
-.v1225
-.v1235
-.v124D
-.v124E
-.v124F
-.v1250
-.v1251
-.v1252
-.v1253
-.v1254
-.v12DD
-.v12DE
-.v180E
-.v1828
-.v1877
-.v1897
+.v11CD ; []
+.v11ED ; []
+.v11EE ; []
+.v11EF ; []
+.v11F0 ; []
+.v1215 ; []
+.v1225 ; []
+.v1235 ; []
+.v124D ; []
+.v124E ; []
+.v124F ; []
+.v1250 ; []
+.v1251 ; []
+.v1252 ; []
+.v1253 ; []
+.v1254 ; []
+.v12DD ; []
+.v12DE ; []
+.v180E ; []
+.v1828 ; []
+.v1877 ; []
+.v1897 ; []
 
 ORG &189F
 ; Lookup table for screen offsets
@@ -1080,17 +1080,17 @@ ORG &189F
   EQUB &74, &75, &76, &77, &79, &7A, &7B, &7C
   EQUB &7E
 
-.v18D9
+.v18D9 ; []
 .v18DE ; object table offset / &FF / ????
 coins_tens = &18E5
 coins = &18E6
 .v18E7
-.v18E8
-.v18EC
+.v18E8 ; []
+.v18EC ; []
 .v18F0
-.v18F4
-.v18F8
-.v1903
+.v18F4 ; []
+.v18F8 ; []
+.v1903 ; []
 
 ; Entry point ??
 
@@ -3801,20 +3801,20 @@ ORG &190E
   LDA #&81:STA &D404
   CLI ; Enable interrupts
 
-.v2AF2
+.v2AF2 ; []
   RTS
 }
 
   ; No idea what this is, used by l2D95
-.v2AF3
+.v2AF3 ; []
   EQUB &00, &00, &b8, &00, &00, &00, &81, &00, &80
 
 .v2B13
-.v2B14
+.v2B14 ; []
 
-.v2B1E
+.v2B1E ; []
 
-.v2B28
+.v2B28 ; []
 
 ORG &2B32
 
@@ -6271,7 +6271,7 @@ ORG &2B32
 }
 
 .v3AE9
-.v3AF0
+.v3AF0 ; []
 
 ORG &3B00
 
@@ -6372,15 +6372,15 @@ ORG &4000
 INCLUDE "dizzy_sprites.asm"
 ; &5180 - end of sprite bitmaps
 
-.v5800
+.v5800 ; []
 .v58C8
-.v5900
-.v5990
+.v5900 ; []
+.v5990 ; []
 .s5A00 ; to ???? = solidity bitmap ????
-.v5A58
-.v5B20
+.v5A58 ; []
+.v5B20 ; []
 .s5C00 ; to 5FE7 = 8x8 screen colour attribs
-.v5FF8
+.v5FF8 ; []
 
 ; &6000..&7F3F = screen RAM (320x200 hires bitmap mode, $d011=$3b, $d016=8)
 
