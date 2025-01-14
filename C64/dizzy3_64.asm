@@ -1081,7 +1081,7 @@ ORG &189F
   EQUB &7E
 
 .v18D9
-.v18DE
+.v18DE ; object table offset / &FF / ????
 coins_tens = &18E5
 coins = &18E6
 .v18E7
@@ -1164,11 +1164,13 @@ ORG &190E
   CPX #&C8
   BCC l1983
 
+  ; Reset coins collected count
   LDA #&00
   STA coins_tens
   STA coins
   STA &18E7
 
+  ; Reset lives
   LDA #&02:STA lives
 
   LDX #&00
@@ -1196,15 +1198,15 @@ ORG &190E
   STA SPR_PRIORITY
   STA v2B48
 
-  ; Copy &C400..&C69D to &C69E..&C93B
+  ; Reset moving data (objects)
   LDX #noofmoving
 .l19DA
   DEX
-  LDA &C400,X:STA objs_rooms,X ; room
-  LDA &C486,X:STA objs_xlocs,X ; X position
-  LDA &C50C,X:STA objs_ylocs,X ; Y position
-  LDA &C592,X:STA objs_attrs,X ; attrib
-  LDA &C618,X:STA objs_frames, X ; frame
+  LDA orig_rooms,X:STA objs_rooms,X ; room
+  LDA orig_xlocs,X:STA objs_xlocs,X ; X position
+  LDA orig_ylocs,X:STA objs_ylocs,X ; Y position
+  LDA orig_attrs,X:STA objs_attrs,X ; attrib
+  LDA orig_frames,X:STA objs_frames, X ; frame
 
   CPX #&00
   BNE l19DA
@@ -2259,7 +2261,7 @@ ORG &190E
   LDA #&04:STA objs_rooms+obj_bag
 .l20F1
   LDA #&FF:STA &18DE
-  JMP l214C
+  JMP coincheck
 
 .l20F9
   CPX #&02
@@ -2281,10 +2283,11 @@ ORG &190E
 
 .l2113
   CPX #&0A
-  BNE l214C
+  BNE coincheck
 
-  LDX #&01
-.l2119
+  ; Loop around the objects
+  LDX #obj_bean
+.objloop
   LDA objs_rooms,X
   CMP #&04
   BNE l213A
@@ -2302,27 +2305,27 @@ ORG &190E
   INX
   ; Is it < 63
   CPX #&3F
-  BCC l2119
+  BCC objloop
 
   LDA #&27
   JSR l357D
   LDA #OFFMAP:STA objs_rooms+obj_blackhole ; Remove blackhole
   JMP l20F1
 
-.l214C
-  ; Is it < 26
+.coincheck
+  ; Check to see if this object is a coin
   LDX &18DE
-  CPX #&1A
-  BCC l215D
+  CPX #firstcoin
+  BCC notacoin
 
-  ; Is it >= 56
-  CPX #&38
-  BCS l215D
+  CPX #lastcoin+1
+  BCS notacoin
 
-  JSR l3997
+  ; This object is a coin
+  JSR collect_coin
   JMP l24A0
 
-.l215D
+.notacoin
   ; Is it >= 63
   CPX #&3F
   BCS l21A0
@@ -4493,7 +4496,7 @@ ORG &2B32
   LDA roomno:STA objs_rooms,X
 
   LDA &FF:STA objs_attrs,X
-  LDA &C50C,X:STA objs_ylocs,X
+  LDA orig_ylocs,X:STA objs_ylocs,X
 
   INX
   ; Is it < 115
@@ -4716,8 +4719,8 @@ ORG &2B32
   CLC
   ADC #&73
   TAX
-  LDA &C50C,X:STA objs_ylocs,X
-  LDA &C50C+1,X:STA objs_ylocs+1,X
+  LDA orig_ylocs,X:STA objs_ylocs,X
+  LDA orig_ylocs+1,X:STA objs_ylocs+1,X
 .l30F8
   JSR l3306
 
@@ -4754,7 +4757,7 @@ ORG &2B32
   BEQ done
 
   LDX #obj_lifttop
-  LDA &C50C,X:STA objs_ylocs,X
+  LDA orig_ylocs,X:STA objs_ylocs,X
 .l3131
   JSR l3306
 
@@ -5123,17 +5126,17 @@ ORG &2B32
 
   ; See if this object is in the room it started in...
   LDA objs_rooms,X
-  CMP &C400,X
+  CMP orig_rooms,X
   BNE done
 
   ; ...and in the same X position...
   LDA objs_xlocs,X
-  CMP &C486,X
+  CMP orig_xlocs,X
   BNE done
 
   ; ...and in the same Y position
   LDA objs_ylocs,X
-  CMP &C50C,X
+  CMP orig_ylocs,X
   BNE done
 
   ; It has been moved, so switch to PLOT_AND
@@ -6058,36 +6061,37 @@ ORG &2B32
 }
 
 ; Collecting a coin
-.l3997
+.collect_coin
 {
+  ; Check to see if this object is a coin - just done before entering this function, but hey ?
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   LDX &18DE
-  ; Is it < 26
-  CPX #&1A
+  CPX #firstcoin
   BCC done
 
-  ; Is it >= 56
-  CPX #&38
+  CPX #lastcoin+1
   BCS done
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+  ; Set this coin to "collected", by removing from room
   LDA #OFFMAP
   STA objs_rooms,X
   STA &18DE
 
+  ; Update counter of coins collected so far
+  LDA coins:CLC:ADC #1
   ; Is it < 10
-  LDA coins
-  CLC
-  ADC #&01
-  ; Is it < 10
-  CMP #&0A
-  BCC l39B9
+  CMP #10
+  BCC underten
 
   ; >= 10 so increment tens
   INC coins_tens
 
   ; Set units to zero
-  LDA #&00
-.l39B9
-  STA coins
+  LDA #0
+
+.underten
+  STA coins ; Update units
 
   LDA #&03:STA v0B00
   JSR l3A30
@@ -6433,7 +6437,7 @@ ORG &C400
 .movingdata
 
 ; static set of objects
-.vC400 ; rooms
+.orig_rooms ; rooms
   EQUB &37, &65, &3a, &65, &53 ; 0
   EQUB &64, &3a, &4d, &57, &5d ; 5
   EQUB &48, &28, &55, &18, &3c ; 10
@@ -6461,7 +6465,7 @@ ORG &C400
   EQUB &58, &38, &38, &43, &45 ; 120
   EQUB &48, &59, &3b, &2f, &57 ; 125
   EQUB &49, &65, &23, &58      ; 130
-.vC486 ; Xs
+.orig_xlocs ; Xs
   EQUB &30, &40, &48, &36, &50 ; 0
   EQUB &34, &3c, &38, &54, &50 ; 5
   EQUB &3c, &34, &2a, &50, &3c ; 10
@@ -6489,7 +6493,7 @@ ORG &C400
   EQUB &3a, &3c, &3c, &54, &2e ; 120
   EQUB &22, &3e, &40, &44, &3c ; 125
   EQUB &3e, &43, &5a, &3a      ; 130
-.vC50C ; Ys
+.orig_ylocs ; Ys
   EQUB &90, &90, &aa, &50, &90 ; 0
   EQUB &a0, &98, &70, &50, &98 ; 5
   EQUB &80, &70, &70, &88, &78 ; 10
@@ -6517,7 +6521,7 @@ ORG &C400
   EQUB &60, &68, &88, &70, &b0 ; 120
   EQUB &60, &48, &80, &50, &40 ; 125
   EQUB &40, &72, &80, &b0      ; 130
-.vC592 ; attribs
+.orig_attrs ; attribs
   EQUB PAL_RED,                 PAL_GREEN,               PAL_RED,                 PAL_CYAN,                PAL_CYAN                ; 0
   EQUB PAL_WHITE,               PAL_WHITE,               PAL_MAGENTA,             PAL_RED,                 PAL_YELLOW              ; 5
   EQUB PAL_WHITE,               PAL_RED,                 PAL_YELLOW,              PAL_YELLOW,              PAL_YELLOW              ; 10
@@ -6545,19 +6549,23 @@ ORG &C400
   EQUB ATTR_NOTSOLID+PAL_WHITE, PAL_WHITE,               ATTR_NOTSOLID+PAL_WHITE, PAL_BLACK,               ATTR_NOTSOLID+PAL_RED   ; 120
   EQUB ATTR_NOTSOLID+PAL_GREEN, ATTR_NOTSOLID+PLOT_XOR+PAL_GREEN, ATTR_NOTSOLID+PLOT_XOR+PAL_RED, ATTR_NOTSOLID+PLOT_XOR+PAL_RED, ATTR_NOTSOLID+PAL_GREEN ; 125
   EQUB ATTR_NOTSOLID+PLOT_XOR+PAL_GREEN, ATTR_REVERSE+ATTR_NOTSOLID+PAL_GREEN,         ATTR_NOTSOLID+PAL_RED,   ATTR_NOTSOLID+PAL_RED   ; 130
-.vC618 ; frames
+.orig_frames ; frames
   EQUB SPR_BAG,         SPR_BEAN,       SPR_MANURE,         SPR_CROWBAR,     SPR_BUCKET           ; 0
   EQUB SPR_BONE,        SPR_COW,        SPR_HAPPYDUST,      SPR_PICKAXE,     SPR_GOLDENEGG        ; 5
   EQUB SPR_BLACKHOLE,   SPR_THICKRUG,   SPR_KEY,            SPR_KEY,         SPR_KEY              ; 10
   EQUB SPR_KEY,         SPR_ROPE,       SPR_SLEEPINGPOTION, SPR_APPLE,       SPR_BRANDYBOTTLE     ; 15
   EQUB SPR_JUGOFWATER,  SPR_BREAD,      SPR_DOORKNOCKER,    SPR_SMALLSTONE5, SPR_SMALLSTONE3      ; 20
-  EQUB SPR_SMALLSTONE2, SPR_COIN,       SPR_COIN,           SPR_COIN,        SPR_COIN             ; 25
+  EQUB SPR_SMALLSTONE2 ; 25
+.coinstart
+  EQUB SPR_COIN,        SPR_COIN,       SPR_COIN,           SPR_COIN                              ; 26
   EQUB SPR_COIN,        SPR_COIN,       SPR_COIN,           SPR_COIN,        SPR_COIN             ; 30
   EQUB SPR_COIN,        SPR_COIN,       SPR_COIN,           SPR_COIN,        SPR_COIN             ; 35
   EQUB SPR_COIN,        SPR_COIN,       SPR_COIN,           SPR_COIN,        SPR_COIN             ; 40
   EQUB SPR_COIN,        SPR_COIN,       SPR_COIN,           SPR_COIN,        SPR_COIN             ; 45
   EQUB SPR_COIN,        SPR_COIN,       SPR_COIN,           SPR_COIN,        SPR_COIN             ; 50
-  EQUB SPR_COIN,        SPR_WOODENRAIL, SPR_LEAFYBIT1,      SPR_WOODENRAIL,  SPR_WOODENRAIL       ; 55
+  EQUB SPR_COIN                                                                                   ; 55
+.coinend
+  EQUB SPR_WOODENRAIL,  SPR_LEAFYBIT1,  SPR_WOODENRAIL,     SPR_WOODENRAIL                        ; 56
   EQUB SPR_WOODENRAIL,  SPR_WINDOW,     SPR_LEAFYBIT1,      SPR_SHOPKEEPER,  SPR_SHOPKEEPER       ; 60
   EQUB SPR_EGG,         SPR_TROLL,      SPR_EGG,            SPR_EGG,         SPR_RAT              ; 65
   EQUB SPR_GOLDENEGG,   SPR_EGG,        SPR_LARGESTONE2,    SPR_EGG,         SPR_DOZY             ; 70
@@ -6584,6 +6592,9 @@ noofmoving = (((endofmovingdata-movingdata)/movingsize) AND &FF)
 IF (endofmovingdata-movingdata) <> (noofmoving*movingsize)
   ERROR "moving data typed in wrong"
 ENDIF
+
+firstcoin = coinstart-orig_frames
+lastcoin = coinend-orig_frames-1
 
 ; object arrays
 objs_rooms  = &C69E
