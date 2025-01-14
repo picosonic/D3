@@ -2332,7 +2332,7 @@ ORG &190E
 
   LDA #&04
   STA objs_rooms,X
-  CPX #LIFTCONTROLROOM
+  CPX #lastcoin+1
   BCC l2177
 
   LDA &C696,X
