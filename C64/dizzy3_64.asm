@@ -86,7 +86,7 @@ lives = &03B9
 .v03BD
 .v03BE
 .v03BF
-.v03C0 ; Input bitfield
+player_input = &03C0
 .v03C1
 .v03C2
 .v03C3
@@ -1071,7 +1071,7 @@ ORG &190E
   BNE l1915
 
   JSR l3B6D
-  LDA #&36:STA CPU_CONFIG
+  LDA #CASSETTE_OFF+CASSETTE_SWITCH+CHAREN_IO+HIRAM_E000_ROM+LORAM_A000_RAM:STA CPU_CONFIG
   LDA #&0A:STA v0B00
 .l1927
   LDA #&00
@@ -1259,9 +1259,9 @@ ORG &190E
   AND #&20
   BNE l1A96
 
-  LDA &03C0
+  LDA player_input
   EOR #JOY_RIGHT+JOY_LEFT
-  STA &03C0
+  STA player_input
 
 .l1A96
   LDA &03BE
@@ -1274,13 +1274,13 @@ ORG &190E
   CMP #&19
   BCS l1AD2
 
-  LDA &03C0
+  LDA player_input
   AND #JOY_RIGHT+JOY_LEFT
   BEQ l1AB4
 
-  LDA &03C0
+  LDA player_input
   EOR #JOY_RIGHT+JOY_LEFT
-  STA &03C0
+  STA player_input
 .l1AB4
   JSR l3257
 
@@ -1291,15 +1291,15 @@ ORG &190E
   JSR l326A
 
   AND #JOY_UP
-  ORA &03C0
-  STA &03C0
+  ORA player_input
+  STA player_input
 
   JSR l326A
 
   ASL A
   AND #JOY_RIGHT+JOY_LEFT
-  ORA &03C0
-  STA &03C0
+  ORA player_input
+  STA player_input
 .l1AD2
   NOP
   NOP
@@ -1358,7 +1358,7 @@ ORG &190E
   AND #&40
   BEQ l1B1D
 
-  LDA &03C0
+  LDA player_input
   AND #JOY_RIGHT+JOY_LEFT+JOY_UP
   BNE l1B48
 
@@ -1383,18 +1383,18 @@ ORG &190E
   JMP l1AD9
 
 .l1B63
-  LDA #JOY_NONE:STA &03C0
+  LDA #JOY_NONE:STA player_input
 .l1B68
   ; Is it >= 2
   LDA &03C8
   CMP #&02
   BCS l1B95
 
-  LDA &03C0
+  LDA player_input
   AND #JOY_LEFT
   BNE l1B80
 
-  LDA &03C0
+  LDA player_input
   AND #JOY_RIGHT
   BNE l1B90
 
@@ -1426,14 +1426,14 @@ ORG &190E
   CMP #&02
   BEQ l1BCD
 
-  LDA &03C0
+  LDA player_input
   AND #JOY_UP
   BNE l1BAD
 
   JMP l1B9C
 
 .l1BAD
-  LDA &03C0
+  LDA player_input
   AND #JOY_RIGHT+JOY_LEFT+JOY_DOWN+JOY_UP
   CMP #JOY_UP
   BNE l1BBE
@@ -1897,7 +1897,7 @@ ORG &190E
   STA &03C7
   STA &03C8
 
-  LDA #JOY_LEFT+JOY_UP:STA &03C0
+  LDA #JOY_LEFT+JOY_UP:STA player_input
   JMP l1B68
 
 .l1ECC
@@ -1949,7 +1949,7 @@ ORG &190E
   STA &03C7
   STA &03C8
 
-  LDA #JOY_LEFT+JOY_UP:STA &03C0
+  LDA #JOY_LEFT+JOY_UP:STA player_input
   LDA #CASTLEDUNGEONROOM:STA &C6D5
   JMP l1B68
 
@@ -1967,11 +1967,11 @@ ORG &190E
   JMP l1F50
 
 .l1F48
-  LDA &03C0
+  LDA player_input
   AND #&EF ; ????
-  STA &03C0
+  STA player_input
 .l1F50
-  LDA &03C0
+  LDA player_input
   AND #JOY_FIRE
   BNE l1F5A
 
@@ -2368,7 +2368,7 @@ ORG &190E
   JSR l31D6
 .l21E1
   JSR l33AA
-  LDA &03C0
+  LDA player_input
   AND #JOY_FIRE+JOY_RIGHT+JOY_LEFT
   BEQ l21E1
 
@@ -2388,7 +2388,7 @@ ORG &190E
 .l2202
   LDA #&03
   JSR l3A71
-  LDA &03C0
+  LDA player_input
   AND #JOY_LEFT
   BEQ l221B
 
@@ -2582,7 +2582,7 @@ ORG &190E
   STA &03C7
   STA &03C8
 
-  LDA #JOY_LEFT+JOY_UP:STA &03C0
+  LDA #JOY_LEFT+JOY_UP:STA player_input
   JMP l1B68
 
 .l2365
@@ -5114,20 +5114,20 @@ ORG &2B32
   LDA CIA1_PRA ; Read Joystick 2 state
   EOR #&FF ; Make bitfield active high
   AND #%00011111 ; Mask to just Joystick 2
-  STA &03C0
+  STA player_input
 
   JSR l3541
 
   LDA &03D8
   AND #&10 ; Joystick button pressed ?
-  AND &03C0
+  AND player_input
   BEQ l33CA
 
-  LDA &03C0:AND #&0F:STA &03C0 ; Clear FIRE button state
+  LDA player_input:AND #&0F:STA player_input ; Clear FIRE button state
   RTS
 
 .l33CA
-  LDA &03C0:STA &03D8
+  LDA player_input:STA &03D8
 
   RTS
 }
@@ -5327,7 +5327,7 @@ ORG &2B32
   ; check last pressed key
   LDY KEY_PRESSED
   LDX &028D
-  LDA &03C0
+  LDA player_input
   CPY #&0C ; matrix code for 'Z'
   BNE l3552
 
@@ -5350,7 +5350,7 @@ ORG &2B32
 
   ORA #JOY_FIRE
 .l3564
-  STA &03C0
+  STA player_input
 
   RTS
 }
@@ -5359,7 +5359,7 @@ ORG &2B32
 .l3568
 {
   SEI
-  LDA #&34:STA CPU_CONFIG
+  LDA #CASSETTE_OFF+CASSETTE_SWITCH+CHAREN_IO+HIRAM_E000_RAM+LORAM_A000_RAM:STA CPU_CONFIG
   LDY #&00
   LDA (&05),Y
   INC &05
@@ -5381,10 +5381,10 @@ ORG &2B32
 
   ; Change memory configuration (with interrupts off)
   SEI
-  LDA #&34:STA CPU_CONFIG
+  LDA #CASSETTE_OFF+CASSETTE_SWITCH+CHAREN_IO+HIRAM_E000_RAM+LORAM_A000_RAM:STA CPU_CONFIG
   LDA &D148,X:STA &05
   LDA &D149,X:STA &06
-  LDA #&36:STA CPU_CONFIG
+  LDA #CASSETTE_OFF+CASSETTE_SWITCH+CHAREN_IO+HIRAM_E000_ROM+LORAM_A000_RAM:STA CPU_CONFIG
   CLI
 
 .l3596
@@ -5436,7 +5436,7 @@ ORG &2B32
 .l35CC
   JSR l33AA
 
-  LDA &03C0
+  LDA player_input
   AND #JOY_FIRE
   BNE l35CC
 
@@ -5611,7 +5611,7 @@ ORG &2B32
   TAX
 
   SEI
-  LDA #&34:STA CPU_CONFIG
+  LDA #CASSETTE_OFF+CASSETTE_SWITCH+CHAREN_IO+HIRAM_E000_RAM+LORAM_A000_RAM:STA CPU_CONFIG
   CPX #&08
   BNE l372A
 
@@ -5631,7 +5631,7 @@ ORG &2B32
   LDA &D0CB,X
 .l3732
   STA &06
-  LDA #&36:STA CPU_CONFIG
+  LDA #CASSETTE_OFF+CASSETTE_SWITCH+CHAREN_IO+HIRAM_E000_ROM+LORAM_A000_RAM:STA CPU_CONFIG
   CLI
 
   LDA &06
@@ -5749,10 +5749,10 @@ ORG &2B32
 
   ; Get pointer to room name
   SEI
-  LDA #&34:STA CPU_CONFIG
+  LDA #CASSETTE_OFF+CASSETTE_SWITCH+CHAREN_IO+HIRAM_E000_RAM+LORAM_A000_RAM:STA CPU_CONFIG
   LDA roomnames,X:STA &05
   LDA roomnames+1,X:STA &06
-  LDA #&36:STA CPU_CONFIG
+  LDA #CASSETTE_OFF+CASSETTE_SWITCH+CHAREN_IO+HIRAM_E000_ROM+LORAM_A000_RAM:STA CPU_CONFIG
   CLI
 
   ; Set starting X position
@@ -6305,7 +6305,7 @@ ORG &3B00
 
   LDA #&1B:STA GFX_VICII_REG1 ; rst8|ecm|bmm|DEN|RSEL|YSCROLL - Bitmap
   LDA #&15:STA GFX_MEM_PTR
-  LDA #&37:STA CPU_CONFIG
+  LDA #CASSETTE_OFF+CASSETTE_SWITCH+CHAREN_IO+HIRAM_E000_ROM+LORAM_A000_ROM:STA CPU_CONFIG
 
   RTS
 }
