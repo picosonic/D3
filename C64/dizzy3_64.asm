@@ -1,43 +1,12 @@
 INCLUDE "consts.asm"
 INCLUDE "sprites.asm"
-
-; VIC-II = &D000 .. &D3FF
-
-SPR_MSB_X = &D010
-GFX_VICII_REG1 = &D011
-GFX_RASTER_LINE = &D012
-SPR_ENABLE = &D015
-GFX_VICII_REG2 = &D016
-SPR_Y_EXP = &D017
-GFX_MEM_PTR = &D018
-SPR_PRIORITY = &D01B
-SPR_MULTICOLOUR = &D01C
-SPR_X_EXP = &D01D
-SPR_COLLISION = &D01E ; Sprite-sprite collision
-SPR_COLLISION2 = &D01F ; Sprite-data collision
-GFX_BORDER_COLOUR = &D020
-SPR_MULTICOLOUR_01 = &D025
-SPR_MULTICOLOUR_11 = &D026
-SPR_0_COLOUR = &D027
-
-; SID (audio) = &D400 .. &D7FF
-
-CIA1_PRA = &DC00
-CIA2_PRA = &DD00
-
-JOY_UP    = %00000001
-JOY_DOWN  = %00000010
-JOY_LEFT  = %00000100
-JOY_RIGHT = %00001000
-JOY_FIRE  = %00010000
+INCLUDE "hardware.asm"
 
 ORG &00
 
 .c64start
 
 ; Variables
-.v0001 ; processor port (mem config)
-
 .v0005 ; int to float routine
 .v0006
 
@@ -59,8 +28,6 @@ ORG &00
 .v00B4 ; pointer (BA83 / A779 / BA81) - FRAMEDATA
 .v00B5
 
-.v00C5 ; previously pressed key
-
 .v00FB ; pointer (73BE / 726E / 60E4 / 7787 / 72ED) - SCREEN RAM
 .v00FC
 
@@ -69,12 +36,10 @@ ORG &00
 
 .v00FF
 
-.v0314 ; ISR lo
-.v0315 ; ISR hi
-
 .v0339 ; []
 .v033A ; X position
 .v033B ; Y position
+; Vars in datasette buffer
 .v033C ; attrib
 .v033D
 .v033E
@@ -121,7 +86,7 @@ lives = &03B9
 .v03BD
 .v03BE
 .v03BF
-.v03C0 ; input bitfield ?
+.v03C0 ; Input bitfield
 .v03C1
 .v03C2
 .v03C3
@@ -1106,7 +1071,7 @@ ORG &190E
   BNE l1915
 
   JSR l3B6D
-  LDA #&36:STA &01
+  LDA #&36:STA CPU_CONFIG
   LDA #&0A:STA v0B00
 .l1927
   LDA #&00
@@ -1295,7 +1260,7 @@ ORG &190E
   BNE l1A96
 
   LDA &03C0
-  EOR #&0C
+  EOR #JOY_RIGHT+JOY_LEFT
   STA &03C0
 
 .l1A96
@@ -1310,11 +1275,11 @@ ORG &190E
   BCS l1AD2
 
   LDA &03C0
-  AND #&0C
+  AND #JOY_RIGHT+JOY_LEFT
   BEQ l1AB4
 
   LDA &03C0
-  EOR #&0C
+  EOR #JOY_RIGHT+JOY_LEFT
   STA &03C0
 .l1AB4
   JSR l3257
@@ -1325,14 +1290,14 @@ ORG &190E
 
   JSR l326A
 
-  AND #&01
+  AND #JOY_UP
   ORA &03C0
   STA &03C0
 
   JSR l326A
 
   ASL A
-  AND #&0C
+  AND #JOY_RIGHT+JOY_LEFT
   ORA &03C0
   STA &03C0
 .l1AD2
@@ -1394,7 +1359,7 @@ ORG &190E
   BEQ l1B1D
 
   LDA &03C0
-  AND #&0D
+  AND #JOY_RIGHT+JOY_LEFT+JOY_UP
   BNE l1B48
 
   LDA #&00
@@ -1418,7 +1383,7 @@ ORG &190E
   JMP l1AD9
 
 .l1B63
-  LDA #&00:STA &03C0
+  LDA #JOY_NONE:STA &03C0
 .l1B68
   ; Is it >= 2
   LDA &03C8
@@ -1426,11 +1391,11 @@ ORG &190E
   BCS l1B95
 
   LDA &03C0
-  AND #&04
+  AND #JOY_LEFT
   BNE l1B80
 
   LDA &03C0
-  AND #&08
+  AND #JOY_RIGHT
   BNE l1B90
 
   JMP l1B95
@@ -1462,15 +1427,15 @@ ORG &190E
   BEQ l1BCD
 
   LDA &03C0
-  AND #&01
+  AND #JOY_UP
   BNE l1BAD
 
   JMP l1B9C
 
 .l1BAD
   LDA &03C0
-  AND #&0F
-  CMP #&01
+  AND #JOY_RIGHT+JOY_LEFT+JOY_DOWN+JOY_UP
+  CMP #JOY_UP
   BNE l1BBE
 
   LDA #&00
@@ -1932,7 +1897,7 @@ ORG &190E
   STA &03C7
   STA &03C8
 
-  LDA #&05:STA &03C0
+  LDA #JOY_LEFT+JOY_UP:STA &03C0
   JMP l1B68
 
 .l1ECC
@@ -1984,7 +1949,7 @@ ORG &190E
   STA &03C7
   STA &03C8
 
-  LDA #&05:STA &03C0
+  LDA #JOY_LEFT+JOY_UP:STA &03C0
   LDA #CASTLEDUNGEONROOM:STA &C6D5
   JMP l1B68
 
@@ -2003,11 +1968,11 @@ ORG &190E
 
 .l1F48
   LDA &03C0
-  AND #&EF
+  AND #&EF ; ????
   STA &03C0
 .l1F50
   LDA &03C0
-  AND #&10
+  AND #JOY_FIRE
   BNE l1F5A
 
   JMP l24A0
@@ -2404,10 +2369,10 @@ ORG &190E
 .l21E1
   JSR l33AA
   LDA &03C0
-  AND #&1C
+  AND #JOY_FIRE+JOY_RIGHT+JOY_LEFT
   BEQ l21E1
 
-  AND #&10
+  AND #JOY_FIRE
   BEQ l2202
 
   LDX &03D9
@@ -2424,7 +2389,7 @@ ORG &190E
   LDA #&03
   JSR l3A71
   LDA &03C0
-  AND #&04
+  AND #JOY_LEFT
   BEQ l221B
 
   DEC &03D9
@@ -2617,7 +2582,7 @@ ORG &190E
   STA &03C7
   STA &03C8
 
-  LDA #&05:STA &03C0
+  LDA #JOY_LEFT+JOY_UP:STA &03C0
   JMP l1B68
 
 .l2365
@@ -3822,10 +3787,8 @@ ORG &2B32
 {
   SEI
 
-  LDA #lo(isr_routine)
-  STA &0314 ; ISR
-  LDA #hi(isr_routine)
-  STA &0315 ; ISR
+  LDA #lo(isr_routine):STA ISR
+  LDA #hi(isr_routine):STA ISR+1
 
   LDA #&00
   STA v2B48
@@ -3853,7 +3816,7 @@ ORG &2B32
   JSR l0B01
 
 .done
-  JMP &EA31 ; KERNAL ISR
+  JMP KERNAL_ISR
 }
 
 ; Draw frame/sprite
@@ -5148,9 +5111,9 @@ ORG &2B32
 
 .l33AA
 {
-  LDA CIA1_PRA ; Read inputs
-  EOR #&FF
-  AND #&1F
+  LDA CIA1_PRA ; Read Joystick 2 state
+  EOR #&FF ; Make bitfield active high
+  AND #%00011111 ; Mask to just Joystick 2
   STA &03C0
 
   JSR l3541
@@ -5160,7 +5123,7 @@ ORG &2B32
   AND &03C0
   BEQ l33CA
 
-  LDA &03C0:AND #&0F:STA &03C0
+  LDA &03C0:AND #&0F:STA &03C0 ; Clear FIRE button state
   RTS
 
 .l33CA
@@ -5362,30 +5325,30 @@ ORG &2B32
 .l3541
 {
   ; check last pressed key
-  LDY &C5
+  LDY KEY_PRESSED
   LDX &028D
   LDA &03C0
   CPY #&0C ; matrix code for 'Z'
   BNE l3552
 
-  ORA #&04 ; Set bit 2
+  ORA #JOY_LEFT
   JMP l3558
 
 .l3552
   CPY #&17 ; matrix code for 'X'
   BNE l3558
 
-  ORA #&08 ; Set bit 3
+  ORA #JOY_RIGHT
 .l3558
   CPX #&00
   BEQ l355E
 
-  ORA #&01 ; Set bit 0
+  ORA #JOY_UP
 .l355E
   CPY #&01 ; matrix code for 'Return'
   BNE l3564
 
-  ORA #&10 ; Set bit 4
+  ORA #JOY_FIRE
 .l3564
   STA &03C0
 
@@ -5396,7 +5359,7 @@ ORG &2B32
 .l3568
 {
   SEI
-  LDA #&34:STA &01
+  LDA #&34:STA CPU_CONFIG
   LDY #&00
   LDA (&05),Y
   INC &05
@@ -5418,10 +5381,10 @@ ORG &2B32
 
   ; Change memory configuration (with interrupts off)
   SEI
-  LDA #&34:STA &01
+  LDA #&34:STA CPU_CONFIG
   LDA &D148,X:STA &05
   LDA &D149,X:STA &06
-  LDA #&36:STA &01
+  LDA #&36:STA CPU_CONFIG
   CLI
 
 .l3596
@@ -5474,7 +5437,7 @@ ORG &2B32
   JSR l33AA
 
   LDA &03C0
-  AND #&10
+  AND #JOY_FIRE
   BNE l35CC
 
 .l35D6
@@ -5648,7 +5611,7 @@ ORG &2B32
   TAX
 
   SEI
-  LDA #&34:STA &01
+  LDA #&34:STA CPU_CONFIG
   CPX #&08
   BNE l372A
 
@@ -5668,7 +5631,7 @@ ORG &2B32
   LDA &D0CB,X
 .l3732
   STA &06
-  LDA #&36:STA &01
+  LDA #&36:STA CPU_CONFIG
   CLI
 
   LDA &06
@@ -5786,10 +5749,10 @@ ORG &2B32
 
   ; Get pointer to room name
   SEI
-  LDA #&34:STA &01
+  LDA #&34:STA CPU_CONFIG
   LDA roomnames,X:STA &05
   LDA roomnames+1,X:STA &06
-  LDA #&36:STA &01
+  LDA #&36:STA CPU_CONFIG
   CLI
 
   ; Set starting X position
@@ -6280,7 +6243,7 @@ ORG &3B00
   LDX #&00
 .l3B02
   ; check last key pressed
-  LDA &C5
+  LDA KEY_PRESSED
   CMP &3AE9,X
   BEQ l3B0A
 
@@ -6288,7 +6251,7 @@ ORG &3B00
 
 .l3B0A
   ; check last key pressed
-  LDA &C5
+  LDA KEY_PRESSED
   CMP &3AE9,X
   BEQ l3B0A
 
@@ -6342,7 +6305,7 @@ ORG &3B00
 
   LDA #&1B:STA GFX_VICII_REG1 ; rst8|ecm|bmm|DEN|RSEL|YSCROLL - Bitmap
   LDA #&15:STA GFX_MEM_PTR
-  LDA #&37:STA &01
+  LDA #&37:STA CPU_CONFIG
 
   RTS
 }
@@ -6638,6 +6601,8 @@ obj_liftbottom     = 102
 obj_daisy          = 103
 obj_dragonhead     = 114
 
+; Upper RAM area
+
 ; Live set of objects (copied from C400)
 ; room[] array
 ;.vC69E ; bag
@@ -6729,7 +6694,6 @@ obj_dragonhead     = 114
 ;.vC928 ; dragonhead
 
 .vCFF8
-
 
 ORG &D000
 ; String table pointers

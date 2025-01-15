@@ -1,3 +1,12 @@
+; Input related
+
+JOY_NONE  = %00000000
+JOY_UP    = %00000001
+JOY_DOWN  = %00000010
+JOY_LEFT  = %00000100
+JOY_RIGHT = %00001000
+JOY_FIRE  = %00010000
+
 ; Graphics related
 
 PAL_BLACK = 0
