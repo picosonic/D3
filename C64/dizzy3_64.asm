@@ -1908,8 +1908,8 @@ ORG &190E
 
   ; Make shopkeeper appear
   LDA #MARKETSQUAREROOM
-  STA &C6DD
-  STA &C6DE
+  STA objs_rooms+obj_shopkeeper
+  STA objs_rooms+obj_shopkeeper+1
 
   LDA #OFFMAP:STA &C6DF
 
@@ -2431,8 +2431,8 @@ ORG &190E
 
   ; Hide shopkeeper
   LDA #OFFMAP
-  STA &C6DD
-  STA &C6DE
+  STA objs_rooms+obj_shopkeeper
+  STA objs_rooms+obj_shopkeeper+1
 
   LDA #&04
   JSR l357D
@@ -2498,16 +2498,18 @@ ORG &190E
   JSR l39D4
   BCC l2272
 
-  LDA &C7F5
+  LDA objs_ylocs+obj_water
   SEC
   SBC #&05
-  STA &C7F5
-  STA &C7F6
-  STA &C7F7
-  LDA &C7F8
+  STA objs_ylocs+obj_water
+  STA objs_ylocs+obj_water+1
+  STA objs_ylocs+obj_water+2
+
+  LDA objs_ylocs+obj_pontoon
   SEC
   SBC #&05
-  STA &C7F8
+  STA objs_ylocs+obj_pontoon
+
   JSR l29C1
   LDA #&1A
   JSR l357D
@@ -5693,7 +5695,7 @@ ORG &2B32
 {
   JSR l374F
   LDX #&37
-  LDA &C69E
+  LDA objs_rooms+obj_bag
   CMP #&04
   BNE l3784
 
@@ -5703,7 +5705,7 @@ ORG &2B32
   JSR l357D
 
   LDY #&58
-  LDA &C69E
+  LDA objs_rooms+obj_bag
   CMP #&04
   BNE l3793
 
@@ -6164,7 +6166,7 @@ ORG &2B32
   LDA &1897,X:STA &033C
 
   LDA #&0B
-  LDX &C69E
+  LDX objs_rooms+obj_bag
   CPX #&04
   BNE l3A83
 
@@ -6583,10 +6585,13 @@ obj_brandy         = 19
 obj_jugofwater     = 20
 obj_bread          = 21
 obj_doorknocker    = 22
+obj_shopkeeper     = 63
 obj_troll          = 66
 obj_rat            = 69
 obj_goldenegg2     = 70
 obj_dozy           = 74
+obj_water          = 75
+obj_pontoon        = 78
 obj_hawk           = 80
 obj_grunt          = 81
 obj_switch         = 83
@@ -6621,8 +6626,8 @@ obj_dragonhead     = 114
 ;.vC6B3 ; bread
 ;.vC6B4 ; doorknocker
 .vC6D5 ; (last coin)
-.vC6DD ; shopkeeper
-.vC6DE ; shopkeeper
+;.vC6DD ; shopkeeper
+;.vC6DE ; shopkeeper
 .vC6DF ; egg
 ;.vC6E0 ; troll
 .vC6E1 ; egg
@@ -6656,10 +6661,10 @@ obj_dragonhead     = 114
 ;.vC7BF ; bread
 ;.vC7EC ; troll
 ;.vC7F4 ; dozy
-.vC7F5 ; 75 these 3 are "water" ?
-.vC7F6 ; 76
-.vC7F7 ; 77
-.vC7F8 ; wood2
+;.vC7F5 ; 75 these 3 are "water" ?
+;.vC7F6 ; 76
+;.vC7F7 ; 77
+;.vC7F8 ; wood2 (pontoon / bridge)
 ;.vC7FA ; hawk
 ;.vC7FE ; portcullis
 ;.vC80F ; lifttop
