@@ -2498,6 +2498,7 @@ ORG &190E
   JSR l39D4
   BCC l2272
 
+  ; Raise the water by 5 pixels
   LDA objs_ylocs+obj_water
   SEC
   SBC #&05
@@ -2505,6 +2506,7 @@ ORG &190E
   STA objs_ylocs+obj_water+1
   STA objs_ylocs+obj_water+2
 
+  ; Raise the pontoon by 5 pixels
   LDA objs_ylocs+obj_pontoon
   SEC
   SBC #&05
