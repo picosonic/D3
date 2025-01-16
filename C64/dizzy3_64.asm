@@ -36,7 +36,6 @@ ORG &00
 
 .v00FF
 
-.v0339 ; []
 .v033A ; X position
 .v033B ; Y position
 ; Vars in datasette buffer
@@ -70,8 +69,8 @@ dizzyy = &035C
 .v036A
 .v036B
 .v0370 ; []
-.v037A ; []
-.v0384 ; []
+.v037A ; [] related to dizzyy
+.v0384 ; [] related to dizzyx
 .v0398
 .v0399
 .v039A
@@ -1063,12 +1062,14 @@ ORG &190E
 
 .l190E
   JSR l2B32
+
+  ; Zero-out &033A to &03FF
   LDX #&C6
   LDA #&00
-.l1915
-  STA &0339,X
+.zerovar_loop
+  STA &033A-1,X
   DEX
-  BNE l1915
+  BNE zerovar_loop
 
   JSR l3B6D
   LDA #CASSETTE_OFF+CASSETTE_SWITCH+CHAREN_IO+HIRAM_E000_ROM+LORAM_A000_RAM:STA CPU_CONFIG
@@ -5188,9 +5189,9 @@ ORG &2B32
 .l3440
 {
   LDX #&05:STX &0346
-.l3445
-  LDX #&02
 .loop
+  LDX #&02
+.innerloop
   STX &034E
 
   LDA dizzyx,X
@@ -5206,12 +5207,12 @@ ORG &2B32
   INX
   ; Is it < 6
   CPX #&06
-  BCC loop
+  BCC innerloop
 
   LDA #&08
   JSR l31D6
   DEC &0346
-  BNE l3445
+  BNE loop
 
   RTS
 }
