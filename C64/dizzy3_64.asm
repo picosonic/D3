@@ -1887,8 +1887,8 @@ ORG &190E
   CMP #&02
   BEQ l1ECC
 
-  LDX #&43
-  JSR l39D4
+  LDX #&43 ; egg, room 36, 80x160
+  JSR collidewithdizzy
   BCC l1ECC
 
   LDA #&26
@@ -1903,7 +1903,7 @@ ORG &190E
 
 .l1ECC
   LDX #&41
-  JSR l39D4
+  JSR collidewithdizzy
   BCC l1EE8
 
   ; Make shopkeeper appear
@@ -2030,8 +2030,8 @@ ORG &190E
   LDX #&FF
   STX &18DE
 .l1FB3
-  LDX #&5E
-  JSR l39D4
+  LDX #obj_denzil
+  JSR collidewithdizzy
   BCC l1FD1
 
   ; Check rope
@@ -2051,7 +2051,7 @@ ORG &190E
 
 .l1FD1
   LDX #&55
-  JSR l39D4
+  JSR collidewithdizzy
   BCC l1FE0
 
   LDA #&12
@@ -2059,8 +2059,8 @@ ORG &190E
   JMP l24A0
 
 .l1FE0
-  LDX #&53
-  JSR l39D4
+  LDX #obj_switch
+  JSR collidewithdizzy
   BCC l1FFB
 
   ; Check if portcullis switch has been activated
@@ -2075,8 +2075,8 @@ ORG &190E
   JMP l24A0
 
 .l1FFB
-  LDX #&4A
-  JSR l39D4
+  LDX #obj_dozy
+  JSR collidewithdizzy
   BCC l202B
 
   ; Check sleeping potion
@@ -2114,7 +2114,7 @@ ORG &190E
   BEQ l2048
 
   LDX #&44
-  JSR l39D4
+  JSR collidewithdizzy
   BCC l2048
 
   LDA #&20
@@ -2123,7 +2123,7 @@ ORG &190E
 
 .l2048
   LDX #&63
-  JSR l39D4
+  JSR collidewithdizzy
   BCC l2066
 
   ; Check crowbar
@@ -2141,8 +2141,8 @@ ORG &190E
   JMP l24A0
 
 .l2066
-  LDX #&5C
-  JSR l39D4
+  LDX #obj_dylan
+  JSR collidewithdizzy
   BCC l2084
 
   ; Check Dylan orientation
@@ -2160,8 +2160,8 @@ ORG &190E
   JMP l24A0
 
 .l2084
-  LDX #&64
-  JSR l39D4
+  LDX #obj_switch2
+  JSR collidewithdizzy
   BCC l20CE
 
   ; Check switch in Daisy's prison
@@ -2203,8 +2203,8 @@ ORG &190E
   JMP l24A0
 
 .l20CE
-  LDX #&46
-  JSR l39D4
+  LDX #obj_goldenegg2
+  JSR collidewithdizzy
   BCC l20E2
 
   LDX #obj_goldenegg2
@@ -2412,8 +2412,8 @@ ORG &190E
   JMP l21D7
 
 .l222E
-  LDX #&3F
-  JSR l39D4
+  LDX #obj_shopkeeper
+  JSR collidewithdizzy
   BCC l225C
 
   LDA &03D9
@@ -2443,8 +2443,8 @@ ORG &190E
   CMP #&12
   BNE l2275
 
-  LDX #&42
-  JSR l39D4
+  LDX #obj_troll
+  JSR collidewithdizzy
   BCC l2272
 
   JSR l29C1
@@ -2458,7 +2458,7 @@ ORG &190E
   BNE l2295
 
   LDX #&44
-  JSR l39D4
+  JSR collidewithdizzy
   BCC l2272
 
   JSR l29C1
@@ -2474,8 +2474,8 @@ ORG &190E
   CMP #&10
   BNE l22B0
 
-  LDX #&56
-  JSR l39D4
+  LDX #obj_croc
+  JSR collidewithdizzy
   BCC l2272
 
   JSR l29C1
@@ -2495,7 +2495,7 @@ ORG &190E
   BCS l22E2
 
   LDX #&4F
-  JSR l39D4
+  JSR collidewithdizzy
   BCC l2272
 
   ; Raise the water by 5 pixels
@@ -2526,7 +2526,7 @@ ORG &190E
   BNE l2307
 
   LDX #&44
-  JSR l39D4
+  JSR collidewithdizzy
   BCC l2304
 
   JSR l29C1
@@ -2546,7 +2546,7 @@ ORG &190E
   BNE l2324
 
   LDX #&52
-  JSR l39D4
+  JSR collidewithdizzy
   BCC l2304
 
   LDA #&17
@@ -2559,8 +2559,8 @@ ORG &190E
   CMP #&03
   BNE l233F
 
-  LDX #&57
-  JSR l39D4
+  LDX #obj_wood
+  JSR collidewithdizzy
   BCC l2304
 
   JSR l29C1
@@ -2573,8 +2573,8 @@ ORG &190E
   CMP #&01
   BNE l2365
 
-  LDX #&02
-  JSR l39D4
+  LDX #obj_manure
+  JSR collidewithdizzy
   BCC l2304
 
   JSR l29C1
@@ -2604,8 +2604,8 @@ ORG &190E
   CMP #OFFMAP
   BNE l23C5
 
-  LDX #&02
-  JSR l39D4
+  LDX #obj_manure
+  JSR collidewithdizzy
   BCC l23C5
 
   JSR l29C1
@@ -2619,7 +2619,7 @@ ORG &190E
 
 .l238E
   LDX #&5D
-  JSR l39D4
+  JSR collidewithdizzy
   BCC l23C5
 
   ; Set colour of bucket to blue
@@ -2642,7 +2642,7 @@ ORG &190E
   CLC
   ADC #&4C
   TAX
-  JSR l39D4
+  JSR collidewithdizzy
   BCC l23C5
 
   LDA #PAL_WHITE:STA objs_attrs,X
@@ -2657,7 +2657,7 @@ ORG &190E
   BNE l23E0
 
   LDX #&47
-  JSR l39D4
+  JSR collidewithdizzy
   BCC l23C5
 
   LDA #&1E
@@ -2672,7 +2672,7 @@ ORG &190E
   BNE l23FB
 
   LDX #&49
-  JSR l39D4
+  JSR collidewithdizzy
   BCC l23C5
 
   JSR l29C1
@@ -2715,7 +2715,7 @@ ORG &190E
 .l242D
   LDX #&73:STX &03DB
 .l2432
-  JSR l39D4
+  JSR collidewithdizzy
   BCC l243F
 
   LDX #&FF:STX &03D9
@@ -2769,7 +2769,7 @@ ORG &190E
 .l24A5
   LDA &18F8,X
   TAX
-  JSR l39D4
+  JSR collidewithdizzy
   BCC l24B7
 
   LDX &03B7
@@ -2788,8 +2788,8 @@ ORG &190E
   CMP #SPR_CROCOPEN
   BNE l24D4
 
-  LDX #&56
-  JSR l39D4
+  LDX #obj_croc
+  JSR collidewithdizzy
   BCC l24D4
 
   LDA #&31
@@ -2819,8 +2819,8 @@ ORG &190E
   BEQ l24FF
 
 .l24F3
-  LDX #&72
-  JSR l39D4
+  LDX #obj_dragonhead
+  JSR collidewithdizzy
   BCC l24FF
 
   LDA #&2D
@@ -3658,8 +3658,8 @@ ORG &190E
 }
 
 .l2A2E
-  LDX #&67
-  JSR l39D4
+  LDX #obj_daisy
+  JSR collidewithdizzy
   BCS l2A38
 
   JMP l20E5
@@ -3842,7 +3842,8 @@ ORG &2B32
   RTS
 
 .l2B6B
-  JSR l3893
+  ; Get pointer to frame data
+  JSR getframepointer
   BCC l2B71
 
   RTS
@@ -5875,22 +5876,29 @@ ORG &2B32
   RTS
 }
 
-.l3893
+; Get pointer to sprite in &FB, result in &B4/&B5
+.getframepointer
 {
-  LDA #&A5:STA &FC
+  ; Set initial high-byte
+  LDA #hi(frametable):STA &FC
+
+  ; Double low-byte
   LDA &FB
   CLC
   ADC &FB
-  BCC l38A0
+  BCC nooverflow
 
-  INC &FC
-.l38A0
-  STA &FB
+  INC &FC ; Advance high-byte of pointer due to overflow
+.nooverflow
+  STA &FB ; Store result
 
+  ; Fetch frame pointer low-byte
   LDY #&00
   LDA (&FB),Y:STA &B4
+
+  ; Fetch frame pointer high-byte
   INY
-  LDA (&FB),Y:CLC:ADC #&A7:STA &B5
+  LDA (&FB),Y:CLC:ADC #hi(framedefs):STA &B5
 
   RTS
 }
@@ -6076,53 +6084,57 @@ ORG &2B32
   RTS
 }
 
-.l39D4
+.collidewithdizzy
 {
+  ; Check if object[x] is in current room
   LDA objs_rooms,X
   CMP roomno
-  BEQ l39DE
+  BEQ objinroom
 
-.l39DC
-  CLC
+.objelsewhere
+  CLC ; no collision
   RTS
 
-.l39DE
+.objinroom
+  ; Get pointer to frame data
   LDA objs_frames,X:STA &FB
-  JSR l3893
+  JSR getframepointer
 
+  ; Set up hit-detection around Dizzy ??
   LDA dizzyx:CLC:ADC #&21:STA &033A
-
-  CLC:ADC #&04:STA &033C
+  CLC:ADC #&04:STA &033C ; +width ??
 
   LDA dizzyy:CLC:ADC #&2A:STA &033B
+  CLC:ADC #&15:STA &033D ; +height ??
 
-  CLC:ADC #&15:STA &033D
-
+  ; Return if object.x >= dizzy.x (Dizzy to the left)
   LDA objs_xlocs,X
   CMP &033C
-  BCS l39DC
+  BCS objelsewhere
 
+  ; Return if object.x+object.width <= dizzy.x (Dizzy to the right)
   LDY #&00
-  LDA (&B4),Y
+  LDA (&B4),Y ; Get object width
   CLC
-  ADC objs_xlocs,X
+  ADC objs_xlocs,X ; Add object.x
   CMP &033A
-  BCC l39DC
+  BCC objelsewhere
+  BEQ objelsewhere
 
-  BEQ l39DC
-  LDA objs_ylocs,X
+  ; Return if object.y >= dizzy.y (Dizzy above)
+  LDA objs_ylocs,X ; Get object.y
   CMP &033D
-  BCS l39DC
+  BCS objelsewhere
 
+  ; Return if object.y+object.height <= dizzy.y (Dizzy below)
   INY
   CLC
-  ADC (&B4),Y
+  ADC (&B4),Y ; Add object height
   CMP &033B
-  BCC l39DC
+  BCC objelsewhere
+  BEQ objelsewhere
 
-  BEQ l39DC
-
-  SEC
+  SEC ; collision
 
   RTS
 }
@@ -6397,7 +6409,9 @@ INCBIN "roomdata.bin"
   EQUB &0f, &8f, &4f, &cf, &2f, &af, &6f, &ef, &1f, &9f, &5f, &df, &3f, &bf, &7f, &ff
 
 ORG &A500
+.frametable
 INCBIN "frametable.bin"
+.framedefs
 INCBIN "framedefs.bin"
 
 ORG &C400
@@ -6588,21 +6602,32 @@ obj_jugofwater     = 20
 obj_bread          = 21
 obj_doorknocker    = 22
 obj_shopkeeper     = 63
+;= 65 ; egg
 obj_troll          = 66
+;= 67 ; egg
+;= 68 ; egg
 obj_rat            = 69
 obj_goldenegg2     = 70
+;= 71 ; egg
+;= 73 ; egg
 obj_dozy           = 74
 obj_water          = 75
 obj_pontoon        = 78
+;= 79 ; egg
 obj_hawk           = 80
 obj_grunt          = 81
+;= 82 ; egg
 obj_switch         = 83
 obj_portcullis     = 84
+;= 85 ; egg
 obj_croc           = 86
 obj_wood           = 87
 obj_machines       = 88
 obj_dylan          = 92
+;= 93 ; egg
+obj_denzil         = 94
 obj_plank          = 98
+obj_granddizzy     = 99
 obj_switch2        = 100
 obj_lifttop        = 101
 obj_liftbottom     = 102
