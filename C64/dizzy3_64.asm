@@ -1054,7 +1054,20 @@ coins = &18E6
 .v18F0
 .v18F4 ; []
 .v18F8 ; []
-.v1903 ; []
+
+ORG &1903
+.deathmessages ; death message string table offsets []
+  EQUB str_armorogkilledmess
+  EQUB str_killedbyportcullis
+  EQUB str_killedbyliftmess
+  EQUB str_killedbyliftmess
+  EQUB str_killedbyliftmess
+  EQUB str_killedbyliftmess
+  EQUB str_killedbyhawk
+  EQUB str_ratgotyoumess
+  EQUB str_killedbydaggersmess
+  EQUB str_killedbydaggersmess
+  EQUB str_killedbydaggersmess
 
 ; Entry point ??
 
@@ -1111,8 +1124,7 @@ ORG &190E
 
   JSR printroomname
 
-  LDA #&00
-  JSR l357D
+  LDA #str_startmess:JSR prtmessage
 
   JSR l3023
 
@@ -1891,8 +1903,7 @@ ORG &190E
   JSR collidewithdizzy
   BCC l1ECC
 
-  LDA #&26
-  JSR l357D
+  LDA #str_getbackintheremess:JSR prtmessage
 
   LDA #&00
   STA &03C7
@@ -1913,8 +1924,7 @@ ORG &190E
 
   LDA #OFFMAP:STA &C6DF
 
-  LDA #&02
-  JSR l357D
+  LDA #str_shopkeeperappearsmess:JSR prtmessage
   JMP l1F33
 
 .l1EE8
@@ -1943,8 +1953,7 @@ ORG &190E
   LDX #obj_troll
   JSR l29D3
 
-  LDA #&1F
-  JSR l357D
+  LDA #str_goawaymess:JSR prtmessage
 
   LDA #&00
   STA &03C7
@@ -2035,7 +2044,7 @@ ORG &190E
   BCC l1FD1
 
   ; Check rope
-  LDY #&0A
+  LDY #str_stereoess
   LDA objs_rooms+obj_rope
   CMP #&65
   BNE l1FCA
@@ -2043,10 +2052,11 @@ ORG &190E
   ; Make rope appear
   LDA #BANQUETHALLROOM:STA objs_rooms+obj_rope
 
-  LDY #&09
+  LDY #str_denziltalking
 .l1FCA
   TYA
-  JSR l357D
+  JSR prtmessage
+
   JMP l24A0
 
 .l1FD1
@@ -2054,8 +2064,7 @@ ORG &190E
   JSR collidewithdizzy
   BCC l1FE0
 
-  LDA #&12
-  JSR l357D
+  LDA #str_lookatpicturemess:JSR prtmessage
   JMP l24A0
 
 .l1FE0
@@ -2070,8 +2079,8 @@ ORG &190E
 
   ; Activate portcullis switch
   LDA #ATTR_REVERSE+PAL_WHITE:STA objs_attrs+obj_switch
-  LDA #&16
-  JSR l357D
+  LDA #str_throwswitchmess:JSR prtmessage
+
   JMP l24A0
 
 .l1FFB
@@ -2087,7 +2096,7 @@ ORG &190E
   ; Make sleeping potion appear
   LDA #OUTTOSEAROOM:STA objs_rooms+obj_sleepingpotion
 
-  LDY #&05
+  LDY #str_dozytalking
   JMP l2024
 
 .l2013
@@ -2097,10 +2106,11 @@ ORG &190E
   ; Position Dozy
   LDA #&3C:STA objs_xlocs+obj_dozy
   LDA #&86:STA objs_ylocs+obj_dozy
-  LDY #&06
+  LDY #str_kickdozyagainmess
 .l2024
   TYA
-  JSR l357D
+  JSR prtmessage
+
   JMP l24A0
 
 .l202B
@@ -2117,8 +2127,7 @@ ORG &190E
   JSR collidewithdizzy
   BCC l2048
 
-  LDA #&20
-  JSR l357D
+  LDA #str_knockandentermess:JSR prtmessage
   JMP l24A0
 
 .l2048
@@ -2127,17 +2136,18 @@ ORG &190E
   BCC l2066
 
   ; Check crowbar
-  LDY #&10
+  LDY #str_goonmysonmess
   LDA objs_rooms+obj_crowbar
   CMP #&65
   BNE l205F
 
   ; Make crowbar appear
   LDA #LIFTTOELDERSROOM:STA objs_rooms+obj_crowbar
-  LDY #&0F
+  LDY #str_dougtalking
 .l205F
   TYA
-  JSR l357D
+  JSR prtmessage
+
   JMP l24A0
 
 .l2066
@@ -2146,17 +2156,18 @@ ORG &190E
   BCC l2084
 
   ; Check Dylan orientation
-  LDY #&08
+  LDY #str_trancemess
   LDA objs_attrs+obj_dylan
   CMP #PAL_WHITE
   BNE l207D
 
   ; Make Dylan face the other way
   LDA #ATTR_REVERSE+PAL_WHITE:STA objs_attrs+obj_dylan
-  LDY #&07
+  LDY #str_dylantalking
 .l207D
   TYA
-  JSR l357D
+  JSR prtmessage
+
   JMP l24A0
 
 .l2084
@@ -2241,8 +2252,9 @@ ORG &190E
   ; Add reverse flag
   ORA #ATTR_REVERSE
   STA objs_attrs+obj_manure
-  LDA #&15
-  JSR l357D
+
+  LDA #str_pickupmanuremess:JSR prtmessage
+
 .l210E
   LDX #&03
   JMP l1F5C
@@ -2273,8 +2285,8 @@ ORG &190E
   CPX #&3F
   BCC objloop
 
-  LDA #&27
-  JSR l357D
+  LDA #str_holdingholemess:JSR prtmessage
+
   LDA #OFFMAP:STA objs_rooms+obj_blackhole ; Remove blackhole
   JMP l20F1
 
@@ -2327,8 +2339,9 @@ ORG &190E
   LDX &18D9
   STX &03D9
   LDA #OFFMAP:STA objs_rooms,X
-  LDA #&3A
-  JSR l357D
+
+  LDA #str_carryingtoomuchmess:JSR prtmessage
+
 .l21A0
   LDA #&00
   STA SPR_ENABLE
@@ -2349,8 +2362,8 @@ ORG &190E
   JMP l242D
 
 .l21C4
-  LDA #&39
-  JSR l357D
+  LDA #str_selectitemmess:JSR prtmessage
+
 .l21C9
   LDX #&00
 .l21CB
@@ -2420,8 +2433,8 @@ ORG &190E
   CMP #&06
   BEQ l2244
 
-  LDA #&03
-  JSR l357D
+  LDA #str_givingjunkmess:JSR prtmessage
+
   JMP l242D
 
 .l2244
@@ -2434,8 +2447,8 @@ ORG &190E
   STA objs_rooms+obj_shopkeeper
   STA objs_rooms+obj_shopkeeper+1
 
-  LDA #&04
-  JSR l357D
+  LDA #str_thanksforthecowmess:JSR prtmessage
+
   JMP l242D
 
 .l225C
@@ -2448,8 +2461,9 @@ ORG &190E
   BCC l2272
 
   JSR l29C1
-  LDA #&01
-  JSR l357D
+
+  LDA #str_trollgotapplemess:JSR prtmessage
+
 .l2272
   JMP l242D
 
@@ -2462,8 +2476,8 @@ ORG &190E
   BCC l2272
 
   JSR l29C1
-  LDA #&11
-  JSR l357D
+
+  LDA #str_throwwateronfiremess:JSR prtmessage
 
   LDA #CASTLESTAIRCASEROOM:STA &C6E2
   LDA #&24:STA &C768
@@ -2481,8 +2495,9 @@ ORG &190E
   JSR l29C1
   ; Update crocodile animation frame
   LDA #SPR_CROCCLOSED:STA objs_frames+obj_croc
-  LDA #&19
-  JSR l357D
+
+  LDA #str_croctiedmess:JSR prtmessage
+
   JMP l242D
 
 .l22B0
@@ -2513,8 +2528,9 @@ ORG &190E
   STA objs_ylocs+obj_pontoon
 
   JSR l29C1
-  LDA #&1A
-  JSR l357D
+
+  LDA #str_rockinwatermess:JSR prtmessage
+
   JMP l242D
 
 .l22E2
@@ -2536,8 +2552,8 @@ ORG &190E
   STA objs_rooms+obj_plank
   STA &C6E2
 
-  LDA #&21
-  JSR l357D
+  LDA #str_usedoorknockermess:JSR prtmessage
+
 .l2304
   JMP l242D
 
@@ -2549,8 +2565,8 @@ ORG &190E
   JSR collidewithdizzy
   BCC l2304
 
-  LDA #&17
-  JSR l357D
+  LDA #str_fedarmorog:JSR prtmessage
+
   LDA #ATTR_REVERSE+PAL_WHITE:STA objs_attrs+obj_bone
   LDA #OFFMAP:STA &C6F0
   JMP l242D
@@ -2565,8 +2581,9 @@ ORG &190E
 
   JSR l29C1
   LDA #OFFMAP:STA objs_rooms+obj_wood
-  LDA #&22
-  JSR l357D
+
+  LDA #str_usecrowbarmess:JSR prtmessage
+
   JMP l242D
 
 .l233F
@@ -2578,8 +2595,9 @@ ORG &190E
   BCC l2304
 
   JSR l29C1
-  LDA #&14
-  JSR l357D
+
+  LDA #str_plantbeanmess:JSR prtmessage
+
   JMP l242D
 
 .l2355
@@ -2613,8 +2631,8 @@ ORG &190E
   ; ?? put beanstalk in allotment ??
   LDA #ALLOTMENTROOM:STA &C721
 
-  LDA #&13
-  JSR l357D
+  LDA #str_throwwateronbeanmess:JSR prtmessage
+
   JMP l2355
 
 .l238E
@@ -2626,8 +2644,8 @@ ORG &190E
   LDA #PAL_BLUE:STA objs_attrs+obj_bucket
   LDA #&FF:STA &03D9
 
-  LDA #&1C
-  JSR l357D
+  LDA #str_fillbucketmess:JSR prtmessage
+
   JMP l242D
 
 .l23A7
@@ -2647,8 +2665,9 @@ ORG &190E
 
   LDA #PAL_WHITE:STA objs_attrs,X
   JSR l29C1
-  LDA #&1B
-  JSR l357D
+
+  LDA #str_keyinmachine:JSR prtmessage
+
 .l23C5
   JMP l242D
 
@@ -2660,8 +2679,7 @@ ORG &190E
   JSR collidewithdizzy
   BCC l23C5
 
-  LDA #&1E
-  JSR l357D
+  LDA #str_puteggbackmess:JSR prtmessage
 
   ; Flip golden egg
   LDA #ATTR_REVERSE+PAL_YELLOW:STA objs_attrs+obj_goldenegg
@@ -2679,8 +2697,8 @@ ORG &190E
 
   LDA #OFFMAP:STA &C6E6
 
-  LDA #&23
-  JSR l357D
+  LDA #str_usepickaxemess:JSR prtmessage
+
   JMP l242D
 
 .l23FB
@@ -2695,8 +2713,9 @@ ORG &190E
   STA &C709
 
   JSR l29C1
-  LDA #&25
-  JSR l357D
+
+  LDA #str_userugmess:JSR prtmessage
+
   JMP l242D
 
 .l2417
@@ -2708,8 +2727,9 @@ ORG &190E
   BNE l242D
 
   JSR l29C1
-  LDA #&18
-  JSR l357D
+
+  LDA #str_dragonasleepmess:JSR prtmessage
+
   JMP l242D
 
 .l242D
@@ -2734,8 +2754,9 @@ ORG &190E
   BNE l245B
 
   JSR l29C1
-  LDA #&28
-  JSR l357D
+
+  LDA #str_dropwhiskeymess:JSR prtmessage
+
   JMP l24A0
 
 .l245B
@@ -2772,8 +2793,8 @@ ORG &190E
   JSR collidewithdizzy
   BCC l24B7
 
-  LDX &03B7
-  LDA &1903,X
+  LDX &03B7 ; offset
+  LDA deathmessages,X
   JMP l2572
 
 .l24B7
@@ -2792,7 +2813,7 @@ ORG &190E
   JSR collidewithdizzy
   BCC l24D4
 
-  LDA #&31
+  LDA #str_croceatenmess
   JMP l2572
 
 .l24D4
@@ -2823,7 +2844,7 @@ ORG &190E
   JSR collidewithdizzy
   BCC l24FF
 
-  LDA #&2D
+  LDA #str_dragonkilledmess
   JMP l2572
 
 .l24FF
@@ -2850,7 +2871,7 @@ ORG &190E
   CMP &03BA
   BCS l2527
 
-  LDA #&2E
+  LDA #str_dragonflameskilledmess
   JMP l2572
 
 .l2527
@@ -2881,7 +2902,7 @@ ORG &190E
   AND #&20
   BEQ l2560
 
-  LDA #&2F
+  LDA #str_killedbyflame
   JMP l2572
 
 .l2560
@@ -2889,12 +2910,12 @@ ORG &190E
   AND #&10
   BEQ l25C7
 
-  LDA #&34
+  LDA #str_killedbyvolcano
   LDY roomno
   CPY #ACTIVEVOLCANOROOM
   BEQ l2572
 
-  LDA #&30
+  LDA #str_killedbywater
 .l2572
   STA &03B7
   CMP #&35
@@ -2914,10 +2935,14 @@ ORG &190E
 .l258A
   LDA #&04:STA v0B00
   JSR l34E2
-  LDA #&29
-  JSR l357D
+
+  ; You lose a life ...
+  LDA #str_deadwindow:JSR prtmessage
+
+  ; Reason for losing life message
   LDA &03B7
-  JSR l357D
+  JSR prtmessage
+
   LDA #&07:STA &03B7
 .l25A2
   LDA #&FA
@@ -2971,8 +2996,8 @@ ORG &190E
   ; Flip rat to go back to it's nest
   LDA objs_attrs+obj_rat:ORA #ATTR_REVERSE:STA objs_attrs+obj_rat ; Set top bit
 
-  LDA #&1D
-  JSR l357D
+  LDA #str_thanksforloafmess:JSR prtmessage
+
 .l2601
   LDX #obj_rat
 
@@ -3669,8 +3694,7 @@ ORG &190E
   CMP #DAISYSPRISONROOM
   BNE l2A68
 
-  LDA #&0B
-  JSR l357D
+  LDA #str_gottodaisymess:JSR prtmessage
 
   ; Put Daisy in her hut
   LDA #DAISYSHUTROOM:STA objs_rooms+obj_daisy
@@ -3680,8 +3704,7 @@ ORG &190E
   LDA #&00:STA SPR_ENABLE
   JSR heartdemo
 
-  LDA #&0C
-  JSR l357D
+  LDA #str_daisyrunsmess:JSR prtmessage
 
   LDA #&02:STA v0B00
   JMP l24A0
@@ -3691,13 +3714,13 @@ ORG &190E
   CMP #&03
   BNE l2A77
 
-  LDA #&0E
-  JSR l357D
+  LDA #str_gotallcoins:JSR prtmessage
+
   JMP l1927
 
 .l2A77
-  LDA #&0D
-  JSR l357D
+  LDA #str_notgotallcoins:JSR prtmessage
+
   JMP l24A0
 
 .l2A7F
@@ -5379,7 +5402,7 @@ ORG &2B32
   RTS
 }
 
-.l357D
+.prtmessage
 {
   STA &03DB
   ASL A
@@ -5388,8 +5411,8 @@ ORG &2B32
   ; Change memory configuration (with interrupts off)
   SEI
   LDA #CASSETTE_OFF+CASSETTE_SWITCH+CHAREN_IO+HIRAM_E000_RAM+LORAM_A000_RAM:STA CPU_CONFIG
-  LDA &D148,X:STA &05
-  LDA &D149,X:STA &06
+  LDA messages,X:STA &05
+  LDA messages+1,X:STA &06
   LDA #CASSETTE_OFF+CASSETTE_SWITCH+CHAREN_IO+HIRAM_E000_ROM+LORAM_A000_RAM:STA CPU_CONFIG
   CLI
 
@@ -5697,15 +5720,15 @@ ORG &2B32
 .l3776
 {
   JSR l374F
-  LDX #&37
+  LDX #str_inventory
   LDA objs_rooms+obj_bag
   CMP #&04
   BNE l3784
 
-  LDX #&38
+  LDX #str_inventorywithbag
 .l3784
   TXA
-  JSR l357D
+  JSR prtmessage
 
   LDY #&58
   LDA objs_rooms+obj_bag
@@ -5736,8 +5759,7 @@ ORG &2B32
   LDA &18D9
   BNE done
 
-  LDA #&3B
-  JSR l357D
+  LDA #str_nothingatallmess:JSR prtmessage
 
 .done
   RTS
@@ -6072,8 +6094,7 @@ ORG &2B32
   LDA #&03:STA v0B00
   JSR l3A30
 
-  LDA #&36
-  JSR l357D
+  LDA #str_youfoundcoinmess:JSR prtmessage
 
   LDA v2B48
   BNE done
@@ -6782,73 +6803,138 @@ ORG &D000
   EQUW windowmess
   EQUW leavesmess
 
-  EQUW startmess
+.messages
+
+  EQUW startmess               ; 0
   EQUW trollgotapplemess
   EQUW shopkeeperappearsmess
   EQUW givingjunkmess
 
   EQUW thanksforthecowmess
-  EQUW dozytalking
+  EQUW dozytalking             ; 5
   EQUW kickdozyagainmess
   EQUW dylantalking
   EQUW trancemess
   EQUW denziltalking
-  EQUW stereoess
+  EQUW stereoess               ; 10
   EQUW gottodaisymess
   EQUW daisyrunsmess
 
   EQUW notgotallcoins
   EQUW gotallcoins
 
-  EQUW dougtalking
+  EQUW dougtalking             ; 15
   EQUW goonmysonmess
 
   EQUW throwwateronfiremess
   EQUW lookatpicturemess
   EQUW throwwateronbeanmess
-  EQUW plantbeanmess
+  EQUW plantbeanmess           ; 20
   EQUW pickupmanuremess
   EQUW throwswitchmess
   EQUW fedarmorog
   EQUW dragonasleepmess
-  EQUW croctiedmess
+  EQUW croctiedmess            ; 25
   EQUW rockinwatermess
   EQUW keyinmachine
   EQUW fillbucketmess
   EQUW thanksforloafmess
-  EQUW puteggbackmess
+  EQUW puteggbackmess          ; 30
   EQUW goawaymess
   EQUW knockandentermess
   EQUW usedoorknockermess
   EQUW usecrowbarmess
-  EQUW usepickaxemess
+  EQUW usepickaxemess          ; 35
   EQUW obstructingliftmess
   EQUW userugmess
   EQUW getbackintheremess
   EQUW holdingholemess
-  EQUW dropwhiskeymess
+  EQUW dropwhiskeymess         ; 40
 
   EQUW deadwindow
   EQUW armorogkilledmess
   EQUW killedbyportcullis
   EQUW killedbyliftmess
-  EQUW dragonkilledmess
+  EQUW dragonkilledmess        ; 45
   EQUW dragonflameskilledmess
   EQUW killedbyflame
   EQUW killedbywater
   EQUW croceatenmess
-  EQUW killedbyhawk
+  EQUW killedbyhawk            ; 50
   EQUW ratgotyoumess
   EQUW killedbyvolcano
   EQUW killedbydaggersmess
 
   EQUW youfoundcoinmess
-  EQUW inventory
+  EQUW inventory               ; 55
   EQUW inventorywithbag
   EQUW selectitemmess
   EQUW carryingtoomuchmess
   EQUW nothingatallmess
-  EQUW fullbucketmess
+  EQUW fullbucketmess          ; 60
+
+; message offsets
+str_startmess               = 0
+str_trollgotapplemess       = 1
+str_shopkeeperappearsmess   = 2
+str_givingjunkmess          = 3
+str_thanksforthecowmess     = 4
+str_dozytalking             = 5
+str_kickdozyagainmess       = 6
+str_dylantalking            = 7
+str_trancemess              = 8
+str_denziltalking           = 9
+str_stereoess               = 10
+str_gottodaisymess          = 11
+str_daisyrunsmess           = 12
+str_notgotallcoins          = 13
+str_gotallcoins             = 14
+str_dougtalking             = 15
+str_goonmysonmess           = 16
+str_throwwateronfiremess    = 17
+str_lookatpicturemess       = 18
+str_throwwateronbeanmess    = 19
+str_plantbeanmess           = 20
+str_pickupmanuremess        = 21
+str_throwswitchmess         = 22
+str_fedarmorog              = 23
+str_dragonasleepmess        = 24
+str_croctiedmess            = 25
+str_rockinwatermess         = 26
+str_keyinmachine            = 27
+str_fillbucketmess          = 28
+str_thanksforloafmess       = 29
+str_puteggbackmess          = 30
+str_goawaymess              = 31
+str_knockandentermess       = 32
+str_usedoorknockermess      = 33
+str_usecrowbarmess          = 34
+str_usepickaxemess          = 35
+str_obstructingliftmess     = 36
+str_userugmess              = 37
+str_getbackintheremess      = 38
+str_holdingholemess         = 39
+str_dropwhiskeymess         = 40
+str_deadwindow              = 41
+str_armorogkilledmess       = 42 
+str_killedbyportcullis      = 43
+str_killedbyliftmess        = 44
+str_dragonkilledmess        = 45
+str_dragonflameskilledmess  = 46
+str_killedbyflame           = 47
+str_killedbywater           = 48
+str_croceatenmess           = 49
+str_killedbyhawk            = 50
+str_ratgotyoumess           = 51
+str_killedbyvolcano         = 52
+str_killedbydaggersmess     = 53
+str_youfoundcoinmess        = 54
+str_inventory               = 55
+str_inventorywithbag        = 56
+str_selectitemmess          = 57
+str_carryingtoomuchmess     = 58
+str_nothingatallmess        = 59
+str_fullbucketmess          = 60
 
 mplot   = 3
 mgosub  = 4
