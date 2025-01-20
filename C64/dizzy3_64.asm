@@ -7,7 +7,7 @@ ORG &00
 .c64start
 
 ; Variables
-.v0005 ; int to float routine
+.v0005 ; pointer to current character of string
 .v0006
 
 .v0035 ; pointer to string memory (5A77 / 5A4D / 5A5D / 581C / 5AF0)
@@ -74,8 +74,8 @@ dizzyy = &035C
 .v0398
 .v0399
 .v039A
-.v039B
-.v039C
+cursorx = &039B ; char cursor X
+cursory = &039C ; char cursor Y
 .v03B7
 .v03B8 ; roomno related ?
 lives = &03B9
@@ -84,7 +84,7 @@ lives = &03B9
 .v03BC
 .v03BD
 .v03BE
-.v03BF
+.v03BF ; char attrib
 player_input = &03C0
 .v03C1
 .v03C2
@@ -1256,7 +1256,7 @@ ORG &190E
 
 .l1A6C
   JSR l3B00
-  JSR l33AA
+  JSR getplayerinput
 
   LDA #&00:STA &03C1
   LDA &03BC
@@ -2120,7 +2120,7 @@ ORG &190E
 
   ; Check for doorknocker
   LDA objs_rooms+obj_doorknocker
-  CMP #&04 ; ?? room 4 ??
+  CMP #collected
   BEQ l2048
 
   LDX #&44
@@ -2234,8 +2234,8 @@ ORG &190E
   CPX #&00
   BNE l20F9
 
-  ; Change bag room to 4 ?
-  LDA #&04:STA objs_rooms+obj_bag
+  ; Change bag room to 4 - to indicate it's been collected
+  LDA #collected:STA objs_rooms+obj_bag
 .l20F1
   LDA #&FF:STA &18DE
   JMP coincheck
@@ -2267,7 +2267,7 @@ ORG &190E
   LDX #obj_bean
 .objloop
   LDA objs_rooms,X
-  CMP #&04
+  CMP #collected
   BNE l213A
 
   LDA roomno:STA objs_rooms,X ; place object in current room
@@ -2308,8 +2308,8 @@ ORG &190E
   CPX #&3F
   BCS l21A0
 
-  LDA #&04
-  STA objs_rooms,X
+  LDA #collected:STA objs_rooms,X
+
   CPX #lastcoin+1
   BCC l2177
 
@@ -2321,10 +2321,10 @@ ORG &190E
 .l2177
   JSR l374F
 
-  ; Check bag is in room #4 ?
+  ; Check for larger inventory
   LDA objs_rooms+obj_bag
   LDX #&02
-  CMP #&04
+  CMP #collected
   BNE l2185
 
   LDX #&04
@@ -2358,7 +2358,7 @@ ORG &190E
   JSR l31D6
   LDA #&F0
   JSR l31D6
-  JSR l2F39
+  JSR resetgamestate
   JMP l242D
 
 .l21C4
@@ -2381,7 +2381,7 @@ ORG &190E
   LDA #&3C
   JSR l31D6
 .l21E1
-  JSR l33AA
+  JSR getplayerinput
   LDA player_input
   AND #JOY_FIRE+JOY_RIGHT+JOY_LEFT
   BEQ l21E1
@@ -2396,7 +2396,7 @@ ORG &190E
   LDA #&FF
 .l21F9
   STA &03D9
-  JSR l2F39
+  JSR resetgamestate
   JMP l222E
 
 .l2202
@@ -4434,7 +4434,7 @@ ORG &2B32
   ; Check bone
   LDA objs_rooms+obj_bone
   CMP #OFFMAP
-  BEQ l2F39
+  BEQ resetgamestate
 
   ; Position grunt
   LDA #&36:STA objs_xlocs+obj_grunt
@@ -4443,7 +4443,7 @@ ORG &2B32
 
 ; Fall through
 
-.l2F39
+.resetgamestate
 {
   LDA #&00
   STA &03BB
@@ -5138,7 +5138,7 @@ ORG &2B32
   RTS
 }
 
-.l33AA
+.getplayerinput
 {
   LDA CIA1_PRA ; Read Joystick 2 state
   EOR #&FF ; Make bitfield active high
@@ -5385,18 +5385,19 @@ ORG &2B32
 }
 
 ; Get byte at (&05) and advance pointer
-.l3568
+.nextchar
 {
   SEI
   LDA #CASSETTE_OFF+CASSETTE_SWITCH+CHAREN_IO+HIRAM_E000_RAM+LORAM_A000_RAM:STA CPU_CONFIG
   LDY #&00
   LDA (&05),Y
   INC &05
-  BNE l3577
+  BNE samepage
 
   INC &06
-.l3577
-  LDY #&36:STY &01
+
+.samepage
+  LDY #CASSETTE_OFF+CASSETTE_SWITCH+CHAREN_IO+HIRAM_E000_ROM+LORAM_A000_RAM:STY CPU_CONFIG
   CLI
 
   RTS
@@ -5404,11 +5405,13 @@ ORG &2B32
 
 .prtmessage
 {
+  ; Cache string id
   STA &03DB
+
+  ; Fetch pointer to string[id]
   ASL A
   TAX
 
-  ; Change memory configuration (with interrupts off)
   SEI
   LDA #CASSETTE_OFF+CASSETTE_SWITCH+CHAREN_IO+HIRAM_E000_RAM+LORAM_A000_RAM:STA CPU_CONFIG
   LDA messages,X:STA &05
@@ -5416,90 +5419,98 @@ ORG &2B32
   LDA #CASSETTE_OFF+CASSETTE_SWITCH+CHAREN_IO+HIRAM_E000_ROM+LORAM_A000_RAM:STA CPU_CONFIG
   CLI
 
-.l3596
-  JSR l3568
-.l3599
-  ; Is it < 251
-  CMP #&FB
-  BCC l359E
+  ; Read character and advance pointer
+.advance
+  JSR nextchar
+
+.startmessage
+  ; Is it within range (i.e. <= drawbox)
+  CMP #drawbox+1
+  BCC inrange
 
   RTS
 
-.l359E
-  CMP #&FA
-  BNE l35A8
+.inrange
+  CMP #drawbox
+  BNE notabox
 
-  JSR l361D
-  JMP l3596
+  JSR drawmsgbox
+  JMP advance
 
-.l35A8
-  CMP #&C8
-  ; Is it < 200
-  BCC l35B5
+.notabox
+  CMP #mpen
+  BCC notapen
 
+  ; Determine which pen (colour) to use
   SEC
-  SBC #&C8
+  SBC #mpen
   STA &03BF
 
-  JMP l3596
+  JMP advance
 
-.l35B5
-  CMP #&64
-  ; Is it < 100
-  BCC l35C8
+.notapen
+  CMP #mxy
+  BCC notxy
 
+  ; Get X position for cursor
   SEC
-  SBC #&44
-  STA &039B
+  SBC #mxy-32
+  STA cursorx
 
-  JSR l3568
+  ; Get Y position for cursor
+  JSR nextchar
+  STA cursory
 
-  STA &039C
+  JMP advance
 
-  JMP l3596
+.notxy
+  CMP #mend
+  BNE notatend
 
-.l35C8
-  CMP #&5F
-  BNE l35ED
+.waitforfire
+  JSR getplayerinput
 
-.l35CC
-  JSR l33AA
-
-  LDA player_input
+  LDA player_input ; not needed - it's already in A reg
   AND #JOY_FIRE
-  BNE l35CC
+  BNE waitforfire
 
-.l35D6
-  JSR l33AA
-  AND #&10
-  BEQ l35D6
+.waitfornofire
+  JSR getplayerinput
 
-  JSR l3568
+  AND #JOY_FIRE
+  BEQ waitfornofire
 
-  CMP #&5F
-  BNE l3599
+  ; Check for further dialog box
+  JSR nextchar
 
+  CMP #mend
+  BNE startmessage
+
+  ; Check which message it was
   LDA &03DB
-  BEQ l35EC
+  BEQ nottitle
 
-  JSR l2F39
-.l35EC
+  ; Title screen - so reset everything
+  JSR resetgamestate
+
+.nottitle
   RTS
 
-.l35ED
-  ; Is it < 38
-  CMP #&26
-  BCC l35F5
+.notatend
+  ; If it's before alphabet/messagebox frame, convert it to a space
+  CMP #SPR_SPEECHOPEN
+  BCC clearchar
 
-  ; Is it < 91
-  CMP #&5B
-  BCC l35F7
+  ; If it's after "Z", convert to a space
+  CMP #SPR_Z+1
+  BCC printable
 
-.l35F5
-  LDA #':' ; frame
-.l35F7
-  LDX &039B:STX &033A ; X position
-  LDX &039C:STX &033B ; Y position
+.clearchar
+  LDA #SPR_SPACE ; frame
+
+.printable
+  LDX cursorx:STX &033A ; X position
+  LDX cursory:STX &033B ; Y position
   LDX &03BF:STX &033C ; attrib
 
   LDX #&00
@@ -5508,24 +5519,24 @@ ORG &2B32
 
   JSR frame
 
-  INC &039B
-  INC &039B
+  INC cursorx
+  INC cursorx
 
-  JMP l3596
+  JMP advance
 }
 
-.l361D
+.drawmsgbox
 {
-  JSR l3568
+  JSR nextchar
   STA &0398
 
-  JSR l3568
+  JSR nextchar
   STA &0399
 
   LDA #&00:STA SPR_ENABLE
-  LDA &039B:CLC:ADC #&02:STA &039A
+  LDA cursorx:CLC:ADC #&02:STA &039A
 
-  LDA #&2C
+  LDA #SPR_FRAMETOP
   JSR l36E3
 
   LDA &0398
@@ -5534,9 +5545,9 @@ ORG &2B32
   ADC &039A
   STA &039A
 
-  LDA #&2C
-
+  LDA #SPR_FRAMETOP
   JSR l36E3
+
   JSR l3682
 
 .l364F
@@ -5546,15 +5557,15 @@ ORG &2B32
 
   JSR l3682
 
-  LDA &039C:CLC:ADC #&08:STA &039C
-  LDA &039B:CLC:ADC #&02:STA &039A
+  LDA cursory:CLC:ADC #&08:STA cursory
+  LDA cursorx:CLC:ADC #&02:STA &039A
 
-  LDA #&2D
+  LDA #SPR_FRAMEBOTTOM
   JSR l36E3
 
   LDA &0398:ASL A:CLC:ADC &039A:STA &039A
 
-  LDA #&2D
+  LDA #SPR_FRAMEBOTTOM
   JSR l36E3
 
   RTS
@@ -5562,27 +5573,28 @@ ORG &2B32
 
 .l3682
 {
-  LDA &039C:CLC:ADC #&08:STA &039C
+  LDA cursory:CLC:ADC #&08:STA cursory
 
-  LDA &039B:STA &039A
-  LDA #&2A
+  LDA cursorx:STA &039A
+
+  LDA #SPR_FRAMELEFT
   JSR l36E3
 
-  LDA #&2E
+  LDA #SPR_FRAMECROSS
   JSR l36E3
 
   LDA &0398:STA &0344
 .loop
-  LDA #&28
+  LDA #SPR_FRAMEHORIZ
   JSR l36E3
 
   DEC &0344
   BNE loop
 
-  LDA #&2E
+  LDA #SPR_FRAMECROSS
   JSR l36E3
 
-  LDA #&2B
+  LDA #SPR_FRAMERIGHT
   JSR l36E3
 
   RTS
@@ -5590,15 +5602,15 @@ ORG &2B32
 
 .l36B6
 {
-  LDA &039C:CLC:ADC #&08:STA &039C
-  LDA &039B:CLC:ADC #&02:STA &039A
+  LDA cursory:CLC:ADC #&08:STA cursory
+  LDA cursorx:CLC:ADC #&02:STA &039A
 
   LDA #SPR_FRAMEVERT
   JSR l36E3
 
   LDA &0398:STA &0344
 .loop
-  LDA #':'
+  LDA #SPR_SPACE
   JSR l36E3
 
   DEC &0344
@@ -5613,7 +5625,7 @@ ORG &2B32
 .l36E3
 {
   LDX &039A:STX &033A ; X position
-  LDX &039C:STX &033B ; Y position
+  LDX cursory:STX &033B ; Y position
   LDX &03BF:STX &033C ; attrib
 
   LDX #&00
@@ -5622,6 +5634,7 @@ ORG &2B32
 
   JSR frame
 
+  ; Advance cursor
   INC &039A
   INC &039A
 
@@ -5667,7 +5680,7 @@ ORG &2B32
   BEQ done
 
 .l373D
-  JSR l3568
+  JSR nextchar
 
   ; Is it < 38
   CMP #&26
@@ -5678,6 +5691,7 @@ ORG &2B32
   BCS done
 
   JSR l36E3
+
   JMP l373D
 
 .done
@@ -5721,8 +5735,10 @@ ORG &2B32
 {
   JSR l374F
   LDX #str_inventory
+
+  ; Check for larger inventory
   LDA objs_rooms+obj_bag
-  CMP #&04
+  CMP #collected
   BNE l3784
 
   LDX #str_inventorywithbag
@@ -5731,13 +5747,15 @@ ORG &2B32
   JSR prtmessage
 
   LDY #&58
+
+  ; Check for larger inventory
   LDA objs_rooms+obj_bag
-  CMP #&04
+  CMP #collected
   BNE l3793
 
   LDY #&50
 .l3793
-  STY &039C
+  STY cursory
   LDA #&00:STA &0344
   LDA #&03:STA &03BF
 .l37A0
@@ -5752,7 +5770,7 @@ ORG &2B32
 
   INC &0344
 
-  LDA &039C:CLC:ADC #&08:STA &039C
+  LDA cursory:CLC:ADC #&08:STA cursory
   JMP l37A0
 
 .l37C5
@@ -5784,10 +5802,10 @@ ORG &2B32
   CLI
 
   ; Set starting X position
-  LDX #&2C
+  LDX #44
 .loop
   ; Get next character to print
-  JSR l3568
+  JSR nextchar
 
   ; Make sure it's not a string terminator
   CMP #&5F
@@ -5799,7 +5817,7 @@ ORG &2B32
 .keepgoing
   STX &033A ; X position
 
-  LDY #&18
+  LDY #24
   STY &033B ; Y position
   STY &03E3
 
@@ -6201,8 +6219,10 @@ ORG &2B32
   LDA &1897,X:STA &033C
 
   LDA #&0B
+
+  ; Check for larger inventory
   LDX objs_rooms+obj_bag
-  CPX #&04
+  CPX #collected
   BNE l3A83
 
   LDA #&0A
@@ -6305,7 +6325,7 @@ ORG &3B00
 .l3B23
   LDA #&32
   JSR l31D6
-  JSR l33AA
+  JSR getplayerinput
 
   AND #&1F
   ; Is it >= 16
@@ -6605,6 +6625,9 @@ objs_xlocs  = &C724
 objs_ylocs  = &C7AA
 objs_attrs  = &C830
 objs_frames = &C8B6
+
+; object flags
+collected = 4
 
 ; object offsets
 obj_bag            = 0
