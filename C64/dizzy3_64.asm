@@ -96,8 +96,8 @@ player_input = &03C0
 .v03C8
 .v03C9
 .v03D5 ; set to &FF and &00
-.v03D6 ; dizzyx related, maybe oldx ?
-.v03D7 ; dizzyy related, maybe oldy ?
+olddizzyx = &03D6
+olddizzyy = &03D7
 .v03D8
 .v03D9
 .v03DA
@@ -1112,7 +1112,7 @@ ORG &190E
 
   JSR l2E79
   JSR l3090
-  JSR l3A30
+  JSR drawcoincount
 
   LDA #58:STA &033A ; X position
   LDA #57:STA &033B ; Y position
@@ -1167,7 +1167,7 @@ ORG &190E
 
   LDA #&01:STA SPR_0_COLOUR ; White
 
-  JSR l3A30
+  JSR drawcoincount
 
   LDA #&00
   STA SPR_Y_EXP
@@ -1179,7 +1179,7 @@ ORG &190E
 
   ; Reset moving data (objects)
   LDX #noofmoving
-.l19DA
+.movingloop
   DEX
   LDA orig_rooms,X:STA objs_rooms,X ; room
   LDA orig_xlocs,X:STA objs_xlocs,X ; X position
@@ -1188,16 +1188,16 @@ ORG &190E
   LDA orig_frames,X:STA objs_frames, X ; frame
 
   CPX #&00
-  BNE l19DA
+  BNE movingloop
 
   JSR l29E4
 
   LDA #28
-  STA &03D6
+  STA olddizzyx
   STA dizzyx ; Dizzy starting X position
 
   LDA #100
-  STA &03D7
+  STA olddizzyy
   STA dizzyy ; Dizzy starting Y position
 
   LDA #&FF:STA &03DF
@@ -1806,8 +1806,8 @@ ORG &190E
   BEQ l1E12
 
   STA &03B8
-  LDA dizzyx:STA &03D6
-  LDA dizzyy:STA &03D7
+  LDA dizzyx:STA olddizzyx
+  LDA dizzyy:STA olddizzyy
 .l1E12
   LDA #&00:STA &03E0
   LDA roomno
@@ -5254,8 +5254,8 @@ ORG &2B32
 
 .l346B
 {
-  LDA &03D6:STA dizzyx
-  LDA &03D7:STA dizzyy
+  LDA olddizzyx:STA dizzyx
+  LDA olddizzyy:STA dizzyy
 
   LDA #&3C
   JSR l33D1
@@ -5295,8 +5295,8 @@ ORG &2B32
   CPX #&08
   BCC loop
 
-  LDA &03D6:STA dizzyx
-  LDA &03D7:STA dizzyy
+  LDA olddizzyx:STA dizzyx
+  LDA olddizzyy:STA dizzyy
   LDA SPR_COLLISION
   LDA SPR_COLLISION2
   LDA SPR_COLLISION
@@ -6117,7 +6117,7 @@ ORG &2B32
   STA coins ; Update units
 
   LDA #&03:STA v0B00
-  JSR l3A30
+  JSR drawcoincount
 
   LDA #str_youfoundcoinmess:JSR prtmessage
 
@@ -6186,34 +6186,35 @@ ORG &2B32
 }
 
 ; Print coins collected counter to screen
-.l3A30
+.drawcoincount
 {
-  LDA #&4E:STA &033A ; X position
+  LDA #78:STA &033A ; X position
   LDA #&00:STA &03DC
 
-  LDA #&08
+  LDA #8
   STA &033B ; Y position
   STA &03E3
 
-  LDA #&06:STA &033C ; attrib
+  LDA #PAL_YELLOW:STA &033C ; attrib
 
   ; Convert tens to ASCII
   LDA coins_tens
-  CLC:ADC #'0'
+  CLC:ADC #'0' ; frame
 
   JSR frame
 
-  LDA #&50:STA &033A ; X position
+  LDA #80:STA &033A ; X position
   LDA #&00:STA &03DC
 
-  LDA #&08
+  LDA #8
   STA &033B ; Y position
   STA &03E3
 
-  LDA #&06:STA &033C ; attrib
+  LDA #PAL_YELLOW:STA &033C ; attrib
 
   ; Convert units to ASCII
-  LDA coins:CLC:ADC #'0' ; frame
+  LDA coins
+  CLC:ADC #'0' ; frame
 
   JSR frame
 
