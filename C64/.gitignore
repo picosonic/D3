@@ -5,3 +5,7 @@ built.hex
 targets
 foundvars
 labels
+
+*.vsf
+
+mt6502dis
