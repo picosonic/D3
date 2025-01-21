@@ -96,8 +96,8 @@ player_input = &03C0
 .v03C8
 .v03C9
 .v03D5 ; set to &FF and &00
-.v03D6 ; dizzyx related ?
-.v03D7 ; dizzyy related ?
+.v03D6 ; dizzyx related, maybe oldx ?
+.v03D7 ; dizzyy related, maybe oldy ?
 .v03D8
 .v03D9
 .v03DA
@@ -1114,8 +1114,8 @@ ORG &190E
   JSR l3090
   JSR l3A30
 
-  LDA #&3A:STA &033A ; X position
-  LDA #&39:STA &033B ; Y position
+  LDA #58:STA &033A ; X position
+  LDA #57:STA &033B ; Y position
   LDA #PAL_GREEN:STA &033C ; attrib
   LDA #&00:STA &03DC
 
@@ -1128,6 +1128,7 @@ ORG &190E
 
   JSR l3023
 
+  ; Clear &5800 to &58E8
   LDX #&00
   TXA
 .l1983
@@ -1191,11 +1192,11 @@ ORG &190E
 
   JSR l29E4
 
-  LDA #&1C
+  LDA #28
   STA &03D6
   STA dizzyx ; Dizzy starting X position
 
-  LDA #&64
+  LDA #100
   STA &03D7
   STA dizzyy ; Dizzy starting Y position
 
@@ -1758,33 +1759,33 @@ ORG &190E
 
   ; Check Dizzy X position < 57 (not gone off screen to right)
   LDA dizzyx
-  CMP #&39
+  CMP #57
   BCC l1DB9
 
-  LDA #&02:STA dizzyx ; Set Dizzy position to far left
+  LDA #2:STA dizzyx ; Set Dizzy position to far left
   INC roomno ; Go right
   JMP l1DFC
 
 .l1DB9
   ; Check Dizzy X position >= 2 (not gone off screen to left)
-  CMP #&02
+  CMP #2
   BCS l1DC8
 
-  LDA #&38:STA dizzyx ; Set Dizzy position to far right
+  LDA #56:STA dizzyx ; Set Dizzy position to far right
   DEC roomno ; Go left
   JMP l1DFC
 
 .l1DC8
-  ; Check Dizzy Y position < 50
+  ; Check Dizzy Y position < 128
   LDA dizzyy
-  CMP #&80
+  CMP #128
   BCC l1E1D
 
   ; Check Dizzy Y position >= 192
-  CMP #&C0
+  CMP #192
   BCS l1DE7
 
-  LDA #&00:STA dizzyy
+  LDA #0:STA dizzyy
   LDA roomno:SEC:SBC #16:STA roomno ; Go down
 
   JSR l2A01
@@ -1793,11 +1794,11 @@ ORG &190E
 .l1DE7
   ; Check Dizzy Y position < 192
   LDA dizzyy
-  CMP #&C0
+  CMP #192
   BCC l1E1D
 
-  LDA #&72:STA dizzyy
-  LDA roomno:CLC:ADC #&10:STA roomno ; Go up
+  LDA #114:STA dizzyy
+  LDA roomno:CLC:ADC #16:STA roomno ; Go up
 
 .l1DFC
   LDA roomno
@@ -1934,7 +1935,7 @@ ORG &190E
 
   ; Check Dizzy X position < 52 (far right)
   LDA dizzyx
-  CMP #&34
+  CMP #52
   BCC l1F33
 
   ; Check where troll is
@@ -1945,8 +1946,8 @@ ORG &190E
   ; Put troll in mine
   STA objs_rooms+obj_troll
 
-  LDA #&5A:STA objs_xlocs+obj_troll
-  LDA #&78:STA objs_ylocs+obj_troll
+  LDA #90:STA objs_xlocs+obj_troll
+  LDA #120:STA objs_ylocs+obj_troll
   LDA #ATTR_NOTSOLID+PAL_GREEN:STA objs_attrs+obj_troll
   LDA #OFFMAP:STA &C6E1
 
@@ -1992,17 +1993,17 @@ ORG &190E
 .l1F5C
   LDA dizzyx
   CLC
-  ADC #&1E
+  ADC #30
   STA &033A ; X position
   CLC
-  ADC #&08
+  ADC #8
   STA &033C
   LDA dizzyy
   CLC
-  ADC #&1A
+  ADC #26
   STA &033B ; Y position
   CLC
-  ADC #&22
+  ADC #34
   STA &033D
 .l1F7A
   LDA objs_rooms,X
@@ -2104,8 +2105,8 @@ ORG &190E
   JSR l32EB
 
   ; Position Dozy
-  LDA #&3C:STA objs_xlocs+obj_dozy
-  LDA #&86:STA objs_ylocs+obj_dozy
+  LDA #60:STA objs_xlocs+obj_dozy
+  LDA #134:STA objs_ylocs+obj_dozy
   LDY #str_kickdozyagainmess
 .l2024
   TYA
@@ -2190,25 +2191,30 @@ ORG &190E
   LDX #obj_liftbottom
   JSR l32EB
 
+  ; Move bottom of lift downwards
   INC objs_ylocs+obj_liftbottom
   JSR l29D3
 
   INX ; switch from liftbottom to daisy
   JSR l32EB
 
+  ; Also move Daisy downwards (she's on the lift)
   INC objs_ylocs+obj_daisy
   LDA objs_attrs+obj_daisy:EOR #ATTR_REVERSE:STA objs_attrs+obj_daisy
   JSR l29D3
 
+  ; Move top of lift downwards
   LDX #obj_lifttop
   INC objs_ylocs+obj_lifttop
   JSR l29D3
 
   LDA #&0A
   JSR l31D6
+
+  ; Check where the lift has got to, keep moving until it gets to the bottom
   LDA objs_ylocs+obj_liftbottom
   ; Is it < 139
-  CMP #&8B
+  CMP #139
   BCC l209A
 
   JMP l24A0
@@ -2274,15 +2280,15 @@ ORG &190E
 
   LDA dizzyx
   CLC
-  ADC #&21
-  AND #&FE
+  ADC #33
+  AND #%11111110
   STA objs_xlocs,X ; Update X position of object based on Dizzy X position
 
-  LDA dizzyy:CLC:ADC #&2D:STA objs_ylocs,X
+  LDA dizzyy:CLC:ADC #45:STA objs_ylocs,X
 .l213A
   INX
   ; Is it < 63
-  CPX #&3F
+  CPX #63
   BCC objloop
 
   LDA #str_holdingholemess:JSR prtmessage
@@ -2516,7 +2522,7 @@ ORG &190E
   ; Raise the water by 5 pixels
   LDA objs_ylocs+obj_water
   SEC
-  SBC #&05
+  SBC #5
   STA objs_ylocs+obj_water
   STA objs_ylocs+obj_water+1
   STA objs_ylocs+obj_water+2
@@ -2524,7 +2530,7 @@ ORG &190E
   ; Raise the pontoon by 5 pixels
   LDA objs_ylocs+obj_pontoon
   SEC
-  SBC #&05
+  SBC #5
   STA objs_ylocs+obj_pontoon
 
   JSR l29C1
@@ -2770,15 +2776,15 @@ ORG &190E
 .l2469
   LDA GFX_RASTER_LINE
   ; Is it < 250
-  CMP #&FA
+  CMP #250
   BCC l2469
 
   JSR l3329
   LDX &03D9
   LDA roomno:STA objs_rooms,X
 
-  LDA dizzyx:CLC:ADC #&21:AND #&FE:STA objs_xlocs,X
-  LDA dizzyy:CLC:ADC #&2D:STA objs_ylocs,X
+  LDA dizzyx:CLC:ADC #33:AND #&FE:STA objs_xlocs,X
+  LDA dizzyy:CLC:ADC #45:STA objs_ylocs,X
 
   LDA #&3F:STA &03DD
   LDA #&FF:STA &03D5
@@ -2981,13 +2987,13 @@ ORG &190E
 
   ; Check Y position of bread >= 100 (not near rat)
   LDA objs_ylocs+obj_bread
-  CMP #&64
+  CMP #100
   BCS l2601
 
   ; See if rat's X position is less than the bread - i.e. it ate it
   LDA objs_xlocs+obj_bread
   CLC
-  ADC #&04
+  ADC #4
   CMP objs_xlocs+obj_rat
   BCC l2601
 
@@ -3019,7 +3025,7 @@ ORG &190E
 
   ; Check rat X position < 96
   LDA objs_xlocs+obj_rat
-  CMP #&60
+  CMP #96
   BCC l2650
 
   JSR l32EB
@@ -3032,7 +3038,7 @@ ORG &190E
 .l262C
   ; Check rat X position < 79
   LDA objs_xlocs+obj_rat
-  CMP #&4F
+  CMP #79
   BCC l2650
 
 .l2633
@@ -3051,7 +3057,7 @@ ORG &190E
 
   ; Check rat X position < 47
   LDA objs_xlocs+obj_rat
-  CMP #&2F
+  CMP #47
   BCC l2633
 
 .l2650
@@ -3106,7 +3112,7 @@ ORG &190E
 
   ; Is Y position >= 97
   LDA objs_ylocs+obj_portcullis
-  CMP #&61
+  CMP #97
   BCS l26A6
 
 .l269E
@@ -3121,11 +3127,11 @@ ORG &190E
 .l26AE
   ; Check portcullis height >= 136
   LDA objs_ylocs+obj_portcullis
-  CMP #&88
+  CMP #136
   BCS l269E
 
   ; Move portcullis down
-  CLC:ADC #&04:STA objs_ylocs+obj_portcullis
+  CLC:ADC #4:STA objs_ylocs+obj_portcullis
   JMP l26A6
 
 .l26BE
@@ -3135,7 +3141,7 @@ ORG &190E
 
   ; Check Dozy X position >= 70
   LDA objs_xlocs+obj_dozy
-  CMP #&46
+  CMP #70
   BCS l26E8
 
   LDA &03C4
@@ -3149,7 +3155,7 @@ ORG &190E
   LDA &03C4
   AND #&04
   CLC
-  ADC #&86
+  ADC #134
   STA objs_ylocs+obj_dozy
 
   LDX #obj_dozy
@@ -3239,28 +3245,28 @@ ORG &190E
 
   ; Check hawk Y position == 56
   LDA objs_ylocs+obj_hawk
-  CMP #&38
+  CMP #56
   BNE l279B
 
   ; Check hawk X position > 61
   LDA objs_xlocs+obj_hawk
-  CMP #&3D
+  CMP #61
   BCS l279E
 
   ; Check hawk X position < 46
-  CMP #&2E
+  CMP #46
   BCC l279E
 
   ; See if Dizzy is directly below hawk
   LDA dizzyx
   CLC
-  ADC #&1C
+  ADC #28
   CMP objs_xlocs+obj_hawk
   BEQ l279B
 
   ; Update hawk X position
   CLC
-  ADC #&01
+  ADC #1
   CMP objs_xlocs+obj_hawk
   BNE l279E
 
@@ -3270,11 +3276,11 @@ ORG &190E
 .l279E
   ; Check hawk X position < 35
   LDA objs_xlocs+obj_hawk
-  CMP #&23
+  CMP #35
   BCC l27A9
 
   ; Check hawk X position < 80
-  CMP #&50
+  CMP #80
   BCC l27B1
 
 .l27A9
@@ -3316,13 +3322,13 @@ ORG &190E
   ; Hawk is diving, so move downwards
   LDA objs_ylocs+obj_hawk
   CLC
-  ADC #&08
+  ADC #8
   STA objs_ylocs+obj_hawk
 
   ; Keep hawk moving towards Dizzy
   LDA dizzyx
   CLC
-  ADC #&1C
+  ADC #28
   CMP objs_xlocs+obj_hawk
   BCC l27FE
 
@@ -3350,7 +3356,7 @@ ORG &190E
   ; Check Dizzy Y position >= 104 (on lower ground)
   LDX #obj_grunt
   LDA dizzyy
-  CMP #&68
+  CMP #104
   BCS l283D
 
   LDA &C6F0
@@ -3359,7 +3365,7 @@ ORG &190E
 
   ; Check grunt (Armorog) X position >= 55
   LDA objs_xlocs+obj_grunt
-  CMP #&37
+  CMP #55
   BCS l2847
 
   LDA #&00:STA &03BD
@@ -3409,11 +3415,11 @@ ORG &190E
 .l2878
   ; Check grunt X position < 55
   LDA objs_xlocs+obj_grunt
-  CMP #&37
+  CMP #55
   BCC l2883
 
   ; Check grunt X position < 78
-  CMP #&4E
+  CMP #78
   BCC l28A8
 
 .l2883
@@ -3422,7 +3428,7 @@ ORG &190E
 
   ; Check if grunt X position is 78
   LDA objs_xlocs+obj_grunt
-  CMP #&4E
+  CMP #78
   BNE l28A8
 
   ; Check bone orientation
@@ -3642,8 +3648,8 @@ ORG &190E
 .l29E4
 {
   ; Move sleeping potion
-  LDA #&80:STA objs_ylocs+obj_sleepingpotion
-  LDA #&52:STA objs_xlocs+obj_sleepingpotion
+  LDA #128:STA objs_ylocs+obj_sleepingpotion
+  LDA #82:STA objs_xlocs+obj_sleepingpotion
 
   LDA #OFFMAP:STA &C6A5 ; happy dust?
 
@@ -3698,8 +3704,8 @@ ORG &190E
 
   ; Put Daisy in her hut
   LDA #DAISYSHUTROOM:STA objs_rooms+obj_daisy
-  LDA #&32:STA objs_xlocs+obj_daisy
-  LDA #&4D:STA objs_ylocs+obj_daisy
+  LDA #50:STA objs_xlocs+obj_daisy
+  LDA #77:STA objs_ylocs+obj_daisy
 
   LDA #&00:STA SPR_ENABLE
   JSR heartdemo
@@ -4437,7 +4443,7 @@ ORG &2B32
   BEQ resetgamestate
 
   ; Position grunt
-  LDA #&36:STA objs_xlocs+obj_grunt
+  LDA #54:STA objs_xlocs+obj_grunt
   LDA #ATTR_GRID+PAL_RED:STA objs_attrs+obj_grunt
 }
 
@@ -4453,7 +4459,7 @@ ORG &2B32
 
   LDA &03C4:AND #&F8:STA &03C4
 
-  LDA #&38:STA objs_ylocs+obj_hawk
+  LDA #56:STA objs_ylocs+obj_hawk
   LDA #&0F:STA &03BC
   LDA #&00:STA &2B13
 
@@ -4488,7 +4494,7 @@ ORG &2B32
   LDA roomno:STA objs_rooms,X
 
   LDA &FF:STA objs_attrs,X
-  LDA orig_ylocs,X:STA objs_ylocs,X
+  LDA orig_ylocs,X:STA objs_ylocs,X ; Reset Y position
 
   INX
   ; Is it < 115
@@ -4543,19 +4549,19 @@ ORG &2B32
   BNE l300A
 
   ; Set portcullis height
-  LDA #&60:STA objs_ylocs+obj_portcullis
+  LDA #96:STA objs_ylocs+obj_portcullis
 .l2FF5
   LDX #obj_portcullis
   JSR l3306
 
   ; Check portcullis height > 136
   LDA objs_ylocs+obj_portcullis
-  CMP #&88
+  CMP #136
   BCS l300A
 
   ; Move portcullis down
   CLC
-  ADC #&04
+  ADC #4
   STA objs_ylocs+obj_portcullis
 
   JMP l2FF5
@@ -4711,6 +4717,7 @@ ORG &2B32
   CLC
   ADC #&73
   TAX
+  ; Reset Y position of this object and next
   LDA orig_ylocs,X:STA objs_ylocs,X
   LDA orig_ylocs+1,X:STA objs_ylocs+1,X
 .l30F8
@@ -4756,7 +4763,7 @@ ORG &2B32
   INC objs_ylocs,X
   LDA objs_ylocs,X
   ; Is it < 103
-  CMP #&67
+  CMP #103
   BCC l3131
 
 .done
@@ -5836,11 +5843,11 @@ ORG &2B32
 {
   LDA #&00:STA &03DB
 
-  LDX #&2E
+  LDX #46
 .loop
   STX &033A ; X position
 
-  LDA #&08
+  LDA #8
   STA &033B ; Y position
   STA &03E3
 
