@@ -1,0 +1,35 @@
+{
+    "version": "2.0.0",
+    "command": "bash",
+    "echoCommand": true,
+    "args": [
+        "-c"
+    ],
+    "tasks": [
+        {
+            "label": "c64.bin",
+            "type": "shell",
+            "args": [
+                "${workspaceFolder}/make.sh \"${workspaceFolder}\""
+            ],
+            "problemMatcher": {
+                "owner": "6502",
+                "fileLocation": [
+                    "relative",
+                    "${workspaceRoot}"
+                ],
+                "pattern": {
+                    "regexp": "^(.*):(\\d+):\\s+(warning|error):\\s+(.*)$",
+                    "file": 1,
+                    "line": 2,
+                    "severity": 3,
+                    "message": 4
+                }
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}
