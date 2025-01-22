@@ -40,5 +40,75 @@ CIA2_PRA = &DD00
 
 KEY_PRESSED = &C5
 
+KEY_INSTDEL = &00
+KEY_RETURN  = &01
+KEY_CRSRLR  = &02 ; Cursor left / right
+KEY_F7F8    = &03
+KEY_F1F2    = &04
+KEY_F3F4    = &05
+KEY_F5F6    = &06
+KEY_CRSRUD  = &07 ; Cursor up / down
+KEY_3       = &08
+KEY_W       = &09
+KEY_A       = &0A
+KEY_4       = &0B
+KEY_Z       = &0C
+KEY_S       = &0D
+KEY_E       = &0E
+KEY_UNUSED1 = &0F ; [Internal - Left Shift or Shift Lock]
+
+KEY_5       = &10
+KEY_R       = &11
+KEY_D       = &12
+KEY_6       = &13
+KEY_C       = &14
+KEY_F       = &15
+KEY_T       = &16
+KEY_X       = &17
+KEY_7       = &18
+KEY_Y       = &19
+KEY_G       = &1A
+KEY_8       = &1B
+KEY_B       = &1C
+KEY_H       = &1D
+KEY_U       = &1E
+KEY_V       = &1F
+
+KEY_9       = &20
+KEY_I       = &21
+KEY_J       = &22
+KEY_0       = &23
+KEY_M       = &24
+KEY_K       = &25
+KEY_O       = &26
+KEY_N       = &27
+KEY_PLUS    = &28
+KEY_P       = &29
+KEY_L       = &2A
+KEY_MINUS   = &2B
+KEY_GREATER = &2C ; Greater than >
+KEY_LSQBR   = &2D ; Left square bracket
+KEY_AT      = &2E ; @
+KEY_LESS    = &2F ; Less than <
+
+KEY_POUND   = &30 ; Pound sign
+KEY_STAR    = &31
+KEY_RSQBR   = &32 ; Right square bracket
+KEY_CLRHOME = &33 ; Clear / Home
+KEY_UNUSED2 = &34 ; [Internal - Right Shift]
+KEY_EQUALS  = &35
+KEY_UPARROW = &36 ; Up arrow
+KEY_QUERY   = &37 ; Question mark ?
+KEY_1       = &38
+KEY_LARROW  = &39 ; Left arrow
+KEY_UNUSED3 = &3A ; [Internal - Ctrl]
+KEY_2       = &3B
+KEY_SPACE   = &3C
+KEY_UNUSED4 = &3D ; [Internal - Commodore logo]
+KEY_Q       = &3E
+KEY_RUNSTOP = &3F ; Run / Stop
+
+KEY_NONE    = &40 ; No key pressed
+
 ISR = &0314
 KERNAL_ISR = &EA31
