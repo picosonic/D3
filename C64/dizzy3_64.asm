@@ -6437,7 +6437,9 @@ INCLUDE "dizzy_sprites.asm"
 .s5C00 ; to 5FE7 = 8x8 screen colour attribs
 .v5FF8 ; []
 
+ORG &6000
 ; &6000..&7F3F = screen RAM (320x200 hires bitmap mode, $d011=$3b, $d016=8)
+INCBIN "screendump.bin"
 
 ORG &7F40
 .l7F40
