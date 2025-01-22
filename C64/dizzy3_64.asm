@@ -3808,14 +3808,22 @@ ORG &190E
 .v2AF3 ; []
   EQUB &00, &00, &b8, &00, &00, &00, &81, &00, &80
 
-.v2B13
-.v2B14 ; []
+; Some further unknown bytes here
 
-.v2B1E ; []
+ORG &2B13
 
-.v2B28 ; []
+; Flames
+.flameindex ; flame counter (up to 10)
+  EQUB 0
 
-ORG &2B32
+.flame_x
+  EQUB 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+
+.flame_y
+  EQUB 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+
+.flame_attr
+  EQUB 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 
 .l2B32
 {
@@ -3858,42 +3866,49 @@ ORG &2B32
 ; frame = A reg
 ; frmx = &033A
 ; frmy = &033B
+; attr = &033C
 .frame
+{
   STA &FB
   STA &0340
   STX &0345
 
   LDA &033A
-  ; Is it < 93
-  CMP #&5D
-  BCC l2B6B
+  ; Ensure X position is < 93
+  CMP #93
+  BCC inrange
 
   RTS
 
-.l2B6B
+.inrange
   ; Get pointer to frame data
   JSR getframepointer
-  BCC l2B71
+  BCC foundframe
 
   RTS
 
-.l2B71
+.foundframe
   STA &B5
+
+  ; Divide Y position by 8
   LDA &033B
   LSR A
   LSR A
   LSR A
   TAX
 
-  ; Is it < 91
+  ; Check for frame being a water sprite
+
+  ; Is frame < 91
   LDA &0340
-  CMP #&5B
-  BCC l2BAB
+  CMP #SPR_WATER
+  BCC notwater
 
-  ; Is it >= 96
-  CMP #&60
-  BCS l2BAB
+  ; Is frame >= 96
+  CMP #SPR_TROLL
+  BCS notwater
 
+  ; Water processing
   LDA &03DA
   BEQ l2B8F
 
@@ -3901,34 +3916,38 @@ ORG &2B32
   BCC l2B95
 
 .l2B8F
-  LDA &033A:STA &03DA
+  LDA &033A:STA &03DA ; X position
 .l2B95
   STX &03E0
   LDA &033F:ORA #&10:STA &033F
-  LDA &033B:AND #&F8:STA &033B
+  LDA &033B:AND #&F8:STA &033B ; Y position
   JMP l2BD5
 
-.l2BAB
-  CMP #&73
+.notwater
+  CMP #SPR_FLAME
   BNE l2BD5
 
+  ; Flame processing
   LDY &03DC
   BEQ l2BD5
 
   ; Is it >= 10
-  LDY &2B13
-  CPY #&0A
+  LDY flameindex
+  CPY #10
   BCS l2BD5
 
-  LDA &033A:STA &2B14,Y
-  LDA &033B:STA &2B1E,Y
-  LDA &033C:ORA #&10:STA &2B28,Y
+  LDA &033A:STA flame_x,Y ; X position
+  LDA &033B:STA flame_y,Y ; Y position
+  LDA &033C:ORA #&10:STA flame_attr,Y ; attr
   DEC &03BC
-  INC &2B13
+  INC flameindex
+
 .l2BD5
+  ; Calculate screen RAM position
   LDA screentable_lo,X:STA &FB
   LDA screentable_hi,X:STA &FC
-  LDA &033B
+
+  LDA &033B ; Y position
   AND #&07
   CLC
   ADC &FB
@@ -3943,7 +3962,8 @@ ORG &2B32
   DEC &FC
 .l2BF2
   STA &FB
-  LDA &033A
+
+  LDA &033A ; X position
   AND #&FE
   ASL A
   CLC
@@ -3959,10 +3979,9 @@ ORG &2B32
   INC &FC
 .l2C07
   STA &FB
-  LDA &033B
-  LSR A
-  LSR A
-  LSR A
+
+  LDA &033B ; Y position
+  LSR A:LSR A:LSR A ; Divide by 8
   TAX
   LDA &1828,X:SEC:SBC &03DC:STA &FE
   LDA &180E,X
@@ -3973,8 +3992,9 @@ ORG &2B32
   DEC &FE
 .l2C23
   STA &FD
-  LDA &033A
-  LSR A
+
+  LDA &033A ; X position
+  LSR A ; Divide by 2
   CLC
   ADC &FD
   BCC l2C30
@@ -4006,16 +4026,18 @@ ORG &2B32
 
   ; Is it < 48
   LDA &0340
-  CMP #&30
-  BCC l2C6D
+  CMP #'0'
+  BCC notfont
 
   ; Is it >= 91
-  CMP #&5B
-  BCS l2C6D
+  CMP #'Z'+1
+  BCS notfont
 
+  ; Processing for font sprites
   LDA #&01:STA &033D
   LDA #&08:STA &033E
-.l2C6D
+
+.notfont
   LDA &B4
   CLC
   ADC #&02
@@ -4025,6 +4047,7 @@ ORG &2B32
 .l2C76
   STA &B4
   JSR l2DCF
+
   LDA &03E2
   BNE l2C83
 
@@ -4034,9 +4057,9 @@ ORG &2B32
   LDA &033D:STA &034B
 
   ; Is it >= 34
-  LDA &033A
+  LDA &033A ; X position
   AND #&FE
-  CMP #&22
+  CMP #34
   BCS l2CA2
 
   STA &FF
@@ -4058,8 +4081,9 @@ ORG &2B32
   STA &034B
 .l2CB7
   LDA #&00:STA &0349
+
 .l2CBC
-  LDA &033B
+  LDA &033B ; Y position
   CMP &03E3
   BCS l2CC7
 
@@ -4073,13 +4097,13 @@ ORG &2B32
   CPY &033D
   BCC l2CC9
 
-  LDA &033C
+  LDA &033C ; attr
   AND #&80
   BEQ l2CDE
 
   JSR l2E2E
 .l2CDE
-  LDA &033A
+  LDA &033A ; X position
   AND #&01
   BEQ l2CE8
 
@@ -4136,7 +4160,7 @@ ORG &2B32
   RTS
 
 .l2D46
-  INC &033B
+  INC &033B ; Y position
   LDA &033B
   CMP &03E1
   BCS l2D2E
@@ -4149,7 +4173,7 @@ ORG &2B32
   INC &B5
 .l2D5B
   STA &B4
-  LDA &033B
+  LDA &033B ; Y position
   AND #&07
   BEQ l2D73
 
@@ -4184,7 +4208,9 @@ ORG &2B32
 .l2D8E
   STA &FD
   STA &35
+
   JMP l2CBC
+}
 
 .l2D95
 {
@@ -4461,13 +4487,13 @@ ORG &2B32
 
   LDA #56:STA objs_ylocs+obj_hawk
   LDA #&0F:STA &03BC
-  LDA #&00:STA &2B13
+  LDA #&00:STA flameindex
 
   LDX #&00
 .l2F60
-  STA &2B14,X
-  STA &2B1E,X
-  STA &2B28,X
+  STA flame_x,X
+  STA flame_y,X
+  STA flame_attr,X
 
   INX
   ; Is it < 10
@@ -6039,8 +6065,8 @@ ORG &2B32
   STA &03DB
   STX &034E
 .l393B
-  LDA &2B14,X:STA &033A ; X position
-  LDA &2B1E,X:STA &033B ; Y position
+  LDA flame_x,X:STA &033A ; X position
+  LDA flame_y,X:STA &033B ; Y position
 
   LDA #&00
   STA &033C ; attrib
@@ -6054,19 +6080,19 @@ ORG &2B32
   CPX &03DB
   BCS l3962
 
-  CPX &2B13
+  CPX flameindex
   BCC l393B
 
 .l3962
   LDX &034E
 .l3965
-  LDA &2B28,X
+  LDA flame_attr,X
   EOR #&80
-  STA &2B28,X
+  STA flame_attr,X
   STA &033C ; attrib
 
-  LDA &2B14,X:STA &033A ; X position
-  LDA &2B1E,X:STA &033B ; Y position
+  LDA flame_x,X:STA &033A ; X position
+  LDA flame_y,X:STA &033B ; Y position
   LDA #&20:STA &033F
   LDA #&00:STA &03DC
   LDA #SPR_FLAME ; frame
@@ -6076,7 +6102,7 @@ ORG &2B32
   CPX &03DB
   BCS done
 
-  CPX &2B13
+  CPX flameindex
   BCC l3965
 
 .done
