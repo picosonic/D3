@@ -6341,11 +6341,11 @@ ORG &2B13
   EQUB 16   ; Go up (+16)
   EQUB 0-16 ; Go down (-16)
   EQUB 0
-  EQUB 0-1  ; Go left (-1)
+  EQUB 0-1  ; Go left (-1) "Z"
   EQUB 0
   EQUB 0
   EQUB 0
-  EQUB 1    ; Go right (+1)
+  EQUB 1    ; Go right (+1) "X"
   EQUB 0
   EQUB 0
   EQUB 0
@@ -6466,7 +6466,7 @@ INCLUDE "dizzy_sprites.asm"
 .s5A00 ; to ???? = solidity bitmap ????
 .v5A58 ; []
 .v5B20 ; []
-.s5C00 ; to 5FE7 = 8x8 screen colour attribs
+.s5C00 ; to 5FE7 = 8x8 screen/border colour attribs
 .v5FF8 ; []
 
 ORG &6000
