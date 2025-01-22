@@ -1,0 +1,20 @@
+poke 9566, 96 - Fire Doesn't Kill
+
+poke 9568, 174 - Water Doesn't Kill
+
+??POKE 9592,14
+
+??POKE 9599,7
+
+??POKE 9606,0 - Invincibility
+
+poke 9610, 76, 199, 37 - Invincibility
+
+POKE 9652,173 - Lives
+  - Changes "DEC lives" to "LDA lives"
+
+poke 10862, 0 - No need to collect 30 coins to complete game
+  - Changes "BNE" destination after check for "30+" coins
+
+poke 12765, speed - Game Speed: 1 fastest, 255 normal, 80-128 best
+  - Changes "LDX #&FF" to "LDX #<speed>" which affects iterations of a NOP loop
