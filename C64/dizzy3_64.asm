@@ -4889,7 +4889,7 @@ ORG &2B13
   STA &0340
   STX &0345
 .l31DC
-  LDX #&FF
+  LDX #&FF ; Game speed
 .l31DE
   NOP
   NOP
@@ -5390,14 +5390,14 @@ ORG &2B13
   LDY KEY_PRESSED
   LDX &028D
   LDA player_input
-  CPY #&0C ; matrix code for 'Z'
+  CPY #KEY_Z
   BNE l3552
 
   ORA #JOY_LEFT
   JMP l3558
 
 .l3552
-  CPY #&17 ; matrix code for 'X'
+  CPY #KEY_X
   BNE l3558
 
   ORA #JOY_RIGHT
@@ -5407,7 +5407,7 @@ ORG &2B13
 
   ORA #JOY_UP
 .l355E
-  CPY #&01 ; matrix code for 'Return'
+  CPY #KEY_RETURN
   BNE l3564
 
   ORA #JOY_FIRE
@@ -6325,73 +6325,105 @@ ORG &2B13
   RTS
 }
 
-.v3AE9
-.v3AF0 ; []
+; Cheat mode key-sequence
+.eclipse
+  EQUB KEY_E
+  EQUB KEY_S
+  EQUB KEY_P
+  EQUB KEY_I
+  EQUB KEY_L
+  EQUB KEY_C
+  EQUB KEY_E
 
-ORG &3B00
+; Room number adjustments based on key pressed
+.roomchange
+  EQUB 0
+  EQUB 16   ; Go up (+16)
+  EQUB 0-16 ; Go down (-16)
+  EQUB 0
+  EQUB 0-1  ; Go left (-1)
+  EQUB 0
+  EQUB 0
+  EQUB 0
+  EQUB 1    ; Go right (+1)
+  EQUB 0
+  EQUB 0
+  EQUB 0
+  EQUB 0
+  EQUB 0
+  EQUB 0
+  EQUB 0
 
 .l3B00
 {
   LDX #&00
-.l3B02
+
+.nextchar
   ; check last key pressed
   LDA KEY_PRESSED
-  CMP &3AE9,X
-  BEQ l3B0A
+  CMP eclipse,X
+  BEQ awaitchar
 
   RTS
 
-.l3B0A
-  ; check last key pressed
+.awaitchar
+  ; Wait for last key pressed to change
   LDA KEY_PRESSED
-  CMP &3AE9,X
-  BEQ l3B0A
+  CMP eclipse,X
+  BEQ awaitchar
 
+  ; Move on to check next character of cheat code
   INX
-  ; Is it < 7
-  CPX #&07
-  BCC l3B02
+  CPX #7
+  BCC nextchar
 
-  LDA #&00:STA SPR_ENABLE
-  LDA #&02:STA lives
+  ; ### Cheat mode activate ###
+
+.l3B16
+
+  LDA #&00:STA SPR_ENABLE ; Hide sprites
+  LDA #2:STA lives ; Reset lives
 
   JSR l3814
-.l3B23
+.cheatloop
   LDA #&32
   JSR l31D6
-  JSR getplayerinput
 
+  JSR getplayerinput
   AND #&1F
   ; Is it >= 16
   CMP #&10
-  BCS l3B53
+  BCS done
 
   AND #&0F
   TAX
-  LDA &3AF0,X
-  BEQ l3B23
+  LDA roomchange,X
+  BEQ cheatloop
 
-  CLC
-  ADC roomno
+  CLC:ADC roomno ; Calculate new room number
+
   ; Is it < 21
-  CMP #&15
-  BCC l3B23
+  CMP #MARKETSQUAREROOM-1
+  BCC cheatloop
 
-  ; Is it >= 168
-  CMP #&A8
-  BCS l3B23
+  ; Is it >= 168 - odd because highest used room number is 100 (attic)
+  CMP #168
+  BCS cheatloop
 
   STA roomno
 
-  JSR l2F22
+  JSR l2F22 ; ?? Redraw room ??
 
-  LDA #&00:STA SPR_ENABLE
-  JMP l3B23
+  LDA #&00:STA SPR_ENABLE ; Hide sprites
+  JMP cheatloop
 
-.l3B53
-  LDA #&FF:STA SPR_ENABLE
+.done
+  LDA #&FF:STA SPR_ENABLE ; Show sprites
   RTS
+}
 
+; ?? Unreachable code ??
+{
   ; $DD00 = %xxxxxx11 -> Bank0: $0000-$3FFF
   LDA #&C7:STA CIA2_PRA
 
