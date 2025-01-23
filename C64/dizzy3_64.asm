@@ -3896,17 +3896,23 @@ ORG &190E
 ORG &2B13
 
 ; Flames
-.flameindex ; flame counter (up to 10)
+.flameindex ; flame counter, up to MAXFLAMES (10)
   EQUB 0
 
 .flame_x
-  EQUB 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+  FOR n, 1, MAXFLAMES
+    EQUB 0
+  NEXT
 
 .flame_y
-  EQUB 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+  FOR n, 1, MAXFLAMES
+    EQUB 0
+  NEXT
 
 .flame_attr
-  EQUB 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+  FOR n, 1, MAXFLAMES
+    EQUB 0
+  NEXT
 
 .install_ISR
 {
@@ -4546,7 +4552,7 @@ ORG &2B13
 .l2F22
 {
   JSR printroomname
-  JSR l3814
+  JSR showlives
 
   ; Check bone
   LDA objs_rooms+obj_bone
@@ -4581,8 +4587,8 @@ ORG &2B13
   STA flame_attr,X
 
   INX
-  ; Is it < 10
-  CPX #&0A
+  ; Is it < max flames
+  CPX #MAXFLAMES
   BCC l2F60
 
   LDA roomno
@@ -5974,7 +5980,7 @@ ORG &2B13
   JMP loop
 }
 
-.l3814
+.showlives
 {
   LDA #&00:STA &03DB
 
@@ -5986,13 +5992,14 @@ ORG &2B13
   STA &033B ; Y position
   STA &03E3
 
-  LDY #&00
+  LDY #PAL_BLACK ; Default to rubbing out life indicator eggs
+
   LDA &03DB
   CMP lives
-  BCS l3832
+  BCS keepattr
 
-  LDY #&06
-.l3832
+  LDY #PAL_YELLOW ; Draw life indicator eggs in yellow
+.keepattr
   STY &033C ; attrib
 
   LDA #&00:STA &03DC
@@ -6000,11 +6007,12 @@ ORG &2B13
   LDA #SPR_EGG ; frame
   JSR frame
 
+  ; Check next life indicator
   INC &03DB
   INX
   INX
-  ; Is it < 50
-  CPX #&32
+  ; Loop round again if X position < 50
+  CPX #50
   BCC loop
 
   RTS
@@ -6492,9 +6500,10 @@ ORG &2B13
 .l3B16 ; &3B16
 
   LDA #&00:STA SPR_ENABLE ; Hide sprites
-  LDA #2:STA lives ; Reset lives
 
-  JSR l3814
+  LDA #2:STA lives ; Reset lives
+  JSR showlives
+
 .cheatloop
   LDA #&32:JSR delay
 
