@@ -30,6 +30,18 @@ PLOT_OR = &08
 PLOT_XOR = &10
 PLOT_NULL = &18 ; Invalid - don't plot
 
+; Sound related
+SOUND_ON = 0
+SOUND_OFF = 1
+
+TUNE_NULL = 0 ; no tune
+TUNE_1 = 1 ; title screen
+TUNE_2 = 2 ; in-game
+TUNE_3 = 3 ; coin collect
+TUNE_4 = 4 ; lose a life / heart demo
+TUNE_10 = 10 ; ? no idea ?
+TUNE_CONT = 255 ; continue playing, tune already set up
+
 ; Room related
 
 OFFMAP = 255

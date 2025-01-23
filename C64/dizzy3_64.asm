@@ -113,12 +113,14 @@ roomno = &03E5
 
 ORG &0B00
 
-.v0B00
-  EQUB &FF
+; Current music playing
+.melody
+  EQUB TUNE_CONT
 
-.l0B01
+.musicplayer
 {
-  LDA v0B00
+  ; Check if any music is playing
+  LDA melody
   BNE l0B0F
 
   STA &116D
@@ -238,8 +240,8 @@ ORG &0B00
   CMP #&FE
   BNE l0BE3
 
-  LDA #&00:STA v0B00
-  JMP l0B01
+  LDA #TUNE_NULL:STA melody
+  JMP musicplayer
 
 .l0BE3
   CMP #&FD
@@ -758,7 +760,7 @@ ORG &0B00
 
 .l0F72
 {
-  LDA #&FF:STA v0B00
+  LDA #TUNE_CONT:STA melody
 
   RTS
 }
@@ -1077,7 +1079,7 @@ ORG &1903
 ORG &190E
 
 .l190E
-  JSR l2B32
+  JSR install_ISR
 
   ; Zero-out &033A to &03FF
   LDX #&C6
@@ -1089,7 +1091,7 @@ ORG &190E
 
   JSR l3B6D
   LDA #CASSETTE_OFF+CASSETTE_SWITCH+CHAREN_IO+HIRAM_E000_ROM+LORAM_A000_RAM:STA CPU_CONFIG
-  LDA #&0A:STA v0B00
+  LDA #TUNE_10:STA melody ; There is no melody 10 ??
 .l1927
   LDA #&00
   STA GFX_BORDER_COLOUR
@@ -1104,7 +1106,7 @@ ORG &190E
   CPX #&08
   BCC l1931
 
-  LDA #&01:STA v0B00
+  LDA #TUNE_1:STA melody ; Title screen melody
   LDA #&00:STA &033F
 
   JSR l3B6D
@@ -1178,7 +1180,7 @@ ORG &190E
   STA SPR_MULTICOLOUR
   STA &CFF8
   STA SPR_PRIORITY
-  STA v2B48
+  STA muted ; Enable sound
 
   ; Reset moving data (objects)
   LDX #noofmoving
@@ -1210,53 +1212,61 @@ ORG &190E
   JSR l2F22
   JSR l346B
 
-  LDA #&02:STA v0B00
+  LDA #TUNE_2:STA melody ; In-game melody
 .l1A25
   NOP
-  JSR l3541
+  JSR mergekeypress
 
-  CPY #&3E
-  BNE l1A30
+  CPY #KEY_Q
+  BNE checkpause
 
+  ; Quit to title screen ?
   JMP l1927
 
-.l1A30
-  CPY #&29
-  BNE l1A45
+.checkpause
+  CPY #KEY_P
+  BNE checkmute
 
-.l1A34
-  JSR l3541
+  ; Wait until no keys pressed
+.pauseloop
+  JSR mergekeypress
 
-  CPY #&40
-  BNE l1A34
+  CPY #KEY_NONE
+  BNE pauseloop
 
-.l1A3B
-  JSR l3541
+.waitforkeypress
+  JSR mergekeypress
 
-  CPY #&40
-  BEQ l1A3B
+  CPY #KEY_NONE
+  BEQ waitforkeypress
 
   JMP l1A6C
 
-.l1A45
-  CPY #&24
+.checkmute
+  CPY #KEY_M
   BNE l1A6C
 
-  LDA v2B48
-  BEQ l1A5B
+  ; M has been pressed, so toggle sound
 
-  LDA #&00:STA v2B48
-  LDA #&02:STA v0B00
+  ; Check current state of mute toggle
+  LDA muted
+  BEQ mute
 
-  JMP l1A65
+  ; Enable sound
+  LDA #SOUND_ON:STA muted
+  LDA #TUNE_2:STA melody ; In-game melody
 
-.l1A5B
-  LDA #&00:STA v0B00
-  LDA #&01:STA v2B48
-.l1A65
-  JSR l3541
-  CPY #&24
-  BEQ l1A65
+  JMP waitfor_m_release
+
+.mute
+  ; Disable sound
+  LDA #TUNE_NULL:STA melody
+  LDA #SOUND_OFF:STA muted
+
+.waitfor_m_release
+  JSR mergekeypress
+  CPY #KEY_M
+  BEQ waitfor_m_release
 
 .l1A6C
   JSR l3B00
@@ -2943,7 +2953,7 @@ ORG &190E
   JMP l25C7
 
 .l258A
-  LDA #&04:STA v0B00
+  LDA #TUNE_4:STA melody ; Lose a life / heart demo melody
   JSR l34E2
 
   ; You lose a life ...
@@ -2970,10 +2980,12 @@ ORG &190E
 
   JSR l2F22
   JSR l346B
-  LDA v2B48
+
+  ; Check if muted
+  LDA muted
   BNE l25C7
 
-  LDA #&02:STA v0B00
+  LDA #TUNE_2:STA melody ; In-game melody
 .l25C7
   LDA roomno
   CMP #CASTLEDUNGEONROOM
@@ -3717,7 +3729,7 @@ ORG &190E
 
   LDA #str_daisyrunsmess:JSR prtmessage
 
-  LDA #&02:STA v0B00
+  LDA #TUNE_2:STA melody ; In-game melody
   JMP l24A0
 
 .l2A68
@@ -3782,7 +3794,7 @@ ORG &190E
 
 .l2AB7
 {
-  LDA v2B48
+  LDA muted
   BNE l2ABD
 
 .l2ABC
@@ -3834,16 +3846,18 @@ ORG &2B13
 .flame_attr
   EQUB 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 
-.l2B32
+.install_ISR
 {
   SEI
 
+  ; Set up pointer to ISR routine
   LDA #lo(isr_routine):STA ISR
   LDA #hi(isr_routine):STA ISR+1
 
-  LDA #&00
-  STA v2B48
-  STA v0B00
+  ; Enable sound, but don't play melody yet
+  LDA #SOUND_ON+TUNE_NULL
+  STA muted
+  STA melody
 
   CLI
 
@@ -3852,7 +3866,7 @@ ORG &2B13
 
 .v2B47
   EQUB 142
-.v2B48
+.muted
   EQUB 0
 
 .isr_routine
@@ -3864,7 +3878,7 @@ ORG &2B13
   CMP #&07
   BEQ done
 
-  JSR l0B01
+  JSR musicplayer
 
 .done
   JMP KERNAL_ISR
@@ -5202,7 +5216,7 @@ ORG &2B13
   AND #%00011111 ; Mask to just Joystick 2
   STA player_input
 
-  JSR l3541
+  JSR mergekeypress
 
   LDA &03D8
   AND #&10 ; Joystick button pressed ?
@@ -5366,7 +5380,7 @@ ORG &2B13
   LDX #&00:STX &034E
   JSR l31EE
 
-  LDA #&04:STA v0B00
+  LDA #TUNE_4:STA melody ; Lose a life / hearts demo melody
   LDA #&05:STA &0368
   LDA #&06:STA &0369
   LDA #&09:STA &036A
@@ -5407,34 +5421,44 @@ ORG &2B13
   RTS
 }
 
-.l3541
+.mergekeypress
 {
-  ; check last pressed key
+  ; Check last pressed key
   LDY KEY_PRESSED
   LDX &028D
-  LDA player_input
-  CPY #KEY_Z
-  BNE l3552
 
+  ; Load bitfield
+  LDA player_input
+
+  CPY #KEY_Z
+  BNE checkx
+
+  ; Simulate joystick left
   ORA #JOY_LEFT
   JMP l3558
 
-.l3552
+.checkx
   CPY #KEY_X
   BNE l3558
 
+  ; Simulate joystick right
   ORA #JOY_RIGHT
+
 .l3558
   CPX #&00
-  BEQ l355E
+  BEQ checkreturn
 
+  ; Simulate joystick up
   ORA #JOY_UP
-.l355E
-  CPY #KEY_RETURN
-  BNE l3564
 
+.checkreturn
+  CPY #KEY_RETURN
+  BNE done
+
+  ; Simulate joystick fire
   ORA #JOY_FIRE
-.l3564
+
+.done
   STA player_input
 
   RTS
@@ -5606,10 +5630,10 @@ ORG &2B13
 
   JSR l3682
 
-.l364F
+.loop
   JSR l36B6
   DEC &0399
-  BNE l364F
+  BNE loop
 
   JSR l3682
 
@@ -5929,7 +5953,7 @@ ORG &2B13
   JSR l3023
 
   LDA #&00:STA &03DB
-  LDA #&04:STA v0B00
+  LDA #TUNE_4:STA melody ; Lose a life / hearts demo melody
 
 .loop
   JSR l3257
@@ -6164,15 +6188,16 @@ ORG &2B13
 .underten
   STA coins ; Update units
 
-  LDA #&03:STA v0B00
+  LDA #TUNE_3:STA melody ; Coin collect melody
   JSR drawcoincount
 
   LDA #str_youfoundcoinmess:JSR prtmessage
 
-  LDA v2B48
+  ; Check if muted
+  LDA muted
   BNE done
 
-  LDA #&02:STA v0B00
+  LDA #TUNE_2:STA melody ; In-game melody
 
 .done
   RTS
