@@ -99,11 +99,11 @@ player_input = &03C0
 olddizzyx = &03D6
 olddizzyy = &03D7
 .v03D8
-.v03D9
+.v03D9 ; ID of object being interacted with ?
 .v03DA
 .v03DB
 .v03DC
-.v03DD ; set to &3F and &86
+.v03DD ; max object id to draw
 .v03DF
 .v03E0
 .v03E1
@@ -137,15 +137,16 @@ ORG &0B00
   ASL A
   ADC #&00
   TAY
+
   LDX #&00
-.l0B1F
+.loop
   LDA &1235,Y:STA &11BC,X
   INY
   LDA &1235,Y:STA &11BF,X
   INY
   INX
   CPX #&03
-  BNE l0B1F
+  BNE loop
 
   LDX #&02
 .l0B34
@@ -493,6 +494,7 @@ ORG &0B00
 {
   LDA &118B,X
   BNE l0DAE
+
   LDY &11C3,X
   LDA &1251,Y
   BNE l0DB1
@@ -819,7 +821,7 @@ ORG &0B00
   LDA &11BC,X:STA &A9
   LDA &11BF,X:STA &AA
 
-.l0FCD
+.loop
   LDY &1170,X
   INC &1170,X
   LDA (&A9),Y
@@ -829,13 +831,13 @@ ORG &0B00
   BNE l0FE2
 
   LDA #&00:STA &1170,X
-  BEQ l0FCD
+  BEQ loop
 
 .l0FE2
   CLC
   ADC #&40
   STA &1191,X
-  JMP l0FCD
+  JMP loop
 
 .l0FEB
   ASL A
@@ -903,9 +905,10 @@ ORG &0B00
 
   STA &119C
   CLC
+
   LDX #&10
   LDA #&00
-.l105B
+.loop
   ROL &119A
   ROL &119B
   ROL A
@@ -919,7 +922,7 @@ ORG &0B00
   SEC
 .l106D
   DEX
-  BNE l105B
+  BNE loop
 
   ROL &119A
   ROL &119B
@@ -1575,7 +1578,7 @@ ORG &190E
 .l1C7F
   LDA #&06
 .l1C81
-  STA &0342
+  STA &0342 ; Set jump height
 
   RTS
 }
@@ -1863,6 +1866,7 @@ ORG &190E
   LDA #&22
 .l1E6E
   STA &FF
+
   LDA &03C9
   SEC
   SBC #&01
@@ -1892,9 +1896,10 @@ ORG &190E
   CLC
   ADC &FF
 .l1E9E
-  JSR l2A7F
+  JSR checkfordownunder
+
   STA &5FF8
-  LDA #&FF:STA SPR_ENABLE
+  LDA #&FF:STA SPR_ENABLE ; Show sprites
   LDA &03C7
   CMP #&02
   BEQ l1ECC
@@ -2032,8 +2037,8 @@ ORG &190E
 
 .l1FA9
   INX
-  ; Is it < 63
-  CPX #&3F
+  ; Is it a collectable object
+  CPX #maxcollectable+1
   BCC l1F7A
 
   LDX #&FF
@@ -2308,8 +2313,8 @@ ORG &190E
   JMP l24A0
 
 .notacoin
-  ; Is it >= 63
-  CPX #&3F
+  ; Is it a non-collectable
+  CPX #maxcollectable+1
   BCS l21A0
 
   LDA #collected:STA objs_rooms,X
@@ -2347,9 +2352,10 @@ ORG &190E
   LDA #str_carryingtoomuchmess:JSR prtmessage
 
 .l21A0
-  LDA #&00
-  STA SPR_ENABLE
-  JSR l3776
+  LDA #&00:STA SPR_ENABLE ; Hide sprites
+
+  JSR drawinventory
+
   LDA &18D9
   BEQ l21B4
 
@@ -2433,7 +2439,7 @@ ORG &190E
   BCC l225C
 
   LDA &03D9
-  CMP #&06
+  CMP #obj_cow
   BEQ l2244
 
   LDA #str_givingjunkmess:JSR prtmessage
@@ -2456,8 +2462,8 @@ ORG &190E
 
 .l225C
   LDA &03D9
-  CMP #&12
-  BNE l2275
+  CMP #obj_apple
+  BNE checkjugofwater
 
   LDX #obj_troll
   JSR collidewithdizzy
@@ -2470,9 +2476,9 @@ ORG &190E
 .l2272
   JMP l242D
 
-.l2275
-  CMP #&14
-  BNE l2295
+.checkjugofwater
+  CMP #obj_jugofwater
+  BNE checkrope
 
   LDX #&44
   JSR collidewithdizzy
@@ -2487,8 +2493,8 @@ ORG &190E
 
   JMP l242D
 
-.l2295
-  CMP #&10
+.checkrope
+  CMP #obj_rope
   BNE l22B0
 
   LDX #obj_croc
@@ -2506,11 +2512,11 @@ ORG &190E
 .l22B0
   ; Is it < 23
   CMP #&17
-  BCC l22E2
+  BCC checkdoorknocker
 
   ; Is it >= 26
   CMP #&1A
-  BCS l22E2
+  BCS checkdoorknocker
 
   LDX #&4F
   JSR collidewithdizzy
@@ -2536,13 +2542,13 @@ ORG &190E
 
   JMP l242D
 
-.l22E2
-  CMP #&16
-  BNE l2307
+.checkdoorknocker
+  CMP #obj_doorknocker
+  BNE checkbone
 
   LDX roomno
   CPX #CASTLESTAIRCASEROOM
-  BNE l2307
+  BNE checkbone
 
   LDX #&44
   JSR collidewithdizzy
@@ -2560,9 +2566,9 @@ ORG &190E
 .l2304
   JMP l242D
 
-.l2307
-  CMP #&05
-  BNE l2324
+.checkbone
+  CMP #obj_bone
+  BNE checkcrowbar
 
   LDX #&52
   JSR collidewithdizzy
@@ -2574,9 +2580,9 @@ ORG &190E
   LDA #OFFMAP:STA &C6F0
   JMP l242D
 
-.l2324
-  CMP #&03
-  BNE l233F
+.checkcrowbar
+  CMP #obj_crowbar
+  BNE checkbean
 
   LDX #obj_wood
   JSR collidewithdizzy
@@ -2589,9 +2595,9 @@ ORG &190E
 
   JMP l242D
 
-.l233F
-  CMP #&01
-  BNE l2365
+.checkbean
+  CMP #obj_bean
+  BNE checkbucket
 
   LDX #obj_manure
   JSR collidewithdizzy
@@ -2611,8 +2617,8 @@ ORG &190E
   LDA #JOY_LEFT+JOY_UP:STA player_input
   JMP l1B68
 
-.l2365
-  CMP #&04
+.checkbucket
+  CMP #obj_bucket
   BNE l23A7
 
   ; Check colour of bucket
@@ -2654,11 +2660,11 @@ ORG &190E
 .l23A7
   ; Is it < 12
   CMP #&0C
-  BCC l23C8
+  BCC checkgoldenegg
 
   ; Is it >= 16
   CMP #&10
-  BCS l23C8
+  BCS checkgoldenegg
 
   CLC
   ADC #&4C
@@ -2674,9 +2680,9 @@ ORG &190E
 .l23C5
   JMP l242D
 
-.l23C8
-  CMP #&09
-  BNE l23E0
+.checkgoldenegg
+  CMP #obj_goldenegg
+  BNE checkpickaxe
 
   LDX #&47
   JSR collidewithdizzy
@@ -2688,9 +2694,9 @@ ORG &190E
   LDA #ATTR_REVERSE+PAL_YELLOW:STA objs_attrs+obj_goldenegg
   JMP l242D
 
-.l23E0
-  CMP #&08
-  BNE l23FB
+.checkpickaxe
+  CMP #obj_pickaxe
+  BNE checkrug
 
   LDX #&49
   JSR collidewithdizzy
@@ -2704,9 +2710,9 @@ ORG &190E
 
   JMP l242D
 
-.l23FB
-  CMP #&0B
-  BNE l2417
+.checkrug
+  CMP #obj_rug
+  BNE checksleepingpotion
 
   LDA #DAISYSPRISONROOM
   CMP roomno
@@ -2721,8 +2727,8 @@ ORG &190E
 
   JMP l242D
 
-.l2417
-  CMP #&11
+.checksleepingpotion
+  CMP #obj_sleepingpotion
   BNE l242D
 
   LDA #WIDEEYEDDRAGONROOM
@@ -2766,7 +2772,7 @@ ORG &190E
   CPX #&FF
   BEQ l24A0
 
-  LDA #&3F:STA &03DD
+  LDA #maxcollectable+1:STA &03DD
   LDA #&00:STA &03D5
 
   ; Wait until raster line >= 250
@@ -2776,17 +2782,18 @@ ORG &190E
   CMP #250
   BCC l2469
 
-  JSR l3329
+  JSR drawobjects
+
   LDX &03D9
   LDA roomno:STA objs_rooms,X
 
   LDA dizzyx:CLC:ADC #33:AND #&FE:STA objs_xlocs,X
   LDA dizzyy:CLC:ADC #45:STA objs_ylocs,X
 
-  LDA #&3F:STA &03DD
+  LDA #maxcollectable+1:STA &03DD
   LDA #&FF:STA &03D5
 
-  JSR l3329
+  JSR drawobjects
   JSR l3090
 .l24A0
   LDX #&00:STX &03B7
@@ -3671,7 +3678,7 @@ ORG &190E
   LDA #TOPWELLROOM:STA roomno
 
 .l2A11
-  LDA #&72:STA dizzyy
+  LDA #114:STA dizzyy
 
   LDA #&01
   STA &03C7
@@ -3686,6 +3693,7 @@ ORG &190E
 }
 
 .l2A2E
+{
   LDX #obj_daisy
   JSR collidewithdizzy
   BCS l2A38
@@ -3704,7 +3712,7 @@ ORG &190E
   LDA #50:STA objs_xlocs+obj_daisy
   LDA #77:STA objs_ylocs+obj_daisy
 
-  LDA #&00:STA SPR_ENABLE
+  LDA #&00:STA SPR_ENABLE ; Hide sprites
   JSR heartdemo
 
   LDA #str_daisyrunsmess:JSR prtmessage
@@ -3725,25 +3733,27 @@ ORG &190E
   LDA #str_notgotallcoins:JSR prtmessage
 
   JMP l24A0
+}
 
-.l2A7F
+.checkfordownunder
 {
+  ; Check if were down-under
   LDY roomno
-  CPY #&19 ; No room #25 ???
-  BCC l2A87
+  CPY #CHURCHROOM+1
+  BCC downunder
 
   RTS
 
-.l2A87
+.downunder
   LDY #&00:STY &FC
 
   LDX #&06
-.l2A8D
+.loop
   CLC
   ROL A
   ROL &FC
   DEX
-  BNE l2A8D
+  BNE loop
 
   STA &FB
 
@@ -3751,17 +3761,19 @@ ORG &190E
 
   LDY #&00
   LDX #&3E
-.l2AA1
+.fliploop
   LDA (&FB),Y
-  STX &FF
+
+  STX &FF ; Cache X
   TAX
   LDA flip_lut,X
-  LDX &FF
+  LDX &FF ; Restore X
+
   STA &4A80,X
   DEX
   INY
   CPY #&3F
-  BCC l2AA1
+  BCC fliploop
 
   LDA #&2A
 
@@ -4476,7 +4488,7 @@ ORG &2B13
 {
   LDA #&00
   STA &03BB
-  STA SPR_ENABLE
+  STA SPR_ENABLE ; Hide sprites
   STA &03E0
   STA &03DA
 
@@ -4591,13 +4603,13 @@ ORG &2B13
 
 .l300A
   LDA #&FF:STA &03D5
-  LDA #&86:STA &03DD
+  LDA #noofmoving:STA &03DD
 
-  JSR l3329
+  JSR drawobjects
   JSR l30CD
   JSR l3090
 
-  LDA #&FF:STA SPR_ENABLE
+  LDA #&FF:STA SPR_ENABLE ; Show sprites
 
   RTS
 }
@@ -4982,18 +4994,21 @@ ORG &2B13
 
 .l3257
 {
-  STX &0345
+  STX &0345 ; Cache X
+
   INC &03C5
   LDX &03C5
   LDA &E290,X:STA &03C6
-  LDX &0345
+
+  LDX &0345 ; Restore X
 
   RTS
 }
 
 .l326A
 {
-  STX &0346
+  STX &0346 ; Cache X
+
   INC &03C5
   LDX &03C5
   LDA &EA60,X
@@ -5001,7 +5016,8 @@ ORG &2B13
   CLC
   ADC #&01
   STA &03C6
-  LDX &0346
+
+  LDX &0346 ; Restore X
 
   RTS
 }
@@ -5099,35 +5115,37 @@ ORG &2B13
   RTS
 }
 
-; Draw objects ??
-.l3329
+; Draw objects for the room we are in
+.drawobjects
 {
   LDX &03DD
-.l332C
+.loop
   CPX #&00
-  BNE l333B
+  BNE keepgoing
 
   ; End of objects, reset
-  LDA #&86:STA &03DD
+  LDA #noofmoving:STA &03DD
   LDA #&FF:STA &03D5
   RTS
 
-.l333B
+.keepgoing
   DEX
   LDA objs_rooms,X
-  BEQ l332C
+  BEQ loop ; skip this object if in room 0
 
   CMP roomno
-  BNE l332C
+  BNE loop ; skip this object if not in the room we are in
 
   LDA objs_xlocs,X:STA &033A ; X position
   LDA objs_ylocs,X:STA &033B ; Y position
   LDA objs_attrs,X:STA &033C ; attrib
 
+  ; Check if this is a non-collectable
   LDY #&00
-  CPX #&3F
+  CPX #maxcollectable+1
   BCS l3373
 
+  ; This is a collectable object
   AND #&07
   AND &03D5
   ORA #&08
@@ -5144,7 +5162,7 @@ ORG &2B13
 
   JSR frame
 
-  JMP l332C
+  JMP loop
 }
 
 .l3384
@@ -5571,7 +5589,7 @@ ORG &2B13
   JSR nextchar
   STA &0399
 
-  LDA #&00:STA SPR_ENABLE
+  LDA #&00:STA SPR_ENABLE ; Hide sprites
   LDA cursorx:CLC:ADC #&02:STA &039A
 
   LDA #SPR_FRAMETOP
@@ -5769,7 +5787,7 @@ ORG &2B13
   RTS
 }
 
-.l3776
+.drawinventory
 {
   JSR l374F
   LDX #str_inventory
@@ -5777,10 +5795,10 @@ ORG &2B13
   ; Check for larger inventory
   LDA objs_rooms+obj_bag
   CMP #collected
-  BNE l3784
+  BNE drawbag
 
   LDX #str_inventorywithbag
-.l3784
+.drawbag
   TXA
   JSR prtmessage
 
@@ -6258,7 +6276,7 @@ ORG &2B13
 
   LDA #&0B
 
-  ; Check for larger inventory
+  ; Check for larger inventory (bag collected)
   LDX objs_rooms+obj_bag
   CPX #collected
   BNE l3A83
@@ -6270,14 +6288,15 @@ ORG &2B13
   TAX
   LDA &180E,X:STA &FB
   LDA &1828,X:STA &FC
+
   LDY #&09
   LDA &033C
-.l3A97
+.loop
   STA (&FB),Y
   INY
   ; Is it < 31
   CPY #&1F
-  BCC l3A97
+  BCC loop
 
   RTS
 }
@@ -6287,7 +6306,7 @@ ORG &2B13
   LDA &03BA:CLC:ADC #&08:STA &03DB
 
   LDX &03BA
-.l3AAB
+.loop
   ; Is it < 50
   CPX #&32
   BCC l3AD5
@@ -6318,9 +6337,9 @@ ORG &2B13
   INX
   INX
   CPX &03DB
-  BEQ l3AAB
+  BEQ loop
 
-  BCC l3AAB
+  BCC loop
 
   LDX #obj_dragonhead
   LDA #&00:STA &03DC
@@ -6383,7 +6402,7 @@ ORG &2B13
 
   ; ### Cheat mode activate ###
 
-.l3B16
+.l3B16 ; &3B16
 
   LDA #&00:STA SPR_ENABLE ; Hide sprites
   LDA #2:STA lives ; Reset lives
@@ -6463,12 +6482,8 @@ INCLUDE "dizzy_sprites.asm"
 ; &5180 - end of sprite bitmaps
 
 .v5800 ; []
-.v58C8
 .v5900 ; []
-.v5990 ; []
 .s5A00 ; to ???? = solidity bitmap ????
-.v5A58 ; []
-.v5B20 ; []
 .s5C00 ; to 5FE7 = 8x8 screen/border colour attribs
 .v5FF8 ; []
 

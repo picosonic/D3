@@ -169,6 +169,7 @@ objs_frames = &C8B6
 
 ; object flags
 collected = 4
+maxcollectable = 62
 
 ; object offsets
 obj_bag            = 0
@@ -177,15 +178,21 @@ obj_manure         = 2
 obj_crowbar        = 3
 obj_bucket         = 4
 obj_bone           = 5
+obj_cow            = 6
+obj_pickaxe        = 8
 obj_goldenegg      = 9
 obj_blackhole      = 10
 obj_rug            = 11
 obj_rope           = 16
 obj_sleepingpotion = 17
+obj_apple          = 18
 obj_brandy         = 19
 obj_jugofwater     = 20
 obj_bread          = 21
 obj_doorknocker    = 22
+
+; end of collectables
+
 obj_shopkeeper     = 63
 ;= 65 ; egg
 obj_troll          = 66
