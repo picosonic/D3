@@ -16,7 +16,7 @@ ORG &00
 .v00A7 ; pointer (148D / 14EB / 1502 / 1397 / 14F2 / 14FE)
 .v00A8
 
-.v00A9 ; pointer (149F / 130F)
+.v00A9 ; pointer (149F / 130F) - melody pointer
 .v00AA
 
 .v00B0 ; pointer (8EB7 / 81B0 / 8678 / 8177 / 8FD8) - ROOMDATA
@@ -123,29 +123,36 @@ ORG &0B00
   LDA melody
   BNE l0B0F
 
+  ; Melody is 0
   STA &116D
   JSR l0F78
 .l0B0C
-  JMP l0F72
+  JMP continueplaying
 
+  ; Something is playing
 .l0B0F
-  ; Is it >= 5
-  CMP #&05
+  ; Is it > last tune id (i.e. is it invalid)
+  CMP #TUNE_4+1
   BCS l0B50
 
-  SBC #&00
+  ; Calculate melody id * 6, place in Y
+  SBC #&00 ; Carry is clear so make melody id 0-based
+  ASL A     ; * 2
+  STA mult+1 ; store * 2 value
   ASL A
-  STA &0B1B
-  ASL A
-  ADC #&00
+.mult
+  ADC #&00 ; gets replaced
   TAY
 
+  ; Copy 6 interlaced bytes for new melody to current melody
   LDX #&00
 .loop
-  LDA &1235,Y:STA &11BC,X
+  LDA melodyconfigs,Y:STA v11BC,X ; lo
   INY
-  LDA &1235,Y:STA &11BF,X
+
+  LDA melodyconfigs,Y:STA v11BF,X ; hi
   INY
+
   INX
   CPX #&03
   BNE loop
@@ -155,7 +162,8 @@ ORG &0B00
   LDA #&00
   STA &1188,X
   STA &118B,X
-  STA &1170,X
+  STA v1170,X ; Set melody channel data pos to start
+
   JSR l0FC3
 
   DEX
@@ -164,8 +172,9 @@ ORG &0B00
   JSR l1147
 
   LDA #&01:STA &116D
-  JMP l0F72
+  JMP continueplaying
 
+  ; Invalid or continue playing
 .l0B50
   LDA &116D
   BEQ l0B0C
@@ -751,14 +760,14 @@ ORG &0B00
 
 .l0F67
   DEC &116F
-  BPL l0F72
+  BPL continueplaying
 
   LDA &116E:STA &116F
 }
 
 ; Fall through
 
-.l0F72
+.continueplaying
 {
   LDA #TUNE_CONT:STA melody
 
@@ -818,31 +827,34 @@ ORG &0B00
   RTS
 }
 
+; X reg is the sound channel (0/1/2)
 .l0FC3
 {
-  LDA &11BC,X:STA &A9
-  LDA &11BF,X:STA &AA
+  LDA v11BC,X:STA &A9 ; lo
+  LDA v11BF,X:STA &AA ; hi
 
 .loop
-  LDY &1170,X
-  INC &1170,X
-  LDA (&A9),Y
+  LDY v1170,X ; Get channel offset
+  INC v1170,X ; Advance channel offset
+
+  LDA (&A9),Y ; Read from music data pointer
   BPL l0FEB
 
-  CMP #&FF
-  BNE l0FE2
+  CMP #&FF ; Is this the channel EOF
+  BNE keepgoing
 
-  LDA #&00:STA &1170,X
+  ; Loop back to start of data for this channel
+  LDA #&00:STA v1170,X
   BEQ loop
 
-.l0FE2
+.keepgoing
   CLC
   ADC #&40
   STA &1191,X
   JMP loop
 
 .l0FEB
-  ASL A
+  ASL A ; * 2
   TAY
   LDA &12DD,Y
   STA &117F,X
@@ -971,7 +983,13 @@ ORG &1147
 .v116D
 .v116E
 .v116F
+
+ORG &1170
 .v1170 ; []
+  EQUB &14 ; Channel 0 melody data pos
+  EQUB &11 ; Channel 1 melody data pos
+  EQUB &11 ; Channel 3 melody data pos
+
 .v1173 ; []
 .v1176 ; []
 .v1179 ; []
@@ -1003,8 +1021,18 @@ ORG &1147
 .v11B9
 .v11BA
 .v11BB
+
+ORG &11BC
+  ; Current melody
 .v11BC ; []
+  EQUB &0F
+  EQUB &3D
+  EQUB &65
 .v11BF ; []
+  EQUB &13
+  EQUB &13
+  EQUB &13
+
 .v11C2
 .v11C3 ; []
 .v11C6 ; []
@@ -1019,7 +1047,41 @@ ORG &1147
 .v11F0 ; []
 .v1215 ; []
 .v1225 ; []
-.v1235 ; []
+
+ORG &1235
+.melodyconfigs ; []
+  ; Melody 1 - Title screen
+  EQUB &0F
+  EQUB &13
+  EQUB &3D
+  EQUB &13
+  EQUB &65
+  EQUB &13
+
+  ; Melody 2 - In-game
+  EQUB &9F
+  EQUB &14
+  EQUB &C3
+  EQUB &14
+  EQUB &DA
+  EQUB &14
+
+  ; Melody 3 - Coin collect
+  EQUB &FF
+  EQUB &15
+  EQUB &02
+  EQUB &16
+  EQUB &05
+  EQUB &16
+
+  ; Melody 4 - Lose a life / Heart demo
+  EQUB &AE
+  EQUB &16
+  EQUB &B1
+  EQUB &16
+  EQUB &B4
+  EQUB &16
+
 .v124D ; []
 .v124E ; []
 .v124F ; []
