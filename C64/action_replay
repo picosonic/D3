@@ -13,5 +13,8 @@ poke 9652,173 - Infinite lives
 poke 10862, 0 - No need to collect 30 coins to complete game
   - Changes "BNE" destination after check for "30+" coins
 
+poke 12758, 96 - Mega speed
+  - Changes "STA &0340" to an "RTS" (so delay becomes only 6 cycles)
+
 poke 12765, speed - Game Speed: 1 fastest, 255 normal, 80-128 best
-  - Changes "LDX #&FF" to "LDX #<speed>" which affects iterations of a NOP loop
+  - Changes "LDX #&FF" to "LDX #<speed>" which affects iterations of an inner NOP loop

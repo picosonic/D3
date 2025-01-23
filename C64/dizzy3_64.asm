@@ -1260,8 +1260,7 @@ ORG &190E
   JSR getplayerinput
 
   LDA #&00:STA &03C1
-  LDA &03BC
-  JSR l31D6
+  LDA &03BC:JSR delay
   INC &03C4
 
   ; Check brandy bottle
@@ -2208,8 +2207,7 @@ ORG &190E
   INC objs_ylocs+obj_lifttop
   JSR l29D3
 
-  LDA #&0A
-  JSR l31D6
+  LDA #&0A:JSR delay
 
   ; Check where the lift has got to, keep moving until it gets to the bottom
   LDA objs_ylocs+obj_liftbottom
@@ -2360,10 +2358,9 @@ ORG &190E
   BEQ l21C4
 
 .l21B4
-  LDA #&F0
-  JSR l31D6
-  LDA #&F0
-  JSR l31D6
+  LDA #&F0:JSR delay
+  LDA #&F0:JSR delay
+
   JSR resetgamestate
   JMP l242D
 
@@ -2384,8 +2381,8 @@ ORG &190E
 .l21D7
   LDA #&05
   JSR l3A71
-  LDA #&3C
-  JSR l31D6
+
+  LDA #&3C:JSR delay
 .l21E1
   JSR getplayerinput
   LDA player_input
@@ -2951,8 +2948,8 @@ ORG &190E
 
   LDA #&07:STA &03B7
 .l25A2
-  LDA #&FA
-  JSR l31D6
+  LDA #&FA:JSR delay
+
   DEC &03B7
   BNE l25A2
 
@@ -4884,26 +4881,35 @@ ORG &2B13
   RTS
 }
 
-.l31D6
+; 18 cycles of setup
+; Then multiply the following by A reg
+; 3315 cycles of innerloop
+; 11 cycles of loop
+;
+; A reg of &00 = 3,344 cycles / &FF = 848,148 cycles
+.delay
 {
-  STA &0340
-  STX &0345
-.l31DC
-  LDX #&FF ; Game speed
-.l31DE
-  NOP
-  NOP
-  NOP
-  NOP
-  DEX
-  BNE l31DE
+  STA &0340 ; (4) Delay amount
+  STX &0345 ; (4) Preserve X
 
-  DEC &0340
-  BNE l31DC
+.loop
+  LDX #&FF ; (2) Game speed
 
-  LDX &0345
+.innerloop
+  NOP ; (2)
+  NOP ; (2)
+  NOP ; (2)
+  NOP ; (2)
 
-  RTS
+  DEX ; (2)
+  BNE innerloop ; (3 or 2 when not taken)
+
+  DEC &0340 ; (6)
+  BNE loop ; (3 or 2 when not taken)
+
+  LDX &0345 ; (4) Restore X
+
+  RTS ; (6)
 }
 
 .l31EE
@@ -5005,7 +5011,7 @@ ORG &2B13
   STX &0345
   STA &0340
   LDX &034E
-  LDA &0340
+  LDA &0340 ; Not required ?
   AND #&03
   BEQ l32AD
 
@@ -5270,8 +5276,8 @@ ORG &2B13
   CPX #&06
   BCC innerloop
 
-  LDA #&08
-  JSR l31D6
+  LDA #&08:JSR delay
+
   DEC &0346
   BNE loop
 
@@ -5376,8 +5382,7 @@ ORG &2B13
   CPX #&08
   BCC l352A
 
-  LDA #&64
-  JSR l31D6
+  LDA #&64:JSR delay
 
   LDA &03B8:STA roomno
 
@@ -5940,8 +5945,7 @@ ORG &2B13
   ADC #SPR_HEARTNULL ; frame
   JSR frame
 
-  LDA #&05
-  JSR l31D6
+  LDA #&05:JSR delay
 
   INC &03DB
   BNE loop
@@ -6386,8 +6390,7 @@ ORG &2B13
 
   JSR l3814
 .cheatloop
-  LDA #&32
-  JSR l31D6
+  LDA #&32:JSR delay
 
   JSR getplayerinput
   AND #&1F
