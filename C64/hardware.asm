@@ -141,5 +141,7 @@ KEY_RUNSTOP = &3F ; Run / Stop
 
 KEY_NONE    = &40 ; No key pressed
 
+KEY_SHIFT   = &028D ; Shift key indicator
+
 ISR = &0314
 KERNAL_ISR = &EA31

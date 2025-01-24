@@ -5490,7 +5490,7 @@ ORG &2B13
 {
   ; Check last pressed key
   LDY KEY_PRESSED
-  LDX &028D
+  LDX KEY_SHIFT
 
   ; Load bitfield
   LDA player_input
@@ -5500,16 +5500,16 @@ ORG &2B13
 
   ; Simulate joystick left
   ORA #JOY_LEFT
-  JMP l3558
+  JMP checkshift
 
 .checkx
   CPY #KEY_X
-  BNE l3558
+  BNE checkshift
 
   ; Simulate joystick right
   ORA #JOY_RIGHT
 
-.l3558
+.checkshift
   CPX #&00
   BEQ checkreturn
 
@@ -6454,16 +6454,17 @@ ORG &2B13
   EQUB KEY_E
 
 ; Room number adjustments based on key pressed
+;   These indexes map to JOYSTICK bitfield
 .roomchange
   EQUB 0
-  EQUB 16   ; Go up (+16)
-  EQUB 0-16 ; Go down (-16)
+  EQUB 16   ; Go up (+16)    Joystick UP / Keyboard "SHIFT" or "COMMODORE" or "CONTROL"
+  EQUB 0-16 ; Go down (-16)  Joystick DOWN
   EQUB 0
-  EQUB 0-1  ; Go left (-1) "Z"
+  EQUB 0-1  ; Go left (-1)   Joystick LEFT / Keyboard "Z"
   EQUB 0
   EQUB 0
   EQUB 0
-  EQUB 1    ; Go right (+1) "X"
+  EQUB 1    ; Go right (+1)  Joystick RIGHT / Keyboard "X"
   EQUB 0
   EQUB 0
   EQUB 0
@@ -6508,12 +6509,13 @@ ORG &2B13
   LDA #&32:JSR delay
 
   JSR getplayerinput
-  AND #&1F
-  ; Is it >= 16
-  CMP #&10
+  AND #JOY_FIRE+JOY_RIGHT+JOY_LEFT+JOY_DOWN+JOY_UP
+  ; If FIRE or RETURN are pressed, exit cheat mode
+  CMP #JOY_FIRE
   BCS done
 
-  AND #&0F
+  ; Mask off FIRE button
+  AND #JOY_RIGHT+JOY_LEFT+JOY_DOWN+JOY_UP
   TAX
   LDA roomchange,X
   BEQ cheatloop
