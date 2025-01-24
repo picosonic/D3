@@ -6621,7 +6621,6 @@ INCBIN "roomdata.bin"
   EQUB &07, &87, &47, &c7, &27, &a7, &67, &e7, &17, &97, &57, &d7, &37, &b7, &77, &f7
   EQUB &0f, &8f, &4f, &cf, &2f, &af, &6f, &ef, &1f, &9f, &5f, &df, &3f, &bf, &7f, &ff
 
-ORG &A500
 .frametable
 INCBIN "frametable.bin"
 .framedefs
