@@ -1887,13 +1887,13 @@ ORG &190E
   LDA roomno
   JSR l2F22
 .l1E1D
-  LDA dizzyy:CLC:ADC #&5A:STA &D001
+  LDA dizzyy:CLC:ADC #90:STA &D001
 
   LDA dizzyx
   ASL A
   ASL A
   CLC
-  ADC #&38
+  ADC #56
   STA &D000
 
   BCC l1E3B
@@ -2932,7 +2932,7 @@ ORG &190E
 .l24FF
   LDA dizzyy
   ; Is it < 88
-  CMP #&58
+  CMP #88
   BCC l2527
 
   LDA &03BA
@@ -2940,9 +2940,9 @@ ORG &190E
 
   LDA dizzyx
   CLC
-  ADC #&23
+  ADC #35
   ; Is it < 49
-  CMP #&31
+  CMP #49
   BCC l2527
 
   CMP &03BA
@@ -5304,9 +5304,9 @@ ORG &2B13
 {
   STA &033A
 
-  LDA dizzyx:ASL A:CLC:ADC #&1C:STA dizzyx
+  LDA dizzyx:ASL A:CLC:ADC #28:STA dizzyx
 
-  LDA dizzyy:CLC:ADC #&5A:STA dizzyy
+  LDA dizzyy:CLC:ADC #90:STA dizzyy
 
   LDX #&02
 .loop
@@ -6290,11 +6290,11 @@ ORG &2B13
   JSR getframepointer
 
   ; Set up hit-detection around Dizzy ??
-  LDA dizzyx:CLC:ADC #&21:STA &033A
-  CLC:ADC #&04:STA &033C ; +width ??
+  LDA dizzyx:CLC:ADC #33:STA &033A
+  CLC:ADC #4:STA &033C ; +width ??
 
-  LDA dizzyy:CLC:ADC #&2A:STA &033B
-  CLC:ADC #&15:STA &033D ; +height ??
+  LDA dizzyy:CLC:ADC #66:STA &033B
+  CLC:ADC #21:STA &033D ; +height ??
 
   ; Return if object.x >= dizzy.x (Dizzy to the left)
   LDA objs_xlocs,X
