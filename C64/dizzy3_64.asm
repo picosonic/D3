@@ -16,8 +16,7 @@ ORG &00
 .v00A7 ; pointer (148D / 14EB / 1502 / 1397 / 14F2 / 14FE)
 .v00A8
 
-.v00A9 ; pointer (149F / 130F) - melody pointer
-.v00AA
+melody_ptr = &00A9
 
 .v00B0 ; pointer (8EB7 / 81B0 / 8678 / 8177 / 8FD8) - ROOMDATA
 .v00B1
@@ -148,10 +147,10 @@ ORG &0B00
   {
     LDX #&00
 .loop
-    LDA melodyconfigs,Y:STA v11BC,X ; lo
+    LDA melodyconfigs,Y:STA melodychanptr_lo,X ; lo
     INY
 
-    LDA melodyconfigs,Y:STA v11BF,X ; hi
+    LDA melodyconfigs,Y:STA melodychanptr_hi,X ; hi
     INY
 
     INX
@@ -165,7 +164,7 @@ ORG &0B00
     LDA #&00
     STA &1188,X
     STA &118B,X
-    STA v1170,X ; Set melody channel data pos to start
+    STA melody_chan_pos,X ; Set melody channel data pos to start
 
     JSR l0FC3
 
@@ -836,21 +835,21 @@ ORG &0B00
 ; X reg is the sound channel (0/1/2)
 .l0FC3
 {
-  LDA v11BC,X:STA &A9 ; lo
-  LDA v11BF,X:STA &AA ; hi
+  LDA melodychanptr_lo,X:STA melody_ptr ; lo
+  LDA melodychanptr_hi,X:STA melody_ptr+1 ; hi
 
 .loop
-  LDY v1170,X ; Get channel offset
-  INC v1170,X ; Advance channel offset
+  LDY melody_chan_pos,X ; Get channel offset
+  INC melody_chan_pos,X ; Advance channel offset
 
-  LDA (&A9),Y ; Read from music data pointer
+  LDA (melody_ptr),Y ; Read from music data pointer
   BPL l0FEB
 
   CMP #&FF ; Is this the channel EOF
   BNE keepgoing
 
   ; Loop back to start of data for this channel
-  LDA #&00:STA v1170,X
+  LDA #&00:STA melody_chan_pos,X
   BEQ loop
 
 .keepgoing
@@ -991,9 +990,9 @@ ORG &1147
 .v116F
 
 ORG &1170
-.v1170 ; []
-  EQUB &14 ; Channel 0 melody data pos
-  EQUB &11 ; Channel 1 melody data pos
+.melody_chan_pos ; []
+  EQUB &14 ; Channel 1 melody data pos
+  EQUB &11 ; Channel 2 melody data pos
   EQUB &11 ; Channel 3 melody data pos
 
 .v1173 ; []
@@ -1030,11 +1029,11 @@ ORG &1170
 
 ORG &11BC
   ; Current melody
-.v11BC ; []
+.melodychanptr_lo ; []
   EQUB &0F
   EQUB &3D
   EQUB &65
-.v11BF ; []
+.melodychanptr_hi ; []
   EQUB &13
   EQUB &13
   EQUB &13
@@ -1057,24 +1056,24 @@ ORG &11BC
 ORG &1235
 .melodyconfigs ; []
   ; Melody 1 - Title screen
-  EQUW &130F
-  EQUW &133D
-  EQUW &1365
+  EQUW m1c1
+  EQUW m1c2
+  EQUW m1c3
 
   ; Melody 2 - In-game
-  EQUW &149F
-  EQUW &14C3
-  EQUW &14DA
+  EQUW m2c1
+  EQUW m2c2
+  EQUW m2c3
 
   ; Melody 3 - Coin collect
-  EQUW &15FF
-  EQUW &1602
-  EQUW &1605
+  EQUW m3c1
+  EQUW m3c2
+  EQUW m3c3
 
   ; Melody 4 - Lose a life / Heart demo
-  EQUW &16AE
-  EQUW &16B1
-  EQUW &16B4
+  EQUW m4c1
+  EQUW m4c2
+  EQUW m4c3
 
 .v124D ; []
 .v124E ; []
@@ -1086,6 +1085,9 @@ ORG &1235
 .v1254 ; []
 .v12DD ; []
 .v12DE ; []
+
+ORG &130F
+INCLUDE "melodydata.asm"
 
 .v180E ; []
 .v1828 ; []
