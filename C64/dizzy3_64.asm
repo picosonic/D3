@@ -144,30 +144,34 @@ ORG &0B00
   ADC #&00 ; gets replaced
   TAY
 
-  ; Copy 6 interlaced bytes for new melody to current melody
-  LDX #&00
+  ; Copy 3 channel pointers for new melody to current melody
+  {
+    LDX #&00
 .loop
-  LDA melodyconfigs,Y:STA v11BC,X ; lo
-  INY
+    LDA melodyconfigs,Y:STA v11BC,X ; lo
+    INY
 
-  LDA melodyconfigs,Y:STA v11BF,X ; hi
-  INY
+    LDA melodyconfigs,Y:STA v11BF,X ; hi
+    INY
 
-  INX
-  CPX #&03
-  BNE loop
+    INX
+    CPX #&03
+    BNE loop
+  }
 
-  LDX #&02
-.l0B34
-  LDA #&00
-  STA &1188,X
-  STA &118B,X
-  STA v1170,X ; Set melody channel data pos to start
+  {
+    LDX #&02
+.loop
+    LDA #&00
+    STA &1188,X
+    STA &118B,X
+    STA v1170,X ; Set melody channel data pos to start
 
-  JSR l0FC3
+    JSR l0FC3
 
-  DEX
-  BPL l0B34
+    DEX
+    BPL loop
+  }
 
   JSR l1147
 
@@ -232,6 +236,7 @@ ORG &0B00
   LDA #&03:STA &11C6,X
   LDA &117F,X:STA &A7
   LDA &1182,X:STA &A8
+
 .l0BBF
   LDY &11C2
   INC &11C2
@@ -258,7 +263,8 @@ ORG &0B00
 
   LDA (&A7),Y
   INY
-  STA &D418
+  STA SID_VOL_FLT
+
   LDA (&A7),Y
   INY
   CMP #&FF
@@ -965,7 +971,7 @@ ORG &1147
 {
   JSR l0F78
 
-  LDA #&0F:STA &D418
+  LDA #&0F:STA SID_VOL_FLT ; Set volume 100%
 
   LDA #&00
   STA &116F
@@ -3860,17 +3866,18 @@ ORG &1903
   BCS l2ABC
 
   ; SID audio code ?
+  ; 2ACB
 
   SEI ; Disable interrupts
-  LDA #&00:STA &D404
-  LDA #&09:STA &D418
-  LDA &03C4:AND #&02:ASL A:CLC:ADC #&06:STA &D401
-  LDA #&00:STA &D406
-  LDA #&10:STA &D405
-  LDA #&81:STA &D404
+  LDA #&00:STA SID_CH1_CTRL
+  LDA #&09:STA SID_VOL_FLT ; Volume at 60%
+  LDA &03C4:AND #&02:ASL A:CLC:ADC #&06:STA SID_CH1_FREQ_H
+  LDA #&00:STA SID_CH1_SURL ; Sustain=0 / Release=0
+  LDA #&10:STA SID_CH1_ATDK ; Attack=1 / Decay=0
+  LDA #&81:STA SID_CH1_CTRL ; Noise / Test
   CLI ; Enable interrupts
 
-.v2AF2 ; []
+.^v2AF2 ; []
   RTS
 }
 
@@ -3919,16 +3926,17 @@ ORG &2B13
   RTS
 }
 
-.v2B47
+.isr_counter
   EQUB 142
+
 .muted
   EQUB 0
 
 .isr_routine
 {
-  INC v2B47
+  INC isr_counter
 
-  LDA v2B47
+  LDA isr_counter
   AND #&07
   CMP #&07
   BEQ done
@@ -4170,7 +4178,7 @@ ORG &2B13
 .l2CC7
   LDY #&00
 .l2CC9
-  LDA (&B4),Y:STA &2AF3,Y
+  LDA (&B4),Y:STA v2AF3,Y
   INY
   CPY &033D
   BCC l2CC9
@@ -4191,7 +4199,7 @@ ORG &2B13
 .l2CEB
   LDA &1877,X
   TAY
-  LDA &2AF3,X
+  LDA v2AF3,X
   AND &03DF
 
   ; Polymorphic code
@@ -4293,22 +4301,22 @@ ORG &2B13
 .l2D95
 {
   LDX &033D
-  LDA #&00:STA &2AF3,X
+  LDA #&00:STA v2AF3,X
 .l2D9D
-  LDA &2AF2,X
+  LDA v2AF2,X
   ASL A
   ASL A
   ASL A
   ASL A
-  ORA &2AF3,X
-  STA &2AF3,X
+  ORA v2AF3,X
+  STA v2AF3,X
 
-  LDA &2AF2,X
+  LDA v2AF2,X
   LSR A
   LSR A
   LSR A
   LSR A
-  STA &2AF2,X
+  STA v2AF2,X
 
   DEX
   BNE l2D9D
@@ -4400,27 +4408,27 @@ ORG &2B13
 
   BCS done
 
-  LDA &2AF3,X
+  LDA v2AF3,X
   TAY
   LDA flip_lut,Y:STA &FF
   LDX &0346
-  LDA &2AF3,X
+  LDA v2AF3,X
   TAY
   LDA flip_lut,Y
   LDX &0347
-  STA &2AF3,X
+  STA v2AF3,X
   LDX &0346
-  LDA &FF:STA &2AF3,X
+  LDA &FF:STA v2AF3,X
   DEC &0346
   INC &0347
 
   JMP l2E3A
 
 .l2E6E
-  LDA &2AF3,X
+  LDA v2AF3,X
   TAY
   LDA flip_lut,Y
-  STA &2AF3,X
+  STA v2AF3,X
 
 .done
   RTS
@@ -6281,7 +6289,7 @@ ORG &2B13
   LDA dizzyx:CLC:ADC #33:STA &033A
   CLC:ADC #4:STA &033C ; +width ??
 
-  LDA dizzyy:CLC:ADC #66:STA &033B
+  LDA dizzyy:CLC:ADC #42:STA &033B
   CLC:ADC #21:STA &033D ; +height ??
 
   ; Return if object.x >= dizzy.x (Dizzy to the left)
