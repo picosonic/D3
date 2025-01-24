@@ -1080,6 +1080,7 @@ ORG &1235
 .v1254 ; []
 .v12DD ; []
 .v12DE ; []
+
 .v180E ; []
 .v1828 ; []
 .v1877 ; []
@@ -1125,8 +1126,6 @@ ORG &1903
   EQUB str_killedbydaggersmess
 
 ; Entry point ??
-
-ORG &190E
 
 .l190E
   JSR install_ISR
@@ -3398,7 +3397,7 @@ ORG &190E
   CMP objs_xlocs+obj_hawk
   BCC l27FE
 
-  LDA objs_attrs+obj_hawk:AND #&7F:STA objs_attrs+obj_hawk
+  LDA objs_attrs+obj_hawk:AND #%01111111:STA objs_attrs+obj_hawk ; Clear top bit
   JMP l27B1
 
 .l27FE
@@ -3465,7 +3464,7 @@ ORG &190E
   ; Check which way grunt is facing
   LDA objs_attrs+obj_grunt
   AND #ATTR_REVERSE
-  BNE l2872
+  BNE gruntgoesleft
 
   ; Move grunt right
   INC objs_xlocs+obj_grunt
@@ -3473,7 +3472,7 @@ ORG &190E
 
   JMP l2878
 
-.l2872
+.gruntgoesleft
   ; Move grunt left
   DEC objs_xlocs+obj_grunt
   DEC objs_xlocs+obj_grunt
@@ -4017,7 +4016,7 @@ ORG &2B13
 
   LDA &033A:STA flame_x,Y ; X position
   LDA &033B:STA flame_y,Y ; Y position
-  LDA &033C:ORA #&10:STA flame_attr,Y ; attr
+  LDA &033C:ORA #PLOT_XOR:STA flame_attr,Y ; attr
   DEC &03BC
   INC flameindex
 
@@ -4177,7 +4176,7 @@ ORG &2B13
   BCC l2CC9
 
   LDA &033C ; attr
-  AND #&80
+  AND #ATTR_REVERSE
   BEQ l2CDE
 
   JSR l2E2E
@@ -4607,7 +4606,7 @@ ORG &2B13
   BCC l2F84
 
   LDA #&0B:STA &03BC
-  LDA objs_attrs+obj_dragonhead:AND #&07:STA objs_attrs+obj_dragonhead
+  LDA objs_attrs+obj_dragonhead:AND #PAL_WHITE:STA objs_attrs+obj_dragonhead
   JMP l2FAF
 
 .l2FAA
@@ -6028,7 +6027,7 @@ ORG &2B13
   ADC #&30
   STA &033B ; Y position
 
-  LDA #&12:STA &033C ; attrib
+  LDA #PLOT_XOR+PAL_RED:STA &033C ; attrib
 
   LDA #&00
   STA &033F
@@ -6130,11 +6129,12 @@ ORG &2B13
   CMP #ACTIVEVOLCANOROOM
   BNE l3901
 
-  LDA #&0A
+  LDA #ATTR_GRID+PAL_RED ; It's lava
   JMP l3903
 
 .l3901
-  LDA #&0F
+  LDA #ATTR_GRID+PAL_WHITE ; It's water
+
 .l3903
   STA &033C ; attrib
 
@@ -6191,7 +6191,7 @@ ORG &2B13
   LDX &034E
 .l3965
   LDA flame_attr,X
-  EOR #&80
+  EOR #ATTR_REVERSE
   STA flame_attr,X
   STA &033C ; attrib
 
@@ -6401,11 +6401,13 @@ ORG &2B13
   STX &033A ; X position
 
   LDA &C81B:STA &033B ; Y position
-  LDA #&06
+
+  LDA #PAL_YELLOW
+
   CPX &03DB
   BCC l3AC5
 
-  LDA #&00
+  LDA #PAL_BLACK
 .l3AC5
   STA &033C ; attrib
 
