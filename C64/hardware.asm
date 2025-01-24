@@ -32,6 +32,37 @@ SPR_MULTICOLOUR_11 = &D026
 SPR_0_COLOUR = &D027
 
 ; SID (audio) = &D400 .. &D7FF
+SID_CH1_FREQ_L  = &D400 ; LLLLLLLL
+SID_CH1_FREQ_H  = &D401 ; HHHHHHHH
+SID_CH1_PULSE_L = &D402 ; LLLLLLLL
+SID_CH1_PULSE_H = &D403 ; ----HHHH
+SID_CH1_CTRL    = &D404 ; NPST-RSG Noise / Pulse / Saw / Tri / Ring / Sync / Gate
+SID_CH1_ATDK    = &D405 ; AAAADDDD Attack / Decay
+SID_CH1_SURL    = &D406 ; SSSSRRRR Sustain / Release
+
+SID_CH2_FREQ_L  = &D407 ; LLLLLLLL
+SID_CH2_FREQ_H  = &D408 ; HHHHHHHH
+SID_CH2_PULSE_L = &D409 ; LLLLLLLL
+SID_CH2_PULSE_H = &D40A ; ----HHHH
+SID_CH2_CTRL    = &D40B ; NPST-RSG Noise / Pulse / Saw / Tri / Ring / Sync / Gate
+SID_CH2_ATDK    = &D40C ; AAAADDDD Attack / Decay
+SID_CH2_SURL    = &D40D ; SSSSRRRR Sustain / Release
+
+SID_CH3_FREQ_L  = &D40E ; LLLLLLLL
+SID_CH3_FREQ_H  = &D40F ; HHHHHHHH
+SID_CH3_PULSE_L = &D410 ; LLLLLLLL
+SID_CH3_PULSE_H = &D411 ; ----HHHH
+SID_CH3_CTRL    = &D412 ; NPST-RSG Noise / Pulse / Saw / Tri / Ring / Sync / Gate
+SID_CH3_ATDK    = &D413 ; AAAADDDD Attack / Decay
+SID_CH3_SURL    = &D414 ; SSSSRRRR Sustain / Release
+
+SID_FLT_CUT_L   = &D415 ; -----LLL
+SID_FLT_CUT_H   = &D416 ; -----LLL
+SID_FLT_CTRL    = &D417 ; RRRREVVV Resonance / External / Voice (3-1)
+SID_VOL_FLT     = &D418 ; MHBLVVVV Mute / Highpass / Bandpass / Lowpass / Volume
+
+SID_CH3_WAV     = &D41B ; DDDDDDDD Waveform output (RO)
+SID_CH3_ADSR    = &D41C ; DDDDDDDD ADSR output (RO)
 
 CIA1_PRA = &DC00
 CIA2_PRA = &DD00
