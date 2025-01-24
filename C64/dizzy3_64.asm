@@ -1051,36 +1051,24 @@ ORG &11BC
 ORG &1235
 .melodyconfigs ; []
   ; Melody 1 - Title screen
-  EQUB &0F
-  EQUB &13
-  EQUB &3D
-  EQUB &13
-  EQUB &65
-  EQUB &13
+  EQUW &130F
+  EQUW &133D
+  EQUW &1365
 
   ; Melody 2 - In-game
-  EQUB &9F
-  EQUB &14
-  EQUB &C3
-  EQUB &14
-  EQUB &DA
-  EQUB &14
+  EQUW &149F
+  EQUW &14C3
+  EQUW &14DA
 
   ; Melody 3 - Coin collect
-  EQUB &FF
-  EQUB &15
-  EQUB &02
-  EQUB &16
-  EQUB &05
-  EQUB &16
+  EQUW &15FF
+  EQUW &1602
+  EQUW &1605
 
   ; Melody 4 - Lose a life / Heart demo
-  EQUB &AE
-  EQUB &16
-  EQUB &B1
-  EQUB &16
-  EQUB &B4
-  EQUB &16
+  EQUW &16AE
+  EQUW &16B1
+  EQUW &16B4
 
 .v124D ; []
 .v124E ; []
@@ -4915,7 +4903,7 @@ ORG &2B13
   CLC
   ADC &033B
   CLC
-  ADC #&28
+  ADC #40
   STA &033D
 
   DEC &033D
