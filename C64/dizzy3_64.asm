@@ -70,8 +70,8 @@ dizzyy = &035C
 .v0370 ; []
 .v037A ; [] related to dizzyy
 .v0384 ; [] related to dizzyx
-.v0398
-.v0399
+msgbox_width = &0398
+msgbox_height = &0399
 .v039A
 cursorx = &039B ; char cursor X
 cursory = &039C ; char cursor Y
@@ -83,7 +83,7 @@ lives = &03B9
 .v03BC
 .v03BD
 .v03BE
-.v03BF ; char attrib
+cursorattr = &03BF ; char attrib
 player_input = &03C0
 .v03C1
 .v03C2
@@ -4438,14 +4438,14 @@ ORG &2B13
 
 .l2E79
 {
-  STA &0340
-  ; Is it < 101
-  CMP #&65
-  BCC l2E81
+  STA &0340 ; Store roomno
+  ; Check it is a valid room
+  CMP #ATTICROOM+1
+  BCC validroom
 
   RTS
 
-.l2E81
+.validroom
   LDA #&80:STA &FC
   LDA &0340
   CLC
@@ -4516,9 +4516,9 @@ ORG &2B13
 
   LDY #&03
   INC &0342
-  LDA (&B0),Y:EOR #&40:STA &03BF
+  LDA (&B0),Y:EOR #&40:STA cursorattr
 .l2EEE
-  LDA &03BF:STA &033C ; attrib
+  LDA cursorattr:STA &033C ; attrib
   LDA #&00:STA &033F
 
   LDY #&02
@@ -4633,34 +4633,37 @@ ORG &2B13
 
   LDA roomno
   CMP #CASTLEDUNGEONROOM
-  BNE l2FD9
+  BNE checkallotment
 
-  ; Check jug of water
+  ; Check if jug of water has been used
   LDA objs_rooms+obj_jugofwater
   CMP #OFFMAP
-  BEQ l2FE9
+  BEQ checkportcullis
 
-  LDA #&02
-
+  ; Dungeon fire has not been put out, so draw it too
+  LDA #FIREROOM
   JSR l2E79
-  JMP l2FE9
 
-.l2FD9
-  CMP #&3A
-  BNE l2FE9
+  JMP checkportcullis
 
-  ; Check bucket
+.checkallotment
+  CMP #ALLOTMENTROOM
+  BNE checkportcullis
+
+  ; Check if bucket has been used on bean
   LDA objs_rooms+obj_bucket
   CMP #OFFMAP
-  BNE l2FE9
+  BNE checkportcullis
 
-  LDA #&01
+  ; Bean has been watered, so draw beanstalk too
+  LDA #BEANSTALKROOM
   JSR l2E79
-.l2FE9
+
+.checkportcullis
   ; See if Dizzy is in the moat room
   LDA roomno
   CMP #MOATROOM
-  BNE l300A
+  BNE skipportcullis
 
   ; Set portcullis height
   LDA #96:STA objs_ylocs+obj_portcullis
@@ -4671,7 +4674,7 @@ ORG &2B13
   ; Check portcullis height > 136
   LDA objs_ylocs+obj_portcullis
   CMP #136
-  BCS l300A
+  BCS skipportcullis
 
   ; Move portcullis down
   CLC
@@ -4680,7 +4683,7 @@ ORG &2B13
 
   JMP l2FF5
 
-.l300A
+.skipportcullis
   LDA #&FF:STA &03D5
   LDA #noofmoving:STA &03DD
 
@@ -5025,11 +5028,11 @@ ORG &2B13
 
   ; Is it < 28
   LDA dizzyx,X
-  CMP #&1C
+  CMP #28
   BCC l321C
 
   ; Is it >= 145
-  CMP #&91
+  CMP #145
   BCS l321C
 
   JMP l321E
@@ -5589,7 +5592,7 @@ ORG &2B13
   ; Determine which pen (colour) to use
   SEC
   SBC #mpen
-  STA &03BF
+  STA cursorattr
 
   JMP advance
 
@@ -5656,7 +5659,7 @@ ORG &2B13
 .printable
   LDX cursorx:STX &033A ; X position
   LDX cursory:STX &033B ; Y position
-  LDX &03BF:STX &033C ; attrib
+  LDX cursorattr:STX &033C ; attrib
 
   LDX #&00
   STX &033F
@@ -5672,106 +5675,120 @@ ORG &2B13
 
 .drawmsgbox
 {
+  ; Get width of messagebox
   JSR nextchar
-  STA &0398
+  STA msgbox_width
 
+  ; Get height of messagebox
   JSR nextchar
-  STA &0399
+  STA msgbox_height
 
   LDA #&00:STA SPR_ENABLE ; Hide sprites
   LDA cursorx:CLC:ADC #&02:STA &039A
 
+  ; Draw left top-most part of frame
   LDA #SPR_FRAMETOP
-  JSR l36E3
+  JSR drawchar
 
-  LDA &0398
-  ASL A
-  CLC
-  ADC &039A
-  STA &039A
+  LDA msgbox_width:ASL A:CLC:ADC &039A:STA &039A
 
+  ; Draw right top-most part of frame
   LDA #SPR_FRAMETOP
-  JSR l36E3
+  JSR drawchar
 
-  JSR l3682
+  ; Draw upper horizontal part of frame
+  JSR drawmsgbox_horiz
 
 .loop
-  JSR l36B6
-  DEC &0399
+  JSR drawmsgbox_vert
+  DEC msgbox_height
   BNE loop
 
-  JSR l3682
+  ; Draw lower horiztonal part of frame
+  JSR drawmsgbox_horiz
 
   LDA cursory:CLC:ADC #&08:STA cursory
   LDA cursorx:CLC:ADC #&02:STA &039A
 
+  ; Draw left bottom-most part of frame
   LDA #SPR_FRAMEBOTTOM
-  JSR l36E3
+  JSR drawchar
 
-  LDA &0398:ASL A:CLC:ADC &039A:STA &039A
+  LDA msgbox_width:ASL A:CLC:ADC &039A:STA &039A
 
+  ; Draw right bottom-most part of frame
   LDA #SPR_FRAMEBOTTOM
-  JSR l36E3
+  JSR drawchar
 
   RTS
 }
 
-.l3682
+; Draw the horiztonal bar of a message box
+.drawmsgbox_horiz
 {
   LDA cursory:CLC:ADC #&08:STA cursory
-
   LDA cursorx:STA &039A
 
+  ; Draw left-most point of horizontal
   LDA #SPR_FRAMELEFT
-  JSR l36E3
+  JSR drawchar
 
+  ; Draw left-side frame intersection
   LDA #SPR_FRAMECROSS
-  JSR l36E3
+  JSR drawchar
 
-  LDA &0398:STA &0344
+  ; Draw horizontal bar
+  LDA msgbox_width:STA &0344
 .loop
   LDA #SPR_FRAMEHORIZ
-  JSR l36E3
+  JSR drawchar
 
   DEC &0344
   BNE loop
 
+  ; Draw right-side frame intersection
   LDA #SPR_FRAMECROSS
-  JSR l36E3
+  JSR drawchar
 
+  ; Draw right-most point of horizontal
   LDA #SPR_FRAMERIGHT
-  JSR l36E3
+  JSR drawchar
 
   RTS
 }
 
-.l36B6
+; Draw left and right verticals of messagebox frame and clear frame contents
+;   also leave cursor Y in place to draw bottom horizontal bar
+.drawmsgbox_vert
 {
   LDA cursory:CLC:ADC #&08:STA cursory
   LDA cursorx:CLC:ADC #&02:STA &039A
 
+  ; Draw left side of frame
   LDA #SPR_FRAMEVERT
-  JSR l36E3
+  JSR drawchar
 
-  LDA &0398:STA &0344
+  ; Clear middle of frame
+  LDA msgbox_width:STA &0344
 .loop
   LDA #SPR_SPACE
-  JSR l36E3
+  JSR drawchar
 
   DEC &0344
   BNE loop
 
+  ; Draw right side of frame
   LDA #SPR_FRAMEVERT
-  JSR l36E3
+  JSR drawchar
 
   RTS
 }
 
-.l36E3
+.drawchar
 {
   LDX &039A:STX &033A ; X position
   LDX cursory:STX &033B ; Y position
-  LDX &03BF:STX &033C ; attrib
+  LDX cursorattr:STX &033C ; attrib
 
   LDX #&00
   STX &033F
@@ -5827,15 +5844,16 @@ ORG &2B13
 .l373D
   JSR nextchar
 
+  ; Check if char is within messagebox range
   ; Is it < 38
-  CMP #&26
+  CMP #SPR_SPEECHOPEN
   BCC done
 
   ; IS it >= 91
-  CMP #&5B
+  CMP #SPR_Z+1
   BCS done
 
-  JSR l36E3
+  JSR drawchar
 
   JMP l373D
 
@@ -5902,7 +5920,7 @@ ORG &2B13
 .l3793
   STY cursory
   LDA #&00:STA &0344
-  LDA #&03:STA &03BF
+  LDA #&03:STA cursorattr
 .l37A0
   LDA #&2C:STA &039A
   LDX &0344
