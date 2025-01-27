@@ -35,10 +35,9 @@ melody_ptr = &00A9
 
 .v00FF
 
-.v033A ; X position
-.v033B ; Y position
-; Vars in datasette buffer
-.v033C ; attrib
+frmx = &033A ; X position
+frmy = &033B ; Y position
+frmattr = &033C ; attrib
 .v033D
 .v033E
 .v033F
@@ -1089,8 +1088,8 @@ ORG &1235
 ORG &130F
 INCLUDE "melodydata.asm"
 
-.v180E ; []
-.v1828 ; []
+.v180E ; [] pointers lo
+.v1828 ; [] pointers hi
 .v1877 ; []
 .v1897 ; []
 
@@ -1176,9 +1175,9 @@ ORG &1903
   JSR l3090
   JSR drawcoincount
 
-  LDA #58:STA &033A ; X position
-  LDA #57:STA &033B ; Y position
-  LDA #PAL_GREEN:STA &033C ; attrib
+  LDA #58:STA frmx ; X position
+  LDA #57:STA frmy ; Y position
+  LDA #PAL_GREEN:STA frmattr ; attrib
   LDA #&00:STA &03DC
 
   LDA #SPR_DIZZYLOGO ; frame
@@ -1326,7 +1325,7 @@ ORG &1903
   BEQ waitfor_m_release
 
 .l1A6C
-  JSR l3B00
+  JSR checkcheatmode
   JSR getplayerinput
 
   LDA #&00:STA &03C1
@@ -1393,13 +1392,13 @@ ORG &1903
   JMP l1B95
 
 .l1AE1
-  LDA #&16:STA &033B
-  LDA #&01:STA &033A
+  LDA #22:STA frmy
+  LDA #1:STA frmx
 .l1AEB
-  INC &033A
+  INC frmx
 
   ; Is it >= 6
-  LDA &033A
+  LDA frmx
   CMP #&06
   BCS l1B04
 
@@ -1422,13 +1421,13 @@ ORG &1903
   CMP #&03
   BNE l1B68
 
-  LDA #&16:STA &033B
-  LDA #&01:STA &033A
+  LDA #22:STA frmy
+  LDA #1:STA frmx
 .l1B1D
-  INC &033A
+  INC frmx
 
   ; Is it >= 6
-  LDA &033A
+  LDA frmx
   CMP #&06
   BCS l1B58
 
@@ -1538,14 +1537,14 @@ ORG &1903
 
   JSR l1C62
 .l1BDA
-  LDA #&00:STA &033B
-  LDA #&01:STA &033A
+  LDA #0:STA frmy
+  LDA #1:STA frmx
 .l1BE4
-  INC &033A
+  INC frmx
 
   ; Is it >= 6
-  LDA &033A
-  CMP #&06
+  LDA frmx
+  CMP #6
   BCS l1BFD
 
   JSR l3154
@@ -1573,19 +1572,19 @@ ORG &1903
 .l1C15
   JSR l1C62
 .l1C18
-  LDA #&16:STA &033B
-  LDA #&01:STA &033A
+  LDA #22:STA frmy
+  LDA #1:STA frmx
 
   LDA &03C9
   CMP &03C3
   BCC l1C85
 
 .l1C2A
-  INC &033A
+  INC frmx
 
   ; Is it >= 6
-  LDA &033A
-  CMP #&06
+  LDA frmx
+  CMP #6
   BCS l1C3E
 
   JSR l3154
@@ -1699,8 +1698,8 @@ ORG &1903
 .l1CCB
   LDA #&07
 .l1CCD
-  STA &033A
-  LDA #&0C:STA &033B
+  STA frmx
+  LDA #12:STA frmy
   JSR l3154
   BCC l1CFC
 
@@ -1727,17 +1726,17 @@ ORG &1903
   BNE l1CB9
 
 .l1CFC
-  LDA #&0C:STA &033B
+  LDA #12:STA frmy
   JSR l3154
   BCS l1CB9
 
-  LDA #&0C:STA &033B
+  LDA #12:STA frmy
   JSR l3154
 
   BCC l1D12
   BNE l1CB9
 .l1D12
-  LDA #&0D:STA &033B
+  LDA #13:STA frmy
   JSR l3154
 
   BCC l1D1E
@@ -1779,14 +1778,14 @@ ORG &1903
   AND #&07
   BNE l1D7C
 
-  LDA #&16:STA &033B
-  LDA #&00:STA &033A
+  LDA #22:STA frmy
+  LDA #0:STA frmx
 .l1D5D
-  INC &033A
+  INC frmx
 
   ; Is it >= 6
-  LDA &033A
-  CMP #&06
+  LDA frmx
+  CMP #6
   BCS l1D7C
 
   JSR l3154
@@ -1799,15 +1798,15 @@ ORG &1903
   STA &03C9
   STA &03C3
 .l1D7C
-  LDA #&15:STA &033B
+  LDA #21:STA frmy
 .l1D81
-  LDA #&01:STA &033A
+  LDA #1:STA frmx
 .l1D86
-  INC &033A
+  INC frmx
 
   ; Is it >= 6
-  LDA &033A
-  CMP #&06
+  LDA frmx
+  CMP #6
   BCS l1D9D
 
   JSR l3154
@@ -1819,32 +1818,34 @@ ORG &1903
   JMP l1D41
 
 .l1D9D
-  DEC &033B
+  DEC frmy
 
   ; IS it >= 18
-  LDA &033B
-  CMP #&12
+  LDA frmy
+  CMP #18
   BCS l1D81
 
   ; Check Dizzy X position < 57 (not gone off screen to right)
   LDA dizzyx
   CMP #57
-  BCC l1DB9
+  BCC checkleft
 
+  ; Dizzy has gone off screen to the right
   LDA #2:STA dizzyx ; Set Dizzy position to far left
   INC roomno ; Go right
   JMP l1DFC
 
-.l1DB9
+.checkleft
   ; Check Dizzy X position >= 2 (not gone off screen to left)
   CMP #2
-  BCS l1DC8
+  BCS checkvertical
 
+  ; Dizzy has gone off screen to the left
   LDA #56:STA dizzyx ; Set Dizzy position to far right
   DEC roomno ; Go left
   JMP l1DFC
 
-.l1DC8
+.checkvertical
   ; Check Dizzy Y position < 128
   LDA dizzyy
   CMP #128
@@ -1854,7 +1855,7 @@ ORG &1903
   CMP #192
   BCS l1DE7
 
-  LDA #0:STA dizzyy
+  LDA #0:STA dizzyy ; Set Dizzy position to top
   LDA roomno:SEC:SBC #16:STA roomno ; Go down
 
   JSR l2A01
@@ -1866,7 +1867,7 @@ ORG &1903
   CMP #192
   BCC l1E1D
 
-  LDA #114:STA dizzyy
+  LDA #114:STA dizzyy ; Set Dizzy position to bottom
   LDA roomno:CLC:ADC #16:STA roomno ; Go up
 
 .l1DFC
@@ -1874,11 +1875,13 @@ ORG &1903
   CMP #EASTWINGROOM
   BEQ l1E12
 
-  STA &03B8
+  STA &03B8 ; Cache roomno
   LDA dizzyx:STA olddizzyx
   LDA dizzyy:STA olddizzyy
+
 .l1E12
   LDA #&00:STA &03E0
+
   LDA roomno
   JSR l2F22
 .l1E1D
@@ -2065,14 +2068,14 @@ ORG &1903
   LDA dizzyx
   CLC
   ADC #30
-  STA &033A ; X position
+  STA frmx ; X position
   CLC
   ADC #8
-  STA &033C
+  STA frmattr
   LDA dizzyy
   CLC
   ADC #26
-  STA &033B ; Y position
+  STA frmy ; Y position
   CLC
   ADC #34
   STA &033D
@@ -2086,14 +2089,14 @@ ORG &1903
   BNE l1FA9
 
   LDA objs_xlocs,X
-  CMP &033A
+  CMP frmx
   BCC l1FA9
 
-  CMP &033C
+  CMP frmattr
   BCS l1FA9
 
   LDA objs_ylocs,X
-  CMP &033B
+  CMP frmy
   BCC l1FA9
 
   CMP &033D
@@ -2952,24 +2955,24 @@ ORG &1903
   JMP l2572
 
 .l2527
-  LDA #&02:STA &033A
+  LDA #2:STA frmx
 .l252C
-  LDA #&06:STA &033B
+  LDA #6:STA frmy
 
   JSR l3154
   LDA &033F
   AND #&30
   BNE l2554
 
-  LDA #&0D:STA &033B
+  LDA #13:STA frmy
 
   JSR l3154
   LDA &033F
   AND #&30
   BNE l2554
 
-  INC &033A
-  LDA &033A
+  INC frmx
+  LDA frmx
   ; Is it < 6
   CMP #&06
   BCC l252C
@@ -3952,16 +3955,16 @@ ORG &2B13
 ; Draw frame/sprite
 ;
 ; frame = A reg
-; frmx = &033A
-; frmy = &033B
-; attr = &033C
+; frmx
+; frmy
+; frmattr
 .frame
 {
   STA &FB
   STA &0340
   STX &0345
 
-  LDA &033A
+  LDA frmx
   ; Ensure X position is < 93
   CMP #93
   BCC inrange
@@ -3979,7 +3982,7 @@ ORG &2B13
   STA &B5
 
   ; Divide Y position by 8
-  LDA &033B
+  LDA frmy
   LSR A
   LSR A
   LSR A
@@ -4000,15 +4003,15 @@ ORG &2B13
   LDA &03DA
   BEQ l2B8F
 
-  CMP &033A
+  CMP frmx
   BCC l2B95
 
 .l2B8F
-  LDA &033A:STA &03DA ; X position
+  LDA frmx:STA &03DA ; X position
 .l2B95
   STX &03E0
   LDA &033F:ORA #&10:STA &033F
-  LDA &033B:AND #&F8:STA &033B ; Y position
+  LDA frmy:AND #&F8:STA frmy ; Y position
   JMP l2BD5
 
 .notwater
@@ -4024,9 +4027,9 @@ ORG &2B13
   CPY #10
   BCS l2BD5
 
-  LDA &033A:STA flame_x,Y ; X position
-  LDA &033B:STA flame_y,Y ; Y position
-  LDA &033C:ORA #PLOT_XOR:STA flame_attr,Y ; attr
+  LDA frmx:STA flame_x,Y ; X position
+  LDA frmy:STA flame_y,Y ; Y position
+  LDA frmattr:ORA #PLOT_XOR:STA flame_attr,Y ; attr
   DEC &03BC
   INC flameindex
 
@@ -4035,7 +4038,7 @@ ORG &2B13
   LDA screentable_lo,X:STA &FB
   LDA screentable_hi,X:STA &FC
 
-  LDA &033B ; Y position
+  LDA frmy ; Y position
   AND #&07
   CLC
   ADC &FB
@@ -4051,7 +4054,7 @@ ORG &2B13
 .l2BF2
   STA &FB
 
-  LDA &033A ; X position
+  LDA frmx ; X position
   AND #&FE
   ASL A
   CLC
@@ -4068,7 +4071,7 @@ ORG &2B13
 .l2C07
   STA &FB
 
-  LDA &033B ; Y position
+  LDA frmy ; Y position
   LSR A:LSR A:LSR A ; Divide by 8
   TAX
   LDA &1828,X:SEC:SBC &03DC:STA &FE
@@ -4081,7 +4084,7 @@ ORG &2B13
 .l2C23
   STA &FD
 
-  LDA &033A ; X position
+  LDA frmx ; X position
   LSR A ; Divide by 2
   CLC
   ADC &FD
@@ -4145,7 +4148,7 @@ ORG &2B13
   LDA &033D:STA &034B
 
   ; Is it >= 34
-  LDA &033A ; X position
+  LDA frmx ; X position
   AND #&FE
   CMP #34
   BCS l2CA2
@@ -4157,7 +4160,7 @@ ORG &2B13
   LSR A
   STA &034A
 .l2CA2
-  LDA &033A:AND #&FE:STA &FF
+  LDA frmx:AND #&FE:STA &FF
 
   LDA #&5E
   SEC
@@ -4171,7 +4174,7 @@ ORG &2B13
   LDA #&00:STA &0349
 
 .l2CBC
-  LDA &033B ; Y position
+  LDA frmy ; Y position
   CMP &03E3
   BCS l2CC7
 
@@ -4185,13 +4188,13 @@ ORG &2B13
   CPY &033D
   BCC l2CC9
 
-  LDA &033C ; attr
+  LDA frmattr ; attr
   AND #ATTR_REVERSE
   BEQ l2CDE
 
   JSR l2E2E
 .l2CDE
-  LDA &033A ; X position
+  LDA frmx ; X position
   AND #&01
   BEQ l2CE8
 
@@ -4248,8 +4251,8 @@ ORG &2B13
   RTS
 
 .l2D46
-  INC &033B ; Y position
-  LDA &033B
+  INC frmy ; Y position
+  LDA frmy
   CMP &03E1
   BCS l2D2E
 
@@ -4261,7 +4264,7 @@ ORG &2B13
   INC &B5
 .l2D5B
   STA &B4
-  LDA &033B ; Y position
+  LDA frmy ; Y position
   AND #&07
   BEQ l2D73
 
@@ -4328,11 +4331,11 @@ ORG &2B13
   BCC done
 
   ; Is it >= 47
-  LDA &033A
+  LDA frmx
   LSR A
   CLC
   ADC &033D
-  CMP #&2F
+  CMP #47
   BCS done
 
   INC &034B
@@ -4343,32 +4346,32 @@ ORG &2B13
 
 .l2DCF
 {
-  LDA &033C
+  LDA frmattr
   AND #&07
   TAX
   LDA &1897,X:STA &03E2
   BEQ l2DEC
 
-  LDA &033A
+  LDA frmx
   AND #&01
   BEQ l2DEC
 
-  LDA &033C:ORA #&10:STA &033C
+  LDA frmattr:ORA #PLOT_XOR:STA frmattr
 .l2DEC
-  LDA &033C
-  AND #&40
+  LDA frmattr
+  AND #PLOT_XOR
   BEQ l2DF9
 
   ORA &033F
   STA &033F
 .l2DF9
-  LDA &033C
+  LDA frmattr
   AND #&20
   BEQ l2E08
 
   LDA &033F:ORA #&80:STA &033F
 .l2E08
-  LDA &033C
+  LDA frmattr
   AND #&18
   LSR A
   LSR A
@@ -4518,16 +4521,16 @@ ORG &2B13
   INC &0342
   LDA (&B0),Y:EOR #&40:STA cursorattr
 .l2EEE
-  LDA cursorattr:STA &033C ; attrib
+  LDA cursorattr:STA frmattr ; attrib
   LDA #&00:STA &033F
 
   LDY #&02
-  LDA (&B0),Y:STA &033B ; Y position
+  LDA (&B0),Y:STA frmy ; Y position
 
   DEY
   LDA (&B0),Y
   AND #&7F
-  STA &033A ; X position
+  STA frmx ; X position
 
   DEY
   LDA #&58:STA &03DC
@@ -4573,12 +4576,17 @@ ORG &2B13
 
   LDA &03C4:AND #&F8:STA &03C4
 
+  ; Place the hawk in the clouds
   LDA #56:STA objs_ylocs+obj_hawk
+
   LDA #&0F:STA &03BC
+
+  ; Set flame counter to 0
   LDA #&00:STA flameindex
 
+  ; Clear out flame array
   LDX #&00
-.l2F60
+.flameloop
   STA flame_x,X
   STA flame_y,X
   STA flame_attr,X
@@ -4586,7 +4594,7 @@ ORG &2B13
   INX
   ; Is it < max flames
   CPX #MAXFLAMES
-  BCC l2F60
+  BCC flameloop
 
   LDA roomno
   CMP #DRAGONSLAIRROOM
@@ -4596,7 +4604,7 @@ ORG &2B13
   JMP l2F80
 
 .l2F7A
-  CMP #&36
+  CMP #WIDEEYEDDRAGONROOM
   BNE l2FAA
 
   LDA #&0A
@@ -4698,9 +4706,9 @@ ORG &2B13
 
 .l3023
 {
-  LDA #&06:STA &033A
+  LDA #6:STA frmx
 .l3028
-  LDX &033A
+  LDX frmx
   LDA screentable_hi,X:STA &FC
   LDA screentable_lo,X
   CLC
@@ -4747,11 +4755,11 @@ ORG &2B13
   CPY #&00
   BNE l306A
 
-  INC &033A
+  INC frmx
 
-  LDA &033A
+  LDA frmx
   ; Is it < 23
-  CMP #&17
+  CMP #23
   BCC l3028
 
   LDA #&00
@@ -4818,7 +4826,7 @@ ORG &2B13
 {
   LDX #&00
   LDA #&58:STA &03DC
-.loop
+.machineloop
   LDA &18E8,X
   CMP roomno
   BNE l310F
@@ -4854,7 +4862,7 @@ ORG &2B13
   INX
   CPX #&04
   ; Is it < 4
-  BCC loop
+  BCC machineloop
 
   JMP l311B
 
@@ -4874,14 +4882,14 @@ ORG &2B13
 
   LDX #obj_lifttop
   LDA orig_ylocs,X:STA objs_ylocs,X
-.l3131
+.loop
   JSR l3306
 
   INC objs_ylocs,X
   LDA objs_ylocs,X
   ; Is it < 103
   CMP #103
-  BCC l3131
+  BCC loop
 
 .done
   RTS
@@ -4906,14 +4914,14 @@ ORG &2B13
 {
   LDA dizzyx
   CLC
-  ADC &033A
-  STA &033C
+  ADC frmx
+  STA frmattr
 
-  DEC &033C
+  DEC frmattr
 
   LDA dizzyy
   CLC
-  ADC &033B
+  ADC frmy
   CLC
   ADC #40
   STA &033D
@@ -4937,7 +4945,7 @@ ORG &2B13
   ADC #&20
   STA &FB
 
-  LDA &033C
+  LDA frmattr
   LSR A
   CLC
   ADC #&04
@@ -4945,7 +4953,7 @@ ORG &2B13
   LDA (&FD),Y
   STA &033F
 
-  LDA &033C
+  LDA frmattr
   AND #&01
   BEQ l31B5
 
@@ -4958,7 +4966,7 @@ ORG &2B13
 .l31B7
   STA &033E
 
-  LDA &033C
+  LDA frmattr
   LSR A
   TAX
   LDA &1877,X
@@ -5168,11 +5176,11 @@ ORG &2B13
 
 .l32EB
 {
-  LDA objs_xlocs,X:STA &033A ; X position
-  LDA objs_ylocs,X:STA &033B ; Y position
+  LDA objs_xlocs,X:STA frmx ; X position
+  LDA objs_ylocs,X:STA frmy ; Y position
 
   LDA #&00
-  STA &033C ; attrib
+  STA frmattr ; attrib
   STA &033F
 
   LDA objs_frames, X ; frame
@@ -5183,10 +5191,10 @@ ORG &2B13
 
 .l3306
 {
-  LDA objs_xlocs,X:STA &033A ; X position
-  LDA objs_ylocs,X:STA &033B ; Y position
+  LDA objs_xlocs,X:STA frmx ; X position
+  LDA objs_ylocs,X:STA frmy ; Y position
 
-  LDA objs_attrs,X:STA &033C ; attrib
+  LDA objs_attrs,X:STA frmattr ; attrib
   LDA #&00:STA &033F
 
   LDA objs_frames,X ; frame
@@ -5218,9 +5226,9 @@ ORG &2B13
   CMP roomno
   BNE loop ; skip this object if not in the room we are in
 
-  LDA objs_xlocs,X:STA &033A ; X position
-  LDA objs_ylocs,X:STA &033B ; Y position
-  LDA objs_attrs,X:STA &033C ; attrib
+  LDA objs_xlocs,X:STA frmx ; X position
+  LDA objs_ylocs,X:STA frmy ; Y position
+  LDA objs_attrs,X:STA frmattr ; attrib
 
   ; Check if this is a non-collectable
   LDY #&00
@@ -5235,7 +5243,7 @@ ORG &2B13
 
   ; Change plot style if this object has moved from it's initial position
   JSR l3384
-  LDA &033C:AND #&A7:ORA &FF:STA &033C ; attrib
+  LDA frmattr:AND #&A7:ORA &FF:STA frmattr ; attrib
 
 .l3373
   STY &033F
@@ -5302,7 +5310,7 @@ ORG &2B13
 
 .l33D1
 {
-  STA &033A
+  STA frmx
 
   LDA dizzyx:ASL A:CLC:ADC #28:STA dizzyx
 
@@ -5326,27 +5334,27 @@ ORG &2B13
 
   LDA dizzyx
   SEC
-  SBC &033A
+  SBC frmx
   STA &0354
   STA &0355
 
   LDA dizzyx
   CLC
-  ADC &033A
+  ADC frmx
   STA &0356
   STA &0357
 
-  LSR &033A
+  LSR frmx
 
   LDA dizzyy
   SEC
-  SBC &033A
+  SBC frmx
   STA &035E
   STA &0360
 
   LDA dizzyy
   CLC
-  ADC &033A
+  ADC frmx
   STA &035F
   STA &0361
 
@@ -5657,9 +5665,9 @@ ORG &2B13
   LDA #SPR_SPACE ; frame
 
 .printable
-  LDX cursorx:STX &033A ; X position
-  LDX cursory:STX &033B ; Y position
-  LDX cursorattr:STX &033C ; attrib
+  LDX cursorx:STX frmx ; X position
+  LDX cursory:STX frmy ; Y position
+  LDX cursorattr:STX frmattr ; attrib
 
   LDX #&00
   STX &033F
@@ -5786,9 +5794,9 @@ ORG &2B13
 
 .drawchar
 {
-  LDX &039A:STX &033A ; X position
-  LDX cursory:STX &033B ; Y position
-  LDX cursorattr:STX &033C ; attrib
+  LDX &039A:STX frmx ; X position
+  LDX cursory:STX frmy ; Y position
+  LDX cursorattr:STX frmattr ; attrib
 
   LDX #&00
   STX &033F
@@ -5978,13 +5986,13 @@ ORG &2B13
   RTS
 
 .keepgoing
-  STX &033A ; X position
+  STX frmx ; X position
 
   LDY #24
-  STY &033B ; Y position
+  STY frmy ; Y position
   STY &03E3
 
-  LDY #PAL_CYAN:STY &033C ; attrib
+  LDY #PAL_CYAN:STY frmattr ; attrib
   LDY #&00:STY &03DC
   JSR frame
 
@@ -6001,10 +6009,10 @@ ORG &2B13
 
   LDX #46
 .loop
-  STX &033A ; X position
+  STX frmx ; X position
 
   LDA #8
-  STA &033B ; Y position
+  STA frmy ; Y position
   STA &03E3
 
   LDY #PAL_BLACK ; Default to rubbing out life indicator eggs
@@ -6015,7 +6023,7 @@ ORG &2B13
 
   LDY #PAL_YELLOW ; Draw life indicator eggs in yellow
 .keepattr
-  STY &033C ; attrib
+  STY frmattr ; attrib
 
   LDA #&00:STA &03DC
 
@@ -6046,16 +6054,16 @@ ORG &2B13
   AND #&3F
   CLC
   ADC #&20
-  STA &033A ; X position
+  STA frmx ; X position
 
   JSR l3257
 
   AND #&7F
   CLC
   ADC #&30
-  STA &033B ; Y position
+  STA frmy ; Y position
 
-  LDA #PLOT_XOR+PAL_RED:STA &033C ; attrib
+  LDA #PLOT_XOR+PAL_RED:STA frmattr ; attrib
 
   LDA #&00
   STA &033F
@@ -6123,7 +6131,6 @@ ORG &2B13
 
 .l38C3
   LDA &1828,X:SEC:SBC #&04:STA &B3
-
   LDA &180E,X:STA &B2
 
   LDA &03DA
@@ -6145,26 +6152,26 @@ ORG &2B13
   ASL A
   CLC
   ADC #&18
-  STA &033A ; X position
+  STA frmx ; X position
 
   LDA &03E0
   ASL A
   ASL A
   ASL A
-  STA &033B ; Y position
+  STA frmy ; Y position
 
   LDA roomno
   CMP #ACTIVEVOLCANOROOM
-  BNE l3901
+  BNE notlava
 
   LDA #ATTR_GRID+PAL_RED ; It's lava
   JMP l3903
 
-.l3901
+.notlava
   LDA #ATTR_GRID+PAL_WHITE ; It's water
 
 .l3903
-  STA &033C ; attrib
+  STA frmattr ; attrib
 
   LDA #&00:STA &033F
 
@@ -6197,11 +6204,11 @@ ORG &2B13
   STA &03DB
   STX &034E
 .l393B
-  LDA flame_x,X:STA &033A ; X position
-  LDA flame_y,X:STA &033B ; Y position
+  LDA flame_x,X:STA frmx ; X position
+  LDA flame_y,X:STA frmy ; Y position
 
   LDA #&00
-  STA &033C ; attrib
+  STA frmattr ; attrib
   STA &033F
   STA &03DC
 
@@ -6221,10 +6228,10 @@ ORG &2B13
   LDA flame_attr,X
   EOR #ATTR_REVERSE
   STA flame_attr,X
-  STA &033C ; attrib
+  STA frmattr ; attrib
 
-  LDA flame_x,X:STA &033A ; X position
-  LDA flame_y,X:STA &033B ; Y position
+  LDA flame_x,X:STA frmx ; X position
+  LDA flame_y,X:STA frmy ; Y position
   LDA #&20:STA &033F
   LDA #&00:STA &03DC
   LDA #SPR_FLAME ; frame
@@ -6306,15 +6313,15 @@ ORG &2B13
   JSR getframepointer
 
   ; Set up hit-detection around Dizzy ??
-  LDA dizzyx:CLC:ADC #33:STA &033A
-  CLC:ADC #4:STA &033C ; +width ??
+  LDA dizzyx:CLC:ADC #33:STA frmx
+  CLC:ADC #4:STA frmattr ; +width ??
 
-  LDA dizzyy:CLC:ADC #42:STA &033B
+  LDA dizzyy:CLC:ADC #42:STA frmy
   CLC:ADC #21:STA &033D ; +height ??
 
   ; Return if object.x >= dizzy.x (Dizzy to the left)
   LDA objs_xlocs,X
-  CMP &033C
+  CMP frmattr
   BCS objelsewhere
 
   ; Return if object.x+object.width <= dizzy.x (Dizzy to the right)
@@ -6322,7 +6329,7 @@ ORG &2B13
   LDA (&B4),Y ; Get object width
   CLC
   ADC objs_xlocs,X ; Add object.x
-  CMP &033A
+  CMP frmx
   BCC objelsewhere
   BEQ objelsewhere
 
@@ -6335,7 +6342,7 @@ ORG &2B13
   INY
   CLC
   ADC (&B4),Y ; Add object height
-  CMP &033B
+  CMP frmy
   BCC objelsewhere
   BEQ objelsewhere
 
@@ -6347,14 +6354,14 @@ ORG &2B13
 ; Print coins collected counter to screen
 .drawcoincount
 {
-  LDA #78:STA &033A ; X position
+  LDA #78:STA frmx ; X position
   LDA #&00:STA &03DC
 
   LDA #8
-  STA &033B ; Y position
+  STA frmy ; Y position
   STA &03E3
 
-  LDA #PAL_YELLOW:STA &033C ; attrib
+  LDA #PAL_YELLOW:STA frmattr ; attrib
 
   ; Convert tens to ASCII
   LDA coins_tens
@@ -6362,14 +6369,14 @@ ORG &2B13
 
   JSR frame
 
-  LDA #80:STA &033A ; X position
+  LDA #80:STA frmx ; X position
   LDA #&00:STA &03DC
 
   LDA #8
-  STA &033B ; Y position
+  STA frmy ; Y position
   STA &03E3
 
-  LDA #PAL_YELLOW:STA &033C ; attrib
+  LDA #PAL_YELLOW:STA frmattr ; attrib
 
   ; Convert units to ASCII
   LDA coins
@@ -6383,7 +6390,7 @@ ORG &2B13
 .l3A71
 {
   TAX
-  LDA &1897,X:STA &033C
+  LDA &1897,X:STA frmattr
 
   LDA #&0B
 
@@ -6401,7 +6408,7 @@ ORG &2B13
   LDA &1828,X:STA &FC
 
   LDY #&09
-  LDA &033C
+  LDA frmattr
 .loop
   STA (&FB),Y
   INY
@@ -6426,9 +6433,9 @@ ORG &2B13
   CPX #&44
   BCS l3AD5
 
-  STX &033A ; X position
+  STX frmx ; X position
 
-  LDA &C81B:STA &033B ; Y position
+  LDA &C81B:STA frmy ; Y position
 
   LDA #PAL_YELLOW
 
@@ -6437,7 +6444,7 @@ ORG &2B13
 
   LDA #PAL_BLACK
 .l3AC5
-  STA &033C ; attrib
+  STA frmattr ; attrib
 
   LDA #&00
   STA &033F
@@ -6491,7 +6498,7 @@ ORG &2B13
   EQUB 0
   EQUB 0
 
-.l3B00
+.checkcheatmode
 {
   LDX #&00
 
