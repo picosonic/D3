@@ -2849,11 +2849,11 @@ ORG &1903
   LDA #&00:STA &03D5
 
   ; Wait until raster line >= 250
-.l2469
+.rasterwaitloop
   LDA GFX_RASTER_LINE
   ; Is it < 250
   CMP #250
-  BCC l2469
+  BCC rasterwaitloop
 
   JSR drawobjects
 
@@ -4319,9 +4319,10 @@ ORG &2B13
 {
   LDX &033D
   LDA #&00:STA v2AF3,X
-.l2D9D
+
+.loop
   LDA v2AF2,X
-  ASL A
+  ASL A ; * 16
   ASL A
   ASL A
   ASL A
@@ -4329,14 +4330,14 @@ ORG &2B13
   STA v2AF3,X
 
   LDA v2AF2,X
-  LSR A
+  LSR A ; / 16
   LSR A
   LSR A
   LSR A
   STA v2AF2,X
 
   DEX
-  BNE l2D9D
+  BNE loop
 
   LDA &033D
   CMP &034B
@@ -4461,14 +4462,13 @@ ORG &2B13
   RTS
 
 .validroom
-  LDA #&80:STA &FC
-  LDA &0340
-  CLC
-  ADC &0340
-  BCC l2E90
+  ; Set up pointer (FB) to roomtable[roomno]
+  LDA #hi(roomdata):STA &FC
+  LDA &0340:CLC:ADC &0340
+  BCC samepage
 
   INC &FC
-.l2E90
+.samepage
   STA &FB
 
   ; Set up pointers (B0 and B2) to room data
@@ -4512,6 +4512,8 @@ ORG &2B13
   INC &B3
 .l2EC6
   STA &B2
+
+  ; Check if B0 pointer is the same as B1, i.e. the room is fully drawn
 .l2EC8
   LDA &B0
   CMP &B2
@@ -4531,7 +4533,7 @@ ORG &2B13
 
   LDY #&03
   INC &0342
-  LDA (&B0),Y:EOR #&40:STA cursorattr
+  LDA (&B0),Y:EOR #ATTR_NOTSOLID:STA cursorattr
 .l2EEE
   LDA cursorattr:STA frmattr ; attrib
   LDA #&00:STA &033F
@@ -5248,13 +5250,13 @@ ORG &2B13
   BCS l3373
 
   ; This is a collectable object
-  AND #&07
+  AND #PAL_WHITE ; Mask off colour
   AND &03D5
   ORA #&08
   TAY
 
   ; Change plot style if this object has moved from it's initial position
-  JSR l3384
+  JSR calcplotstyle
   LDA frmattr:AND #&A7:ORA &FF:STA frmattr ; attrib
 
 .l3373
@@ -5267,7 +5269,7 @@ ORG &2B13
   JMP loop
 }
 
-.l3384
+.calcplotstyle
 {
   ; Set PLOT_OR - object having been moved
   LDA #PLOT_OR:STA &FF
@@ -6646,6 +6648,7 @@ ORG &7F40
 }
 
 ORG &8000
+.roomdata
 INCBIN "roomdata.bin"
 
   EQUB &00, &00, &00, &00, &00, &00, &00, &00, &00
