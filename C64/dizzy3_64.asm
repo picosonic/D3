@@ -74,7 +74,7 @@ msgbox_height = &0399
 .v039A
 cursorx = &039B ; char cursor X
 cursory = &039C ; char cursor Y
-.v03B7
+.v03B7 ; multi-use - death str id
 .v03B8 ; roomno related ?
 lives = &03B9
 .v03BA
@@ -100,7 +100,7 @@ olddizzyy = &03D7
 .v03D9 ; ID of object being interacted with ?
 .v03DA
 .v03DB
-.v03DC
+.v03DC ; &00 or &58
 .v03DD ; max object id to draw
 .v03DF
 .v03E0
@@ -2034,8 +2034,10 @@ ORG &1903
   STA &03C7
   STA &03C8
 
-  LDA #JOY_LEFT+JOY_UP:STA player_input
-  LDA #CASTLEDUNGEONROOM:STA &C6D5
+  LDA #JOY_LEFT+JOY_UP:STA player_input ; Set Dizzy jumping away from the troll
+
+  LDA #CASTLEDUNGEONROOM:STA &C6D5 ; Put last coin in the dungeon (behind the troll)
+
   JMP l1B68
 
 .l1F33
@@ -2053,11 +2055,12 @@ ORG &1903
 
 .l1F48
   LDA player_input
-  AND #&EF ; ????
+  AND #&EF ; Mask out "FIRE" press
   STA player_input
+
 .l1F50
   LDA player_input
-  AND #JOY_FIRE
+  AND #JOY_FIRE ; Mask only "FIRE" press
   BNE l1F5A
 
   JMP l24A0
@@ -2865,6 +2868,7 @@ ORG &1903
 
   JSR drawobjects
   JSR l3090
+
 .l24A0
   LDX #&00:STX &03B7
 .l24A5
@@ -2875,7 +2879,7 @@ ORG &1903
 
   LDX &03B7 ; offset
   LDA deathmessages,X
-  JMP l2572
+  JMP storekillstr
 
 .l24B7
   INC &03B7
@@ -2887,47 +2891,50 @@ ORG &1903
   ; Check if crocodile's mouth is open
   LDA objs_frames+obj_croc
   CMP #SPR_CROCOPEN
-  BNE l24D4
+  BNE checkdragons
 
+  ; The croc's mouth is open, so is Dizzy touching it?
   LDX #obj_croc
   JSR collidewithdizzy
-  BCC l24D4
+  BCC checkdragons
 
+  ; Dizzy was eaten by the crocodile
   LDA #str_croceatenmess
-  JMP l2572
+  JMP storekillstr
 
-.l24D4
+.checkdragons
   LDA roomno
   CMP #DRAGONSLAIRROOM
-  BEQ l24E2
+  BEQ checkdragoninmine
 
   CMP #WIDEEYEDDRAGONROOM
-  BEQ l24EC
+  BEQ checkopenairdragon
 
   JMP l2527
 
-.l24E2
+.checkdragoninmine
+  ; Check golden egg
   LDA objs_attrs+obj_goldenegg
   AND #ATTR_REVERSE
-  BEQ l24F3
+  BEQ checkdragonbite
 
-  JMP l24FF
+  JMP checkdragonflames
 
-.l24EC
+.checkopenairdragon
   ; Check sleeping potion
   LDA objs_rooms+obj_sleepingpotion
   CMP #OFFMAP
-  BEQ l24FF
+  BEQ checkdragonflames
 
-.l24F3
+.checkdragonbite
   LDX #obj_dragonhead
   JSR collidewithdizzy
-  BCC l24FF
+  BCC checkdragonflames
 
   LDA #str_dragonkilledmess
-  JMP l2572
+  JMP storekillstr
 
-.l24FF
+.checkdragonflames
   LDA dizzyy
   ; Is it < 88
   CMP #88
@@ -2952,7 +2959,7 @@ ORG &1903
   BCS l2527
 
   LDA #str_dragonflameskilledmess
-  JMP l2572
+  JMP storekillstr
 
 .l2527
   LDA #2:STA frmx
@@ -2983,7 +2990,7 @@ ORG &1903
   BEQ l2560
 
   LDA #str_killedbyflame
-  JMP l2572
+  JMP storekillstr
 
 .l2560
   LDA &033F
@@ -2993,23 +3000,27 @@ ORG &1903
   LDA #str_killedbyvolcano
   LDY roomno
   CPY #ACTIVEVOLCANOROOM
-  BEQ l2572
+  BEQ storekillstr
 
   LDA #str_killedbywater
-.l2572
-  STA &03B7
-  CMP #&35
+.storekillstr
+  STA &03B7 ; Store "killed-by" message id
+
+  ; Was it daggers that hurt Dizzy
+  CMP #str_killedbydaggersmess
   BNE l258A
 
+  ; Check which room Dizzy hit daggers
   LDA roomno
   CMP #DAISYSPRISONROOM
   BNE l258A
 
-  ; Check for rug
+  ; Check if rug has been used to cover daggers in Daisy's prison room
   LDA objs_rooms+obj_rug
   CMP #OFFMAP
   BNE l258A
 
+  ; Dizzy is safe - for now
   JMP l25C7
 
 .l258A
@@ -3635,6 +3646,7 @@ ORG &1903
   INC &03BB
 .l2956
   LDA &C89C:EOR #&20:STA &C89C
+
 .l295E
   LDA roomno
   CMP #DRAGONSLAIRROOM
@@ -4359,7 +4371,7 @@ ORG &2B13
   LDA frmattr:ORA #PLOT_XOR:STA frmattr
 .l2DEC
   LDA frmattr
-  AND #PLOT_XOR
+  AND #ATTR_NOTSOLID
   BEQ l2DF9
 
   ORA &033F
@@ -6421,29 +6433,32 @@ ORG &2B13
 
 .l3A9F
 {
-  LDA &03BA:CLC:ADC #&08:STA &03DB
+  ; Set start/end X positions for flames ??
+  LDA &03BA:CLC:ADC #8:STA &03DB
 
   LDX &03BA
 .loop
   ; Is it < 50
-  CPX #&32
+  CPX #50
   BCC l3AD5
 
   ; Is it >= 68
-  CPX #&44
+  CPX #68
   BCS l3AD5
 
   STX frmx ; X position
 
-  LDA &C81B:STA frmy ; Y position
+  LDA objs_ylocs+obj_dragonneck:STA frmy ; Y position
 
+  ; Drawing yellow flames
   LDA #PAL_YELLOW
 
   CPX &03DB
-  BCC l3AC5
+  BCC storeattrs
 
+  ; Erase flames by drawing black ones
   LDA #PAL_BLACK
-.l3AC5
+.storeattrs
   STA frmattr ; attrib
 
   LDA #&00
@@ -6458,7 +6473,6 @@ ORG &2B13
   INX
   CPX &03DB
   BEQ loop
-
   BCC loop
 
   LDX #obj_dragonhead

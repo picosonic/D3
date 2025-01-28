@@ -224,6 +224,7 @@ obj_switch2        = 100
 obj_lifttop        = 101
 obj_liftbottom     = 102
 obj_daisy          = 103
+obj_dragonneck     = 113
 obj_dragonhead     = 114
 
 ; Upper RAM area
@@ -289,7 +290,7 @@ obj_dragonhead     = 114
 ;.vC80F ; lifttop
 ;.vC810 ; liftbottom
 ;.vC811 ; daisy
-.vC81B ; 113 ? dragonneck
+;.vC81B ; dragonneck
 
 ; attrib[] array
 ;.vC830 ; bag
