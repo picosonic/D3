@@ -1,10 +1,13 @@
 ; Ian Gray did the C64 port of 5x Dizzy games, published via Codemasters
 ;
-; 1988 - Dizzy
-; 1989 - Treasure Island
-; 1990 - Fantasy World Dizzy
-; 1990 - Magic Land
-; 1992 - Prince of the YolkFolk
+; 1988 - Dizzy - no eclipse (reported)
+; 1989 - Treasure Island - eclipse [32 screens wide]
+; 1990 - Fantasy World Dizzy - eclipse [16 screens wide]
+; 1990 - Magic Land - eclipse [23 screens wide]
+; 1992 - Prince of the YolkFolk - eclipse [25 screens wide]
+
+; Note also : 1992 - Wild West Seymour - eclipse [10 screens wide]
+;  and 1992 - Slightly Magic - SYZYGY
 
 $8000 .. $80CB = roomtable
 $80CC .. $A3D6 = roomdata
