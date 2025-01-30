@@ -964,7 +964,7 @@ PAL_DIZZY2 = &02
   EQUB 0
 .^messpen
   EQUB 0
-.messplot
+.^messplot
   EQUB 0
 
 .messwidth
@@ -981,12 +981,12 @@ PAL_DIZZY2 = &02
   ; Cache Y
   STY ycache
 
-  ; Make character zero-based
-  SEC:SBC #'a'
-
   ; Check for 2nd bank
   CMP #'z'
   BEQ extendedtable
+
+  ; Make character zero-based
+  SEC:SBC #'a'
 
   ; Make a pointer to lookup entry
   ASL A:TAY
@@ -999,6 +999,9 @@ PAL_DIZZY2 = &02
   ; Read second character to use with second lookup
   LDY ycache
   LDA (zptr5), Y:INC ycache
+
+  ; Make character zero-based
+  SEC:SBC #'a'
 
   ; Make a pointer to lookup2 entry
   ASL A:TAY
@@ -1014,6 +1017,9 @@ PAL_DIZZY2 = &02
   ; Print character
   STA frmno
   LDA messx:CLC:ADC #&20:STA frmx
+  LDA messy:STA frmy
+  LDA messpen:STA frmattri
+  LDA messplot:STA frmplot
   JSR frame
 
   ; Advance cursor
@@ -1059,6 +1065,8 @@ PAL_DIZZY2 = &02
 
 .lookup2
   EQUW e_za
+  EQUW e_zb
+  EQUW e_zc
 
 .e_a EQUB "THE", PRT_END
 .e_b EQUB "YOU", PRT_END
@@ -1070,9 +1078,9 @@ PAL_DIZZY2 = &02
 .e_h EQUB "THAT", PRT_END
 .e_i EQUB "IN", PRT_END
 .e_j EQUB "HE", PRT_END
-.e_k EQUB "CASTLE", PRT_END
+.e_k EQUB "TH", PRT_END
 .e_l EQUB "DAISY", PRT_END
-.e_m EQUB "WATER", PRT_END
+.e_m EQUB "RO", PRT_END
 .e_n EQUB "CLOUD", PRT_END
 .e_o EQUB "ST", PRT_END
 .e_p EQUB "ALL", PRT_END
@@ -1087,6 +1095,8 @@ PAL_DIZZY2 = &02
 .e_y EQUB "AN", PRT_END
 
 .e_za EQUB "DRAGON", PRT_END
+.e_zb EQUB "CASTLE", PRT_END
+.e_zc EQUB "WATER", PRT_END
 }
 
 ; Dizzy animation frames
