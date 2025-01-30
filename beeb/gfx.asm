@@ -711,6 +711,9 @@ PAL_DIZZY2 = &02
   ; Is it a change of X/Y
   CMP #PRT_XY:BCS changexy
 
+  ; Is it a compressed sequence
+  CMP #'a':BCS decompress
+
   ; Anything else above control codes must be a character
   CMP #' ':BCS mustbechar
 
@@ -744,6 +747,10 @@ PAL_DIZZY2 = &02
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 .endrepeatjmp
   JMP endrepeat
+
+.decompress
+  JSR expand
+  JMP prtmessage1
 
   ; Byte in A must be a char, so print it at cursor position
 .mustbechar
@@ -964,6 +971,122 @@ PAL_DIZZY2 = &02
   EQUB 0
 .messheight
   EQUB 0
+}
+
+; Expand common words in strings
+;  A reg = 'a' to 'z'
+;  if A reg = 'z' use second lookup table
+.expand
+{
+  ; Cache Y
+  STY ycache
+
+  ; Make character zero-based
+  SEC:SBC #'a'
+
+  ; Check for 2nd bank
+  CMP #'z'
+  BEQ extendedtable
+
+  ; Make a pointer to lookup entry
+  ASL A:TAY
+  LDA lookup, Y:STA loop+1
+  LDA lookup+1, Y:STA loop+2
+
+  LDY #&00:BEQ startexpansion
+
+.extendedtable
+  ; Read second character to use with second lookup
+  LDY ycache
+  LDA (zptr5), Y:INC ycache
+
+  ; Make a pointer to lookup2 entry
+  ASL A:TAY
+  LDA lookup2, Y:STA loop+1
+  LDA lookup2+1, Y:STA loop+2
+
+.startexpansion
+  LDY #0
+.loop
+  LDA &0000, Y ; Gets replaced with string pointer
+  BEQ done ; Check for end of string
+
+  ; Print character
+  STA frmno
+  LDA messx:CLC:ADC #&20:STA frmx
+  JSR frame
+
+  ; Advance cursor
+  LDA messx:CLC:ADC #&02:STA messx
+  INY
+  JMP loop
+
+.done
+  ; Restore Y
+  LDY ycache
+
+  RTS
+
+.ycache
+  EQUB &00
+
+.lookup
+  EQUW e_a
+  EQUW e_b
+  EQUW e_c
+  EQUW e_d
+  EQUW e_e
+  EQUW e_f
+  EQUW e_g
+  EQUW e_h
+  EQUW e_i
+  EQUW e_j
+  EQUW e_k
+  EQUW e_l
+  EQUW e_m
+  EQUW e_n
+  EQUW e_o
+  EQUW e_p
+  EQUW e_q
+  EQUW e_r
+  EQUW e_s
+  EQUW e_t
+  EQUW e_u
+  EQUW e_v
+  EQUW e_w
+  EQUW e_x
+  EQUW e_y
+
+.lookup2
+  EQUW e_za
+
+.e_a EQUB "THE", PRT_END
+.e_b EQUB "YOU", PRT_END
+.e_c EQUB "AND", PRT_END
+.e_d EQUB "ING", PRT_END
+.e_e EQUB "BUT", PRT_END
+.e_f EQUB "WELL", PRT_END
+.e_g EQUB "DIZZY", PRT_END
+.e_h EQUB "THAT", PRT_END
+.e_i EQUB "IN", PRT_END
+.e_j EQUB "HE", PRT_END
+.e_k EQUB "CASTLE", PRT_END
+.e_l EQUB "DAISY", PRT_END
+.e_m EQUB "WATER", PRT_END
+.e_n EQUB "CLOUD", PRT_END
+.e_o EQUB "ST", PRT_END
+.e_p EQUB "ALL", PRT_END
+.e_q EQUB "ON", PRT_END
+.e_r EQUB "EN", PRT_END
+.e_s EQUB "TO", PRT_END
+.e_t EQUB "ER", PRT_END
+.e_u EQUB ";S", PRT_END
+.e_v EQUB "IT", PRT_END
+.e_w EQUB "RE", PRT_END
+.e_x EQUB "OU", PRT_END
+.e_y EQUB "AN", PRT_END
+
+.e_za EQUB "DRAGON", PRT_END
 }
 
 ; Dizzy animation frames
