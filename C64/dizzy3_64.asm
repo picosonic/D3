@@ -2124,7 +2124,7 @@ ORG &18F8
   BCS l1FA9
 
   STX &18DE
-  JMP l1FB3
+  JMP checkdenzil
 
 .l1FA9
   INX
@@ -2135,7 +2135,7 @@ ORG &18F8
   LDX #&FF
   STX &18DE
 
-.l1FB3
+.checkdenzil
 {
   LDX #obj_denzil
   JSR collidewithdizzy
@@ -2195,18 +2195,18 @@ ORG &18F8
   JSR collidewithdizzy
   BCC l202B
 
-  ; Check sleeping potion
+  ; Check if sleeping potion has been given to Dizzy
   LDA objs_rooms+obj_sleepingpotion
-  CMP #&65
-  BNE l2013
+  CMP #ATTICROOM+1
+  BNE gotpotion
 
   ; Make sleeping potion appear
   LDA #OUTTOSEAROOM:STA objs_rooms+obj_sleepingpotion
 
   LDY #str_dozytalking
-  JMP l2024
+  JMP dozymessage
 
-.l2013
+.gotpotion
   LDX #obj_dozy
   JSR l32EB
 
@@ -2215,7 +2215,7 @@ ORG &18F8
   LDA #134:STA objs_ylocs+obj_dozy
   LDY #str_kickdozyagainmess
 
-.l2024
+.dozymessage
   TYA
   JSR prtmessage
 
@@ -2226,37 +2226,39 @@ ORG &18F8
 {
   LDA roomno
   CMP #CASTLESTAIRCASEROOM
-  BNE l2048
+  BNE checkgranddizzy
 
   ; Check for doorknocker
   LDA objs_rooms+obj_doorknocker
   CMP #collected
-  BEQ l2048
+  BEQ checkgranddizzy
 
   LDX #&44 ; egg, CASTLEDUNGEONROOM, 40x160
   JSR collidewithdizzy
-  BCC l2048
+  BCC checkgranddizzy
 
   LDA #str_knockandentermess:JSR prtmessage
+
   JMP checkdeadlyobj
 }
 
-.l2048
+.checkgranddizzy
 {
-  LDX #&63
+  LDX #obj_granddizzy
   JSR collidewithdizzy
   BCC checkdylan
 
-  ; Check crowbar
+  ; Check if crowbar has been given to Dizzy
   LDY #str_goonmysonmess
   LDA objs_rooms+obj_crowbar
-  CMP #&65
-  BNE l205F
+  CMP #ATTICROOM+1
+  BNE dougmessage
 
   ; Make crowbar appear
   LDA #LIFTTOELDERSROOM:STA objs_rooms+obj_crowbar
   LDY #str_dougtalking
-.l205F
+
+.dougmessage
   TYA
   JSR prtmessage
 
@@ -2267,35 +2269,35 @@ ORG &18F8
 {
   LDX #obj_dylan
   JSR collidewithdizzy
-  BCC l2084
+  BCC checkprisonswitch
 
-  ; Check Dylan orientation
+  ; Check Dylan orientation to see if we've already spoken
   LDY #str_trancemess
   LDA objs_attrs+obj_dylan
   CMP #PAL_WHITE
-  BNE l207D
+  BNE dylanmessage
 
   ; Make Dylan face the other way
   LDA #ATTR_REVERSE+PAL_WHITE:STA objs_attrs+obj_dylan
   LDY #str_dylantalking
 
-.l207D
+.dylanmessage
   TYA
   JSR prtmessage
 
   JMP checkdeadlyobj
 }
 
-.l2084
+.checkprisonswitch
 {
   LDX #obj_switch2
   JSR collidewithdizzy
-  BCC l20CE
+  BCC checkgoldenegg2
 
   ; Check switch in Daisy's prison
   LDA #ATTR_REVERSE+PAL_WHITE
   CMP objs_attrs+obj_switch2
-  BEQ l20CE
+  BEQ checkgoldenegg2
 
   ; Activate switch in Daisy's prison
   STA objs_attrs+obj_switch2
@@ -2335,7 +2337,7 @@ ORG &18F8
   JMP checkdeadlyobj
 }
 
-.l20CE
+.checkgoldenegg2
 {
   LDX #obj_goldenegg2
   JSR collidewithdizzy
@@ -2773,6 +2775,7 @@ ORG &18F8
   JMP l242D
 
 .l23A7
+{
   ; Is it < 12
   CMP #&0C
   BCC checkgoldenegg
@@ -2791,11 +2794,15 @@ ORG &18F8
   JSR l29C1
 
   LDA #str_keyinmachine:JSR prtmessage
+}
 
 .l23C5
+{
   JMP l242D
+}
 
 .checkgoldenegg
+{
   CMP #obj_goldenegg
   BNE checkpickaxe
 
@@ -2808,8 +2815,10 @@ ORG &18F8
   ; Flip golden egg
   LDA #ATTR_REVERSE+PAL_YELLOW:STA objs_attrs+obj_goldenegg
   JMP l242D
+}
 
 .checkpickaxe
+{
   CMP #obj_pickaxe
   BNE checkrug
 
@@ -2824,8 +2833,10 @@ ORG &18F8
   LDA #str_usepickaxemess:JSR prtmessage
 
   JMP l242D
+}
 
 .checkrug
+{
   CMP #obj_rug
   BNE checksleepingpotion
 
@@ -2841,8 +2852,10 @@ ORG &18F8
   LDA #str_userugmess:JSR prtmessage
 
   JMP l242D
+}
 
 .checksleepingpotion
+{
   CMP #obj_sleepingpotion
   BNE l242D
 
@@ -2855,6 +2868,7 @@ ORG &18F8
   LDA #str_dragonasleepmess:JSR prtmessage
 
   JMP l242D
+}
 
 .l242D
   LDX #&73:STX &03DB
@@ -2934,6 +2948,7 @@ ORG &18F8
   BCC loop
 }
 
+{
   ; Check if crocodile's mouth is open
   LDA objs_frames+obj_croc
   CMP #SPR_CROCOPEN
@@ -2947,8 +2962,10 @@ ORG &18F8
   ; Dizzy was eaten by the crocodile
   LDA #str_croceatenmess
   JMP storekillstr
+}
 
 .checkdragons
+{
   LDA roomno
   CMP #DRAGONSLAIRROOM
   BEQ checkdragoninmine
@@ -2957,6 +2974,7 @@ ORG &18F8
   BEQ checkopenairdragon
 
   JMP l2527
+}
 
 .checkdragoninmine
   ; Check golden egg
