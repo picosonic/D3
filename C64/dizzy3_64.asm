@@ -1116,10 +1116,25 @@ coins = &18E6
 .v18EC ; []
 .v18F0
 .v18F4 ; []
-.v18F8 ; []
 
-ORG &1903
-.deathmessages ; death message string table offsets []
+ORG &18F8
+.deadlyobj ; objects that can kill Dizzy on contact []
+{
+  EQUB obj_grunt
+  EQUB obj_portcullis
+  EQUB &73 ;
+  EQUB &75 ; lifts
+  EQUB &77 ;
+  EQUB &79 ;
+  EQUB obj_hawk
+  EQUB obj_rat
+  EQUB &5F ;
+  EQUB &68 ; daggers
+  EQUB &69 ;
+}
+
+.deathmessages ; death message string table offsets for deadly obj (above) []
+{
   EQUB str_armorogkilledmess
   EQUB str_killedbyportcullis
   EQUB str_killedbyliftmess
@@ -1131,6 +1146,7 @@ ORG &1903
   EQUB str_killedbydaggersmess
   EQUB str_killedbydaggersmess
   EQUB str_killedbydaggersmess
+}
 
 ; Entry point ??
 
@@ -1974,21 +1990,23 @@ ORG &1903
   CMP #&02
   BEQ l1ECC
 
-  LDX #&43 ; egg, room 36, 80x160
+  LDX #&43 ; egg, CASTLEDUNGEONROOM, 80x160
   JSR collidewithdizzy
   BCC l1ECC
 
+  ; Collide with troll
   LDA #str_getbackintheremess:JSR prtmessage
 
   LDA #&00
   STA &03C7
   STA &03C8
 
+  ; Set Dizzy tumbling left
   LDA #JOY_LEFT+JOY_UP:STA player_input
   JMP l1B68
 
 .l1ECC
-  LDX #&41
+  LDX #&41 ; egg, MARKETSQUAREROOM, 64x152
   JSR collidewithdizzy
   BCC l1EE8
 
@@ -2063,7 +2081,7 @@ ORG &1903
   AND #JOY_FIRE ; Mask only "FIRE" press
   BNE l1F5A
 
-  JMP l24A0
+  JMP checkdeadlyobj
 
 .l1F5A
   LDX #&00
@@ -2116,52 +2134,63 @@ ORG &1903
 
   LDX #&FF
   STX &18DE
+
 .l1FB3
+{
   LDX #obj_denzil
   JSR collidewithdizzy
-  BCC l1FD1
+  BCC checkportrait
 
-  ; Check rope
+  ; Check if rope has been given to Dizzy
   LDY #str_stereoess
   LDA objs_rooms+obj_rope
-  CMP #&65
-  BNE l1FCA
+  CMP #ATTICROOM+1
+  BNE gotrope
 
   ; Make rope appear
   LDA #BANQUETHALLROOM:STA objs_rooms+obj_rope
 
   LDY #str_denziltalking
-.l1FCA
+
+.gotrope
   TYA
   JSR prtmessage
 
-  JMP l24A0
+  JMP checkdeadlyobj
+}
 
-.l1FD1
-  LDX #&55
+.checkportrait
+{
+  LDX #&55 ; egg, ENTRANCEHALLROOM, 64x104
   JSR collidewithdizzy
-  BCC l1FE0
+  BCC checkportcullis
 
+  ; Look up at the picture of Dizzy 2
   LDA #str_lookatpicturemess:JSR prtmessage
-  JMP l24A0
 
-.l1FE0
+  JMP checkdeadlyobj
+}
+
+.checkportcullis
+{
   LDX #obj_switch
   JSR collidewithdizzy
-  BCC l1FFB
+  BCC checkdozy
 
   ; Check if portcullis switch has been activated
   LDA objs_attrs+obj_switch
   CMP #PAL_CYAN
-  BNE l1FFB
+  BNE checkdozy
 
   ; Activate portcullis switch
   LDA #ATTR_REVERSE+PAL_WHITE:STA objs_attrs+obj_switch
   LDA #str_throwswitchmess:JSR prtmessage
 
-  JMP l24A0
+  JMP checkdeadlyobj
+}
 
-.l1FFB
+.checkdozy
+{
   LDX #obj_dozy
   JSR collidewithdizzy
   BCC l202B
@@ -2185,13 +2214,16 @@ ORG &1903
   LDA #60:STA objs_xlocs+obj_dozy
   LDA #134:STA objs_ylocs+obj_dozy
   LDY #str_kickdozyagainmess
+
 .l2024
   TYA
   JSR prtmessage
 
-  JMP l24A0
+  JMP checkdeadlyobj
+}
 
 .l202B
+{
   LDA roomno
   CMP #CASTLESTAIRCASEROOM
   BNE l2048
@@ -2201,17 +2233,19 @@ ORG &1903
   CMP #collected
   BEQ l2048
 
-  LDX #&44
+  LDX #&44 ; egg, CASTLEDUNGEONROOM, 40x160
   JSR collidewithdizzy
   BCC l2048
 
   LDA #str_knockandentermess:JSR prtmessage
-  JMP l24A0
+  JMP checkdeadlyobj
+}
 
 .l2048
+{
   LDX #&63
   JSR collidewithdizzy
-  BCC l2066
+  BCC checkdylan
 
   ; Check crowbar
   LDY #str_goonmysonmess
@@ -2226,9 +2260,11 @@ ORG &1903
   TYA
   JSR prtmessage
 
-  JMP l24A0
+  JMP checkdeadlyobj
+}
 
-.l2066
+.checkdylan
+{
   LDX #obj_dylan
   JSR collidewithdizzy
   BCC l2084
@@ -2242,13 +2278,16 @@ ORG &1903
   ; Make Dylan face the other way
   LDA #ATTR_REVERSE+PAL_WHITE:STA objs_attrs+obj_dylan
   LDY #str_dylantalking
+
 .l207D
   TYA
   JSR prtmessage
 
-  JMP l24A0
+  JMP checkdeadlyobj
+}
 
 .l2084
+{
   LDX #obj_switch2
   JSR collidewithdizzy
   BCC l20CE
@@ -2264,7 +2303,7 @@ ORG &1903
   LDX #obj_switch2
   JSR l29D3
 
-.l209A
+.loop
   LDX #obj_liftbottom
   JSR l32EB
 
@@ -2291,11 +2330,13 @@ ORG &1903
   LDA objs_ylocs+obj_liftbottom
   ; Is it < 139
   CMP #139
-  BCC l209A
+  BCC loop
 
-  JMP l24A0
+  JMP checkdeadlyobj
+}
 
 .l20CE
+{
   LDX #obj_goldenegg2
   JSR collidewithdizzy
   BCC l20E2
@@ -2306,7 +2347,8 @@ ORG &1903
   ; Remove golden egg
   LDA #OFFMAP:STA objs_rooms+obj_goldenegg2
 
-  JMP l24A0
+  JMP checkdeadlyobj
+}
 
 .l20E2
   JMP l2A2E
@@ -2383,7 +2425,7 @@ ORG &1903
 
   ; This object is a coin
   JSR collect_coin
-  JMP l24A0
+  JMP checkdeadlyobj
 
 .notacoin
   ; Is it a non-collectable
@@ -2839,11 +2881,11 @@ ORG &1903
 
   LDA #str_dropwhiskeymess:JSR prtmessage
 
-  JMP l24A0
+  JMP checkdeadlyobj
 
 .l245B
   CPX #&FF
-  BEQ l24A0
+  BEQ checkdeadlyobj
 
   LDA #maxcollectable+1:STA &03DD
   LDA #&00:STA &03D5
@@ -2869,24 +2911,28 @@ ORG &1903
   JSR drawobjects
   JSR l3090
 
-.l24A0
+.checkdeadlyobj
+{
+  ; Check all the things that can kill Dizzy on contact
   LDX #&00:STX &03B7
-.l24A5
-  LDA &18F8,X
+
+.loop
+  LDA deadlyobj,X
   TAX
   JSR collidewithdizzy
-  BCC l24B7
+  BCC nocontact
 
+  ; Contact has been made
   LDX &03B7 ; offset
   LDA deathmessages,X
   JMP storekillstr
 
-.l24B7
-  INC &03B7
-  LDX &03B7
+.nocontact
+  INC &03B7:LDX &03B7
   ; Is it < 11
-  CPX #&0B
-  BCC l24A5
+  CPX #deathmessages-deadlyobj
+  BCC loop
+}
 
   ; Check if crocodile's mouth is open
   LDA objs_frames+obj_croc
@@ -3802,7 +3848,7 @@ ORG &1903
   LDA #str_daisyrunsmess:JSR prtmessage
 
   LDA #TUNE_2:STA melody ; In-game melody
-  JMP l24A0
+  JMP checkdeadlyobj
 
 .l2A68
   LDA coins_tens
@@ -3816,7 +3862,7 @@ ORG &1903
 .l2A77
   LDA #str_notgotallcoins:JSR prtmessage
 
-  JMP l24A0
+  JMP checkdeadlyobj
 }
 
 .checkfordownunder
