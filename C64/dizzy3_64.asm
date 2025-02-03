@@ -1164,7 +1164,7 @@ ORG &18F8
   JSR l3B6D
   LDA #CASSETTE_OFF+CASSETTE_SWITCH+CHAREN_IO+HIRAM_E000_ROM+LORAM_A000_RAM:STA CPU_CONFIG
   LDA #TUNE_10:STA melody ; There is no melody 10 ??
-.l1927
+.titlescreen
   LDA #&00
   STA GFX_BORDER_COLOUR
   STA lives
@@ -1293,7 +1293,7 @@ ORG &18F8
   BNE checkpause
 
   ; Quit to title screen ?
-  JMP l1927
+  JMP titlescreen
 
 .checkpause
   CPY #KEY_P
@@ -2208,7 +2208,7 @@ ORG &18F8
 
 .gotpotion
   LDX #obj_dozy
-  JSR l32EB
+  JSR ruboutframe
 
   ; Position Dozy
   LDA #60:STA objs_xlocs+obj_dozy
@@ -2307,14 +2307,14 @@ ORG &18F8
 
 .loop
   LDX #obj_liftbottom
-  JSR l32EB
+  JSR ruboutframe
 
   ; Move bottom of lift downwards
   INC objs_ylocs+obj_liftbottom
   JSR l29D3
 
   INX ; switch from liftbottom to daisy
-  JSR l32EB
+  JSR ruboutframe
 
   ; Also move Daisy downwards (she's on the lift)
   INC objs_ylocs+obj_daisy
@@ -2344,7 +2344,7 @@ ORG &18F8
   BCC l20E2
 
   LDX #obj_goldenegg2
-  JSR l32EB
+  JSR ruboutframe
 
   ; Remove golden egg
   LDA #OFFMAP:STA objs_rooms+obj_goldenegg2
@@ -2353,7 +2353,7 @@ ORG &18F8
 }
 
 .l20E2
-  JMP l2A2E
+  JMP checkdaisy
 
 .l20E5
   LDX &18DE
@@ -2843,6 +2843,8 @@ ORG &18F8
   JSR hideobject
 
   LDA #str_keyinmachine:JSR prtmessage
+
+  ; Fall through
 }
 
 .l23C5
@@ -3170,7 +3172,7 @@ ORG &18F8
   LDA lives
   BNE l25B4
 
-  JMP l1927 ; No lives left
+  JMP titlescreen ; No lives left
 
 .l25B4
   DEC lives ; lose a life
@@ -3226,7 +3228,7 @@ ORG &18F8
   BEQ l263E
 
   ; Move rat right
-  JSR l32EB
+  JSR ruboutframe
 
   INC objs_xlocs+obj_rat
   JSR l3306
@@ -3241,7 +3243,7 @@ ORG &18F8
   CMP #96
   BCC l2650
 
-  JSR l32EB
+  JSR ruboutframe
 
   ; Remove rat
   LDA #OFFMAP:STA objs_rooms+obj_rat
@@ -3263,7 +3265,7 @@ ORG &18F8
 .l263E
   ; Move rat left
   LDX #obj_rat
-  JSR l32EB
+  JSR ruboutframe
 
   DEC objs_xlocs+obj_rat
   JSR l3306
@@ -3319,7 +3321,7 @@ ORG &18F8
 
   ; Move portcullis up
   LDX #obj_portcullis
-  JSR l32EB
+  JSR ruboutframe
 
   DEC objs_ylocs+obj_portcullis
 
@@ -3363,7 +3365,7 @@ ORG &18F8
 
   ; Update Dozy Y position
   LDX #obj_dozy
-  JSR l32EB
+  JSR ruboutframe
 
   LDA &03C4
   AND #&04
@@ -3405,7 +3407,7 @@ ORG &18F8
   JSR l29D3
 
   INX
-  JSR l32EB
+  JSR ruboutframe
 
   INC objs_ylocs,X
   JSR l29D3
@@ -3425,7 +3427,7 @@ ORG &18F8
   JSR l29D3
 
   INX
-  JSR l32EB
+  JSR ruboutframe
 
   DEC objs_ylocs,X
   JSR l29D3
@@ -3653,7 +3655,7 @@ ORG &18F8
   LDA #&92:STA objs_attrs+obj_grunt
 
   LDX #obj_grunt
-  JSR l32EB
+  JSR ruboutframe
 
 .l28A8
   LDA #&00:STA &03DC
@@ -3710,7 +3712,7 @@ ORG &18F8
 .l28F5
   LDX #obj_dragonhead
 .l28F7
-  JSR l32EB
+  JSR ruboutframe
 
   DEX
   ; loop while >= 108
@@ -3903,18 +3905,21 @@ ORG &18F8
   RTS
 }
 
-.l2A2E
+.checkdaisy
 {
   LDX #obj_daisy
   JSR collidewithdizzy
-  BCS l2A38
+  BCS collidewithdaisy
 
   JMP l20E5
+}
 
-.l2A38
+.collidewithdaisy
+{
+  ; Check which room we are in
   LDA roomno
   CMP #DAISYSPRISONROOM
-  BNE l2A68
+  BNE checkcoins
 
   LDA #str_gottodaisymess:JSR prtmessage
 
@@ -3931,16 +3936,16 @@ ORG &18F8
   LDA #TUNE_2:STA melody ; In-game melody
   JMP checkdeadlyobj
 
-.l2A68
+.checkcoins
   LDA coins_tens
-  CMP #&03
-  BNE l2A77
+  CMP #&03 ; Check for 30 coins being collected
+  BNE notenough
 
   LDA #str_gotallcoins:JSR prtmessage
 
-  JMP l1927
+  JMP titlescreen
 
-.l2A77
+.notenough
   LDA #str_notgotallcoins:JSR prtmessage
 
   JMP checkdeadlyobj
@@ -5315,7 +5320,7 @@ ORG &2B13
   RTS
 }
 
-.l32EB
+.ruboutframe
 {
   LDA objs_xlocs,X:STA frmx ; X position
   LDA objs_ylocs,X:STA frmy ; Y position
