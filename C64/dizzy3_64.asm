@@ -99,7 +99,7 @@ olddizzyy = &03D7
 .v03D8
 .v03D9 ; ID of object being interacted with ?
 .v03DA
-.v03DB
+.v03DB ; multi-purpose
 .v03DC ; &00 or &58
 .v03DD ; max object id to draw
 .v03DF
@@ -2485,7 +2485,7 @@ ORG &18F8
   LDA #&F0:JSR delay
 
   JSR resetgamestate
-  JMP l242D
+  JMP checklifts
 
 .l21C4
   LDA #str_selectitemmess:JSR prtmessage
@@ -2562,7 +2562,7 @@ ORG &18F8
 
   LDA #str_givingjunkmess:JSR prtmessage
 
-  JMP l242D
+  JMP checklifts
 }
 
 .l2244
@@ -2580,7 +2580,7 @@ ORG &18F8
 
   LDA #str_thanksforthecowmess:JSR prtmessage
 
-  JMP l242D
+  JMP checklifts
 }
 
 .applerou
@@ -2598,8 +2598,12 @@ ORG &18F8
 
   LDA #str_trollgotapplemess:JSR prtmessage
 
+  ; Fall through
+}
+
 .l2272
-  JMP l242D
+{
+  JMP checklifts
 }
 
 .checkjugofwater
@@ -2607,7 +2611,7 @@ ORG &18F8
   CMP #obj_jugofwater
   BNE checkrope
 
-  LDX #&44
+  LDX #&44 ; egg, CASTLEDUNGEONROOM, 40x160
   JSR collidewithdizzy
   BCC l2272
 
@@ -2619,7 +2623,7 @@ ORG &18F8
   LDA #CASTLESTAIRCASEROOM:STA &C6E2
   LDA #&24:STA &C768
 
-  JMP l242D
+  JMP checklifts
 }
 
 .checkrope
@@ -2639,7 +2643,7 @@ ORG &18F8
 
   LDA #str_croctiedmess:JSR prtmessage
 
-  JMP l242D
+  JMP checklifts
 }
 
 .l22B0
@@ -2652,7 +2656,7 @@ ORG &18F8
   CMP #&1A
   BCS checkdoorknocker
 
-  LDX #&4F
+  LDX #&4F ; egg, BROKENBRIDGEROOM, 74x104
   JSR collidewithdizzy
   BCC l2272
 
@@ -2675,7 +2679,7 @@ ORG &18F8
 
   LDA #str_rockinwatermess:JSR prtmessage
 
-  JMP l242D
+  JMP checklifts
 }
 
 .checkdoorknocker
@@ -2687,7 +2691,7 @@ ORG &18F8
   CPX #CASTLESTAIRCASEROOM
   BNE checkbone
 
-  LDX #&44
+  LDX #&44 ; egg, CASTLEDUNGEONROOM, 40x160
   JSR collidewithdizzy
   BCC l2304
 
@@ -2701,8 +2705,12 @@ ORG &18F8
 
   LDA #str_usedoorknockermess:JSR prtmessage
 
+  ; Fall through
+}
+
 .l2304
-  JMP l242D
+{
+  JMP checklifts
 }
 
 .checkbone
@@ -2710,7 +2718,7 @@ ORG &18F8
   CMP #obj_bone
   BNE checkcrowbar
 
-  LDX #&52
+  LDX #&52 ; egg, ARMOROGROOM, 82x160
   JSR collidewithdizzy
   BCC l2304
 
@@ -2719,7 +2727,7 @@ ORG &18F8
   LDA #ATTR_REVERSE+PAL_WHITE:STA objs_attrs+obj_bone
   LDA #OFFMAP:STA &C6F0
 
-  JMP l242D
+  JMP checklifts
 }
 
 .checkcrowbar
@@ -2738,7 +2746,7 @@ ORG &18F8
 
   LDA #str_usecrowbarmess:JSR prtmessage
 
-  JMP l242D
+  JMP checklifts
 }
 
 .checkbean
@@ -2755,7 +2763,7 @@ ORG &18F8
 
   LDA #str_plantbeanmess:JSR prtmessage
 
-  JMP l242D
+  JMP checklifts
 }
 
 .l2355
@@ -2810,7 +2818,7 @@ ORG &18F8
 
   LDA #str_fillbucketmess:JSR prtmessage
 
-  JMP l242D
+  JMP checklifts
 }
 
 .checkkeys
@@ -2839,7 +2847,7 @@ ORG &18F8
 
 .l23C5
 {
-  JMP l242D
+  JMP checklifts
 }
 
 .checkgoldenegg
@@ -2847,7 +2855,7 @@ ORG &18F8
   CMP #obj_goldenegg
   BNE checkpickaxe
 
-  LDX #&47
+  LDX #&47 ; egg, DRAGONSLAIRROOM, 54x160
   JSR collidewithdizzy
   BCC l23C5
 
@@ -2855,7 +2863,8 @@ ORG &18F8
 
   ; Flip golden egg
   LDA #ATTR_REVERSE+PAL_YELLOW:STA objs_attrs+obj_goldenegg
-  JMP l242D
+
+  JMP checklifts
 }
 
 .checkpickaxe
@@ -2863,7 +2872,7 @@ ORG &18F8
   CMP #obj_pickaxe
   BNE checkrug
 
-  LDX #&49
+  LDX #&49 ; egg, MINESROOM, 42x101
   JSR collidewithdizzy
   BCC l23C5
 
@@ -2874,7 +2883,7 @@ ORG &18F8
 
   LDA #str_usepickaxemess:JSR prtmessage
 
-  JMP l242D
+  JMP checklifts
 }
 
 .checkrug
@@ -2894,45 +2903,49 @@ ORG &18F8
 
   LDA #str_userugmess:JSR prtmessage
 
-  JMP l242D
+  JMP checklifts
 }
 
 .checksleepingpotion
 {
   CMP #obj_sleepingpotion
-  BNE l242D
+  BNE checklifts
 
   LDA #WIDEEYEDDRAGONROOM
   CMP roomno
-  BNE l242D
+  BNE checklifts
 
   ; Remove sleeping potion from game
   JSR hideobject
 
   LDA #str_dragonasleepmess:JSR prtmessage
 
-  JMP l242D
+  JMP checklifts
 }
 
-.l242D
-  LDX #&73:STX &03DB
-.l2432
+.checklifts
+{
+  LDX #obj_lifts:STX &03DB
+.liftloop
   JSR collidewithdizzy
-  BCC l243F
+  BCC nocollision
 
   LDX #&FF:STX &03D9
   JMP l2449
 
-.l243F
+.nocollision
   INC &03DB
   LDX &03DB
-  ; Is it < 123
-  CPX #&7B
-  BCC l2432
+
+  ; Is it within range of the lift objects
+  CPX #endoflifts
+  BCC liftloop
+}
 
 .l2449
+{
   LDX &03D9
-  CPX #&13
+  CPX #obj_brandy
   BNE l245B
 
   ; Remove whiskey from game
@@ -2941,6 +2954,7 @@ ORG &18F8
   LDA #str_dropwhiskeymess:JSR prtmessage
 
   JMP checkdeadlyobj
+}
 
 .l245B
   CPX #&FF
@@ -2991,8 +3005,11 @@ ORG &18F8
   ; Is it < 11
   CPX #deathmessages-deadlyobj
   BCC loop
+
+  ; Fall through
 }
 
+.checkcroc
 {
   ; Check if crocodile's mouth is open
   LDA objs_frames+obj_croc
