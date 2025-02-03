@@ -2523,7 +2523,7 @@ ORG &18F8
 .l21F9
   STA &03D9
   JSR resetgamestate
-  JMP l222E
+  JMP shopkeeperrou
 
 .l2202
   LDA #&03
@@ -2550,10 +2550,11 @@ ORG &18F8
   LDA #&00:STA &03D9
   JMP l21D7
 
-.l222E
+.shopkeeperrou
+{
   LDX #obj_shopkeeper
   JSR collidewithdizzy
-  BCC l225C
+  BCC applerou
 
   LDA &03D9
   CMP #obj_cow
@@ -2562,11 +2563,15 @@ ORG &18F8
   LDA #str_givingjunkmess:JSR prtmessage
 
   JMP l242D
+}
 
 .l2244
+{
   ; Make bean appear
   LDA #MARKETSQUAREROOM:STA objs_rooms+obj_bean
-  JSR l29C1
+
+  ; Remove cow from game
+  JSR hideobject
 
   ; Hide shopkeeper
   LDA #OFFMAP
@@ -2576,8 +2581,10 @@ ORG &18F8
   LDA #str_thanksforthecowmess:JSR prtmessage
 
   JMP l242D
+}
 
-.l225C
+.applerou
+{
   LDA &03D9
   CMP #obj_apple
   BNE checkjugofwater
@@ -2586,14 +2593,17 @@ ORG &18F8
   JSR collidewithdizzy
   BCC l2272
 
-  JSR l29C1
+  ; Remove apple from game
+  JSR hideobject
 
   LDA #str_trollgotapplemess:JSR prtmessage
 
 .l2272
   JMP l242D
+}
 
 .checkjugofwater
+{
   CMP #obj_jugofwater
   BNE checkrope
 
@@ -2601,7 +2611,8 @@ ORG &18F8
   JSR collidewithdizzy
   BCC l2272
 
-  JSR l29C1
+  ; Remove jug of water from game
+  JSR hideobject
 
   LDA #str_throwwateronfiremess:JSR prtmessage
 
@@ -2609,8 +2620,10 @@ ORG &18F8
   LDA #&24:STA &C768
 
   JMP l242D
+}
 
 .checkrope
+{
   CMP #obj_rope
   BNE l22B0
 
@@ -2618,15 +2631,19 @@ ORG &18F8
   JSR collidewithdizzy
   BCC l2272
 
-  JSR l29C1
+  ; Remove rope from game
+  JSR hideobject
+
   ; Update crocodile animation frame
   LDA #SPR_CROCCLOSED:STA objs_frames+obj_croc
 
   LDA #str_croctiedmess:JSR prtmessage
 
   JMP l242D
+}
 
 .l22B0
+{
   ; Is it < 23
   CMP #&17
   BCC checkdoorknocker
@@ -2653,13 +2670,16 @@ ORG &18F8
   SBC #5
   STA objs_ylocs+obj_pontoon
 
-  JSR l29C1
+  ; Remove rock from game
+  JSR hideobject
 
   LDA #str_rockinwatermess:JSR prtmessage
 
   JMP l242D
+}
 
 .checkdoorknocker
+{
   CMP #obj_doorknocker
   BNE checkbone
 
@@ -2671,7 +2691,8 @@ ORG &18F8
   JSR collidewithdizzy
   BCC l2304
 
-  JSR l29C1
+  ; Remove ??? from game
+  JSR hideobject
 
   ; Remove plank and (egg?)
   LDA #OFFMAP
@@ -2682,8 +2703,10 @@ ORG &18F8
 
 .l2304
   JMP l242D
+}
 
 .checkbone
+{
   CMP #obj_bone
   BNE checkcrowbar
 
@@ -2695,9 +2718,12 @@ ORG &18F8
 
   LDA #ATTR_REVERSE+PAL_WHITE:STA objs_attrs+obj_bone
   LDA #OFFMAP:STA &C6F0
+
   JMP l242D
+}
 
 .checkcrowbar
+{
   CMP #obj_crowbar
   BNE checkbean
 
@@ -2705,14 +2731,18 @@ ORG &18F8
   JSR collidewithdizzy
   BCC l2304
 
-  JSR l29C1
+  ; Remove ??? from game
+  JSR hideobject
+
   LDA #OFFMAP:STA objs_rooms+obj_wood
 
   LDA #str_usecrowbarmess:JSR prtmessage
 
   JMP l242D
+}
 
 .checkbean
+{
   CMP #obj_bean
   BNE checkbucket
 
@@ -2720,28 +2750,33 @@ ORG &18F8
   JSR collidewithdizzy
   BCC l2304
 
-  JSR l29C1
+  ; Remove bean from game
+  JSR hideobject
 
   LDA #str_plantbeanmess:JSR prtmessage
 
   JMP l242D
+}
 
 .l2355
+{
   LDA #&00
   STA &03C7
   STA &03C8
 
   LDA #JOY_LEFT+JOY_UP:STA player_input
   JMP l1B68
+}
 
 .checkbucket
+{
   CMP #obj_bucket
-  BNE l23A7
+  BNE checkkeys
 
   ; Check colour of bucket
   LDA objs_attrs+obj_bucket
   CMP #PAL_BLUE
-  BNE l238E
+  BNE checkfillingbucket
 
   ; Check bean
   LDA objs_rooms+obj_bean
@@ -2752,7 +2787,8 @@ ORG &18F8
   JSR collidewithdizzy
   BCC l23C5
 
-  JSR l29C1
+  ; Remove bucket from game
+  JSR hideobject
 
   ; ?? put beanstalk in allotment ??
   LDA #ALLOTMENTROOM:STA &C721
@@ -2760,9 +2796,11 @@ ORG &18F8
   LDA #str_throwwateronbeanmess:JSR prtmessage
 
   JMP l2355
+}
 
-.l238E
-  LDX #&5D
+.checkfillingbucket
+{
+  LDX #&5D ; egg, BASEOFVOLCANOROOM, 47x144
   JSR collidewithdizzy
   BCC l23C5
 
@@ -2773,25 +2811,28 @@ ORG &18F8
   LDA #str_fillbucketmess:JSR prtmessage
 
   JMP l242D
+}
 
-.l23A7
+.checkkeys
 {
   ; Is it < 12
-  CMP #&0C
+  CMP #obj_keys
   BCC checkgoldenegg
 
   ; Is it >= 16
-  CMP #&10
+  CMP #obj_rope
   BCS checkgoldenegg
 
-  CLC
-  ADC #&4C
-  TAX
+  ; Determine which machine relates to this key
+  CLC:ADC #obj_machines-obj_keys:TAX
   JSR collidewithdizzy
   BCC l23C5
 
+  ; If correct key used with corresponding machine, change machine white
   LDA #PAL_WHITE:STA objs_attrs,X
-  JSR l29C1
+
+  ; Remove this key from game
+  JSR hideobject
 
   LDA #str_keyinmachine:JSR prtmessage
 }
@@ -2826,7 +2867,8 @@ ORG &18F8
   JSR collidewithdizzy
   BCC l23C5
 
-  JSR l29C1
+  ; Remove pickaxe from game
+  JSR hideobject
 
   LDA #OFFMAP:STA &C6E6
 
@@ -2847,7 +2889,8 @@ ORG &18F8
   STA &C708
   STA &C709
 
-  JSR l29C1
+  ; Remove rug from game
+  JSR hideobject
 
   LDA #str_userugmess:JSR prtmessage
 
@@ -2863,7 +2906,8 @@ ORG &18F8
   CMP roomno
   BNE l242D
 
-  JSR l29C1
+  ; Remove sleeping potion from game
+  JSR hideobject
 
   LDA #str_dragonasleepmess:JSR prtmessage
 
@@ -2891,7 +2935,8 @@ ORG &18F8
   CPX #&13
   BNE l245B
 
-  JSR l29C1
+  ; Remove whiskey from game
+  JSR hideobject
 
   LDA #str_dropwhiskeymess:JSR prtmessage
 
@@ -3771,9 +3816,10 @@ ORG &18F8
   JSR l38B1
   JMP l1A25
 
-.l29C1
+.hideobject
 {
-  STX &034E
+  STX &034E ; Cache X
+
   LDX &03D9
 
   ; Set objects[X] as hidden
@@ -3781,7 +3827,7 @@ ORG &18F8
   STA objs_rooms,X
   STA &03D9
 
-  LDX &034E
+  LDX &034E ; Restore X
 
   RTS
 }
