@@ -227,6 +227,12 @@ obj_liftbottom     = 102
 obj_daisy          = 103
 obj_dragonneck     = 113
 obj_dragonhead     = 114
+obj_lifts          = 115
+
+numlifts = 4
+liftparts = 2
+liftobjs = numlifts*liftparts
+endoflifts = obj_lifts+liftobjs
 
 ; Upper RAM area
 
