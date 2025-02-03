@@ -183,6 +183,7 @@ obj_pickaxe        = 8
 obj_goldenegg      = 9
 obj_blackhole      = 10
 obj_rug            = 11
+obj_keys           = 12
 obj_rope           = 16
 obj_sleepingpotion = 17
 obj_apple          = 18
