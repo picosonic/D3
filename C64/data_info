@@ -9,16 +9,26 @@
 ; Note also : 1992 - Wild West Seymour - eclipse [10 screens wide]
 ;  and 1992 - Slightly Magic - SYZYGY
 
+$4000 .. $5180 = sprites
+
+$5A00 .. $5BFF = solidity bitmap
+$5C00 .. $5FE7 = 8x8 screen/border colour attribs
+
+$6000 .. $7F3F = screen memory
+
 $8000 .. $80CB = roomtable
 $80CC .. $A3D6 = roomdata
 
+$A400 .. $A4FF = fliptable
 $A500 .. $A6FF = frmtable
 $A700 .. $C387 = frmdefs
 
+$C400 .. $C69D = objects (static)
+$C69E .. $C93C = objects (ingame)
+
+$CFF8
+
 $D000 .. $D0C9 = roomnametable
-
-????? .. ????? = stringstable
-
+$D0CA .. $D1C1 = stringstable
 $D1C2 .. $D60D = roomnames
-
-$D81D .. $F006 = messages (up to "NOTHING")
+$D60E .. $F006 = strings (up to "NOTHING")
