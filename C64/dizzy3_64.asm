@@ -1088,8 +1088,10 @@ ORG &1235
 ORG &130F
 INCLUDE "melodydata.asm"
 
+; These pointers are to data in the range &5c00..&5fc0 (screen/border colour attribs)
 .v180E ; [] pointers lo
 .v1828 ; [] pointers hi
+
 .v1877 ; []
 .v1897 ; []
 
@@ -1205,7 +1207,7 @@ ORG &18F8
 
   JSR l3023
 
-  ; Clear &5800 to &58E8
+  ; Clear &5800 to &5BE8
   LDX #&00
   TXA
 .l1983
@@ -1918,7 +1920,7 @@ ORG &18F8
 
 .l1E3B
   LDA SPR_MSB_X
-  AND #&FE
+  AND #&FE ; round down to even number
 .l1E40
   STA SPR_MSB_X
   LDA &03C8
@@ -2977,7 +2979,7 @@ ORG &18F8
   LDX &03D9
   LDA roomno:STA objs_rooms,X
 
-  LDA dizzyx:CLC:ADC #33:AND #&FE:STA objs_xlocs,X
+  LDA dizzyx:CLC:ADC #33:AND #&FE:STA objs_xlocs,X ; rounded down to even number
   LDA dizzyy:CLC:ADC #45:STA objs_ylocs,X
 
   LDA #maxcollectable+1:STA &03DD
@@ -3231,7 +3233,7 @@ ORG &18F8
   JSR ruboutframe
 
   INC objs_xlocs+obj_rat
-  JSR l3306
+  JSR drawobjframe
 
   ; Check for bread being in room
   LDA objs_rooms+obj_bread
@@ -3268,7 +3270,7 @@ ORG &18F8
   JSR ruboutframe
 
   DEC objs_xlocs+obj_rat
-  JSR l3306
+  JSR drawobjframe
 
   ; Check rat X position < 47
   LDA objs_xlocs+obj_rat
@@ -3456,7 +3458,7 @@ ORG &18F8
 
 .l2771
   LDX #obj_hawk
-  JSR l3306
+  JSR drawobjframe
 
   ; Check hawk Y position == 56
   LDA objs_ylocs+obj_hawk
@@ -3530,7 +3532,7 @@ ORG &18F8
   ADC #SPR_HAWK0
   ; Update hawk animation frame
   STA objs_frames+obj_hawk
-  JSR l3306
+  JSR drawobjframe
   JMP l2809
 
 .l27DF
@@ -3596,7 +3598,7 @@ ORG &18F8
   INC &03BD
 .l2847
   LDA #&00:STA &03DC
-  JSR l3306
+  JSR drawobjframe
 
   LDA &03C4
   LSR A
@@ -3660,7 +3662,7 @@ ORG &18F8
 .l28A8
   LDA #&00:STA &03DC
 
-  JSR l3306
+  JSR drawobjframe
 .l28B0
   LDA roomno
   CMP #DRAGONSLAIRROOM
@@ -3746,7 +3748,7 @@ ORG &18F8
 .l2925
   LDA #&00:STA &03DC
 
-  JSR l3306
+  JSR drawobjframe
   DEX
   ; Loop while >=108
   CPX #&6C
@@ -3807,7 +3809,7 @@ ORG &18F8
   LDA #SPR_DRAGONHEADOPEN:STA objs_frames+obj_dragonhead
 
   LDX #obj_dragonhead
-  JSR l3306
+  JSR drawobjframe
 .l2993
   LDA &03BA
   BEQ l29BA
@@ -3825,7 +3827,7 @@ ORG &18F8
   LDA #SPR_DRAGONHEADCLOSED:STA objs_frames+obj_dragonhead
 
   LDX #obj_dragonhead
-  JSR l3306
+  JSR drawobjframe
   JMP l29BA
 
 .l29B7
@@ -3854,10 +3856,10 @@ ORG &18F8
 .l29D3
 {
   LDA #&58:STA &03DC
-  JSR l3306
+  JSR drawobjframe
 
   LDA #&00:STA &03DC
-  JSR l3306
+  JSR drawobjframe
 
   RTS
 }
@@ -4199,7 +4201,7 @@ ORG &2B13
   STA &FB
 
   LDA frmx ; X position
-  AND #&FE
+  AND #&FE ; round down to even number
   ASL A
   CLC
   ASL A
@@ -4293,7 +4295,7 @@ ORG &2B13
 
   ; Is it >= 34
   LDA frmx ; X position
-  AND #&FE
+  AND #&FE ; round down to even number
   CMP #34
   BCS l2CA2
 
@@ -4304,7 +4306,7 @@ ORG &2B13
   LSR A
   STA &034A
 .l2CA2
-  LDA frmx:AND #&FE:STA &FF
+  LDA frmx:AND #&FE:STA &FF ; rounded down to even number
 
   LDA #&5E
   SEC
@@ -4823,7 +4825,7 @@ ORG &2B13
   LDA #96:STA objs_ylocs+obj_portcullis
 .l2FF5
   LDX #obj_portcullis
-  JSR l3306
+  JSR drawobjframe
 
   ; Check portcullis height > 136
   LDA objs_ylocs+obj_portcullis
@@ -4908,14 +4910,15 @@ ORG &2B13
   CMP #23
   BCC l3028
 
+  ; Clear &5800..&59FF
   LDA #&00
   TAX
-.l3086
+.loop
   STA &5800,X
   STA &5900,X
 
   INX
-  BNE l3086
+  BNE loop
 
   RTS
 }
@@ -4992,7 +4995,7 @@ ORG &2B13
   LDA orig_ylocs,X:STA objs_ylocs,X
   LDA orig_ylocs+1,X:STA objs_ylocs+1,X
 .l30F8
-  JSR l3306
+  JSR drawobjframe
 
   LDA objs_ylocs+1,X
   LDY &03DB
@@ -5014,7 +5017,7 @@ ORG &2B13
 
 .l3117
   INX
-  JSR l3306
+  JSR drawobjframe
 
 .l311B
   LDA roomno
@@ -5029,7 +5032,7 @@ ORG &2B13
   LDX #obj_lifttop
   LDA orig_ylocs,X:STA objs_ylocs,X
 .loop
-  JSR l3306
+  JSR drawobjframe
 
   INC objs_ylocs,X
   LDA objs_ylocs,X
@@ -5335,7 +5338,7 @@ ORG &2B13
   RTS
 }
 
-.l3306
+.drawobjframe
 {
   LDA objs_xlocs,X:STA frmx ; X position
   LDA objs_ylocs,X:STA frmy ; Y position
@@ -6611,7 +6614,7 @@ ORG &2B13
 
   LDX #obj_dragonhead
   LDA #&00:STA &03DC
-  JSR l3306
+  JSR drawobjframe
 
   RTS
 }
