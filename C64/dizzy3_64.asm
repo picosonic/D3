@@ -96,7 +96,7 @@ player_input = &03C0
 .v03D5 ; set to &FF and &00
 olddizzyx = &03D6
 olddizzyy = &03D7
-.v03D8
+.v03D8 ; input related
 .v03D9 ; ID of object being interacted with ?
 .v03DA
 .v03DB ; multi-purpose
@@ -106,7 +106,7 @@ olddizzyy = &03D7
 .v03E0
 .v03E1
 .v03E2
-.v03E3
+.v03E3 ; related to Y position
 roomno = &03E5
 
 ORG &0B00
@@ -311,8 +311,7 @@ ORG &0B00
 
   LDA (&A7),Y
   INY
-  CLC
-  ADC &1191,X
+  CLC:ADC &1191,X
   STA &1194,X
   LDA (&A7),Y
   INY
@@ -331,8 +330,7 @@ ORG &0B00
   INY
 .l0C4D
   STY &11C2
-  CLC
-  ADC &1191,X
+  CLC:ADC &1191,X
   STA &1169,X
 
   PHA
@@ -382,8 +380,7 @@ ORG &0B00
 .l0CB4
   LDX &116C
   LDA &117F,X
-  CLC
-  ADC &11C2
+  CLC:ADC &11C2
   STA &117F,X
   BCC l0CC6
 
@@ -454,8 +451,7 @@ ORG &0B00
   TAY
   LDA &1215,Y
   LDY &11CC
-  CLC
-  ADC #&0D
+  CLC:ADC #&0D ; +13
   STA &D401,Y
   LDA #&00:STA &D400,Y
   JMP l0EEC
@@ -531,8 +527,7 @@ ORG &0B00
 
   LDY &1169,X
   LDA &10E7,Y
-  SEC
-  SBC &10E6,Y
+  SEC:SBC &10E6,Y
   STA &11B9
 
   LDA &1086,Y
@@ -581,8 +576,7 @@ ORG &0B00
   BMI l0E35
 
   LDA &11B7
-  SEC
-  SBC &11B9
+  SEC:SBC &11B9
   STA &11B7
   LDA &11B8
   SBC &11BA
@@ -597,9 +591,9 @@ ORG &0B00
   BMI l0E51
 
   LDA &11B7
-  CLC
-  ADC &11B9
+  CLC:ADC &11B9
   STA &11B7
+
   LDA &11B8
   ADC &11BA
   STA &11B8
@@ -632,8 +626,7 @@ ORG &0B00
   JMP l0E6E
 
 .l0E81
-  CLC
-  ADC &1169,X
+  CLC:ADC &1169,X
   LDY &11CC
   TAX
   LDA &10E6,X:STA &D400,Y
@@ -660,8 +653,7 @@ ORG &0B00
   LSR A
   LSR A
   LSR A
-  CLC
-  ADC &1188,X
+  CLC:ADC &1188,X
   CMP &1185,X
   BCS l0EEC
 
@@ -715,8 +707,7 @@ ORG &0B00
   BNE l0F37
 
   LDA &1179,X
-  CLC
-  ADC &1252,Y
+  CLC:ADC &1252,Y
 
   PHA
   STA &1179,X
@@ -734,8 +725,7 @@ ORG &0B00
 
 .l0F37
   LDA &1179,X
-  SEC
-  SBC &1252,Y
+  SEC:SBC &1252,Y
 
   PHA
   STA &1179,X
@@ -852,8 +842,7 @@ ORG &0B00
   BEQ loop
 
 .keepgoing
-  CLC
-  ADC #&40
+  CLC:ADC #&40 ; +64
   STA &1191,X
   JMP loop
 
@@ -1908,8 +1897,7 @@ ORG &18F8
   LDA dizzyx
   ASL A
   ASL A
-  CLC
-  ADC #56
+  CLC:ADC #56
   STA &D000
 
   BCC l1E3B
@@ -1956,11 +1944,9 @@ ORG &18F8
   STA &FF
 
   LDA &03C9
-  SEC
-  SBC #&01
+  SEC:SBC #&01
   AND #&07
-  CLC
-  ADC &FF
+  CLC:ADC &FF
   JMP l1E9E
 
 .l1E7E
@@ -1981,8 +1967,7 @@ ORG &18F8
   STA &FF
   LDA &03C4
   AND #&07
-  CLC
-  ADC &FF
+  CLC:ADC &FF
 .l1E9E
   JSR checkfordownunder
 
@@ -2089,19 +2074,19 @@ ORG &18F8
   LDX #&00
 .l1F5C
   LDA dizzyx
-  CLC
-  ADC #30
+  CLC:ADC #30
   STA frmx ; X position
-  CLC
-  ADC #8
+
+  CLC:ADC #8
   STA frmattr
+
   LDA dizzyy
-  CLC
-  ADC #26
+  CLC:ADC #26
   STA frmy ; Y position
-  CLC
-  ADC #34
+
+  CLC:ADC #34
   STA &033D
+
 .l1F7A
   LDA objs_rooms,X
   CMP roomno
@@ -2339,11 +2324,12 @@ ORG &18F8
   JMP checkdeadlyobj
 }
 
+; Check second golden egg (from dragon's lair)
 .checkgoldenegg2
 {
   LDX #obj_goldenegg2
   JSR collidewithdizzy
-  BCC l20E2
+  BCC dodaisyrou
 
   LDX #obj_goldenegg2
   JSR ruboutframe
@@ -2352,30 +2338,34 @@ ORG &18F8
   LDA #OFFMAP:STA objs_rooms+obj_goldenegg2
 
   JMP checkdeadlyobj
+
+.dodaisyrou
+  JMP checkdaisy ; This could be a JSR ?!?
 }
 
-.l20E2
-  JMP checkdaisy
-
+; Return here after checking Daisy
 .l20E5
+{
   LDX &18DE
-  CPX #&00
-  BNE l20F9
+  CPX #obj_bag
+  BNE checkmanure
 
   ; Change bag room to 4 - to indicate it's been collected
   LDA #collected:STA objs_rooms+obj_bag
-.l20F1
+.^l20F1
   LDA #&FF:STA &18DE
   JMP coincheck
+}
 
-.l20F9
-  CPX #&02
-  BNE l2113
+.checkmanure
+{
+  CPX #obj_manure
+  BNE checkblackhole
 
   ; Check manure orientation
   LDA objs_attrs+obj_manure
   CMP #ATTR_REVERSE
-  BCS l210E
+  BCS pickedup
 
   ; Add reverse flag
   ORA #ATTR_REVERSE
@@ -2383,42 +2373,51 @@ ORG &18F8
 
   LDA #str_pickupmanuremess:JSR prtmessage
 
-.l210E
+.pickedup
   LDX #&03
-  JMP l1F5C
 
-.l2113
-  CPX #&0A
+  JMP l1F5C
+}
+
+.checkblackhole
+{
+  CPX #obj_blackhole
   BNE coincheck
+
+  ; This is the blackhole - so drop everything!
 
   ; Loop around the objects
   LDX #obj_bean
 .objloop
   LDA objs_rooms,X
   CMP #collected
-  BNE l213A
+  BNE nextobj
 
+  ; This is an object which has been collected
   LDA roomno:STA objs_rooms,X ; place object in current room
 
+  ; Position this object where Dizzy is
   LDA dizzyx
-  CLC
-  ADC #33
-  AND #%11111110
+  CLC:ADC #33:AND #&FE ; X+33 then round down to even number
   STA objs_xlocs,X ; Update X position of object based on Dizzy X position
 
-  LDA dizzyy:CLC:ADC #45:STA objs_ylocs,X
-.l213A
+  LDA dizzyy:CLC:ADC #45:STA objs_ylocs,X ; Y+45
+
+.nextobj
   INX
-  ; Is it < 63
-  CPX #63
+  ; Is it within collectable object ids range
+  CPX #maxcollectable+1
   BCC objloop
 
   LDA #str_holdingholemess:JSR prtmessage
 
   LDA #OFFMAP:STA objs_rooms+obj_blackhole ; Remove blackhole
+
   JMP l20F1
+}
 
 .coincheck
+{
   ; Check to see if this object is a coin
   LDX &18DE
   CPX #firstcoin
@@ -2429,7 +2428,9 @@ ORG &18F8
 
   ; This object is a coin
   JSR collect_coin
+
   JMP checkdeadlyobj
+}
 
 .notacoin
   ; Is it a non-collectable
@@ -2451,13 +2452,13 @@ ORG &18F8
 
   ; Check for larger inventory
   LDA objs_rooms+obj_bag
-  LDX #&02
+  LDX #SMALLBAGSIZE ; Default to small bag unless larger one collected
   CMP #collected
   BNE l2185
 
-  LDX #&04
+  LDX #BIGBAGSIZE
 .l2185
-  LDA &18D9,X
+  LDA &18D9,X ; X is either 2 or 4
   CMP #&FF
   BEQ l21A0
 
@@ -2480,7 +2481,7 @@ ORG &18F8
 
   LDA &03D9
   CMP #&FF
-  BEQ l21C4
+  BEQ inventoryprompt
 
 .l21B4
   LDA #&F0:JSR delay
@@ -2489,7 +2490,7 @@ ORG &18F8
   JSR resetgamestate
   JMP checklifts
 
-.l21C4
+.inventoryprompt
   LDA #str_selectitemmess:JSR prtmessage
 
 .l21C9
@@ -2503,19 +2504,29 @@ ORG &18F8
 
 .l21D4
   STX &03D9
-.l21D7
+
+; Loop back here until FIRE pressed
+.inventoryloop
+{
   LDA #&05
   JSR l3A71
 
+  ; Slow down inventory selection
   LDA #&3C:JSR delay
-.l21E1
+
+  ; Fall through
+}
+
+.waitforinventoryinput
+{
   JSR getplayerinput
   LDA player_input
   AND #JOY_FIRE+JOY_RIGHT+JOY_LEFT
-  BEQ l21E1
+  BEQ waitforinventoryinput
 
+  ; Check for FIRE button
   AND #JOY_FIRE
-  BEQ l2202
+  BEQ checkdirection
 
   LDX &03D9
   LDA &18D9,X
@@ -2526,14 +2537,22 @@ ORG &18F8
   STA &03D9
   JSR resetgamestate
   JMP shopkeeperrou
+}
 
-.l2202
+.checkdirection
+{
   LDA #&03
   JSR l3A71
+
+  ; Was it LEFT pressed?
   LDA player_input
   AND #JOY_LEFT
-  BEQ l221B
+  BEQ inventoryright
+}
 
+.inventoryleft
+{
+  ; (go UP inventory list)
   DEC &03D9
 
   ; Is it >= 250
@@ -2541,16 +2560,21 @@ ORG &18F8
   CPX #&FA
   BCS l21C9
 
-  JMP l21D7
+  JMP inventoryloop
+}
 
-.l221B
+.inventoryright
+{
+  ; (go DOWN inventory list)
   LDX &03D9
   INC &03D9
   LDA &18D9,X
-  BNE l21D7
+  BNE inventoryloop
 
   LDA #&00:STA &03D9
-  JMP l21D7
+
+  JMP inventoryloop
+}
 
 .shopkeeperrou
 {
@@ -2560,14 +2584,14 @@ ORG &18F8
 
   LDA &03D9
   CMP #obj_cow
-  BEQ l2244
+  BEQ beanrou
 
   LDA #str_givingjunkmess:JSR prtmessage
 
   JMP checklifts
 }
 
-.l2244
+.beanrou
 {
   ; Make bean appear
   LDA #MARKETSQUAREROOM:STA objs_rooms+obj_bean
@@ -2664,16 +2688,14 @@ ORG &18F8
 
   ; Raise the water by 5 pixels
   LDA objs_ylocs+obj_water
-  SEC
-  SBC #5
+  SEC:SBC #5
   STA objs_ylocs+obj_water
   STA objs_ylocs+obj_water+1
   STA objs_ylocs+obj_water+2
 
   ; Raise the pontoon by 5 pixels
   LDA objs_ylocs+obj_pontoon
-  SEC
-  SBC #5
+  SEC:SBC #5
   STA objs_ylocs+obj_pontoon
 
   ; Remove rock from game
@@ -3074,8 +3096,7 @@ ORG &18F8
   BEQ l2527
 
   LDA dizzyx
-  CLC
-  ADC #35
+  CLC:ADC #35
   ; Is it < 49
   CMP #49
   BCC l2527
@@ -3083,8 +3104,7 @@ ORG &18F8
   CMP &03BA
   BCC l2527
 
-  SEC
-  SBC #&04
+  SEC:SBC #&04
   CMP &03BA
   BCS l2527
 
@@ -3209,8 +3229,7 @@ ORG &18F8
 
   ; See if rat's X position is less than the bread - i.e. it ate it
   LDA objs_xlocs+obj_bread
-  CLC
-  ADC #4
+  CLC:ADC #4
   CMP objs_xlocs+obj_rat
   BCC l2601
 
@@ -3297,10 +3316,10 @@ ORG &18F8
 
   LDA #&01
 .l266B
+  ; Change croc sprite
   AND #&01
   EOR #&01
-  CLC
-  ADC #SPR_CROCCLOSED
+  CLC:ADC #SPR_CROCCLOSED
   STA objs_frames+obj_croc
 
   LDX #obj_croc
@@ -3371,8 +3390,7 @@ ORG &18F8
 
   LDA &03C4
   AND #&04
-  CLC
-  ADC #134
+  CLC:ADC #134
   STA objs_ylocs+obj_dozy
 
   LDX #obj_dozy
@@ -3398,8 +3416,7 @@ ORG &18F8
   STX &03B7
   TXA
   ASL A
-  CLC
-  ADC #&73
+  CLC:ADC #&73
   TAX
   LDA objs_attrs+obj_bean,X
   AND #ATTR_REVERSE
@@ -3476,14 +3493,12 @@ ORG &18F8
 
   ; See if Dizzy is directly below hawk
   LDA dizzyx
-  CLC
-  ADC #28
+  CLC:ADC #28
   CMP objs_xlocs+obj_hawk
   BEQ l279B
 
   ; Update hawk X position
-  CLC
-  ADC #1
+  CLC:ADC #1
   CMP objs_xlocs+obj_hawk
   BNE l279E
 
@@ -3528,8 +3543,8 @@ ORG &18F8
 
   LDA #&01
 .l27D3
-  CLC
-  ADC #SPR_HAWK0
+  CLC:ADC #SPR_HAWK0
+
   ; Update hawk animation frame
   STA objs_frames+obj_hawk
   JSR drawobjframe
@@ -3538,14 +3553,12 @@ ORG &18F8
 .l27DF
   ; Hawk is diving, so move downwards
   LDA objs_ylocs+obj_hawk
-  CLC
-  ADC #8
+  CLC:ADC #8
   STA objs_ylocs+obj_hawk
 
   ; Keep hawk moving towards Dizzy
   LDA dizzyx
-  CLC
-  ADC #28
+  CLC:ADC #28
   CMP objs_xlocs+obj_hawk
   BCC l27FE
 
@@ -3603,8 +3616,7 @@ ORG &18F8
   LDA &03C4
   LSR A
   AND #&01
-  CLC
-  ADC #SPR_GRUNT0
+  CLC:ADC #SPR_GRUNT0
   ; Update grunt (Armorog) animation frame
   STA objs_frames+obj_grunt
 
@@ -3725,8 +3737,7 @@ ORG &18F8
 .l2901
   STX &FF
   LDA #&72
-  SEC
-  SBC &FF
+  SEC:SBC &FF
   CMP &03BB
   BEQ l290F
   BCS l2925
@@ -4186,14 +4197,12 @@ ORG &2B13
 
   LDA frmy ; Y position
   AND #&07
-  CLC
-  ADC &FB
+  CLC:ADC &FB
   BCC l2BEB
 
   INC &FC
 .l2BEB
-  SEC
-  SBC #&60
+  SEC:SBC #&60
   BCS l2BF2
 
   DEC &FC
@@ -4209,8 +4218,7 @@ ORG &2B13
 
   INC &FC
 .l2C00
-  CLC
-  ADC &FB
+  CLC:ADC &FB
   BCC l2C07
 
   INC &FC
@@ -4222,8 +4230,7 @@ ORG &2B13
   TAX
   LDA &1828,X:SEC:SBC &03DC:STA &FE
   LDA &180E,X
-  SEC
-  SBC #&0C
+  SEC:SBC #&0C
   BCS l2C23
 
   DEC &FE
@@ -4232,8 +4239,7 @@ ORG &2B13
 
   LDA frmx ; X position
   LSR A ; Divide by 2
-  CLC
-  ADC &FD
+  CLC:ADC &FD
   BCC l2C30
 
   INC &FE
@@ -4244,15 +4250,13 @@ ORG &2B13
   BNE l2C41
 
   LDA &FE
-  SEC
-  SBC #&04
+  SEC:SBC #&04
 
   JMP l2C46
 
 .l2C41
   LDA &FE
-  CLC
-  ADC #&54
+  CLC:ADC #&54
 .l2C46
   STA &36
   LDY #&00
@@ -4276,8 +4280,7 @@ ORG &2B13
 
 .notfont
   LDA &B4
-  CLC
-  ADC #&02
+  CLC:ADC #&02
   BCC l2C76
 
   INC &B5
@@ -4301,16 +4304,14 @@ ORG &2B13
 
   STA &FF
   LDA #&22
-  SEC
-  SBC &FF
+  SEC:SBC &FF
   LSR A
   STA &034A
 .l2CA2
   LDA frmx:AND #&FE:STA &FF ; rounded down to even number
 
   LDA #&5E
-  SEC
-  SBC &FF
+  SEC:SBC &FF
   LSR A
   CMP &034B
   BCS l2CB7
@@ -4403,8 +4404,7 @@ ORG &2B13
   BCS l2D2E
 
   LDA &B4
-  CLC
-  ADC &033D
+  CLC:ADC &033D
   BCC l2D5B
 
   INC &B5
@@ -4428,16 +4428,14 @@ ORG &2B13
   INC &FC
   STA &0349
   LDA &FB
-  CLC
-  ADC #&39
+  CLC:ADC #&39
   BCC l2D81
 
   INC &FC
 .l2D81
   STA &FB
   LDA &FD
-  CLC
-  ADC #&28
+  CLC:ADC #&28
   BCC l2D8E
 
   INC &FE
@@ -4480,8 +4478,7 @@ ORG &2B13
   ; Is it >= 47
   LDA frmx
   LSR A
-  CLC
-  ADC &033D
+  CLC:ADC &033D
   CMP #47
   BCS done
 
@@ -4616,14 +4613,12 @@ ORG &2B13
 
   LDY #&01
   LDA (&FB),Y
-  CLC
-  ADC &B1
+  CLC:ADC &B1
   STA &B1
 
   DEY
   LDA (&FB),Y
-  CLC
-  ADC &B0
+  CLC:ADC &B0
   BCC l2EB1
 
   INC &B1
@@ -4632,15 +4627,13 @@ ORG &2B13
 
   LDY #&03
   LDA (&FB),Y
-  CLC
-  ADC &B3
+  CLC:ADC &B3
   STA &B3
 
   DEY
 
   LDA (&FB),Y
-  CLC
-  ADC &B2
+  CLC:ADC &B2
   BCC l2EC6
 
   INC &B3
@@ -4686,8 +4679,7 @@ ORG &2B13
   JSR frame
 
   LDA &B0
-  CLC
-  ADC &0342
+  CLC:ADC &0342
   BCC l2F1D
 
   INC &B1
@@ -4833,8 +4825,7 @@ ORG &2B13
   BCS skipportcullis
 
   ; Move portcullis down
-  CLC
-  ADC #4
+  CLC:ADC #4
   STA objs_ylocs+obj_portcullis
 
   JMP l2FF5
@@ -4859,8 +4850,7 @@ ORG &2B13
   LDX frmx
   LDA screentable_hi,X:STA &FC
   LDA screentable_lo,X
-  CLC
-  ADC #&28
+  CLC:ADC #&28
   BCC l303A
 
   INC &FC
@@ -4868,8 +4858,7 @@ ORG &2B13
   STA &FB
   LDA &1828,X:STA &FE
   LDA &180E,X
-  CLC
-  ADC #&05
+  CLC:ADC #&05
   BCC l304B
 
   INC &FE
@@ -4880,8 +4869,7 @@ ORG &2B13
 
   LDA &FE:SEC:SBC #&04:STA &B1
 
-  SEC
-  SBC #&54
+  SEC:SBC #&54
   STA &B3
 
   LDY #&F0
@@ -4929,12 +4917,10 @@ ORG &2B13
 .l3092
   LDA &1828,X:STA &FC
 
-  SEC
-  SBC #&04
+  SEC:SBC #&04
   STA &36
 
-  SEC
-  SBC #&54
+  SEC:SBC #&54
   STA &FE
 
   LDA &180E,X
@@ -4988,8 +4974,7 @@ ORG &2B13
   STX &03DB
   TXA
   ASL A
-  CLC
-  ADC #&73
+  CLC:ADC #&73
   TAX
   ; Reset Y position of this object and next
   LDA orig_ylocs,X:STA objs_ylocs,X
@@ -5062,15 +5047,13 @@ ORG &2B13
 .l3154
 {
   LDA dizzyx
-  CLC
-  ADC frmx
+  CLC:ADC frmx
   STA frmattr
 
   DEC frmattr
 
   LDA dizzyy
-  CLC
-  ADC frmy
+  CLC:ADC frmy
   CLC
   ADC #40
   STA &033D
@@ -5088,16 +5071,13 @@ ORG &2B13
 
   LDA &033D
   AND #&07
-  CLC
-  ADC &FB
-  CLC
-  ADC #&20
+  CLC:ADC &FB
+  CLC:ADC #&20
   STA &FB
 
   LDA frmattr
   LSR A
-  CLC
-  ADC #&04
+  CLC:ADC #&04
   TAY
   LDA (&FD),Y
   STA &033F
@@ -5252,8 +5232,7 @@ ORG &2B13
   LDX &03C5
   LDA &EA60,X
   AND #&03
-  CLC
-  ADC #&01
+  CLC:ADC #&01
   STA &03C6
 
   LDX &0346 ; Restore X
@@ -5293,8 +5272,7 @@ ORG &2B13
 
 .l32C5
   LDA dizzyx,X
-  CLC
-  ADC &0384,X
+  CLC:ADC &0384,X
   STA dizzyx,X
 
 .l32CF
@@ -5482,28 +5460,24 @@ ORG &2B13
   BCC loop
 
   LDA dizzyx
-  SEC
-  SBC frmx
+  SEC:SBC frmx
   STA &0354
   STA &0355
 
   LDA dizzyx
-  CLC
-  ADC frmx
+  CLC:ADC frmx
   STA &0356
   STA &0357
 
   LSR frmx
 
   LDA dizzyy
-  SEC
-  SBC frmx
+  SEC:SBC frmx
   STA &035E
   STA &0360
 
   LDA dizzyy
-  CLC
-  ADC frmx
+  CLC:ADC frmx
   STA &035F
   STA &0361
 
@@ -5747,8 +5721,7 @@ ORG &2B13
   BCC notapen
 
   ; Determine which pen (colour) to use
-  SEC
-  SBC #mpen
+  SEC:SBC #mpen
   STA cursorattr
 
   JMP advance
@@ -5758,8 +5731,7 @@ ORG &2B13
   BCC notxy
 
   ; Get X position for cursor
-  SEC
-  SBC #mxy-32
+  SEC:SBC #mxy-32
   STA cursorx
 
   ; Get Y position for cursor
@@ -6199,17 +6171,13 @@ ORG &2B13
 
 .loop
   JSR l3257
-
   AND #&3F
-  CLC
-  ADC #&20
+  CLC:ADC #&20
   STA frmx ; X position
 
   JSR l3257
-
   AND #&7F
-  CLC
-  ADC #&30
+  CLC:ADC #&30
   STA frmy ; Y position
 
   LDA #PLOT_XOR+PAL_RED:STA frmattr ; attrib
@@ -6225,8 +6193,7 @@ ORG &2B13
 
   LDA #&01
 .l3882
-  CLC
-  ADC #SPR_HEARTNULL ; frame
+  CLC:ADC #SPR_HEARTNULL ; frame
   JSR frame
 
   LDA #&05:JSR delay
@@ -6245,8 +6212,7 @@ ORG &2B13
 
   ; Double low-byte
   LDA &FB
-  CLC
-  ADC &FB
+  CLC:ADC &FB
   BCC nooverflow
 
   INC &FC ; Advance high-byte of pointer due to overflow
@@ -6283,9 +6249,8 @@ ORG &2B13
   LDA &180E,X:STA &B2
 
   LDA &03DA
-  SEC
-  SBC #&18
-  LSR A
+  SEC:SBC #&18 ; -24
+  LSR A        ; /2
   TAY
   STY &03DB
 
@@ -6299,8 +6264,7 @@ ORG &2B13
 .l38E4
   TYA
   ASL A
-  CLC
-  ADC #&18
+  CLC:ADC #&18 ; +24
   STA frmx ; X position
 
   LDA &03E0
@@ -6327,8 +6291,7 @@ ORG &2B13
   LDA &03C4
   LSR A
   AND #&03
-  CLC
-  ADC #SPR_WATER0 ; frame
+  CLC:ADC #SPR_WATER0 ; frame
   JSR frame
 
   INC &03DB
@@ -6476,8 +6439,7 @@ ORG &2B13
   ; Return if object.x+object.width <= dizzy.x (Dizzy to the right)
   LDY #&00
   LDA (&B4),Y ; Get object width
-  CLC
-  ADC objs_xlocs,X ; Add object.x
+  CLC:ADC objs_xlocs,X ; Add object.x
   CMP frmx
   BCC objelsewhere
   BEQ objelsewhere
@@ -6489,8 +6451,7 @@ ORG &2B13
 
   ; Return if object.y+object.height <= dizzy.y (Dizzy below)
   INY
-  CLC
-  ADC (&B4),Y ; Add object height
+  CLC:ADC (&B4),Y ; Add object height
   CMP frmy
   BCC objelsewhere
   BEQ objelsewhere
@@ -6541,17 +6502,16 @@ ORG &2B13
   TAX
   LDA &1897,X:STA frmattr
 
-  LDA #&0B
+  LDA #&0B ; Default to small bag
 
   ; Check for larger inventory (bag collected)
   LDX objs_rooms+obj_bag
   CPX #collected
   BNE l3A83
 
-  LDA #&0A
+  LDA #&0A ; Big bag
 .l3A83
-  CLC
-  ADC &03D9
+  CLC:ADC &03D9
   TAX
   LDA &180E,X:STA &FB
   LDA &1828,X:STA &FC
