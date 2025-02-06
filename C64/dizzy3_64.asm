@@ -36,6 +36,7 @@ melody_ptr = &00A9
 .v00FF
 
 frmx = &033A ; X position
+tmp1 = &033A
 frmy = &033B ; Y position
 frmattr = &033C ; attrib
 .v033D
@@ -1176,7 +1177,7 @@ ORG &18F8
   LDA #&00:STA &033F
 
   JSR l3B6D
-  JSR l3023
+  JSR cleargamescreen
 
   LDA #&58:STA &03DC
   LDA #TITLEROOM:STA roomno
@@ -1197,7 +1198,7 @@ ORG &18F8
 
   LDA #str_startmess:JSR prtmessage
 
-  JSR l3023
+  JSR cleargamescreen
 
   ; Clear &5800 to &5BE8
   LDX #&00
@@ -4777,7 +4778,7 @@ ORG &2B13
   LDA SPR_COLLISION2
   LDA SPR_COLLISION2
   LDA #&FF:STA &03DF
-  JSR l3023
+  JSR cleargamescreen
 
   LDA roomno
   JSR l2E79
@@ -4846,19 +4847,22 @@ ORG &2B13
   RTS
 }
 
-.l3023
+; This clears the game screen, not sure what else it does yet
+.cleargamescreen
 {
-  LDA #6:STA frmx
-.l3028
-  LDX frmx
+  ; Set up a pointer in &FB
+  LDA #6:STA tmp1 ; Start 6 blocks down from top of screen
+.clearrow
+  LDX tmp1
   LDA screentable_hi,X:STA &FC
   LDA screentable_lo,X
   CLC:ADC #&28
-  BCC l303A
+  BCC samepage
 
   INC &FC
-.l303A
+.samepage
   STA &FB
+
   LDA &1828,X:STA &FE
   LDA &180E,X
   CLC:ADC #&05
@@ -4894,12 +4898,14 @@ ORG &2B13
   CPY #&00
   BNE l306A
 
-  INC frmx
+  ; Advance down the screen by 1 block
+  INC tmp1
 
-  LDA frmx
+  ; Check for bottom of game screen
+  LDA tmp1
   ; Is it < 23
   CMP #23
-  BCC l3028
+  BCC clearrow
 
   ; Clear &5800..&59FF
   LDA #&00
@@ -6167,7 +6173,7 @@ ORG &2B13
 
 .heartdemo
 {
-  JSR l3023
+  JSR cleargamescreen
 
   LDA #&00:STA &03DB
   LDA #TUNE_4:STA melody ; Lose a life / hearts demo melody
