@@ -1113,15 +1113,18 @@ ORG &18F8
 {
   EQUB obj_grunt
   EQUB obj_portcullis
-  EQUB &73 ;
-  EQUB &75 ; lifts
-  EQUB &77 ;
-  EQUB &79 ;
+
+  EQUB obj_lifttop1
+  EQUB obj_lifttop2
+  EQUB obj_lifttop3
+  EQUB obj_lifttop4
+
   EQUB obj_hawk
   EQUB obj_rat
-  EQUB &5F ;
-  EQUB &68 ; daggers
-  EQUB &69 ;
+
+  EQUB obj_dagger1
+  EQUB obj_dagger2
+  EQUB obj_dagger3
 }
 
 .deathmessages ; death message string table offsets for deadly obj (above) []

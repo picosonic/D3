@@ -219,15 +219,23 @@ obj_machines       = 88
 obj_dylan          = 92
 ;= 93 ; egg
 obj_denzil         = 94
+obj_dagger1        = 95
 obj_plank          = 98
 obj_granddizzy     = 99
 obj_switch2        = 100
 obj_lifttop        = 101
 obj_liftbottom     = 102
 obj_daisy          = 103
+obj_dagger2        = 104
+obj_dagger3        = 105
 obj_dragonneck     = 113
 obj_dragonhead     = 114
-obj_lifts          = 115
+obj_lifttop1       = 115
+obj_lifttop2       = 117
+obj_lifttop3       = 119
+obj_lifttop4       = 121
+
+obj_lifts          = 115 ; start of the 4 lifts
 
 numlifts = 4
 liftparts = 2
