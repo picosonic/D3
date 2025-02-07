@@ -1896,13 +1896,13 @@ ORG &18F8
   LDA roomno
   JSR l2F22
 .l1E1D
-  LDA dizzyy:CLC:ADC #90:STA &D001
+  LDA dizzyy:CLC:ADC #90:STA SPR_0_Y
 
   LDA dizzyx
   ASL A
   ASL A
   CLC:ADC #56
-  STA &D000
+  STA SPR_0_X
 
   BCC l1E3B
 
