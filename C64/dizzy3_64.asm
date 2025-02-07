@@ -7,8 +7,7 @@ ORG &00
 .c64start
 
 ; Variables
-.v0005 ; pointer to current character of string
-.v0006
+stringptr = &05 ; pointer to current character of string
 
 .v0035 ; pointer to string memory (5A77 / 5A4D / 5A5D / 581C / 5AF0)
 .v0036
@@ -1161,7 +1160,7 @@ ORG &18F8
   LDA #TUNE_10:STA melody ; There is no melody 10 ??
 .titlescreen
   LDA #&00
-  STA GFX_BORDER_COLOUR
+  STA GFX_BORDER_COLOUR ; 0 = Black
   STA lives
 
   LDX #&00
@@ -1237,7 +1236,7 @@ ORG &18F8
   STA &03B8
   STA roomno
 
-  LDA #&01:STA SPR_0_COLOUR ; White
+  LDA #COLOUR_WHITE:STA SPR_0_COLOUR
 
   JSR drawcoincount
 
@@ -5457,7 +5456,7 @@ ORG &2B13
   STX &034E
   JSR l313F
 
-  LDA #&01:STA SPR_0_COLOUR,X ; White
+  LDA #COLOUR_WHITE:STA SPR_0_COLOUR,X
 
   LDA #&33:STA &5FF8,X
   LDA #&04:STA &0384,X
@@ -5672,17 +5671,17 @@ ORG &2B13
   RTS
 }
 
-; Get byte at (&05) and advance pointer
+; Get byte at (stringptr) and advance pointer
 .nextchar
 {
   SEI
   LDA #CASSETTE_OFF+CASSETTE_SWITCH+CHAREN_IO+HIRAM_E000_RAM+LORAM_A000_RAM:STA CPU_CONFIG
   LDY #&00
-  LDA (&05),Y
-  INC &05
+  LDA (stringptr),Y
+  INC stringptr
   BNE samepage
 
-  INC &06
+  INC stringptr+1
 
 .samepage
   LDY #CASSETTE_OFF+CASSETTE_SWITCH+CHAREN_IO+HIRAM_E000_ROM+LORAM_A000_RAM:STY CPU_CONFIG
@@ -5702,8 +5701,8 @@ ORG &2B13
 
   SEI
   LDA #CASSETTE_OFF+CASSETTE_SWITCH+CHAREN_IO+HIRAM_E000_RAM+LORAM_A000_RAM:STA CPU_CONFIG
-  LDA messages,X:STA &05
-  LDA messages+1,X:STA &06
+  LDA messages,X:STA stringptr
+  LDA messages+1,X:STA stringptr+1
   LDA #CASSETTE_OFF+CASSETTE_SWITCH+CHAREN_IO+HIRAM_E000_ROM+LORAM_A000_RAM:STA CPU_CONFIG
   CLI
 
@@ -5962,21 +5961,21 @@ ORG &2B13
   CMP #PAL_BLUE
   BNE l372A
 
-  LDA &D1C0:STA &05
+  LDA &D1C0:STA stringptr
 
   LDA &D1C1
   JMP l3732
 
 .l372A
-  LDA &D0CA,X:STA &05
+  LDA &D0CA,X:STA stringptr
 
   LDA &D0CB,X
 .l3732
-  STA &06
+  STA stringptr+1
   LDA #CASSETTE_OFF+CASSETTE_SWITCH+CHAREN_IO+HIRAM_E000_ROM+LORAM_A000_RAM:STA CPU_CONFIG
   CLI
 
-  LDA &06
+  LDA stringptr+1
   BEQ done
 
 .l373D
@@ -6097,8 +6096,8 @@ ORG &2B13
   ; Get pointer to room name
   SEI
   LDA #CASSETTE_OFF+CASSETTE_SWITCH+CHAREN_IO+HIRAM_E000_RAM+LORAM_A000_RAM:STA CPU_CONFIG
-  LDA roomnames,X:STA &05
-  LDA roomnames+1,X:STA &06
+  LDA roomnames,X:STA stringptr
+  LDA roomnames+1,X:STA stringptr+1
   LDA #CASSETTE_OFF+CASSETTE_SWITCH+CHAREN_IO+HIRAM_E000_ROM+LORAM_A000_RAM:STA CPU_CONFIG
   CLI
 
@@ -6710,7 +6709,7 @@ ORG &2B13
   ; $D018 = %0111xxxx -> ScreenMem is at $1c00 (#7168)
   LDA #&78:STA GFX_MEM_PTR
 
-  LDA #&00:STA GFX_BORDER_COLOUR
+  LDA #COLOUR_BLACK:STA GFX_BORDER_COLOUR
 
   LDA #&FF:STA &03DF
   LDA #&B8:STA &03E1
@@ -6746,7 +6745,7 @@ ORG &7F40
   ; $D018 = %0111xxxx -> ScreenMem is at $1c00 (#7168)
   LDA #&78:STA GFX_MEM_PTR
 
-  LDA #&00:STA GFX_BORDER_COLOUR
+  LDA #COLOUR_BLACK:STA GFX_BORDER_COLOUR
 
   RTS
 }
