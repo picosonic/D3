@@ -1098,7 +1098,10 @@ ORG &189F
   EQUB &74, &75, &76, &77, &79, &7A, &7B, &7C
   EQUB &7E
 
-.v18D9 ; []
+ORG &18D9
+.v18D9 ; Objects carried list []
+  EQUB &FF, &FF, &FF, &FF, &FF
+
 .v18DE ; object table offset / &FF / ????
 coins_tens = &18E5
 coins = &18E6
@@ -2183,7 +2186,7 @@ ORG &18F8
 {
   LDX #obj_dozy
   JSR collidewithdizzy
-  BCC l202B
+  BCC checkdoorknocker
 
   ; Check if sleeping potion has been given to Dizzy
   LDA objs_rooms+obj_sleepingpotion
@@ -2212,7 +2215,7 @@ ORG &18F8
   JMP checkdeadlyobj
 }
 
-.l202B
+.checkdoorknocker
 {
   LDA roomno
   CMP #CASTLESTAIRCASEROOM
@@ -2451,7 +2454,7 @@ ORG &18F8
 
   LDA roomno:STA &C696,X
 .l2177
-  JSR l374F
+  JSR buildinventorylist
 
   ; Check for larger inventory
   LDA objs_rooms+obj_bag
@@ -2531,6 +2534,7 @@ ORG &18F8
   AND #JOY_FIRE
   BEQ checkdirection
 
+  ; See if anything is selected, ( or just "exit and don't drop")
   LDX &03D9
   LDA &18D9,X
   BNE l21F9
@@ -2620,7 +2624,7 @@ ORG &18F8
 
   LDX #obj_troll
   JSR collidewithdizzy
-  BCC l2272
+  BCC do_checklifts
 
   ; Remove apple from game
   JSR hideobject
@@ -2630,7 +2634,7 @@ ORG &18F8
   ; Fall through
 }
 
-.l2272
+.do_checklifts
 {
   JMP checklifts
 }
@@ -2642,7 +2646,7 @@ ORG &18F8
 
   LDX #&44 ; egg, CASTLEDUNGEONROOM, 40x160
   JSR collidewithdizzy
-  BCC l2272
+  BCC do_checklifts
 
   ; Remove jug of water from game
   JSR hideobject
@@ -2662,7 +2666,7 @@ ORG &18F8
 
   LDX #obj_croc
   JSR collidewithdizzy
-  BCC l2272
+  BCC do_checklifts
 
   ; Remove rope from game
   JSR hideobject
@@ -2679,15 +2683,15 @@ ORG &18F8
 {
   ; Is it < 23
   CMP #&17
-  BCC checkdoorknocker
+  BCC checkdoorknocker2
 
   ; Is it >= 26
   CMP #&1A
-  BCS checkdoorknocker
+  BCS checkdoorknocker2
 
   LDX #&4F ; egg, BROKENBRIDGEROOM, 74x104
   JSR collidewithdizzy
-  BCC l2272
+  BCC do_checklifts
 
   ; Raise the water by 5 pixels
   LDA objs_ylocs+obj_water
@@ -2709,7 +2713,7 @@ ORG &18F8
   JMP checklifts
 }
 
-.checkdoorknocker
+.checkdoorknocker2
 {
   CMP #obj_doorknocker
   BNE checkbone
@@ -5998,34 +6002,40 @@ ORG &2B13
   RTS
 }
 
-.l374F
+.buildinventorylist
 {
   LDA #&FF
 
+  ; Clear inventory list
   LDX #&00
-.loop
+.clearloop
   STA &18D9,X
   INX
   ; Loop while it is < 5
-  CPX #&05
-  BCC loop
+  CPX #BIGBAGSIZE+1
+  BCC clearloop
 
-  LDX #&01
+  ; Find items for inventory
+  LDX #obj_bean
   LDY #&00
-.l375F
+.buildloop
+  ; Is this object in "collected" room
   LDA objs_rooms,X
-  CMP #&04
-  BNE l376B
+  CMP #collected
+  BNE nextobj
 
+  ; Add id for this object to inventory list
   TXA
   STA &18D9,Y
   INY
-.l376B
-  INX
-  ; Is it < 63
-  CPX #&3F
-  BCC l375F
 
+.nextobj
+  INX
+  ; Is it within range of collectables?
+  CPX #maxcollectable+1
+  BCC buildloop
+
+  ; Add an end marker
   LDA #&00:STA &18D9,Y
 
   RTS
@@ -6033,7 +6043,7 @@ ORG &2B13
 
 .drawinventory
 {
-  JSR l374F
+  JSR buildinventorylist
   LDX #str_inventory
 
   ; Check for larger inventory
