@@ -97,7 +97,7 @@ player_input = &03C0
 olddizzyx = &03D6
 olddizzyy = &03D7
 .v03D8 ; input related
-.v03D9 ; ID of object being interacted with ?
+.v03D9 ; ID of object being interacted with from inventory ?
 .v03DA
 .v03DB ; multi-purpose
 .v03DC ; &00 or &58
@@ -1099,7 +1099,7 @@ ORG &189F
   EQUB &7E
 
 ORG &18D9
-.v18D9 ; Objects carried list []
+inventorylist = &18D9 ; Objects carried list []
   EQUB &FF, &FF, &FF, &FF, &FF
 
 .v18DE ; object table offset / &FF / ????
@@ -2350,7 +2350,7 @@ ORG &18F8
 }
 
 ; Return here after checking Daisy
-.l20E5
+.checkbag
 {
   LDX &18DE
   CPX #obj_bag
@@ -2358,6 +2358,7 @@ ORG &18F8
 
   ; Change bag room to 4 - to indicate it's been collected
   LDA #collected:STA objs_rooms+obj_bag
+
 .^l20F1
   LDA #&FF:STA &18DE
   JMP coincheck
@@ -2464,14 +2465,14 @@ ORG &18F8
 
   LDX #BIGBAGSIZE
 .l2185
-  LDA &18D9,X ; X is either 2 or 4
+  LDA inventorylist,X ; X is either 2 or 4
   CMP #&FF
   BEQ l21A0
 
   CMP #&00
   BEQ l21A0
 
-  LDX &18D9
+  LDX inventorylist
   STX &03D9
   LDA #OFFMAP:STA objs_rooms,X
 
@@ -2482,7 +2483,7 @@ ORG &18F8
 
   JSR drawinventory
 
-  LDA &18D9
+  LDA inventorylist
   BEQ l21B4
 
   LDA &03D9
@@ -2502,7 +2503,7 @@ ORG &18F8
 .l21C9
   LDX #&00
 .l21CB
-  LDA &18D9,X
+  LDA inventorylist,X
   BEQ l21D4
 
   INX
@@ -2536,7 +2537,7 @@ ORG &18F8
 
   ; See if anything is selected, ( or just "exit and don't drop")
   LDX &03D9
-  LDA &18D9,X
+  LDA inventorylist,X
   BNE l21F9
 
   LDA #&FF
@@ -2575,7 +2576,7 @@ ORG &18F8
   ; (go DOWN inventory list)
   LDX &03D9
   INC &03D9
-  LDA &18D9,X
+  LDA inventorylist,X
   BNE inventoryloop
 
   LDA #&00:STA &03D9
@@ -2990,6 +2991,7 @@ ORG &18F8
 }
 
 .l245B
+{
   CPX #&FF
   BEQ checkdeadlyobj
 
@@ -3016,6 +3018,7 @@ ORG &18F8
 
   JSR drawobjects
   JSR l3090
+}
 
 .checkdeadlyobj
 {
@@ -3931,7 +3934,7 @@ ORG &18F8
   JSR collidewithdizzy
   BCS collidewithdaisy
 
-  JMP l20E5
+  JMP checkbag
 }
 
 .collidewithdaisy
@@ -5946,7 +5949,7 @@ ORG &2B13
 
 .l3707
 {
-  LDX &18D9
+  LDX inventorylist
   BNE l370D
 
   RTS
@@ -5990,7 +5993,7 @@ ORG &2B13
   CMP #SPR_SPEECHOPEN
   BCC done
 
-  ; IS it >= 91
+  ; Is it >= 91
   CMP #SPR_Z+1
   BCS done
 
@@ -6009,7 +6012,7 @@ ORG &2B13
   ; Clear inventory list
   LDX #&00
 .clearloop
-  STA &18D9,X
+  STA inventorylist,X
   INX
   ; Loop while it is < 5
   CPX #BIGBAGSIZE+1
@@ -6026,7 +6029,7 @@ ORG &2B13
 
   ; Add id for this object to inventory list
   TXA
-  STA &18D9,Y
+  STA inventorylist,Y
   INY
 
 .nextobj
@@ -6036,7 +6039,7 @@ ORG &2B13
   BCC buildloop
 
   ; Add an end marker
-  LDA #&00:STA &18D9,Y
+  LDA #&00:STA inventorylist,Y
 
   RTS
 }
@@ -6071,11 +6074,11 @@ ORG &2B13
 .l37A0
   LDA #&2C:STA &039A
   LDX &0344
-  LDA &18D9,X
+  LDA inventorylist,X
   JSR l3707
 
   LDX &0344
-  LDA &18D9,X
+  LDA inventorylist,X
   BEQ l37C5
 
   INC &0344
@@ -6084,7 +6087,7 @@ ORG &2B13
   JMP l37A0
 
 .l37C5
-  LDA &18D9
+  LDA inventorylist
   BNE done
 
   LDA #str_nothingatallmess:JSR prtmessage
