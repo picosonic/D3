@@ -14,17 +14,18 @@
   EQUW room88,room89,room90,room91,room92,room93,room94,room95
   EQUW room96,room97,room98,room99,room100
 
+.objnames
   EQUW bagmess
   EQUW greenbeanmess
 
-  EQUW &0000
+  EQUW NULLPTR ; manure
 
   EQUW crowbarmess
   EQUW mtbucketmess
   EQUW bonemess
   EQUW pigmycowmess
 
-  EQUW &0000
+  EQUW NULLPTR ; happy dust
 
   EQUW pickaxemess
   EQUW goldeneggmess
@@ -34,16 +35,18 @@
   EQUW ropemess
   EQUW sleeppotionmess
   EQUW applemess
-  EQUW fullwhiskeymess
+  EQUW fullwhiskeymess ; brandy
   EQUW jugmess
   EQUW loafmess
   EQUW doorknockermess
+
   EQUW rockmess, rockmess, rockmess
 
-  EQUW &0000, &0000, &0000, &0000, &0000, &0000, &0000, &0000
-  EQUW &0000, &0000, &0000, &0000, &0000, &0000, &0000, &0000
-  EQUW &0000, &0000, &0000, &0000, &0000, &0000, &0000, &0000
-  EQUW &0000, &0000, &0000, &0000, &0000, &0000
+  ; Coins
+  EQUW NULLPTR, NULLPTR, NULLPTR, NULLPTR, NULLPTR, NULLPTR, NULLPTR, NULLPTR
+  EQUW NULLPTR, NULLPTR, NULLPTR, NULLPTR, NULLPTR, NULLPTR, NULLPTR, NULLPTR
+  EQUW NULLPTR, NULLPTR, NULLPTR, NULLPTR, NULLPTR, NULLPTR, NULLPTR, NULLPTR
+  EQUW NULLPTR, NULLPTR, NULLPTR, NULLPTR, NULLPTR, NULLPTR
 
   EQUW railingmess
   EQUW leavesmess
