@@ -43,7 +43,7 @@ frmattr = &033C ; attrib
 .v033F
 .v0340 ; frame
 .v0342
-.v0344
+cursorindex = &0344
 .v0345 ; cache for X reg
 .v0346
 .v0347
@@ -5882,12 +5882,12 @@ ORG &2B13
   JSR drawchar
 
   ; Draw horizontal bar
-  LDA msgbox_width:STA &0344
+  LDA msgbox_width:STA cursorindex
 .loop
   LDA #SPR_FRAMEHORIZ
   JSR drawchar
 
-  DEC &0344
+  DEC cursorindex
   BNE loop
 
   ; Draw right-side frame intersection
@@ -5913,12 +5913,12 @@ ORG &2B13
   JSR drawchar
 
   ; Clear middle of frame
-  LDA msgbox_width:STA &0344
+  LDA msgbox_width:STA cursorindex
 .loop
   LDA #SPR_SPACE
   JSR drawchar
 
-  DEC &0344
+  DEC cursorindex
   BNE loop
 
   ; Draw right side of frame
@@ -5947,45 +5947,47 @@ ORG &2B13
   RTS
 }
 
-.l3707
+.printinventoryitem
 {
+  ; First check for empty inventory list
   LDX inventorylist
-  BNE l370D
+  BNE notempty
 
   RTS
 
-.l370D
+.notempty
+  ; Multiply item id by 2 and transfer to X index reg
   ASL A
   TAX
 
   SEI
   LDA #CASSETTE_OFF+CASSETTE_SWITCH+CHAREN_IO+HIRAM_E000_RAM+LORAM_A000_RAM:STA CPU_CONFIG
-  CPX #&08
-  BNE l372A
+  CPX #obj_bucket*2
+  BNE notbucket
 
-  ; Check if bucket is blue
+  ; Check if bucket is blue - has water in it
   LDA objs_attrs+obj_bucket
   CMP #PAL_BLUE
-  BNE l372A
+  BNE notbucket
 
-  LDA &D1C0:STA stringptr
+  LDA messages+(str_fullbucketmess*2):STA stringptr
+  LDA messages+(str_fullbucketmess*2)+1
+  JMP setstringptrhi
 
-  LDA &D1C1
-  JMP l3732
-
-.l372A
-  LDA &D0CA,X:STA stringptr
-
-  LDA &D0CB,X
-.l3732
+.notbucket
+  LDA objnames,X:STA stringptr
+  LDA objnames+1,X
+.setstringptrhi
   STA stringptr+1
+
   LDA #CASSETTE_OFF+CASSETTE_SWITCH+CHAREN_IO+HIRAM_E000_ROM+LORAM_A000_RAM:STA CPU_CONFIG
   CLI
 
+  ; If ptr hi is zero (no name) it means don't print
   LDA stringptr+1
   BEQ done
 
-.l373D
+.printloop
   JSR nextchar
 
   ; Check if char is within messagebox range
@@ -5999,7 +6001,7 @@ ORG &2B13
 
   JSR drawchar
 
-  JMP l373D
+  JMP printloop
 
 .done
   RTS
@@ -6059,34 +6061,36 @@ ORG &2B13
   TXA
   JSR prtmessage
 
-  LDY #&58
+  LDY #&58 ; small bag
 
   ; Check for larger inventory
   LDA objs_rooms+obj_bag
   CMP #collected
-  BNE l3793
+  BNE setcursory
 
-  LDY #&50
-.l3793
+  LDY #&50 ; large bag
+.setcursory
   STY cursory
-  LDA #&00:STA &0344
-  LDA #&03:STA cursorattr
-.l37A0
+  LDA #&00:STA cursorindex
+  LDA #PAL_MAGENTA:STA cursorattr
+.loop
   LDA #&2C:STA &039A
-  LDX &0344
-  LDA inventorylist,X
-  JSR l3707
 
-  LDX &0344
+  LDX cursorindex
   LDA inventorylist,X
-  BEQ l37C5
+  JSR printinventoryitem
 
-  INC &0344
+  LDX cursorindex
+  LDA inventorylist,X
+  BEQ endoflist
+
+  ; Advance down to next line
+  INC cursorindex
 
   LDA cursory:CLC:ADC #&08:STA cursory
-  JMP l37A0
+  JMP loop
 
-.l37C5
+.endoflist
   LDA inventorylist
   BNE done
 
