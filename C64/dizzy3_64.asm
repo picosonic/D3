@@ -2965,7 +2965,7 @@ ORG &18F8
   BCC nocollision
 
   LDX #&FF:STX &03D9
-  JMP l2449
+  JMP checkwhiskey
 
 .nocollision
   INC &03DB
@@ -2976,7 +2976,7 @@ ORG &18F8
   BCC liftloop
 }
 
-.l2449
+.checkwhiskey
 {
   LDX &03D9
   CPX #obj_brandy
@@ -4929,22 +4929,23 @@ ORG &2B13
 .l3090
 {
   LDX #&06
-.l3092
-  LDA &1828,X:STA &FC
+.loop
+  LDA &1828,X:STA &FC ; Set up pointer &FB (lo)
 
   SEC:SBC #&04
-  STA &36
+  STA &36 ; Set up pointer &35 (lo)
 
   SEC:SBC #&54
-  STA &FE
+  STA &FE ; Set up pointer &FD (lo)
 
-  LDA &180E,X
+
+  LDA &180E,X ; Set up pointers &35 / &FB / &FD (hi)
   STA &FB
   STA &FD
   STA &35
 
   LDY #&22
-.l30AC
+.innerloop
   LDA (&35),Y
   AND #&07
   BEQ l30BE
@@ -4962,12 +4963,12 @@ ORG &2B13
 
   DEY
   CPY #&04
-  BNE l30AC
+  BNE innerloop
 
   INX
   ; Is it < 23
   CPX #&17
-  BCC l3092
+  BCC loop
 
   RTS
 }
