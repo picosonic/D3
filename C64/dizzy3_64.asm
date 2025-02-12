@@ -1133,7 +1133,7 @@ ORG &18E8
   EQUB LIFTCONTROLROOM
 }
 
-.v18EC ; []
+.highestliftpos ; lifts upper Y position in machine/key order []
 {
   EQUB 96
   EQUB 88
@@ -1149,7 +1149,7 @@ ORG &18E8
   EQUB 176
 }
 
-.v18F4 ; ?? copied from v18EC, related to lift Y position ?? []
+.v18F4 ; ?? copied from highestliftpos, related to lift Y position ?? []
 {
   EQUB 0, 0, 0, 0
 }
@@ -1270,7 +1270,7 @@ ORG &18E8
 
   LDX #&00
 .l19A9
-  LDA &18EC,X:STA v18F4,X
+  LDA highestliftpos,X:STA v18F4,X
 
   INX
   ; Is it < 4
@@ -3492,7 +3492,7 @@ ORG &18E8
   BCC done
 
 .l272F
-  LDA objs_attrs,X:EOR #ATTR_REVERSE:STA objs_attrs,X ; flip top bit
+  LDA objs_attrs,X:EOR #ATTR_REVERSE:STA objs_attrs,X ; flip top bit (change direction)
   LDA #&10:STA &03BE
   JMP done
 
@@ -3508,7 +3508,7 @@ ORG &18E8
 
   LDY &03B7
   LDA objs_ylocs,X:STA v18F4,Y
-  CMP &18EC,Y
+  CMP highestliftpos,Y
   BEQ l272F
   BCC l272F
 
