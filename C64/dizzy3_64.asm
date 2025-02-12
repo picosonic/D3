@@ -1082,36 +1082,78 @@ INCLUDE "melodydata.asm"
 .v1828 ; [] pointers hi
 
 .v1877 ; []
-.v1897 ; []
 
-ORG &189F
+ORG &1897
+.v1897 ; attribs ?? []
+{
+  EQUB &00
+  EQUB &60
+  EQUB &20
+  EQUB &40
+  EQUB &50
+  EQUB &30
+  EQUB &70
+  EQUB &10
+}
+
 ; Lookup table for screen offsets
 .screentable_lo
+{
   EQUB &00, &40, &80, &C0, &00, &40, &80, &C0
   EQUB &00, &40, &80, &C0, &00, &40, &80, &C0
   EQUB &00, &40, &80, &C0, &00, &40, &80, &C0
   EQUB &00
+}
 
 .screentable_hi
+{
   EQUB &60, &61, &62, &63, &65, &66, &67, &68
   EQUB &6A, &6B, &6C, &6D, &6F, &70, &71, &72
   EQUB &74, &75, &76, &77, &79, &7A, &7B, &7C
   EQUB &7E
+}
 
 ORG &18D9
-inventorylist = &18D9 ; Objects carried list []
+.inventorylist ; Objects carried list []
+{
   EQUB &FF, &FF, &FF, &FF, &FF
+}
 
 .v18DE ; object table offset / &FF / ????
 coins_tens = &18E5
 coins = &18E6
 .v18E7
-.v18E8 ; []
-.v18EC ; []
-.v18F0
-.v18F4 ; []
 
-ORG &18F8
+ORG &18E8
+.liftrooms ; rooms with lifts in machine/key order []
+{
+  EQUB DOZYSHUTROOM
+  EQUB DRAGONSLAIRROOM
+  EQUB LIFTTOELDERSROOM
+  EQUB LIFTCONTROLROOM
+}
+
+.v18EC ; []
+{
+  EQUB 96
+  EQUB 88
+  EQUB 96
+  EQUB 136
+}
+
+.lowestliftpos ; lifts lower Y position in machine/key order []
+{
+  EQUB 152
+  EQUB 174
+  EQUB 172
+  EQUB 176
+}
+
+.v18F4 ; ?? copied from v18EC, related to lift Y position ?? []
+{
+  EQUB 0, 0, 0, 0
+}
+
 .deadlyobj ; objects that can kill Dizzy on contact []
 {
   EQUB obj_grunt
@@ -1228,11 +1270,11 @@ ORG &18F8
 
   LDX #&00
 .l19A9
-  LDA &18EC,X:STA &18F4,X
+  LDA &18EC,X:STA v18F4,X
 
   INX
   ; Is it < 4
-  CPX #&04
+  CPX #&04 ; number of lifts ??
   BCC l19A9
 
   LDA #GAMESTARTROOM
@@ -3383,16 +3425,16 @@ ORG &18F8
 .l26BE
   LDA roomno
   CMP #OUTTOSEAROOM
-  BNE l26E8
+  BNE liftsrou
 
   ; Check Dozy X position >= 70
   LDA objs_xlocs+obj_dozy
   CMP #70
-  BCS l26E8
+  BCS liftsrou
 
   LDA &03C4
   AND #&03
-  BNE l26E8
+  BNE liftsrou
 
   ; Update Dozy Y position
   LDX #obj_dozy
@@ -3406,32 +3448,35 @@ ORG &18F8
   LDX #obj_dozy
   JSR l29D3
 
-.l26E8
+.liftsrou
+{
   LDX #&00
   LDA &03BE
-  BEQ l26F2
+  BEQ checklift
 
-  JMP l2767
+  JMP done
 
-.l26F2
-  LDA &18E8,X
+.checklift
+  ; Check if this room has a lift
+  LDA liftrooms,X
   CMP roomno
-  BNE l2762
+  BNE nextlift
 
   ; Check if machine[x] is active
   LDA objs_attrs+obj_machines,X
   CMP #PAL_WHITE
-  BNE l2762
+  BNE nextlift
 
   STX &03B7
   TXA
   ASL A
-  CLC:ADC #&73
+  CLC:ADC #obj_lifts
   TAX
-  LDA objs_attrs+obj_bean,X
-  AND #ATTR_REVERSE
-  BNE l273F
+  LDA objs_attrs+1,X ; Lift bottom
+  AND #ATTR_REVERSE ; Check lift direction
+  BNE goingup
 
+.goingdown
   INC objs_ylocs,X
   JSR l29D3
 
@@ -3442,16 +3487,16 @@ ORG &18F8
   JSR l29D3
 
   LDY &03B7
-  LDA objs_ylocs,X:STA &18F4,Y
-  CMP &18F0,Y
-  BCC l2767
+  LDA objs_ylocs,X:STA v18F4,Y
+  CMP lowestliftpos,Y
+  BCC done
 
 .l272F
   LDA objs_attrs,X:EOR #ATTR_REVERSE:STA objs_attrs,X ; flip top bit
   LDA #&10:STA &03BE
-  JMP l2767
+  JMP done
 
-.l273F
+.goingup
   DEC objs_ylocs,X
   JSR l29D3
 
@@ -3462,28 +3507,30 @@ ORG &18F8
   JSR l29D3
 
   LDY &03B7
-  LDA objs_ylocs,X:STA &18F4,Y
+  LDA objs_ylocs,X:STA v18F4,Y
   CMP &18EC,Y
   BEQ l272F
   BCC l272F
 
-  JMP l2767
+  JMP done
 
-.l2762
+.nextlift
   INX
 
   ; Is it < 4
-  CPX #&04
-  BCC l26F2
+  CPX #&04 ; Number of rooms with a lift
+  BCC checklift
 
-.l2767
+.done
   LDA roomno
   CMP #GUARDHOUSEROOM
-  BEQ l2771
+  BEQ hawkrou
 
   JMP l2809
+}
 
-.l2771
+.hawkrou
+{
   LDX #obj_hawk
   JSR drawobjframe
 
@@ -3578,6 +3625,7 @@ ORG &18F8
 .l27FE
   LDA objs_attrs+obj_hawk:ORA #ATTR_REVERSE:STA objs_attrs+obj_hawk ; Set top bit
   JMP l27B1
+}
 
 .l2809
   LDA roomno
@@ -3852,7 +3900,7 @@ ORG &18F8
   JMP l29BA
 
 .l29B7
-  JSR l3A9F
+  JSR drawdragonflames
 .l29BA
   NOP
   JSR l38B1
@@ -4978,7 +5026,7 @@ ORG &2B13
   LDX #&00
   LDA #&58:STA &03DC
 .machineloop
-  LDA &18E8,X
+  LDA liftrooms,X
   CMP roomno
   BNE l310F
 
@@ -5000,7 +5048,7 @@ ORG &2B13
 
   LDA objs_ylocs+1,X
   LDY &03DB
-  CMP &18F4,Y
+  CMP v18F4,Y
   BCS l3117
 
   INC objs_ylocs,X
@@ -5233,6 +5281,7 @@ ORG &2B13
 
   INC &03C5
   LDX &03C5
+
   LDA &E290,X:STA &03C6
 
   LDX &0345 ; Restore X
@@ -5246,6 +5295,7 @@ ORG &2B13
 
   INC &03C5
   LDX &03C5
+
   LDA &EA60,X
   AND #&03
   CLC:ADC #&01
@@ -5957,7 +6007,7 @@ ORG &2B13
   RTS
 
 .notempty
-  ; Multiply item id by 2 and transfer to X index reg
+  ; Calculate string pointer offset
   ASL A
   TAX
 
@@ -6072,6 +6122,7 @@ ORG &2B13
   LDY #&50 ; large bag
 .setcursory
   STY cursory
+
   LDA #&00:STA cursorindex
   LDA #PAL_MAGENTA:STA cursorattr
 .loop
@@ -6126,7 +6177,7 @@ ORG &2B13
   JSR nextchar
 
   ; Make sure it's not a string terminator
-  CMP #&5F
+  CMP #mend
   BNE keepgoing
 
 .done
@@ -6554,7 +6605,7 @@ ORG &2B13
   RTS
 }
 
-.l3A9F
+.drawdragonflames
 {
   ; Set start/end X positions for flames ??
   LDA &03BA:CLC:ADC #8:STA &03DB
