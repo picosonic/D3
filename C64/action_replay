@@ -10,6 +10,9 @@ poke 9610, 76, 199, 37 - Invincibility
 poke 9652,173 - Infinite lives
   - Changes "DEC lives" to "LDA lives"
 
+poke 9984, 0 - Enable all lifts
+  - Changes "BNE" destination after check for machine enable
+
 poke 10862, 0 - No need to collect 30 coins to complete game
   - Changes "BNE" destination after check for "30+" coins
 
