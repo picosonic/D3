@@ -3351,12 +3351,12 @@ ORG &18E8
 .l2650
   LDA roomno
   CMP #GATORROOM
-  BNE l267A
+  BNE portcullisrou
 
   ; Check rope
   LDA objs_rooms+obj_rope
   CMP #OFFMAP
-  BEQ l267A
+  BEQ portcullisrou
 
   LDA &03C4
   LSR A
@@ -3377,52 +3377,58 @@ ORG &18E8
   LDX #obj_croc
   JSR l29D3
 
-.l267A
+.portcullisrou
+{
   LDA roomno
   CMP #MOATROOM
-  BNE l26BE
+  BNE dozyrou
 
   ; Check if portcullis switch is active
   LDA objs_attrs+obj_switch
   CMP #PAL_CYAN
-  BEQ l26BE
+  BEQ dozyrou
 
   ; Check portcullis orientation
   LDA objs_attrs+obj_portcullis
   AND #ATTR_REVERSE
-  BNE l26AE
+  BNE movedown
 
+.moveup
   ; Move portcullis up
   LDX #obj_portcullis
   JSR ruboutframe
 
+  ; Move portcullis up
   DEC objs_ylocs+obj_portcullis
 
-  ; Is Y position >= 97
+  ; Has it got to the top?
   LDA objs_ylocs+obj_portcullis
   CMP #97
-  BCS l26A6
+  BCS done
 
-.l269E
+.flipdir
   ; Flip portcullis orientation
   LDA objs_attrs+obj_portcullis:EOR #ATTR_REVERSE:STA objs_attrs+obj_portcullis
-.l26A6
+
+.done
   LDX #obj_portcullis
   JSR l29D3
 
-  JMP l26BE
+  JMP dozyrou
 
-.l26AE
-  ; Check portcullis height >= 136
+.movedown
+  ; Has it got to the bottom?
   LDA objs_ylocs+obj_portcullis
   CMP #136
-  BCS l269E
+  BCS flipdir
 
-  ; Move portcullis down
+  ; Move portcullis down quickly, 4x speed
   CLC:ADC #4:STA objs_ylocs+obj_portcullis
-  JMP l26A6
+  JMP done
+}
 
-.l26BE
+.dozyrou
+{
   LDA roomno
   CMP #OUTTOSEAROOM
   BNE liftsrou
@@ -3447,6 +3453,7 @@ ORG &18E8
 
   LDX #obj_dozy
   JSR l29D3
+}
 
 .liftsrou
 {
