@@ -87,7 +87,7 @@ player_input = &03C0
 .v03C1
 .v03C2
 .v03C3
-.v03C4
+gamecounter = &03C4 ; pace of game actions
 .v03C5
 .v03C6
 .v03C7
@@ -1385,22 +1385,23 @@ ORG &18E8
 
   LDA #&00:STA &03C1
   LDA &03BC:JSR delay
-  INC &03C4
+  INC gamecounter
 
   ; Check brandy bottle
   LDA objs_rooms+obj_brandy
   CMP #OFFMAP
-  BNE l1A96
+  BNE sober
 
-  LDA &03C4
+  LDA gamecounter
   AND #&20
-  BNE l1A96
+  BNE sober
 
+  ; Mess up player input (mimic being drunk)
   LDA player_input
   EOR #JOY_RIGHT+JOY_LEFT
   STA player_input
 
-.l1A96
+.sober
   LDA &03BE
   BEQ l1A9E
 
@@ -1965,7 +1966,7 @@ ORG &18E8
   LDA &03C7
   BNE l1E7E
 
-  LDA &03C4
+  LDA gamecounter
   AND #&01
   JMP l1E9E
 
@@ -2013,7 +2014,7 @@ ORG &18E8
   LDA #&12
 .l1E94
   STA &FF
-  LDA &03C4
+  LDA gamecounter
   AND #&07
   CLC:ADC &FF
 .l1E9E
@@ -3197,7 +3198,7 @@ ORG &18E8
 .l2560
   LDA &033F
   AND #&10
-  BEQ l25C7
+  BEQ ratrou
 
   LDA #str_killedbyvolcano
   LDY roomno
@@ -3223,7 +3224,7 @@ ORG &18E8
   BNE l258A
 
   ; Dizzy is safe - for now
-  JMP l25C7
+  JMP ratrou
 
 .l258A
   LDA #TUNE_4:STA melody ; Lose a life / heart demo melody
@@ -3256,34 +3257,36 @@ ORG &18E8
 
   ; Check if muted
   LDA muted
-  BNE l25C7
+  BNE ratrou
 
   LDA #TUNE_2:STA melody ; In-game melody
-.l25C7
+
+.ratrou
+{
   LDA roomno
   CMP #CASTLEDUNGEONROOM
-  BNE l2629
+  BNE gotogator
 
-  ; Check for rat
+  ; Check for rat being on the prowl
   LDA objs_rooms+obj_rat
   CMP #OFFMAP
-  BEQ l2629
+  BEQ gotogator
 
   ; Check if bread is in this room
   LDA roomno
   CMP objs_rooms+obj_bread
-  BNE l2601
+  BNE moveright
 
-  ; Check Y position of bread >= 100 (not near rat)
+  ; Check Y position of bread >= 100 (not near rat - below it)
   LDA objs_ylocs+obj_bread
   CMP #100
-  BCS l2601
+  BCS moveright
 
   ; See if rat's X position is less than the bread - i.e. it ate it
   LDA objs_xlocs+obj_bread
   CLC:ADC #4
   CMP objs_xlocs+obj_rat
-  BCC l2601
+  BCC moveright
 
   LDA #OFFMAP:STA objs_rooms+obj_bread ; Remove bread
 
@@ -3292,13 +3295,13 @@ ORG &18E8
 
   LDA #str_thanksforloafmess:JSR prtmessage
 
-.l2601
+.moveright
   LDX #obj_rat
 
   ; Check rat direction
   LDA objs_attrs+obj_rat
   AND #ATTR_REVERSE
-  BEQ l263E
+  BEQ moveleft
 
   ; Move rat right
   JSR ruboutframe
@@ -3309,7 +3312,7 @@ ORG &18E8
   ; Check for bread being in room
   LDA objs_rooms+obj_bread
   CMP #OFFMAP
-  BNE l262C
+  BNE dontcheckbread
 
   ; Check rat X position < 96
   LDA objs_xlocs+obj_rat
@@ -3320,22 +3323,23 @@ ORG &18E8
 
   ; Remove rat
   LDA #OFFMAP:STA objs_rooms+obj_rat
-.l2629
+
+.gotogator
   JMP gatorrou
 
-.l262C
-  ; Check rat X position < 79
+.dontcheckbread
+  ; Check rat X position < 79 (under hole in ceiling)
   LDA objs_xlocs+obj_rat
   CMP #79
   BCC gatorrou
 
-.l2633
+.fliprat
   ; Flip rat direction
   LDA objs_attrs+obj_rat:EOR #ATTR_REVERSE:STA objs_attrs+obj_rat ; flip top bit
 
   JMP gatorrou
 
-.l263E
+.moveleft
   ; Move rat left
   LDX #obj_rat
   JSR ruboutframe
@@ -3346,7 +3350,8 @@ ORG &18E8
   ; Check rat X position < 47
   LDA objs_xlocs+obj_rat
   CMP #47
-  BCC l2633
+  BCC fliprat
+}
 
 .gatorrou
 {
@@ -3354,22 +3359,23 @@ ORG &18E8
   CMP #GATORROOM
   BNE portcullisrou
 
-  ; Check rope
+  ; Check if rope has been "used" - tied up croc
   LDA objs_rooms+obj_rope
   CMP #OFFMAP
   BEQ portcullisrou
 
-  LDA &03C4
+  ; Gator is not tied, so animate
+  LDA gamecounter
   LSR A:LSR A ; divide by 4
   AND #&07
   ; Is it < 6
   CMP #&06
-  BCC l266B
+  BCC animcroc
 
-  LDA #&01
-.l266B
+  LDA #&01 ; Mouth shut during longer period
+.animcroc
   ; Change croc sprite
-  AND #&01
+  AND #&01 ; restrict to 2 frames (0 and 1)
   EOR #&01
   CLC:ADC #SPR_CROCCLOSED
   STA objs_frames+obj_croc
@@ -3439,7 +3445,7 @@ ORG &18E8
   CMP #70
   BCS liftsrou
 
-  LDA &03C4
+  LDA gamecounter
   AND #&03
   BNE liftsrou
 
@@ -3447,7 +3453,7 @@ ORG &18E8
   LDX #obj_dozy
   JSR ruboutframe
 
-  LDA &03C4
+  LDA gamecounter
   AND #&04
   CLC:ADC #134
   STA objs_ylocs+obj_dozy
@@ -3600,7 +3606,7 @@ ORG &18E8
   DEC objs_xlocs+obj_hawk
   DEC objs_xlocs+obj_hawk
 .l27C7
-  LDA &03C4
+  LDA gamecounter
   LSR A
   AND #&03
   CMP #&03
@@ -3641,7 +3647,7 @@ ORG &18E8
   CMP #ARMOROGROOM
   BNE l283A
 
-  LDA &03C4
+  LDA gamecounter
   AND #&01
   BEQ l283A
 
@@ -3680,7 +3686,7 @@ ORG &18E8
   LDA #&00:STA &03DC
   JSR drawobjframe
 
-  LDA &03C4
+  LDA gamecounter
   LSR A
   AND #&01
   CLC:ADC #SPR_GRUNT0
@@ -3786,7 +3792,7 @@ ORG &18E8
   JMP l295E
 
 .l28EB
-  LDA &03C4
+  LDA gamecounter
   AND #&01
   BEQ l28F5
 
@@ -4088,7 +4094,7 @@ ORG &18E8
   RTS
 
 .l2ABD
-  LDA &03C4
+  LDA gamecounter
   AND #&01
   BEQ l2ABC
 
@@ -4103,7 +4109,7 @@ ORG &18E8
   SEI ; Disable interrupts
   LDA #&00:STA SID_CH1_CTRL
   LDA #&09:STA SID_VOL_FLT ; Volume at 60%
-  LDA &03C4:AND #&02:ASL A:CLC:ADC #&06:STA SID_CH1_FREQ_H
+  LDA gamecounter:AND #&02:ASL A:CLC:ADC #&06:STA SID_CH1_FREQ_H
   LDA #&00:STA SID_CH1_SURL ; Sustain=0 / Release=0
   LDA #&10:STA SID_CH1_ATDK ; Attack=1 / Decay=0
   LDA #&81:STA SID_CH1_CTRL ; Noise / Test
@@ -4784,7 +4790,7 @@ ORG &2B13
   STA &03E0
   STA &03DA
 
-  LDA &03C4:AND #&F8:STA &03C4
+  LDA gamecounter:AND #&F8:STA gamecounter
 
   ; Place the hawk in the clouds
   LDA #56:STA objs_ylocs+obj_hawk
@@ -6321,7 +6327,7 @@ ORG &2B13
 
 .l38B1
 {
-  LDA &03C4
+  LDA gamecounter
   AND #&01
   BNE l38BB
 
@@ -6377,7 +6383,7 @@ ORG &2B13
 
   LDA #&00:STA &033F
 
-  LDA &03C4
+  LDA gamecounter
   LSR A
   AND #&03
   CLC:ADC #SPR_WATER0 ; frame
