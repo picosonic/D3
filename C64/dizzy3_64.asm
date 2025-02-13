@@ -2079,7 +2079,7 @@ ORG &18E8
   LDA #OFFMAP:STA &C6E1
 
   LDX #obj_troll
-  JSR l29D3
+  JSR redrawobj
 
   LDA #str_goawaymess:JSR prtmessage
 
@@ -2338,7 +2338,7 @@ ORG &18E8
   STA objs_attrs+obj_switch2
 
   LDX #obj_switch2
-  JSR l29D3
+  JSR redrawobj
 
 .loop
   LDX #obj_liftbottom
@@ -2346,7 +2346,7 @@ ORG &18E8
 
   ; Move bottom of lift downwards
   INC objs_ylocs+obj_liftbottom
-  JSR l29D3
+  JSR redrawobj
 
   INX ; switch from liftbottom to daisy
   JSR ruboutframe
@@ -2354,12 +2354,12 @@ ORG &18E8
   ; Also move Daisy downwards (she's on the lift)
   INC objs_ylocs+obj_daisy
   LDA objs_attrs+obj_daisy:EOR #ATTR_REVERSE:STA objs_attrs+obj_daisy
-  JSR l29D3
+  JSR redrawobj
 
   ; Move top of lift downwards
   LDX #obj_lifttop
   INC objs_ylocs+obj_lifttop
-  JSR l29D3
+  JSR redrawobj
 
   LDA #&0A:JSR delay
 
@@ -3314,26 +3314,26 @@ ORG &18E8
   ; Check rat X position < 96
   LDA objs_xlocs+obj_rat
   CMP #96
-  BCC l2650
+  BCC gatorrou
 
   JSR ruboutframe
 
   ; Remove rat
   LDA #OFFMAP:STA objs_rooms+obj_rat
 .l2629
-  JMP l2650
+  JMP gatorrou
 
 .l262C
   ; Check rat X position < 79
   LDA objs_xlocs+obj_rat
   CMP #79
-  BCC l2650
+  BCC gatorrou
 
 .l2633
   ; Flip rat direction
   LDA objs_attrs+obj_rat:EOR #ATTR_REVERSE:STA objs_attrs+obj_rat ; flip top bit
 
-  JMP l2650
+  JMP gatorrou
 
 .l263E
   ; Move rat left
@@ -3348,7 +3348,8 @@ ORG &18E8
   CMP #47
   BCC l2633
 
-.l2650
+.gatorrou
+{
   LDA roomno
   CMP #GATORROOM
   BNE portcullisrou
@@ -3359,8 +3360,7 @@ ORG &18E8
   BEQ portcullisrou
 
   LDA &03C4
-  LSR A
-  LSR A
+  LSR A:LSR A ; divide by 4
   AND #&07
   ; Is it < 6
   CMP #&06
@@ -3375,7 +3375,8 @@ ORG &18E8
   STA objs_frames+obj_croc
 
   LDX #obj_croc
-  JSR l29D3
+  JSR redrawobj
+}
 
 .portcullisrou
 {
@@ -3412,7 +3413,7 @@ ORG &18E8
 
 .done
   LDX #obj_portcullis
-  JSR l29D3
+  JSR redrawobj
 
   JMP dozyrou
 
@@ -3452,7 +3453,7 @@ ORG &18E8
   STA objs_ylocs+obj_dozy
 
   LDX #obj_dozy
-  JSR l29D3
+  JSR redrawobj
 }
 
 .liftsrou
@@ -3485,13 +3486,13 @@ ORG &18E8
 
 .goingdown
   INC objs_ylocs,X
-  JSR l29D3
+  JSR redrawobj
 
   INX
   JSR ruboutframe
 
   INC objs_ylocs,X
-  JSR l29D3
+  JSR redrawobj
 
   LDY &03B7
   LDA objs_ylocs,X:STA v18F4,Y
@@ -3505,13 +3506,13 @@ ORG &18E8
 
 .goingup
   DEC objs_ylocs,X
-  JSR l29D3
+  JSR redrawobj
 
   INX
   JSR ruboutframe
 
   DEC objs_ylocs,X
-  JSR l29D3
+  JSR redrawobj
 
   LDY &03B7
   LDA objs_ylocs,X:STA v18F4,Y
@@ -3533,7 +3534,7 @@ ORG &18E8
   CMP #GUARDHOUSEROOM
   BEQ hawkrou
 
-  JMP l2809
+  JMP armorogrou
 }
 
 .hawkrou
@@ -3612,7 +3613,7 @@ ORG &18E8
   ; Update hawk animation frame
   STA objs_frames+obj_hawk
   JSR drawobjframe
-  JMP l2809
+  JMP armorogrou
 
 .l27DF
   ; Hawk is diving, so move downwards
@@ -3626,15 +3627,16 @@ ORG &18E8
   CMP objs_xlocs+obj_hawk
   BCC l27FE
 
-  LDA objs_attrs+obj_hawk:AND #%01111111:STA objs_attrs+obj_hawk ; Clear top bit
+  LDA objs_attrs+obj_hawk:AND #%01111111:STA objs_attrs+obj_hawk ; Clear reverse (look right)
   JMP l27B1
 
 .l27FE
-  LDA objs_attrs+obj_hawk:ORA #ATTR_REVERSE:STA objs_attrs+obj_hawk ; Set top bit
+  LDA objs_attrs+obj_hawk:ORA #ATTR_REVERSE:STA objs_attrs+obj_hawk ; Set reverse (look left)
   JMP l27B1
 }
 
-.l2809
+.armorogrou
+{
   LDA roomno
   CMP #ARMOROGROOM
   BNE l283A
@@ -3740,6 +3742,8 @@ ORG &18E8
   LDA #&00:STA &03DC
 
   JSR drawobjframe
+}
+
 .l28B0
   LDA roomno
   CMP #DRAGONSLAIRROOM
@@ -3929,7 +3933,8 @@ ORG &18E8
   RTS
 }
 
-.l29D3
+; Draw object in X reg
+.redrawobj
 {
   LDA #&58:STA &03DC
   JSR drawobjframe
