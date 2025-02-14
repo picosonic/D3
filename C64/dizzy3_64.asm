@@ -987,8 +987,17 @@ ORG &1170
 .v1176 ; []
 .v1179 ; []
 .v117C ; []
-.v117F ; []
-.v1182 ; []
+
+; These are *variable* pointers in the range &1399..&1431 (melody data)
+.v117F ; pointers lo []
+  EQUB &99
+  EQUB &E2
+  EQUB &31
+.v1182 ; pointers hi []
+  EQUB &13
+  EQUB &13
+  EQUB &14
+
 .v1185 ; []
 .v1188 ; []
 .v118B ; []
@@ -1077,9 +1086,63 @@ ORG &1235
 ORG &130F
 INCLUDE "melodydata.asm"
 
-; These pointers are to data in the range &5c00..&5fc0 (screen/border colour attribs)
+ORG &180E
+; These static pointers are to data in the range &5c00..&5fc0 (screen/border colour attribs)
 .v180E ; [] pointers lo
+  EQUB &00
+  EQUB &28
+  EQUB &50
+  EQUB &78
+  EQUB &A0
+  EQUB &C8
+  EQUB &F0
+  EQUB &18
+  EQUB &40
+  EQUB &68
+  EQUB &90
+  EQUB &B8
+  EQUB &E0
+  EQUB &08
+  EQUB &30
+  EQUB &58
+  EQUB &80
+  EQUB &A8
+  EQUB &D0
+  EQUB &F8
+  EQUB &20
+  EQUB &48
+  EQUB &70
+  EQUB &98
+  EQUB &C0
+
+  EQUB &5B ; ???
+
 .v1828 ; [] pointers hi
+  EQUB &5C
+  EQUB &5C
+  EQUB &5C
+  EQUB &5C
+  EQUB &5C
+  EQUB &5C
+  EQUB &5C
+  EQUB &5D
+  EQUB &5D
+  EQUB &5D
+  EQUB &5D
+  EQUB &5D
+  EQUB &5D
+  EQUB &5E
+  EQUB &5E
+  EQUB &5E
+  EQUB &5E
+  EQUB &5E
+  EQUB &5E
+  EQUB &5E
+  EQUB &5F
+  EQUB &5F
+  EQUB &5F
+  EQUB &5F
+  EQUB &5F
 
 .v1877 ; []
 
