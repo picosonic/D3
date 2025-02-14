@@ -1084,16 +1084,16 @@ INCLUDE "melodydata.asm"
 .v1877 ; []
 
 ORG &1897
-.v1897 ; attribs ?? []
+.c64palette ; spectrum to c64 palette lookup []
 {
-  EQUB &00
-  EQUB &60
-  EQUB &20
-  EQUB &40
-  EQUB &50
-  EQUB &30
-  EQUB &70
-  EQUB &10
+  EQUB &00 ; black
+  EQUB &60 ; blue
+  EQUB &20 ; red
+  EQUB &40 ; magenta
+  EQUB &50 ; green
+  EQUB &30 ; cyan
+  EQUB &70 ; yellow
+  EQUB &10 ; white
 }
 
 ; Lookup table for screen offsets
@@ -2558,7 +2558,8 @@ ORG &18E8
 ; Loop back here until FIRE pressed
 .inventoryloop
 {
-  LDA #&05
+  ; Set non-highlighted entry inventory colour
+  LDA #PAL_CYAN
   JSR l3A71
 
   ; Slow down inventory selection
@@ -2592,7 +2593,8 @@ ORG &18E8
 
 .checkdirection
 {
-  LDA #&03
+  ; Set highlighted inventory item colour
+  LDA #PAL_MAGENTA
   JSR l3A71
 
   ; Was it LEFT pressed?
@@ -3118,28 +3120,35 @@ ORG &18E8
 }
 
 .checkdragoninmine
+{
   ; Check golden egg
   LDA objs_attrs+obj_goldenegg
   AND #ATTR_REVERSE
   BEQ checkdragonbite
 
   JMP checkdragonflames
+}
 
 .checkopenairdragon
+{
   ; Check sleeping potion
   LDA objs_rooms+obj_sleepingpotion
   CMP #OFFMAP
   BEQ checkdragonflames
+}
 
 .checkdragonbite
+{
   LDX #obj_dragonhead
   JSR collidewithdizzy
   BCC checkdragonflames
 
   LDA #str_dragonkilledmess
   JMP storekillstr
+}
 
 .checkdragonflames
+{
   LDA dizzyy
   ; Is it < 88
   CMP #88
@@ -3163,8 +3172,10 @@ ORG &18E8
 
   LDA #str_dragonflameskilledmess
   JMP storekillstr
+}
 
 .l2527
+{
   LDA #2:STA frmx
 .l252C
   LDA #6:STA frmy
@@ -3194,8 +3205,10 @@ ORG &18E8
 
   LDA #str_killedbyflame
   JMP storekillstr
+}
 
 .l2560
+{
   LDA &033F
   AND #&10
   BEQ ratrou
@@ -3206,27 +3219,32 @@ ORG &18E8
   BEQ storekillstr
 
   LDA #str_killedbywater
+
+  ; Fall through
+}
+
 .storekillstr
+{
   STA &03B7 ; Store "killed-by" message id
 
   ; Was it daggers that hurt Dizzy
   CMP #str_killedbydaggersmess
-  BNE l258A
+  BNE processdeath
 
   ; Check which room Dizzy hit daggers
   LDA roomno
   CMP #DAISYSPRISONROOM
-  BNE l258A
+  BNE processdeath
 
   ; Check if rug has been used to cover daggers in Daisy's prison room
   LDA objs_rooms+obj_rug
   CMP #OFFMAP
-  BNE l258A
+  BNE processdeath
 
   ; Dizzy is safe - for now
   JMP ratrou
 
-.l258A
+.processdeath
   LDA #TUNE_4:STA melody ; Lose a life / heart demo melody
   JSR l34E2
 
@@ -3238,18 +3256,18 @@ ORG &18E8
   JSR prtmessage
 
   LDA #&07:STA &03B7
-.l25A2
+.loop
   LDA #&FA:JSR delay
 
   DEC &03B7
-  BNE l25A2
+  BNE loop
 
   LDA lives
-  BNE l25B4
+  BNE livesleft
 
   JMP titlescreen ; No lives left
 
-.l25B4
+.livesleft
   DEC lives ; lose a life
 
   JSR l2F22
@@ -3260,6 +3278,7 @@ ORG &18E8
   BNE ratrou
 
   LDA #TUNE_2:STA melody ; In-game melody
+}
 
 .ratrou
 {
@@ -4569,7 +4588,7 @@ ORG &2B13
   LDA frmattr
   AND #&07
   TAX
-  LDA &1897,X:STA &03E2
+  LDA c64palette,X:STA &03E2
   BEQ l2DEC
 
   LDA frmx
@@ -5018,7 +5037,7 @@ ORG &2B13
 
   STX &0346
   TAX
-  LDA &1897,X
+  LDA c64palette,X
   LDX &0346
   BNE l30C0
 
@@ -6595,7 +6614,7 @@ ORG &2B13
 .l3A71
 {
   TAX
-  LDA &1897,X:STA frmattr
+  LDA c64palette,X:STA frmattr
 
   LDA #&0B ; Default to small bag
 
