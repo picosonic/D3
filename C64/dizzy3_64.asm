@@ -40,9 +40,9 @@ frmy = &033B ; Y position
 frmattr = &033C ; attrib
 .v033D
 .v033E
-.v033F
+.v033F ; ?? flame ?? &00 = not solid or deadly, bit &40 = solid ??
 .v0340 ; frame
-.v0342
+.v0342 ; ?? inc and dec, set to 01/03/06 ?? maybe jump/gravity related ??
 cursorindex = &0344
 .v0345 ; cache for X reg
 .v0346
@@ -988,6 +988,7 @@ ORG &1170
 .v1179 ; []
 .v117C ; []
 
+ORG &117F
 ; These are *variable* pointers in the range &1399..&1431 (melody data)
 .v117F ; pointers lo []
   EQUB &99
@@ -1182,7 +1183,7 @@ ORG &18D9
   EQUB &FF, &FF, &FF, &FF, &FF
 }
 
-.v18DE ; object table offset / &FF / ????
+pickupobj = &18DE ; object table offset / &FF / ????
 coins_tens = &18E5
 coins = &18E6
 .v18E7
@@ -1331,14 +1332,15 @@ ORG &18E8
   ; Reset lives
   LDA #&02:STA lives
 
+{
+  ; Duplicate highestliftpos array
   LDX #&00
-.l19A9
+.liftloop
   LDA highestliftpos,X:STA v18F4,X
 
-  INX
-  ; Is it < 4
-  CPX #&04 ; number of lifts ??
-  BCC l19A9
+  INX:CPX #numlifts
+  BCC liftloop
+}
 
   LDA #GAMESTARTROOM
   STA &03B8
@@ -1655,10 +1657,13 @@ ORG &18E8
   BCS l1C15
 
   JSR l1C62
+
 .l1BDA
+{
+  ; JRC - not actually used for frmx and frmy
   LDA #0:STA frmy
   LDA #1:STA frmx
-.l1BE4
+.loop
   INC frmx
 
   ; Is it >= 6
@@ -1667,13 +1672,15 @@ ORG &18E8
   BCS l1BFD
 
   JSR l3154
-  BEQ l1BE4
-  BCC l1BE4
+  BEQ loop
+  BCC loop
 
   LDA #&02:STA &03C1
   JMP l1C85
+}
 
 .l1BFD
+{
   DEC dizzyy ; go up due to jumping
   DEC &0342
   LDA &0342
@@ -1687,10 +1694,16 @@ ORG &18E8
   DEC &03C3
 
   JMP l1C85
+}
 
 .l1C15
+{
   JSR l1C62
+}
+
 .l1C18
+{
+  ; JRC - not actually used for frmx and frmy
   LDA #22:STA frmy
   LDA #1:STA frmx
 
@@ -1698,7 +1711,7 @@ ORG &18E8
   CMP &03C3
   BCC l1C85
 
-.l1C2A
+.loop
   INC frmx
 
   ; Is it >= 6
@@ -1707,12 +1720,14 @@ ORG &18E8
   BCS l1C3E
 
   JSR l3154
-  BEQ l1C2A
-  BCC l1C2A
+  BEQ loop
+  BCC loop
 
   JMP l1C51
+}
 
 .l1C3E
+{
   INC dizzyy ; apply gravity whilst jumping/rolling
   DEC &0342
   LDA &0342
@@ -1721,8 +1736,10 @@ ORG &18E8
   LDA #&00:STA &03C3
 
   JMP l1C85
+}
 
 .l1C51
+{
   ; Is it >= 17
   LDA &03C9
   CMP #&11
@@ -1733,7 +1750,10 @@ ORG &18E8
   LDA #&00
 
   JMP l1C85
+}
 
+; 00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 ...
+;  6  6  4  4  4  4  4  2  2  2  2  4  4  4  4  4  6  6 ...
 .l1C62
 {
   ; Is it < 7
@@ -1745,7 +1765,7 @@ ORG &18E8
   CMP #&0B
   BCS l1C72
 
-  LDA #&02
+  LDA #&02 ;;;;;;
   JMP l1C81
 
 .l1C72
@@ -1757,11 +1777,12 @@ ORG &18E8
   CMP #&10
   BCS l1C7F
 
-  LDA #&04
+  LDA #&04 ;;;;;;
   JMP l1C81
 
 .l1C7F
-  LDA #&06
+  LDA #&06 ;;;;;;
+
 .l1C81
   STA &0342 ; Set jump height
 
@@ -1769,6 +1790,7 @@ ORG &18E8
 }
 
 .l1C85
+{
   ; Is it >= 2
   LDA &03C8
   CMP #&02
@@ -1780,8 +1802,10 @@ ORG &18E8
   DEC &03C8
 
   JMP l1CA8
+}
 
 .l1C96
+{
   STA &03C8
   STA &03C7
   STA &03C3
@@ -1789,34 +1813,44 @@ ORG &18E8
   STA &03C1
 
   JMP l1CB9
+}
 
 .l1CA8
+{
   LDA &03C7
   BNE l1CB0
 
   JMP l1CB9
+}
 
 .l1CB0
+{
   CMP #&01
   BEQ l1CCB
 
   LDA #&00
   JMP l1CCD
+}
 
 .l1CB9
+{
   LDA &03C1
   CMP #&01
   BNE l1CC8
 
   LDA #&00:STA &03C1
   JMP l1BDA
+}
 
 .l1CC8
+{
   JMP l1D41
+}
 
 .l1CCB
+{
   LDA #&07
-.l1CCD
+.^l1CCD
   STA frmx
   LDA #12:STA frmy
   JSR l3154
@@ -1828,6 +1862,7 @@ ORG &18E8
 
   LDA #&00:STA &03C1
   JMP l1CF7
+}
 
 .l1CE9
   LDA &03C3
@@ -1916,6 +1951,7 @@ ORG &18E8
   STA &03C7
   STA &03C9
   STA &03C3
+
 .l1D7C
   LDA #21:STA frmy
 .l1D81
@@ -1939,11 +1975,13 @@ ORG &18E8
 .l1D9D
   DEC frmy
 
-  ; IS it >= 18
+  ; Is it >= 18
   LDA frmy
   CMP #18
   BCS l1D81
 
+.checkright
+{
   ; Check Dizzy X position < 57 (not gone off screen to right)
   LDA dizzyx
   CMP #57
@@ -1952,9 +1990,12 @@ ORG &18E8
   ; Dizzy has gone off screen to the right
   LDA #2:STA dizzyx ; Set Dizzy position to far left
   INC roomno ; Go right
+
   JMP l1DFC
+}
 
 .checkleft
+{
   ; Check Dizzy X position >= 2 (not gone off screen to left)
   CMP #2
   BCS checkvertical
@@ -1962,9 +2003,12 @@ ORG &18E8
   ; Dizzy has gone off screen to the left
   LDA #56:STA dizzyx ; Set Dizzy position to far right
   DEC roomno ; Go left
+
   JMP l1DFC
+}
 
 .checkvertical
+{
   ; Check Dizzy Y position < 128
   LDA dizzyy
   CMP #128
@@ -1979,8 +2023,10 @@ ORG &18E8
 
   JSR l2A01
   JMP l1DFC
+}
 
 .l1DE7
+{
   ; Check Dizzy Y position < 192
   LDA dizzyy
   CMP #192
@@ -1988,6 +2034,9 @@ ORG &18E8
 
   LDA #114:STA dizzyy ; Set Dizzy position to bottom
   LDA roomno:CLC:ADC #16:STA roomno ; Go up
+
+  ; Fall through
+}
 
 .l1DFC
   LDA roomno
@@ -2034,6 +2083,7 @@ ORG &18E8
   JMP l1E9E
 
 .l1E55
+{
   CMP #&02
   BNE l1E7E
 
@@ -2042,13 +2092,16 @@ ORG &18E8
 
   LDA #&02
   JMP l1E6E
+}
 
 .l1E63
+{
   CMP #&01
   BNE l1E6C
 
   LDA #&1A
   JMP l1E6E
+}
 
 .l1E6C
   LDA #&22
@@ -2105,9 +2158,10 @@ ORG &18E8
   JMP l1B68
 
 .l1ECC
+{
   LDX #&41 ; egg, MARKETSQUAREROOM, 64x152
   JSR collidewithdizzy
-  BCC l1EE8
+  BCC checkminetroll
 
   ; Make shopkeeper appear
   LDA #MARKETSQUAREROOM
@@ -2118,8 +2172,10 @@ ORG &18E8
 
   LDA #str_shopkeeperappearsmess:JSR prtmessage
   JMP l1F33
+}
 
-.l1EE8
+.checkminetroll
+{
   LDA roomno
   CMP #MINESROOM
   BNE l1F33
@@ -2156,11 +2212,13 @@ ORG &18E8
   LDA #CASTLEDUNGEONROOM:STA &C6D5 ; Put last coin in the dungeon (behind the troll)
 
   JMP l1B68
+}
 
 .l1F33
-  LDA #&FF
+{
+  LDA #obj_null
   STA &03D9
-  STA &18DE
+  STA pickupobj
 
   LDA &03C7
   BNE l1F48
@@ -2169,22 +2227,28 @@ ORG &18E8
   BNE l1F48
 
   JMP l1F50
+}
 
 .l1F48
+{
   LDA player_input
   AND #&EF ; Mask out "FIRE" press
   STA player_input
+}
 
 .l1F50
+{
   LDA player_input
   AND #JOY_FIRE ; Mask only "FIRE" press
-  BNE l1F5A
+  BNE checkpickup
 
   JMP checkdeadlyobj
+}
 
-.l1F5A
-  LDX #&00
-.l1F5C
+.checkpickup
+{
+  LDX #obj_bag
+.^l1F5C
   LDA dizzyx
   CLC:ADC #30
   STA frmx ; X position
@@ -2199,40 +2263,49 @@ ORG &18E8
   CLC:ADC #34
   STA &033D
 
-.l1F7A
+.objloop
+  ; Is object in this room ?
   LDA objs_rooms,X
   CMP roomno
-  BNE l1FA9
+  BNE nextobj
 
+  ; Is object flipped ?
   LDA objs_attrs,X
   AND #ATTR_REVERSE
-  BNE l1FA9
+  BNE nextobj
 
+  ; Is object X position < (dizzyx + 30) ?
   LDA objs_xlocs,X
   CMP frmx
-  BCC l1FA9
+  BCC nextobj
 
+  ; Is object X position >= (dizzyx + 30 + 8) ?
   CMP frmattr
-  BCS l1FA9
+  BCS nextobj
 
+  ; Is object Y position < (dizzyy + 26) ?
   LDA objs_ylocs,X
   CMP frmy
-  BCC l1FA9
+  BCC nextobj
 
+  ; Is object Y position >= (dizzyy + 26 + 34) ?
   CMP &033D
-  BCS l1FA9
+  BCS nextobj
 
-  STX &18DE
+  ; At this point the object overlaps dizzy
+  STX pickupobj
+
   JMP checkdenzil
 
-.l1FA9
+.nextobj
   INX
   ; Is it a collectable object
   CPX #maxcollectable+1
-  BCC l1F7A
+  BCC objloop
 
-  LDX #&FF
-  STX &18DE
+  ; Dizzy not overlapping a collectable
+  LDX #obj_null:STX pickupobj
+}
 
 .checkdenzil
 {
@@ -2458,7 +2531,7 @@ ORG &18E8
 ; Return here after checking Daisy
 .checkbag
 {
-  LDX &18DE
+  LDX pickupobj
   CPX #obj_bag
   BNE checkmanure
 
@@ -2466,7 +2539,7 @@ ORG &18E8
   LDA #collected:STA objs_rooms+obj_bag
 
 .^l20F1
-  LDA #&FF:STA &18DE
+  LDA #obj_null:STA pickupobj
   JMP coincheck
 }
 
@@ -2487,7 +2560,7 @@ ORG &18E8
   LDA #str_pickupmanuremess:JSR prtmessage
 
 .pickedup
-  LDX #&03
+  LDX #obj_manure+1 ; move on to next object
 
   JMP l1F5C
 }
@@ -2499,7 +2572,7 @@ ORG &18E8
 
   ; This is the blackhole - so drop everything!
 
-  ; Loop around the objects
+  ; Loop around the objects, skipping big bag
   LDX #obj_bean
 .objloop
   LDA objs_rooms,X
@@ -2532,7 +2605,7 @@ ORG &18E8
 .coincheck
 {
   ; Check to see if this object is a coin
-  LDX &18DE
+  LDX pickupobj
   CPX #firstcoin
   BCC notacoin
 
@@ -3613,8 +3686,7 @@ ORG &18E8
 .nextlift
   INX
 
-  ; Is it < 4
-  CPX #&04 ; Number of rooms with a lift
+  CPX #numlifts
   BCC checklift
 
 .done
@@ -4159,7 +4231,7 @@ ORG &18E8
   STA &4A80,X
   DEX
   INY
-  CPY #&3F
+  CPY #&3F ; < 63
   BCC fliploop
 
   LDA #&2A
@@ -4327,28 +4399,28 @@ ORG &2B13
   STX &03E0
   LDA &033F:ORA #&10:STA &033F
   LDA frmy:AND #&F8:STA frmy ; Y position
-  JMP l2BD5
+  JMP skipflame
 
 .notwater
   CMP #SPR_FLAME
-  BNE l2BD5
+  BNE skipflame
 
   ; Flame processing
   LDY &03DC
-  BEQ l2BD5
+  BEQ skipflame
 
-  ; Is it >= 10
   LDY flameindex
-  CPY #10
-  BCS l2BD5
+  CPY #MAXFLAMES
+  BCS skipflame
 
+  ; Process flame
   LDA frmx:STA flame_x,Y ; X position
   LDA frmy:STA flame_y,Y ; Y position
   LDA frmattr:ORA #PLOT_XOR:STA flame_attr,Y ; attr
   DEC &03BC
   INC flameindex
 
-.l2BD5
+.skipflame
   ; Calculate screen RAM position
   LDA screentable_lo,X:STA &FB
   LDA screentable_hi,X:STA &FC
@@ -5086,7 +5158,6 @@ ORG &2B13
   SEC:SBC #&54
   STA &FE ; Set up pointer &FD (lo)
 
-
   LDA &180E,X ; Set up pointers &35 / &FB / &FD (hi)
   STA &FB
   STA &FD
@@ -5158,8 +5229,7 @@ ORG &2B13
 
 .l310F
   INX
-  CPX #&04
-  ; Is it < 4
+  CPX #nummachines
   BCC machineloop
 
   JMP l311B
@@ -6542,7 +6612,7 @@ ORG &2B13
 {
   ; Check to see if this object is a coin - just done before entering this function, but hey ?
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-  LDX &18DE
+  LDX pickupobj
   CPX #firstcoin
   BCC done
 
@@ -6553,7 +6623,7 @@ ORG &2B13
   ; Set this coin to "collected", by removing from room
   LDA #OFFMAP
   STA objs_rooms,X
-  STA &18DE
+  STA pickupobj
 
   ; Update counter of coins collected so far
   LDA coins:CLC:ADC #1

@@ -234,6 +234,7 @@ obj_lifttop1       = 115
 obj_lifttop2       = 117
 obj_lifttop3       = 119
 obj_lifttop4       = 121
+obj_null           = 255
 
 obj_lifts          = 115 ; start of the 4 lifts
 
@@ -241,6 +242,7 @@ numlifts = 4
 liftparts = 2
 liftobjs = numlifts*liftparts
 endoflifts = obj_lifts+liftobjs
+nummachines = numlifts
 
 ; Upper RAM area
 
