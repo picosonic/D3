@@ -37,7 +37,9 @@ melody_ptr = &00A9
 frmx = &033A ; X position
 tmp1 = &033A
 frmy = &033B ; Y position
+tmp2 = &033B
 frmattr = &033C ; attrib
+tmp3 = &033C
 .v033D
 .v033E
 .v033F ; ?? flame ?? &00 = not solid or deadly, bit &40 = solid ??
@@ -1186,7 +1188,7 @@ ORG &18D9
 pickupobj = &18DE ; object table offset / &FF / ????
 coins_tens = &18E5
 coins = &18E6
-.v18E7
+.v18E7 ; not used ?? only ever set to 0 when coin counters reset
 
 ORG &18E8
 .liftrooms ; rooms with lifts in machine/key order []
@@ -1932,19 +1934,22 @@ ORG &18E8
   AND #&07
   BNE l1D7C
 
-  LDA #22:STA frmy
-  LDA #0:STA frmx
-.l1D5D
-  INC frmx
+{
+  LDA #22:STA tmp2
+  LDA #0:STA tmp1
+.loop
+  INC tmp1
 
   ; Is it >= 6
-  LDA frmx
+  LDA tmp1
   CMP #6
   BCS l1D7C
 
   JSR l3154
-  BCC l1D5D
-  BEQ l1D5D
+
+  ; Is it <= ??
+  BCC loop
+  BEQ loop
 
   LDA #&00
   STA &03C8
@@ -1952,33 +1957,40 @@ ORG &18E8
   STA &03C9
   STA &03C3
 
+  ; Fall through
+}
+
 .l1D7C
-  LDA #21:STA frmy
-.l1D81
-  LDA #1:STA frmx
-.l1D86
-  INC frmx
+{
+  LDA #21:STA tmp2
+.loop
+  LDA #1:STA tmp1
+.innerloop
+  INC tmp1
 
   ; Is it >= 6
-  LDA frmx
+  LDA tmp1
   CMP #6
   BCS l1D9D
 
   JSR l3154
 
-  BCC l1D86
-  BEQ l1D86
+  BCC innerloop
+  BEQ innerloop
 
   DEC dizzyy ; go up due to stairs
   JMP l1D41
 
 .l1D9D
-  DEC frmy
+  DEC tmp2
 
   ; Is it >= 18
-  LDA frmy
+  LDA tmp2
   CMP #18
-  BCS l1D81
+  BCS loop
+
+  ; Fall through
+}
 
 .checkright
 {
@@ -2136,7 +2148,7 @@ ORG &18E8
 .l1E9E
   JSR checkfordownunder
 
-  STA &5FF8
+  STA sprite_pointer ; Update Dizzy hardware sprite
   LDA #&FF:STA SPR_ENABLE ; Show sprites
   LDA &03C7
   CMP #&02
@@ -5232,22 +5244,23 @@ ORG &2B13
   CPX #nummachines
   BCC machineloop
 
-  JMP l311B
+  JMP checkprisonlift
 
 .l3117
   INX
   JSR drawobjframe
 
-.l311B
+.checkprisonlift
   LDA roomno
   CMP #DAISYSPRISONROOM
   BNE done
 
   ; Check if switch in Daisy's prison is activated
   LDA objs_attrs+obj_switch2
-  CMP #PAL_CYAN
+  CMP #PAL_CYAN ; it turns from cyan to white when activated
   BEQ done
 
+  ; Move Daisy's prison lift downwards (redrawing) until it reaches the bottom
   LDX #obj_lifttop
   LDA orig_ylocs,X:STA objs_ylocs,X
 .loop
@@ -5281,15 +5294,14 @@ ORG &2B13
 .l3154
 {
   LDA dizzyx
-  CLC:ADC frmx
-  STA frmattr
+  CLC:ADC tmp1
+  STA tmp3
 
-  DEC frmattr
+  DEC tmp3
 
   LDA dizzyy
-  CLC:ADC frmy
-  CLC
-  ADC #40
+  CLC:ADC tmp2
+  CLC:ADC #40
   STA &033D
 
   DEC &033D
@@ -5309,14 +5321,15 @@ ORG &2B13
   CLC:ADC #&20
   STA &FB
 
-  LDA frmattr
+  LDA tmp3
   LSR A
   CLC:ADC #&04
   TAY
   LDA (&FD),Y
   STA &033F
 
-  LDA frmattr
+  ; Check for even number
+  LDA tmp3
   AND #&01
   BEQ l31B5
 
@@ -5329,7 +5342,7 @@ ORG &2B13
 .l31B7
   STA &033E
 
-  LDA frmattr
+  LDA tmp3
   LSR A
   TAX
   LDA &1877,X
@@ -5686,7 +5699,7 @@ ORG &2B13
 
   LDA #COLOUR_WHITE:STA SPR_0_COLOUR,X
 
-  LDA #&33:STA &5FF8,X
+  LDA #&33:STA sprite_pointer,X ; Dot sprite
   LDA #&04:STA &0384,X
   LDA #&02:STA &037A,X
 
@@ -5759,7 +5772,7 @@ ORG &2B13
   LDA #&3C
   JSR l33D1
 
-  LDA #&37:STA &5FF8
+  LDA #&37:STA sprite_pointer ; Reverse death animation "small face"
   LDX #&00:STX &034E
   JSR l31EE
 
@@ -5772,16 +5785,16 @@ ORG &2B13
 .l349F
   JSR l3440
 
-  DEC &5FF8
+  DEC sprite_pointer
   DEY
-  BNE l349F
+  BNE l349F ; Loop until reverse death animation "large face", i.e. &34
 
   LDA #&00
   STA &03C8
   STA &03C7
   STA &03C9
   STA &03C2
-  STA &5FF8
+  STA sprite_pointer ; Default Dizzy sprite (arms up"
   STA &03C1
 
   LDX #&01
@@ -5811,7 +5824,7 @@ ORG &2B13
   LDA #&00
   JSR l33D1
 
-  LDA #&34:STA &5FF8
+  LDA #&34:STA sprite_pointer ; Dizzy death "big face"
   LDX #&00:STX &034E
   JSR l31EE
 
@@ -5825,16 +5838,16 @@ ORG &2B13
 .l3510
   JSR l3440
 
-  LDA &5FF8
+  LDA sprite_pointer
   ; Is it < 55
-  CMP #&37
+  CMP #&37 ; Dizzy death "small face"
   BCC l3522
 
-  LDA #&45:STA &5FF8
+  LDA #&45:STA sprite_pointer ; Blank sprite
   JMP l3525
 
 .l3522
-  INC &5FF8
+  INC sprite_pointer
 .l3525
   DEY
   BNE l3510
@@ -6966,7 +6979,9 @@ INCLUDE "dizzy_sprites.asm"
 .v5900 ; []
 .s5A00 ; to ???? = solidity bitmap ????
 .s5C00 ; to 5FE7 = 8x8 screen/border colour attribs
-.v5FF8 ; []
+
+ORG &5FF8
+.sprite_pointer ; hw sprite "pointers" []
 
 ORG &6000
 ; &6000..&7F3F = screen RAM (320x200 hires bitmap mode, $d011=$3b, $d016=8)

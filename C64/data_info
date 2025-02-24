@@ -13,6 +13,7 @@ $4000 .. $5180 = sprites
 
 $5A00 .. $5BFF = solidity bitmap
 $5C00 .. $5FE7 = 8x8 screen/border colour attribs
+$5FF8 .. $5FFF = hw sprite "pointers"
 
 $6000 .. $7F3F = screen memory
 
