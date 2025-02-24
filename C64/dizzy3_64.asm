@@ -2103,7 +2103,7 @@ ORG &18E8
   LDA &03C7
   BNE l1E63
 
-  LDA #&02
+  LDA #&02 ; Jump straight up animation
   JMP l1E6E
 }
 
@@ -2112,12 +2112,12 @@ ORG &18E8
   CMP #&01
   BNE l1E6C
 
-  LDA #&1A
+  LDA #&1A ; Jump right animation
   JMP l1E6E
 }
 
 .l1E6C
-  LDA #&22
+  LDA #&22 ; Jump left animation
 .l1E6E
   STA &FF
 
@@ -2136,16 +2136,16 @@ ORG &18E8
   CMP #&01
   BNE l1E92
 
-  LDA #&0A
+  LDA #&0A ; Walk right animation
   JMP l1E94
 
 .l1E92
-  LDA #&12
+  LDA #&12 ; Walk left animation
 .l1E94
   STA &FF
   LDA gamecounter
   AND #&07
-  CLC:ADC &FF
+  CLC:ADC &FF ; add offset
 .l1E9E
   JSR checkfordownunder
 
