@@ -87,14 +87,14 @@ lives = &03B9
 cursorattr = &03BF ; char attrib
 player_input = &03C0
 .v03C1
-.v03C2
-.v03C3
+.v03C2 ; ?? sprite animation frame related ??
+.v03C3 ; ?? sprite animation frame related ??
 gamecounter = &03C4 ; pace of game actions
 .v03C5
 .v03C6
 .v03C7
 .v03C8
-.v03C9
+.v03C9 ; ?? sprite animation frame related ??
 .v03D5 ; set to &FF and &00
 olddizzyx = &03D6
 olddizzyy = &03D7
@@ -2090,6 +2090,7 @@ ORG &18E8
   LDA &03C7
   BNE l1E7E
 
+  ; ?? Set sprite for "idle" animation ??
   LDA gamecounter
   AND #&01
   JMP l1E9E
@@ -4246,6 +4247,7 @@ ORG &18E8
   CPY #&3F ; < 63
   BCC fliploop
 
+  ; Set sprite
   LDA #&2A
 
   RTS
