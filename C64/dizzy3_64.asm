@@ -2103,7 +2103,7 @@ ORG &18E8
   LDA &03C7
   BNE l1E63
 
-  LDA #&02 ; Jump straight up animation
+  LDA #ANIM_JUMP_UP ; Jump straight up animation
   JMP l1E6E
 }
 
@@ -2112,12 +2112,12 @@ ORG &18E8
   CMP #&01
   BNE l1E6C
 
-  LDA #&1A ; Jump right animation
+  LDA #ANIM_JUMP_RIGHT ; Jump right animation
   JMP l1E6E
 }
 
 .l1E6C
-  LDA #&22 ; Jump left animation
+  LDA #ANIM_JUMP_LEFT ; Jump left animation
 .l1E6E
   STA &FF
 
@@ -2136,11 +2136,11 @@ ORG &18E8
   CMP #&01
   BNE l1E92
 
-  LDA #&0A ; Walk right animation
+  LDA #ANIM_WALK_RIGHT ; Walk right animation
   JMP l1E94
 
 .l1E92
-  LDA #&12 ; Walk left animation
+  LDA #ANIM_WALK_LEFT ; Walk left animation
 .l1E94
   STA &FF
   LDA gamecounter
