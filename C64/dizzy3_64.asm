@@ -115,7 +115,9 @@ ORG &0B00
 
 ; Current music playing
 .melody
+{
   EQUB TUNE_CONT
+}
 
 .musicplayer
 {
@@ -981,9 +983,11 @@ ORG &1147
 
 ORG &1170
 .melody_chan_pos ; []
+{
   EQUB &14 ; Channel 1 melody data pos
   EQUB &11 ; Channel 2 melody data pos
   EQUB &11 ; Channel 3 melody data pos
+}
 
 .v1173 ; []
 .v1176 ; []
@@ -993,13 +997,18 @@ ORG &1170
 ORG &117F
 ; These are *variable* pointers in the range &1399..&1431 (melody data)
 .v117F ; pointers lo []
+{
   EQUB &99
   EQUB &E2
   EQUB &31
+}
+
 .v1182 ; pointers hi []
+{
   EQUB &13
   EQUB &13
   EQUB &14
+}
 
 .v1185 ; []
 .v1188 ; []
@@ -1030,13 +1039,17 @@ ORG &117F
 ORG &11BC
   ; Current melody
 .melodychanptr_lo ; []
+{
   EQUB &0F
   EQUB &3D
   EQUB &65
+}
 .melodychanptr_hi ; []
+{
   EQUB &13
   EQUB &13
   EQUB &13
+}
 
 .v11C2
 .v11C3 ; []
@@ -1055,6 +1068,7 @@ ORG &11BC
 
 ORG &1235
 .melodyconfigs ; []
+{
   ; Melody 1 - Title screen
   EQUW m1c1
   EQUW m1c2
@@ -1074,6 +1088,7 @@ ORG &1235
   EQUW m4c1
   EQUW m4c2
   EQUW m4c3
+}
 
 .v124D ; []
 .v124E ; []
@@ -1092,6 +1107,7 @@ INCLUDE "melodydata.asm"
 ORG &180E
 ; These static pointers are to data in the range &5c00..&5fc0 (screen/border colour attribs)
 .v180E ; [] pointers lo
+{
   EQUB &00
   EQUB &28
   EQUB &50
@@ -1117,10 +1133,12 @@ ORG &180E
   EQUB &70
   EQUB &98
   EQUB &C0
+}
 
   EQUB &5B ; ???
 
 .v1828 ; [] pointers hi
+{
   EQUB &5C
   EQUB &5C
   EQUB &5C
@@ -1146,6 +1164,7 @@ ORG &180E
   EQUB &5F
   EQUB &5F
   EQUB &5F
+}
 
 .v1877 ; []
 
@@ -1170,7 +1189,6 @@ ORG &1897
   EQUB &00, &40, &80, &C0, &00, &40, &80, &C0
   EQUB &00
 }
-
 .screentable_hi
 {
   EQUB &60, &61, &62, &63, &65, &66, &67, &68
@@ -1201,18 +1219,18 @@ ORG &18E8
 
 .highestliftpos ; lifts upper Y position in machine/key order []
 {
-  EQUB 96
-  EQUB 88
-  EQUB 96
-  EQUB 136
+  EQUB 96  ; Keep out! Dozy's hut
+  EQUB 88  ; The dragon's lair
+  EQUB 96  ; Lift to the elders
+  EQUB 136 ; The lift control hut
 }
 
 .lowestliftpos ; lifts lower Y position in machine/key order []
 {
-  EQUB 152
-  EQUB 174
-  EQUB 172
-  EQUB 176
+  EQUB 152 ; Keep out! Dozy's hut
+  EQUB 174 ; The dragon's lair
+  EQUB 172 ; Lift to the elders
+  EQUB 176 ; The lift control hut
 }
 
 .v18F4 ; ?? copied from highestliftpos, related to lift Y position ?? []
@@ -1237,6 +1255,7 @@ ORG &18E8
   EQUB obj_dagger2
   EQUB obj_dagger3
 }
+numdeadlyobj = * - deadlyobj
 
 .deathmessages ; death message string table offsets for deadly obj (above) []
 {
@@ -3251,7 +3270,7 @@ ORG &18E8
 .nocontact
   INC &03B7:LDX &03B7
   ; Is it < 11
-  CPX #deathmessages-deadlyobj
+  CPX #numdeadlyobj
   BCC loop
 
   ; Fall through
@@ -4308,7 +4327,9 @@ ORG &18E8
 
   ; No idea what this is, used by l2D95
 .v2AF3 ; []
+{
   EQUB &00, &00, &b8, &00, &00, &00, &81, &00, &80
+}
 
 ; Some further unknown bytes here
 
@@ -4316,22 +4337,30 @@ ORG &2B13
 
 ; Flames
 .flameindex ; flame counter, up to MAXFLAMES (10)
+{
   EQUB 0
+}
 
 .flame_x
+{
   FOR n, 1, MAXFLAMES
     EQUB 0
   NEXT
+}
 
 .flame_y
+{
   FOR n, 1, MAXFLAMES
     EQUB 0
   NEXT
+}
 
 .flame_attr
+{
   FOR n, 1, MAXFLAMES
     EQUB 0
   NEXT
+}
 
 .install_ISR
 {
@@ -4352,10 +4381,14 @@ ORG &2B13
 }
 
 .isr_counter
+{
   EQUB 142
+}
 
 .muted
+{
   EQUB 0
+}
 
 .isr_routine
 {
@@ -6862,6 +6895,7 @@ ORG &2B13
 
 ; Cheat mode key-sequence
 .eclipse
+{
   EQUB KEY_E
   EQUB KEY_S
   EQUB KEY_P
@@ -6869,10 +6903,12 @@ ORG &2B13
   EQUB KEY_L
   EQUB KEY_C
   EQUB KEY_E
+}
 
 ; Room number adjustments based on key pressed
 ;   These indexes map to JOYSTICK bitfield
 .roomchange
+{
   EQUB 0
   EQUB 16   ; Go up (+16)    Joystick UP / Keyboard "SHIFT" or "COMMODORE" or "CONTROL"
   EQUB 0-16 ; Go down (-16)  Joystick DOWN
@@ -6889,6 +6925,7 @@ ORG &2B13
   EQUB 0
   EQUB 0
   EQUB 0
+}
 
 .checkcheatmode
 {
@@ -7036,6 +7073,7 @@ INCBIN "roomdata.bin"
 ; &A400
 ; Horizontal flip look up table
 .flip_lut
+{
   EQUB &00, &80, &40, &c0, &20, &a0, &60, &e0, &10, &90, &50, &d0, &30, &b0, &70, &f0
   EQUB &08, &88, &48, &c8, &28, &a8, &68, &e8, &18, &98, &58, &d8, &38, &b8, &78, &f8
   EQUB &04, &84, &44, &c4, &24, &a4, &64, &e4, &14, &94, &54, &d4, &34, &b4, &74, &f4
@@ -7052,6 +7090,7 @@ INCBIN "roomdata.bin"
   EQUB &0b, &8b, &4b, &cb, &2b, &ab, &6b, &eb, &1b, &9b, &5b, &db, &3b, &bb, &7b, &fb
   EQUB &07, &87, &47, &c7, &27, &a7, &67, &e7, &17, &97, &57, &d7, &37, &b7, &77, &f7
   EQUB &0f, &8f, &4f, &cf, &2f, &af, &6f, &ef, &1f, &9f, &5f, &df, &3f, &bf, &7f, &ff
+}
 
 .frametable
 INCBIN "frametable.bin"
