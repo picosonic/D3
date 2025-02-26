@@ -18,6 +18,11 @@ PAL_CYAN = 5
 PAL_YELLOW = 6
 PAL_WHITE = 7
 
+; Player direction
+ANIM_IDLE = 0
+ANIM_RIGHT = 1
+ANIM_LEFT = 2
+
 ; Attribute related
 ATTR_GRID = 8
 

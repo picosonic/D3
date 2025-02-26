@@ -87,7 +87,7 @@ lives = &03B9
 cursorattr = &03BF ; char attrib
 player_input = &03C0
 .v03C1
-.v03C2 ; ?? sprite animation frame related ??
+player_direction = &03C2 ; sprite animation direction
 .v03C3 ; ?? sprite animation frame related ??
 gamecounter = &03C4 ; pace of game actions
 .v03C5
@@ -1575,7 +1575,7 @@ ORG &18E8
 
 .l1B48
   LDA #&01:STA &03C8
-  LDA &03C2:STA &03C7
+  LDA player_direction:STA &03C7
   LDA #&00
 
   JMP l1B68
@@ -1606,17 +1606,17 @@ ORG &18E8
   JMP l1B95
 
 .l1B80
-  LDA #&02
+  LDA #ANIM_LEFT
 .l1B82
   STA &03C7
-  STA &03C2
+  STA player_direction
 
   LDA #&01:STA &03C8
 
   JMP l1B95
 
 .l1B90
-  LDA #&01
+  LDA #ANIM_RIGHT
   JMP l1B82
 
 .l1B95
@@ -1643,9 +1643,10 @@ ORG &18E8
   CMP #JOY_UP
   BNE l1BBE
 
-  LDA #&00
+  LDA #ANIM_IDLE
   STA &03C7
-  STA &03C2
+  STA player_direction
+
 .l1BBE
   LDA #&02:STA &03C8
   LDA #&00:STA &03C9
@@ -2033,7 +2034,9 @@ ORG &18E8
   LDA #0:STA dizzyy ; Set Dizzy position to top
   LDA roomno:SEC:SBC #16:STA roomno ; Go down
 
-  JSR l2A01
+  ; Check for entering/leaving Australia
+  JSR check_oz
+
   JMP l1DFC
 }
 
@@ -2104,7 +2107,7 @@ ORG &18E8
   BNE l1E63
 
   LDA #ANIM_JUMP_UP ; Jump straight up animation
-  JMP l1E6E
+  JMP set_jump_animation
 }
 
 .l1E63
@@ -2113,12 +2116,13 @@ ORG &18E8
   BNE l1E6C
 
   LDA #ANIM_JUMP_RIGHT ; Jump right animation
-  JMP l1E6E
+  JMP set_jump_animation
 }
 
 .l1E6C
+{
   LDA #ANIM_JUMP_LEFT ; Jump left animation
-.l1E6E
+.^set_jump_animation
   STA &FF
 
   LDA &03C9
@@ -2126,38 +2130,51 @@ ORG &18E8
   AND #&07
   CLC:ADC &FF
   JMP l1E9E
+}
 
 .l1E7E
-  LDA &03C2
-  BEQ l1E9E
+{
+  ; Check animation direction
+  LDA player_direction
+  BEQ l1E9E ; No direction
 
   JSR l2AB7
-  LDA &03C2
-  CMP #&01
-  BNE l1E92
+
+  ; Check for right animation direction
+  LDA player_direction
+  CMP #ANIM_RIGHT
+  BNE goingleft
 
   LDA #ANIM_WALK_RIGHT ; Walk right animation
-  JMP l1E94
+  JMP set_walk_animation
 
-.l1E92
+.goingleft
   LDA #ANIM_WALK_LEFT ; Walk left animation
-.l1E94
+
+.set_walk_animation
   STA &FF
+
+  ; Set current animation frame
   LDA gamecounter
   AND #&07
   CLC:ADC &FF ; add offset
+
+  ; Fall through
+}
+
 .l1E9E
+{
   JSR checkfordownunder
 
   STA sprite_pointer ; Update Dizzy hardware sprite
   LDA #&FF:STA SPR_ENABLE ; Show sprites
   LDA &03C7
   CMP #&02
-  BEQ l1ECC
+  BEQ checkshopkeeper
 
   LDX #&43 ; egg, CASTLEDUNGEONROOM, 80x160
   JSR collidewithdizzy
-  BCC l1ECC
+  BCC checkshopkeeper
 
   ; Collide with troll
   LDA #str_getbackintheremess:JSR prtmessage
@@ -2169,8 +2186,9 @@ ORG &18E8
   ; Set Dizzy tumbling left
   LDA #JOY_LEFT+JOY_UP:STA player_input
   JMP l1B68
+}
 
-.l1ECC
+.checkshopkeeper
 {
   LDX #&41 ; egg, MARKETSQUAREROOM, 64x152
   JSR collidewithdizzy
@@ -4135,12 +4153,13 @@ ORG &18E8
   RTS
 }
 
-.l2A01
+.check_oz
 {
   LDA roomno
   CMP #STRANGENEWROOM
   BEQ l2A11
 
+  ; Check for leaving Australia
   CMP #UNDERAUSROOM
   BNE done
 
@@ -4149,9 +4168,9 @@ ORG &18E8
 .l2A11
   LDA #114:STA dizzyy
 
-  LDA #&01
+  LDA #ANIM_RIGHT
   STA &03C7
-  STA &03C2
+  STA player_direction
 
   LDA #&02:STA &03C8
   LDA #&01:STA &03C9
@@ -5795,7 +5814,7 @@ ORG &2B13
   STA &03C8
   STA &03C7
   STA &03C9
-  STA &03C2
+  STA player_direction ; = ANIM_IDLE
   STA sprite_pointer ; Default Dizzy sprite (arms up"
   STA &03C1
 
