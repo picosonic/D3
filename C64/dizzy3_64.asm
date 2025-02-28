@@ -76,7 +76,8 @@ msgbox_height = &0399
 .v039A
 cursorx = &039B ; char cursor X
 cursory = &039C ; char cursor Y
-.v03B7 ; multi-use - death str id
+index = &03B7
+deathid = &03B7
 .v03B8 ; roomno related ?
 lives = &03B9
 .v03BA
@@ -3254,7 +3255,7 @@ numdeadlyobj = * - deadlyobj
 .checkdeadlyobj
 {
   ; Check all the things that can kill Dizzy on contact
-  LDX #&00:STX &03B7
+  LDX #&00:STX index
 
 .loop
   LDA deadlyobj,X
@@ -3263,12 +3264,12 @@ numdeadlyobj = * - deadlyobj
   BCC nocontact
 
   ; Contact has been made
-  LDX &03B7 ; offset
+  LDX index
   LDA deathmessages,X
   JMP storekillstr
 
 .nocontact
-  INC &03B7:LDX &03B7
+  INC index:LDX index
   ; Is it < 11
   CPX #numdeadlyobj
   BCC loop
@@ -3411,7 +3412,7 @@ numdeadlyobj = * - deadlyobj
 
 .storekillstr
 {
-  STA &03B7 ; Store "killed-by" message id
+  STA deathid ; Store "killed-by" message id
 
   ; Was it daggers that hurt Dizzy
   CMP #str_killedbydaggersmess
@@ -3438,14 +3439,15 @@ numdeadlyobj = * - deadlyobj
   LDA #str_deadwindow:JSR prtmessage
 
   ; Reason for losing life message
-  LDA &03B7
+  LDA deathid
   JSR prtmessage
 
+  ; Delay whilst death message is shown
   LDA #&07:STA &03B7
 .loop
   LDA #&FA:JSR delay
 
-  DEC &03B7
+  DEC index
   BNE loop
 
   LDA lives
@@ -3686,7 +3688,7 @@ numdeadlyobj = * - deadlyobj
   CMP #PAL_WHITE
   BNE nextlift
 
-  STX &03B7
+  STX index
   TXA
   ASL A
   CLC:ADC #obj_lifts
@@ -3705,7 +3707,7 @@ numdeadlyobj = * - deadlyobj
   INC objs_ylocs,X
   JSR redrawobj
 
-  LDY &03B7
+  LDY index
   LDA objs_ylocs,X:STA v18F4,Y
   CMP lowestliftpos,Y
   BCC done
@@ -3725,7 +3727,7 @@ numdeadlyobj = * - deadlyobj
   DEC objs_ylocs,X
   JSR redrawobj
 
-  LDY &03B7
+  LDY index
   LDA objs_ylocs,X:STA v18F4,Y
   CMP highestliftpos,Y
   BEQ l272F
