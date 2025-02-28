@@ -1262,12 +1262,15 @@ numdeadlyobj = * - deadlyobj
 {
   EQUB str_armorogkilledmess
   EQUB str_killedbyportcullis
+
   EQUB str_killedbyliftmess
   EQUB str_killedbyliftmess
   EQUB str_killedbyliftmess
   EQUB str_killedbyliftmess
+
   EQUB str_killedbyhawk
   EQUB str_ratgotyoumess
+
   EQUB str_killedbydaggersmess
   EQUB str_killedbydaggersmess
   EQUB str_killedbydaggersmess
@@ -2045,7 +2048,7 @@ numdeadlyobj = * - deadlyobj
   ; Check Dizzy Y position < 128
   LDA dizzyy
   CMP #128
-  BCC l1E1D
+  BCC setdizzyspritepos
 
   ; Check Dizzy Y position >= 192
   CMP #192
@@ -2062,18 +2065,20 @@ numdeadlyobj = * - deadlyobj
 
 .l1DE7
 {
-  ; Check Dizzy Y position < 192
+  ; Check Dizzy Y position < 192 - this will _never_ be the case
   LDA dizzyy
   CMP #192
-  BCC l1E1D
+  BCC setdizzyspritepos
 
+  ; Dizzy is going up a screen
   LDA #114:STA dizzyy ; Set Dizzy position to bottom
-  LDA roomno:CLC:ADC #16:STA roomno ; Go up
+  LDA roomno:CLC:ADC #16:STA roomno
 
   ; Fall through
 }
 
 .l1DFC
+{
   LDA roomno
   CMP #EASTWINGROOM
   BEQ l1E12
@@ -2087,26 +2092,37 @@ numdeadlyobj = * - deadlyobj
 
   LDA roomno
   JSR l2F22
-.l1E1D
+
+.^setdizzyspritepos
+  ; Set Dizzy hardware sprite Y position
   LDA dizzyy:CLC:ADC #90:STA SPR_0_Y
 
+  ; Set Dizzy hardware sprite X position
   LDA dizzyx
-  ASL A
-  ASL A
-  CLC:ADC #56
+  ASL A       ; * 4
+  ASL A       ;
+  CLC:ADC #56 ; + 56
   STA SPR_0_X
 
-  BCC l1E3B
+  ; Check for overflow
+  BCC sprite_lhs
 
-  LDA SPR_MSB_X
-  ORA #&01
+  ; Overflow happened (Dizzy at far rhs), so set bottom bit
+  LDA SPR_MSB_X:ORA #&01
+
   JMP l1E40
+}
 
-.l1E3B
-  LDA SPR_MSB_X
-  AND #&FE ; round down to even number
+.sprite_lhs
+{
+  ; No overflow (Dizzy not at far rhs), so clear bottom bit
+  LDA SPR_MSB_X:AND #&FE
+}
+
 .l1E40
+{
   STA SPR_MSB_X
+
   LDA &03C8
   BNE l1E55
 
@@ -2117,6 +2133,7 @@ numdeadlyobj = * - deadlyobj
   LDA gamecounter
   AND #&01
   JMP l1E9E
+}
 
 .l1E55
 {
