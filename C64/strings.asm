@@ -898,6 +898,7 @@ drawbox = 250 ; YES
   EQUS mpen+4,mxy+6,56,drawbox,22,6,mxy+16,76
 .carrymess
   EQUS mpen+5,"YOU:ARE:CARRYING",mpen+2,mend+mend2-1
+
 .inventorywithbag
   EQUS mpen+4,mxy+6,48,drawbox,22,8,mxy+16,68
   EQUS mpen+5,"YOU:ARE:CARRYING",mpen+2,mend+mend2-1
