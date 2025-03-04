@@ -18,6 +18,10 @@ PAL_CYAN = 5
 PAL_YELLOW = 6
 PAL_WHITE = 7
 
+; Text mode metrics for 320x200 graphics mode (8x8 per char)
+CHAR_COLUMNS = 40
+CHAR_ROWS = 25
+
 ; Player direction
 ANIM_IDLE = 0
 ANIM_RIGHT = 1

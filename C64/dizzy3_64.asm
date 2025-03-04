@@ -1110,68 +1110,19 @@ ORG &180E
 ;   at 40 characters per row
 .screenattrtable_lo ; [] pointers lo
 {
-  EQUB &00
-  EQUB &28
-  EQUB &50
-  EQUB &78
-  EQUB &A0
-  EQUB &C8
-  EQUB &F0
-
-  EQUB &18
-  EQUB &40
-  EQUB &68
-  EQUB &90
-  EQUB &B8
-  EQUB &E0
-
-  EQUB &08
-  EQUB &30
-  EQUB &58
-  EQUB &80
-  EQUB &A8
-  EQUB &D0
-  EQUB &F8
-
-  EQUB &20
-  EQUB &48
-  EQUB &70
-  EQUB &98
-  EQUB &C0
+  FOR n, 0, CHAR_ROWS-1
+    EQUB lo(screen_attribs+(n*CHAR_COLUMNS))
+  NEXT
 }
 
-  EQUB &5B ; ???
+.u1827
+  EQUB &5B ; ??? not sure what this is for ???
 
 .screenattrtable_hi ; [] pointers hi
 {
-  EQUB &5C
-  EQUB &5C
-  EQUB &5C
-  EQUB &5C
-  EQUB &5C
-  EQUB &5C
-  EQUB &5C
-
-  EQUB &5D
-  EQUB &5D
-  EQUB &5D
-  EQUB &5D
-  EQUB &5D
-  EQUB &5D
-
-  EQUB &5E
-  EQUB &5E
-  EQUB &5E
-  EQUB &5E
-  EQUB &5E
-  EQUB &5E
-  EQUB &5E
-
-  EQUB &5F
-  EQUB &5F
-  EQUB &5F
-  EQUB &5F
-  EQUB &5F
+  FOR n, 0, CHAR_ROWS-1
+    EQUB hi(screen_attribs+(n*CHAR_COLUMNS))
+  NEXT
 }
 
 .v1877 ; []
@@ -1189,20 +1140,18 @@ ORG &1897
   EQUB &10 ; white
 }
 
-; Lookup table for screen offsets
+; Lookup table for screen offsets, for the start of each row
 .screentable_lo
 {
-  EQUB &00, &40, &80, &C0, &00, &40, &80, &C0
-  EQUB &00, &40, &80, &C0, &00, &40, &80, &C0
-  EQUB &00, &40, &80, &C0, &00, &40, &80, &C0
-  EQUB &00
+  FOR n, 0, CHAR_ROWS-1
+    EQUB lo(screen_memory+(n*CHAR_COLUMNS*8))
+  NEXT
 }
 .screentable_hi
 {
-  EQUB &60, &61, &62, &63, &65, &66, &67, &68
-  EQUB &6A, &6B, &6C, &6D, &6F, &70, &71, &72
-  EQUB &74, &75, &76, &77, &79, &7A, &7B, &7C
-  EQUB &7E
+  FOR n, 0, CHAR_ROWS-1
+    EQUB hi(screen_memory+(n*CHAR_COLUMNS*8))
+  NEXT
 }
 
 ORG &18D9
@@ -7081,12 +7030,16 @@ INCLUDE "dizzy_sprites.asm"
 .v5800 ; []
 .v5900 ; []
 .s5A00 ; to ???? = solidity bitmap ????
-.s5C00 ; to 5FE7 = 8x8 screen/border colour attribs
+
+ORG &5C00
+; to 5FE7 = 8x8 screen/border colour attribs
+.screen_attribs
 
 ORG &5FF8
 .sprite_pointer ; hw sprite "pointers" []
 
 ORG &6000
+.screen_memory
 ; &6000..&7F3F = screen RAM (320x200 hires bitmap mode, $d011=$3b, $d016=8)
 INCBIN "screendump.bin"
 
