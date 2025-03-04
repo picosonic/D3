@@ -1107,7 +1107,8 @@ INCLUDE "melodydata.asm"
 
 ORG &180E
 ; These static pointers are to data in the range &5c00..&5fc0 (screen/border colour attribs)
-.v180E ; [] pointers lo
+;   at 40 characters per row
+.screenattrtable_lo ; [] pointers lo
 {
   EQUB &00
   EQUB &28
@@ -1116,12 +1117,14 @@ ORG &180E
   EQUB &A0
   EQUB &C8
   EQUB &F0
+
   EQUB &18
   EQUB &40
   EQUB &68
   EQUB &90
   EQUB &B8
   EQUB &E0
+
   EQUB &08
   EQUB &30
   EQUB &58
@@ -1129,6 +1132,7 @@ ORG &180E
   EQUB &A8
   EQUB &D0
   EQUB &F8
+
   EQUB &20
   EQUB &48
   EQUB &70
@@ -1138,7 +1142,7 @@ ORG &180E
 
   EQUB &5B ; ???
 
-.v1828 ; [] pointers hi
+.screenattrtable_hi ; [] pointers hi
 {
   EQUB &5C
   EQUB &5C
@@ -1147,12 +1151,14 @@ ORG &180E
   EQUB &5C
   EQUB &5C
   EQUB &5C
+
   EQUB &5D
   EQUB &5D
   EQUB &5D
   EQUB &5D
   EQUB &5D
   EQUB &5D
+
   EQUB &5E
   EQUB &5E
   EQUB &5E
@@ -1160,6 +1166,7 @@ ORG &180E
   EQUB &5E
   EQUB &5E
   EQUB &5E
+
   EQUB &5F
   EQUB &5F
   EQUB &5F
@@ -2734,7 +2741,7 @@ numdeadlyobj = * - deadlyobj
   BEQ l21B4
 
   LDA &03D9
-  CMP #&FF
+  CMP #obj_null
   BEQ inventoryprompt
 
 .l21B4
@@ -2748,13 +2755,15 @@ numdeadlyobj = * - deadlyobj
   LDA #str_selectitemmess:JSR prtmessage
 
 .l21C9
+{
   LDX #&00
-.l21CB
+.loop
   LDA inventorylist,X
   BEQ l21D4
 
   INX
-  JMP l21CB
+  JMP loop
+}
 
 .l21D4
   STX &03D9
@@ -2764,7 +2773,7 @@ numdeadlyobj = * - deadlyobj
 {
   ; Set non-highlighted entry inventory colour
   LDA #PAL_CYAN
-  JSR l3A71
+  JSR setinventorycolour
 
   ; Slow down inventory selection
   LDA #&3C:JSR delay
@@ -2788,23 +2797,28 @@ numdeadlyobj = * - deadlyobj
   LDA inventorylist,X
   BNE l21F9
 
-  LDA #&FF
+  LDA #obj_null
 .l21F9
   STA &03D9
+
   JSR resetgamestate
   JMP shopkeeperrou
 }
 
+; Called when something was pressed on inventory screen
+; .. but it wasn't FIRE
 .checkdirection
 {
   ; Set highlighted inventory item colour
   LDA #PAL_MAGENTA
-  JSR l3A71
+  JSR setinventorycolour
 
   ; Was it LEFT pressed?
   LDA player_input
   AND #JOY_LEFT
-  BEQ inventoryright
+  BEQ inventoryright ; - no, so go right
+
+  ; Fall through
 }
 
 .inventoryleft
@@ -2812,7 +2826,7 @@ numdeadlyobj = * - deadlyobj
   ; (go UP inventory list)
   DEC &03D9
 
-  ; Is it >= 250
+  ; Is it >= 250 (i.e. now negative)
   LDX &03D9
   CPX #&FA
   BCS l21C9
@@ -2828,8 +2842,8 @@ numdeadlyobj = * - deadlyobj
   LDA inventorylist,X
   BNE inventoryloop
 
+  ; Move selection highlight back to top of list
   LDA #&00:STA &03D9
-
   JMP inventoryloop
 }
 
@@ -4150,7 +4164,7 @@ numdeadlyobj = * - deadlyobj
 {
   STX &034E ; Cache X
 
-  LDX &03D9
+  LDX &03D9 ; Get object id
 
   ; Set objects[X] as hidden
   LDA #OFFMAP
@@ -4543,8 +4557,11 @@ ORG &2B13
   LDA frmy ; Y position
   LSR A:LSR A:LSR A ; Divide by 8
   TAX
-  LDA &1828,X:SEC:SBC &03DC:STA &FE
-  LDA &180E,X
+
+  ; Set pointer at &FD to screen attribute RAM
+  LDA screenattrtable_hi,X:SEC:SBC &03DC:STA &FE
+  LDA screenattrtable_lo,X
+
   SEC:SBC #&0C
   BCS l2C23
 
@@ -5174,8 +5191,10 @@ ORG &2B13
 .samepage
   STA &FB
 
-  LDA &1828,X:STA &FE
-  LDA &180E,X
+  ; Set pointer at &FD to screen attribute RAM
+  LDA screenattrtable_hi,X:STA &FE
+  LDA screenattrtable_lo,X
+
   CLC:ADC #&05
   BCC l304B
 
@@ -5235,7 +5254,7 @@ ORG &2B13
 {
   LDX #&06
 .loop
-  LDA &1828,X:STA &FC ; Set up pointer &FB (lo)
+  LDA screenattrtable_hi,X:STA &FC ; Set up pointer &FB (lo)
 
   SEC:SBC #&04
   STA &36 ; Set up pointer &35 (lo)
@@ -5243,7 +5262,7 @@ ORG &2B13
   SEC:SBC #&54
   STA &FE ; Set up pointer &FD (lo)
 
-  LDA &180E,X ; Set up pointers &35 / &FB / &FD (hi)
+  LDA screenattrtable_lo,X ; Set up pointers &35 / &FB / &FD (hi)
   STA &FB
   STA &FD
   STA &35
@@ -5383,10 +5402,14 @@ ORG &2B13
   LSR A
   LSR A
   TAX
+
+  ; Set pointer at &FB to screen RAM
   LDA screentable_lo,X:STA &FB
   LDA screentable_hi,X:STA &FC
-  LDA &180E,X:STA &FD
-  LDA &1828,X:SEC:SBC #&04:STA &FE
+
+  ; Set pointer at &FD to screen attribute RAM
+  LDA screenattrtable_lo,X:STA &FD
+  LDA screenattrtable_hi,X:SEC:SBC #&04:STA &FE
 
   LDA &033D
   AND #&07
@@ -6578,8 +6601,9 @@ ORG &2B13
   JMP l392A
 
 .l38C3
-  LDA &1828,X:SEC:SBC #&04:STA &B3
-  LDA &180E,X:STA &B2
+  ; Set pointer &B2 to screen attribute RAM
+  LDA screenattrtable_hi,X:SEC:SBC #&04:STA &B3
+  LDA screenattrtable_lo,X:STA &B2
 
   LDA &03DA
   SEC:SBC #&18 ; -24
@@ -6830,32 +6854,34 @@ ORG &2B13
   RTS
 }
 
-.l3A71
+.setinventorycolour
 {
   TAX
   LDA c64palette,X:STA frmattr
 
-  LDA #&0B ; Default to small bag
+  LDA #&0B ; Default to small bag (drawn lower down screen)
 
   ; Check for larger inventory (bag collected)
   LDX objs_rooms+obj_bag
   CPX #collected
   BNE l3A83
 
-  LDA #&0A ; Big bag
+  LDA #&0A ; Big bag (drawn higher up screen - top of play area)
 .l3A83
+  ; Create pointer to colour attribs RAM for selected inventory line
   CLC:ADC &03D9
   TAX
-  LDA &180E,X:STA &FB
-  LDA &1828,X:STA &FC
+  LDA screenattrtable_lo,X:STA &FB
+  LDA screenattrtable_hi,X:STA &FC
 
-  LDY #&09
+  ; Set colour of text
+  LDY #&09 ; Left X position of inventory item text (min 0)
   LDA frmattr
 .loop
   STA (&FB),Y
   INY
   ; Is it < 31
-  CPY #&1F
+  CPY #&1F ; Right X position of inventory item text (max 40)
   BCC loop
 
   RTS
