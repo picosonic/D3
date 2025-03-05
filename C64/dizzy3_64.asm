@@ -5128,12 +5128,12 @@ ORG &2B13
 .cleargamescreen
 {
   ; Set up a pointer in &FB
-  LDA #6:STA tmp1 ; Start 6 blocks down from top of screen
+  LDA #GAMEAREA_TOP:STA tmp1 ; Start 6 blocks down from top of screen
 .clearrow
   LDX tmp1
   LDA screentable_hi,X:STA &FC
   LDA screentable_lo,X
-  CLC:ADC #&28
+  CLC:ADC #GAMEAREA_LEFT*8 ; Skip left border (bitmap)
   BCC samepage
 
   INC &FC
@@ -5144,12 +5144,13 @@ ORG &2B13
   LDA screenattrtable_hi,X:STA &FE
   LDA screenattrtable_lo,X
 
-  CLC:ADC #&05
-  BCC l304B
+  CLC:ADC #GAMEAREA_LEFT ; Skip left border (attribs)
+  BCC samepage2
 
   INC &FE
-.l304B
+.samepage2
   STA &FD
+
   STA &B0
   STA &B2
 
@@ -5160,22 +5161,23 @@ ORG &2B13
 
   LDY #&F0
   LDA #&00
-.l3061
+.clearbitmaploop
   DEY
-  STA (&FB),Y
+  STA (&FB),Y ; Clear bitmap char
   CPY #&00
-  BNE l3061
+  BNE clearbitmaploop
 
   LDY #&1E
-.l306A
+.clearattrloop
   DEY
   STA (&B0),Y
-  STA (&FD),Y
+  STA (&FD),Y ; Clear attrib char
 
-  LDA #&10:STA (&B2),Y
-  LDA #&00
+  LDA #&10:STA (&B2),Y ; Set game area background colour (&10=black)
+
+  LDA #&00 ; Reset char to clear attrib to
   CPY #&00
-  BNE l306A
+  BNE clearattrloop
 
   ; Advance down the screen by 1 block
   INC tmp1
@@ -5183,7 +5185,7 @@ ORG &2B13
   ; Check for bottom of game screen
   LDA tmp1
   ; Is it < 23
-  CMP #23
+  CMP #GAMEAREA_BOTTOM+1
   BCC clearrow
 
   ; Clear &5800..&59FF
@@ -5201,7 +5203,7 @@ ORG &2B13
 
 .l3090
 {
-  LDX #&06
+  LDX #GAMEAREA_TOP ; Row to start from
 .loop
   LDA screenattrtable_hi,X:STA &FC ; Set up pointer &FB (lo)
 
@@ -5237,9 +5239,10 @@ ORG &2B13
   CPY #&04
   BNE innerloop
 
+  ; Advance down to next row
   INX
   ; Is it < 23
-  CPX #&17
+  CPX #GAMEAREA_BOTTOM+1
   BCC loop
 
   RTS

@@ -21,6 +21,9 @@ PAL_WHITE = 7
 ; Text mode metrics for 320x200 graphics mode (8x8 per char)
 CHAR_COLUMNS = 40
 CHAR_ROWS = 25
+GAMEAREA_TOP = 6
+GAMEAREA_LEFT = 5
+GAMEAREA_BOTTOM = 22
 
 ; Player direction
 ANIM_IDLE = 0
