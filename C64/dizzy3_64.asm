@@ -1272,7 +1272,7 @@ numdeadlyobj = * - deadlyobj
   LDA #TITLEROOM:STA roomno
 
   JSR l2E79
-  JSR l3090
+  JSR convertpalette
   JSR drawcoincount
 
   LDA #58:STA frmx ; X position
@@ -1289,7 +1289,7 @@ numdeadlyobj = * - deadlyobj
 
   JSR cleargamescreen
 
-  ; Clear &5800 to &5BE8
+  ; Clear &5800 to &5BE8 - spectrum palette screen attribs
   LDX #&00
   TXA
 .l1983
@@ -3229,7 +3229,7 @@ numdeadlyobj = * - deadlyobj
   LDA #&FF:STA &03D5
 
   JSR drawobjects
-  JSR l3090
+  JSR convertpalette
 }
 
 .checkdeadlyobj
@@ -5117,7 +5117,7 @@ ORG &2B13
 
   JSR drawobjects
   JSR l30CD
-  JSR l3090
+  JSR convertpalette
 
   LDA #&FF:STA SPR_ENABLE ; Show sprites
 
@@ -5188,7 +5188,7 @@ ORG &2B13
   CMP #GAMEAREA_BOTTOM+1
   BCC clearrow
 
-  ; Clear &5800..&59FF
+  ; Clear &5800..&59FF - some of the spectrum palette screen attribs
   LDA #&00
   TAX
 .loop
@@ -5201,49 +5201,52 @@ ORG &2B13
   RTS
 }
 
-.l3090
+; Screen is initially drawn with attribs in spectrum palette to &5800
+; this function swaps them to C64 palette
+.convertpalette
 {
   LDX #GAMEAREA_TOP ; Row to start from
-.loop
-  LDA screenattrtable_hi,X:STA &FC ; Set up pointer &FB (lo)
+.rowloop
+  LDA screenattrtable_hi,X:STA &FC ; Set up pointer &FB (hi)
 
   SEC:SBC #&04
-  STA &36 ; Set up pointer &35 (lo)
+  STA &36 ; Set up pointer &35 (hi), &04 pages lower (&5800)
 
   SEC:SBC #&54
-  STA &FE ; Set up pointer &FD (lo)
+  STA &FE ; Set up pointer &FD (hi), &58 pages lower (&0400)
 
-  LDA screenattrtable_lo,X ; Set up pointers &35 / &FB / &FD (hi)
+  LDA screenattrtable_lo,X ; Set up pointers &35 / &FB / &FD (lo), all the same offset
   STA &FB
   STA &FD
   STA &35
 
-  LDY #&22
-.innerloop
-  LDA (&35),Y
-  AND #&07
-  BEQ l30BE
+  LDY #CHAR_COLUMNS-GAMEAREA_LEFT-1 ; Start at last column of game area
+.columnloop
+  LDA (&35),Y ; read from &5800[]
+  AND #%00000111 ; mask off (spectrum colours)
+  BEQ l30BE ; If it's black - skip C64 palette lookup
 
-  STX &0346
-  TAX
-  LDA c64palette,X
-  LDX &0346
-  BNE l30C0
+  ; C64 palette lookup
+  STX &0346 ; Cache X
+  TAX ; Convert spectrum palette value to offset
+  LDA c64palette,X ; Lookup C64 equivalent colour
+  LDX &0346 ; Restore X
+  BNE l30C0 ; Row will never be 0, so always branch
 
 .l30BE
-  LDA (&FD),Y
+  LDA (&FD),Y ; read from &0400[]
+
 .l30C0
-  STA (&FB),Y
+  STA (&FB),Y ; store attribute to screen attrib memory
 
-  DEY
-  CPY #&04
-  BNE innerloop
+  DEY ; look at column to the left next, until we are off the left of the game area
+  CPY #GAMEAREA_LEFT-1
+  BNE columnloop
 
-  ; Advance down to next row
+  ; Advance down to next row, until we are off the bottom of the game area
   INX
-  ; Is it < 23
   CPX #GAMEAREA_BOTTOM+1
-  BCC loop
+  BCC rowloop
 
   RTS
 }
@@ -7030,9 +7033,10 @@ ORG &4000
 INCLUDE "dizzy_sprites.asm"
 ; &5180 - end of sprite bitmaps
 
+ORG &5800
 .v5800 ; []
-.v5900 ; []
-.s5A00 ; to ???? = solidity bitmap ????
+INCBIN "attribs.bin"
+;.s5A00 ; to ???? = solidity bitmap ????
 
 ORG &5C00
 ; to 5FE7 = 8x8 screen/border colour attribs
