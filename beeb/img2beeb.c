@@ -6,6 +6,7 @@
 #include <string.h>
 #include <strings.h>
 #include <math.h>
+#include <sys/types.h>
 
 #define MAX_CMAP_SIZE 8
 #define MAX_WIDTH 320
