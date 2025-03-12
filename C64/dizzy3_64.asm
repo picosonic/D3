@@ -4444,7 +4444,7 @@ ORG &2B13
 {
   STA &FB
   STA &0340 ; frame
-  STX &0345
+  STX &0345 ; Cache X
 
   LDA frmx
   ; Ensure X position is < 93
@@ -4718,7 +4718,7 @@ ORG &2B13
   BNE l2D46
 
 .l2D2E
-  LDX &0345
+  LDX &0345 ; Restore X
   LDA #&FF:STA &03DF
   LDA #&00:STA &03DC
   LDA #&30:STA &03E3
@@ -5314,18 +5314,18 @@ ORG &2B13
 
 .l30CD
 {
-  LDX #&00
+  LDX #&00 ; machine offset
   LDA #&58:STA &03DC
 .machineloop
   {
   LDA liftrooms,X
   CMP roomno
-  BNE l310F
+  BNE nextmachine
 
   ; Check if machine[x] is activated
   LDA objs_attrs+obj_machines,X
   CMP #PAL_WHITE
-  BNE l310F
+  BNE nextmachine
 
   STX &03DB
   TXA
@@ -5348,7 +5348,7 @@ ORG &2B13
 
   JMP l30F8
 
-.l310F
+.nextmachine
   INX
   CPX #nummachines
   BCC machineloop
