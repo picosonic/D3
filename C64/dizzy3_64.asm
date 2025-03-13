@@ -1265,12 +1265,14 @@ numdeadlyobj = * - deadlyobj
 
   LDX #&00
 .l1931
+  {
   JSR l313F
 
   INX
   ; Is it < 8
   CPX #&08
   BCC l1931
+  }
 
   LDA #TUNE_1:STA melody ; Title screen melody
   LDA #&00:STA &033F
@@ -5964,8 +5966,10 @@ ORG &2B13
   LDA #&09:STA &036A
   LDA #&0A:STA &036B
 
+  ; Loop from 10 down to 1
   LDY #&0A
-.l3510
+.spriteloop
+  {
   JSR l3440
 
   LDA sprite_pointer
@@ -5980,10 +5984,13 @@ ORG &2B13
   INC sprite_pointer
 .l3525
   DEY
-  BNE l3510
+  BNE spriteloop
+  }
 
+  ; Loop from 0 up to 8
   LDX #&00
 .l352A
+  {
   STX &034E
   JSR l313F
 
@@ -5991,6 +5998,7 @@ ORG &2B13
   ; Is it < 8
   CPX #&08
   BCC l352A
+  }
 
   LDA #&64:JSR delay
 
