@@ -2730,7 +2730,7 @@ numdeadlyobj = * - deadlyobj
   LDA #&F0:JSR delay
 
   JSR resetgamestate
-  JMP checklifts
+  JMP checkliftcollide
 
 .inventoryprompt
   LDA #str_selectitemmess:JSR prtmessage
@@ -2843,7 +2843,7 @@ numdeadlyobj = * - deadlyobj
 
   LDA #str_givingjunkmess:JSR prtmessage
 
-  JMP checklifts
+  JMP checkliftcollide
 }
 
 .beanrou
@@ -2861,7 +2861,7 @@ numdeadlyobj = * - deadlyobj
 
   LDA #str_thanksforthecowmess:JSR prtmessage
 
-  JMP checklifts
+  JMP checkliftcollide
 }
 
 .applerou
@@ -2872,7 +2872,7 @@ numdeadlyobj = * - deadlyobj
 
   LDX #obj_troll
   JSR collidewithdizzy
-  BCC do_checklifts
+  BCC do_checkliftcollide
 
   ; Remove apple from game
   JSR hideobject
@@ -2882,9 +2882,9 @@ numdeadlyobj = * - deadlyobj
   ; Fall through
 }
 
-.do_checklifts
+.do_checkliftcollide
 {
-  JMP checklifts
+  JMP checkliftcollide
 }
 
 .checkjugofwater
@@ -2894,7 +2894,7 @@ numdeadlyobj = * - deadlyobj
 
   LDX #&44 ; egg, CASTLEDUNGEONROOM, 40x160
   JSR collidewithdizzy
-  BCC do_checklifts
+  BCC do_checkliftcollide
 
   ; Remove jug of water from game
   JSR hideobject
@@ -2904,7 +2904,7 @@ numdeadlyobj = * - deadlyobj
   LDA #CASTLESTAIRCASEROOM:STA &C6E2
   LDA #&24:STA &C768
 
-  JMP checklifts
+  JMP checkliftcollide
 }
 
 .checkrope
@@ -2914,7 +2914,7 @@ numdeadlyobj = * - deadlyobj
 
   LDX #obj_croc
   JSR collidewithdizzy
-  BCC do_checklifts
+  BCC do_checkliftcollide
 
   ; Remove rope from game
   JSR hideobject
@@ -2924,7 +2924,7 @@ numdeadlyobj = * - deadlyobj
 
   LDA #str_croctiedmess:JSR prtmessage
 
-  JMP checklifts
+  JMP checkliftcollide
 }
 
 .l22B0
@@ -2939,7 +2939,7 @@ numdeadlyobj = * - deadlyobj
 
   LDX #&4F ; egg, BROKENBRIDGEROOM, 74x104
   JSR collidewithdizzy
-  BCC do_checklifts
+  BCC do_checkliftcollide
 
   ; Raise the water by 5 pixels
   LDA objs_ylocs+obj_water
@@ -2958,7 +2958,7 @@ numdeadlyobj = * - deadlyobj
 
   LDA #str_rockinwatermess:JSR prtmessage
 
-  JMP checklifts
+  JMP checkliftcollide
 }
 
 .checkdoorknocker2
@@ -2989,7 +2989,7 @@ numdeadlyobj = * - deadlyobj
 
 .l2304
 {
-  JMP checklifts
+  JMP checkliftcollide
 }
 
 .checkbone
@@ -3006,7 +3006,7 @@ numdeadlyobj = * - deadlyobj
   LDA #ATTR_REVERSE+PAL_WHITE:STA objs_attrs+obj_bone
   LDA #OFFMAP:STA &C6F0
 
-  JMP checklifts
+  JMP checkliftcollide
 }
 
 .checkcrowbar
@@ -3025,7 +3025,7 @@ numdeadlyobj = * - deadlyobj
 
   LDA #str_usecrowbarmess:JSR prtmessage
 
-  JMP checklifts
+  JMP checkliftcollide
 }
 
 .checkbean
@@ -3042,7 +3042,7 @@ numdeadlyobj = * - deadlyobj
 
   LDA #str_plantbeanmess:JSR prtmessage
 
-  JMP checklifts
+  JMP checkliftcollide
 }
 
 .l2355
@@ -3097,7 +3097,7 @@ numdeadlyobj = * - deadlyobj
 
   LDA #str_fillbucketmess:JSR prtmessage
 
-  JMP checklifts
+  JMP checkliftcollide
 }
 
 .checkkeys
@@ -3128,7 +3128,7 @@ numdeadlyobj = * - deadlyobj
 
 .l23C5
 {
-  JMP checklifts
+  JMP checkliftcollide
 }
 
 .checkgoldenegg
@@ -3145,7 +3145,7 @@ numdeadlyobj = * - deadlyobj
   ; Flip golden egg
   LDA #ATTR_REVERSE+PAL_YELLOW:STA objs_attrs+obj_goldenegg
 
-  JMP checklifts
+  JMP checkliftcollide
 }
 
 .checkpickaxe
@@ -3164,7 +3164,7 @@ numdeadlyobj = * - deadlyobj
 
   LDA #str_usepickaxemess:JSR prtmessage
 
-  JMP checklifts
+  JMP checkliftcollide
 }
 
 .checkrug
@@ -3184,27 +3184,27 @@ numdeadlyobj = * - deadlyobj
 
   LDA #str_userugmess:JSR prtmessage
 
-  JMP checklifts
+  JMP checkliftcollide
 }
 
 .checksleepingpotion
 {
   CMP #obj_sleepingpotion
-  BNE checklifts
+  BNE checkliftcollide
 
   LDA #WIDEEYEDDRAGONROOM
   CMP roomno
-  BNE checklifts
+  BNE checkliftcollide
 
   ; Remove sleeping potion from game
   JSR hideobject
 
   LDA #str_dragonasleepmess:JSR prtmessage
 
-  JMP checklifts
+  JMP checkliftcollide
 }
 
-.checklifts
+.checkliftcollide
 {
   LDX #obj_lifts:STX &03DB
 .liftloop
@@ -3223,6 +3223,8 @@ numdeadlyobj = * - deadlyobj
   CPX #endoflifts
   BCC liftloop
   }
+
+  ; Fall through
 }
 
 .checkwhiskey
@@ -5169,7 +5171,7 @@ ORG &2B13
   LDA #noofmoving:STA &03DD
 
   JSR drawobjects
-  JSR l30CD
+  JSR updatelifts
   JSR convertpalette
 
   LDA #&FF:STA SPR_ENABLE ; Show sprites
@@ -5314,7 +5316,7 @@ ORG &2B13
   RTS
 }
 
-.l30CD
+.updatelifts
 {
   LDX #&00 ; machine offset
   LDA #&58:STA &03DC
@@ -5679,9 +5681,9 @@ ORG &2B13
   LDA objs_xlocs,X:STA frmx ; X position
   LDA objs_ylocs,X:STA frmy ; Y position
 
-  LDA #&00
+  LDA #PLOT_AND+PAL_BLACK
   STA frmattr ; attrib
-  STA &033F
+  STA &033F ; =0
 
   LDA objs_frames, X ; frame
   JSR frame
