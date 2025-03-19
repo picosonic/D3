@@ -78,7 +78,7 @@ cursorx = &039B ; char cursor X
 cursory = &039C ; char cursor Y
 index = &03B7
 deathid = &03B7
-.v03B8 ; roomno related ?
+olddizzyroom = &03B8 ; roomno to reincarnate into
 lives = &03B9
 .v03BA
 .v03BB
@@ -97,8 +97,8 @@ gamecounter = &03C4 ; pace of game actions
 .v03C8
 .v03C9 ; ?? sprite animation frame related ??
 .v03D5 ; set to &FF and &00
-olddizzyx = &03D6
-olddizzyy = &03D7
+olddizzyx = &03D6 ; position where Dizzy entered current room
+olddizzyy = &03D7 ;   used for where to reincarnate to
 .v03D8 ; input related
 .v03D9 ; ID of object being interacted with from inventory ?
 .v03DA
@@ -1336,7 +1336,7 @@ numdeadlyobj = * - deadlyobj
   }
 
   LDA #GAMESTARTROOM
-  STA &03B8
+  STA olddizzyroom
   STA roomno
 
   LDA #COLOUR_WHITE:STA SPR_0_COLOUR
@@ -2009,7 +2009,7 @@ numdeadlyobj = * - deadlyobj
   LDA #2:STA dizzyx ; Set Dizzy position to far left
   INC roomno ; Go right
 
-  JMP l1DFC
+  JMP enternewroom
 }
 
 .checkleft
@@ -2022,7 +2022,7 @@ numdeadlyobj = * - deadlyobj
   LDA #56:STA dizzyx ; Set Dizzy position to far right
   DEC roomno ; Go left
 
-  JMP l1DFC
+  JMP enternewroom
 }
 
 .checkvertical
@@ -2042,7 +2042,7 @@ numdeadlyobj = * - deadlyobj
   ; Check for entering/leaving Australia
   JSR check_oz
 
-  JMP l1DFC
+  JMP enternewroom
 }
 
 .l1DE7
@@ -2059,17 +2059,20 @@ numdeadlyobj = * - deadlyobj
   ; Fall through
 }
 
-.l1DFC
+.enternewroom
 {
+  ; Has Dizzy just entered the East Wing?
+  ;   If so, dont't store where he came from (incase it was from above onto the daggers)
   LDA roomno
   CMP #EASTWINGROOM
-  BEQ l1E12
+  BEQ donecacheentry
 
-  STA &03B8 ; Cache roomno
+  ; Store where Dizzy entered the room from - used after death
+  STA olddizzyroom
   LDA dizzyx:STA olddizzyx
   LDA dizzyy:STA olddizzyy
 
-.l1E12
+.donecacheentry
   LDA #&00:STA &03E0
 
   LDA roomno
@@ -6004,7 +6007,7 @@ ORG &2B13
 
   LDA #&64:JSR delay
 
-  LDA &03B8:STA roomno
+  LDA olddizzyroom:STA roomno
 
   RTS
 }
