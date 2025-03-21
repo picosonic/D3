@@ -80,7 +80,7 @@ index = &03B7
 deathid = &03B7
 olddizzyroom = &03B8 ; roomno to reincarnate into
 lives = &03B9
-.v03BA
+.v03BA ; related to dragon flames
 .v03BB
 .v03BC
 .v03BD
@@ -103,7 +103,7 @@ olddizzyy = &03D7 ;   used for where to reincarnate to
 .v03D9 ; ID of object being interacted with from inventory ?
 .v03DA
 .v03DB ; multi-purpose
-.v03DC ; &00 or &58
+.v03DC ; location of screen attribs to use, &00 = &5C00, &58 = &0400
 .v03DD ; max object id to draw
 .v03DF
 .v03E0
@@ -111,6 +111,9 @@ olddizzyy = &03D7 ;   used for where to reincarnate to
 .v03E2
 .v03E3 ; related to Y position
 roomno = &03E5
+
+; This just seems to always be full of &20 ??
+otherattribs = &0400 ; Set of screen attributes
 
 ORG &0B00
 
@@ -1305,11 +1308,11 @@ numdeadlyobj = * - deadlyobj
   LDX #&00
   TXA
 .l1983
-  STA &5800,X
-  STA &58C8,X
-  STA &5990,X
-  STA &5A58,X
-  STA &5B20,X
+  STA spec_screen_attribs,X
+  STA spec_screen_attribs+&C8,X
+  STA spec_screen_attribs+(&C8*2),X
+  STA spec_screen_attribs+(&C8*3),X
+  STA spec_screen_attribs+(&C8*4),X
 
   INX
   ; Is it < 200
@@ -5255,8 +5258,8 @@ ORG &2B13
   TAX
 .loop
   {
-  STA &5800,X
-  STA &5900,X
+  STA spec_screen_attribs,X
+  STA spec_screen_attribs+&100,X
 
   INX
   BNE loop
@@ -5274,7 +5277,7 @@ ORG &2B13
   {
   LDA screenattrtable_hi,X:STA &FC ; Set up pointer &FB (hi)
 
-  SEC:SBC #&04
+  SEC:SBC #hi(screen_attribs-spec_screen_attribs)
   STA &36 ; Set up pointer &35 (hi), &04 pages lower (&5800)
 
   SEC:SBC #&54
@@ -5290,7 +5293,7 @@ ORG &2B13
   {
   LDA (&35),Y ; read from &5800[]
   AND #%00000111 ; mask off (spectrum colours)
-  BEQ l30BE ; If it's black - skip C64 palette lookup
+  BEQ skiplookup ; If it's black - skip C64 palette lookup
 
   ; C64 palette lookup
   STX &0346 ; Cache X
@@ -5299,7 +5302,7 @@ ORG &2B13
   LDX &0346 ; Restore X
   BNE l30C0 ; Row will never be 0, so always branch
 
-.l30BE
+.skiplookup
   LDA (&FD),Y ; read from &0400[]
 
 .l30C0
@@ -6966,11 +6969,11 @@ ORG &2B13
   {
   ; Is it < 50
   CPX #50
-  BCC l3AD5
+  BCC nextflame
 
   ; Is it >= 68
   CPX #68
-  BCS l3AD5
+  BCS nextflame
 
   STX frmx ; X position
 
@@ -6979,6 +6982,7 @@ ORG &2B13
   ; Drawing yellow flames
   LDA #PAL_YELLOW
 
+  ; Is Xreg < [&03DB]
   CPX &03DB
   BCC storeattrs
 
@@ -6994,7 +6998,7 @@ ORG &2B13
   LDA #SPR_DRAGONFIRE ; frame
   JSR frame
 
-.l3AD5
+.nextflame
   INX
   INX
   CPX &03DB
@@ -7153,7 +7157,7 @@ INCLUDE "dizzy_sprites.asm"
 ; &5180 - end of sprite bitmaps
 
 ORG &5800
-.v5800 ; []
+.spec_screen_attribs ; []
 INCBIN "attribs.bin"
 ;.s5A00 ; to ???? = solidity bitmap ????
 
