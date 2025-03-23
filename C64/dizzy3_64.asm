@@ -7159,7 +7159,7 @@ INCLUDE "dizzy_sprites.asm"
 ORG &5800
 .spec_screen_attribs ; []
 INCBIN "attribs.bin"
-;.s5A00 ; to ???? = solidity bitmap ????
+;&58F5 to &5B92 = solidity bitmap (&40=solid, &00=squash, &20=fire, &10=water)
 
 ORG &5C00
 ; to 5FE7 = 8x8 screen/border colour attribs
@@ -7167,13 +7167,20 @@ ORG &5C00
 
 ORG &5FF8
 .sprite_pointer ; hw sprite "pointers" []
+EQUB &4E ; sprite 0
+EQUB &36 ; sprite 1
+EQUB &00 ; sprite 2
+EQUB &0A ; sprite 3
+EQUB &60 ; sprite 4
+EQUB &48 ; sprite 5
+EQUB &26 ; sprite 6
+EQUB &43 ; sprite 7
 
 ORG &6000
 .screen_memory
 ; &6000..&7F3F = screen RAM (320x200 hires bitmap mode, $d011=$3b, $d016=8)
 INCBIN "screendump.bin"
 
-ORG &7F40
 .l7F40
 {
   ; $DD00 = %xxxxxx10 -> Bank1: $4000-$7FFF
@@ -7224,12 +7231,14 @@ INCBIN "roomdata.bin"
 INCBIN "frametable.bin"
 .framedefs
 INCBIN "framedefs.bin"
+; to &C388
 
 ORG &C400
 INCLUDE "objects.asm"
 
 ORG &D000
 INCLUDE "strings.asm"
+; to &F007
 
 ORG &FFFF
 .c64end
