@@ -4488,7 +4488,7 @@ ORG &2B13
   BCC notwater
 
   ; Is frame >= 96
-  CMP #SPR_TROLL
+  CMP #SPR_WATER3+1
   BCS notwater
 
   ; Water processing
@@ -7159,7 +7159,7 @@ INCLUDE "dizzy_sprites.asm"
 ORG &5800
 .spec_screen_attribs ; []
 INCBIN "attribs.bin"
-;&58F5 to &5B92 = solidity bitmap (&40=solid, &00=squash, &20=fire, &10=water)
+;&58F5 to &5B92 = solidity bitmap (&40=solid, &20=fire, &10=water, &00=empty)
 
 ORG &5C00
 ; to 5FE7 = 8x8 screen/border colour attribs
