@@ -37,7 +37,6 @@ melody_ptr = &00A9
 frmx = &033A ; X position
 tmp1 = &033A
 frmy = &033B ; Y position
-tmp2 = &033B
 frmattr = &033C ; attrib
 tmp3 = &033C
 .v033D
@@ -1523,7 +1522,7 @@ numdeadlyobj = * - deadlyobj
   CMP #&06
   BCS l1B04
 
-  JSR l3154
+  JSR l3154 ; ?? hit detection ??
 
   BEQ l1AEB
 
@@ -1552,7 +1551,7 @@ numdeadlyobj = * - deadlyobj
   CMP #&06
   BCS l1B58
 
-  JSR l3154
+  JSR l3154 ; ?? hit detection ??
 
   LDA &033E
   BEQ l1B1D
@@ -1673,7 +1672,7 @@ numdeadlyobj = * - deadlyobj
   CMP #6
   BCS l1BFD
 
-  JSR l3154
+  JSR l3154 ; ?? hit detection ??
   BEQ loop
   BCC loop
   }
@@ -1706,7 +1705,6 @@ numdeadlyobj = * - deadlyobj
 
 .l1C18
 {
-  ; JRC - not actually used for frmx and frmy
   LDA #22:STA frmy
   LDA #1:STA frmx
 
@@ -1723,7 +1721,7 @@ numdeadlyobj = * - deadlyobj
   CMP #6
   BCS l1C3E
 
-  JSR l3154
+  JSR l3154 ; ?? hit detection ??
   BEQ loop
   BCC loop
   }
@@ -1858,7 +1856,7 @@ numdeadlyobj = * - deadlyobj
 .^l1CCD
   STA frmx
   LDA #12:STA frmy
-  JSR l3154
+  JSR l3154 ; ?? hit detection ??
   BCC l1CFC
 
   LDA &03C1
@@ -1886,17 +1884,17 @@ numdeadlyobj = * - deadlyobj
 
 .l1CFC
   LDA #12:STA frmy
-  JSR l3154
+  JSR l3154 ; ?? hit detection ??
   BCS l1CB9
 
   LDA #12:STA frmy
-  JSR l3154
+  JSR l3154 ; ?? hit detection ??
 
   BCC l1D12
   BNE l1CB9
 .l1D12
   LDA #13:STA frmy
-  JSR l3154
+  JSR l3154 ; ?? hit detection ??
 
   BCC l1D1E
   BNE l1CB9
@@ -1938,18 +1936,18 @@ numdeadlyobj = * - deadlyobj
   BNE l1D7C
 
 {
-  LDA #22:STA tmp2
-  LDA #0:STA tmp1
+  LDA #22:STA frmy
+  LDA #0:STA frmx
 .loop
   {
-  INC tmp1
+  INC frmx
 
   ; Is it >= 6
-  LDA tmp1
+  LDA frmx
   CMP #6
   BCS l1D7C
 
-  JSR l3154
+  JSR l3154 ; ?? hit detection ??
 
   ; Is it <= ??
   BCC loop
@@ -1967,20 +1965,20 @@ numdeadlyobj = * - deadlyobj
 
 .l1D7C
 {
-  LDA #21:STA tmp2
+  LDA #21:STA frmy
 .loop
   {
-  LDA #1:STA tmp1
+  LDA #1:STA frmx
 .innerloop
   {
-  INC tmp1
+  INC frmx
 
   ; Is it >= 6
-  LDA tmp1
+  LDA frmx
   CMP #6
   BCS l1D9D
 
-  JSR l3154
+  JSR l3154 ; ?? hit detection ??
 
   BCC innerloop
   BEQ innerloop
@@ -1990,10 +1988,10 @@ numdeadlyobj = * - deadlyobj
   JMP l1D41
 
 .l1D9D
-  DEC tmp2
+  DEC frmy
 
   ; Is it >= 18
-  LDA tmp2
+  LDA frmy
   CMP #18
   BCS loop
   }
@@ -3396,14 +3394,14 @@ numdeadlyobj = * - deadlyobj
 .l252C
   LDA #6:STA frmy
 
-  JSR l3154
+  JSR l3154 ; ?? hit detection ??
   LDA &033F
   AND #&30
   BNE l2554
 
   LDA #13:STA frmy
 
-  JSR l3154
+  JSR l3154 ; ?? hit detection ??
   LDA &033F
   AND #&30
   BNE l2554
@@ -5420,24 +5418,27 @@ ORG &2B13
   RTS
 }
 
+; ? Hit detection ?
 .l3154
 {
+  ; Calculate X position
   LDA dizzyx
-  CLC:ADC tmp1
+  CLC:ADC frmx
   STA tmp3
-
   DEC tmp3
 
+  ; Calculate Y position
   LDA dizzyy
-  CLC:ADC tmp2
+  CLC:ADC frmy
   CLC:ADC #40
   STA &033D
-
   DEC &033D
+
+  ; Calculate offset
   LDA &033D
-  LSR A
-  LSR A
-  LSR A
+  LSR A ; / 8
+  LSR A ;
+  LSR A ;
   TAX
 
   ; Set pointer at &FB to screen RAM
@@ -5450,18 +5451,19 @@ ORG &2B13
 
   LDA &033D
   AND #&07
-  CLC:ADC &FB
-  CLC:ADC #&20
-  STA &FB
+  CLC:ADC &FB ; add screen RAM lo
+  CLC:ADC #GAMECHAR_COLUMNS ; move down a row
+  STA &FB ; update screen RAM lo
 
+  ; Calculate hit-detection offset from X
   LDA tmp3
-  LSR A
-  CLC:ADC #&04
+  LSR A      ; / 2
+  CLC:ADC #4 ; + 4
   TAY
-  LDA (&FD),Y
-  STA &033F
+  LDA (&FD),Y ; Load from hit-detection bitmap
+  STA &033F   ; Store result
 
-  ; Check for even number
+  ; Check for even number of X position
   LDA tmp3
   AND #&01
   BEQ l31B5
@@ -5472,21 +5474,24 @@ ORG &2B13
 
 .l31B5
   LDA #&F0
+
 .l31B7
-  STA &033E
+  STA &033E ; either &F0 (even X pos) or &0F (odd X pos)
 
   LDA tmp3
-  LSR A
+  LSR A ; / 2
   TAX
   LDA &1877,X
   TAY
-  LDA (&FB),Y
+  LDA (&FB),Y ; Load from screen RAM
   AND &033E
   STA &033E
 
+  ; Check hit-detection bitmap value
   LDA &033F
-  AND #&40
-  CMP #&01
+  AND #ATTR_NOTSOLID
+  CMP #&01 ; Always false due to AND mask above
+
   LDA &033E
 
   RTS
