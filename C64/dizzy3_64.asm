@@ -1308,8 +1308,8 @@ numdeadlyobj = * - deadlyobj
   LDX #&00
   TXA
 .l1983
-  STA spec_screen_attribs,X
-  STA spec_screen_attribs+&C8,X
+  STA spec_screen_attribs+(&C8*0),X
+  STA spec_screen_attribs+(&C8*1),X
   STA spec_screen_attribs+(&C8*2),X
   STA spec_screen_attribs+(&C8*3),X
   STA spec_screen_attribs+(&C8*4),X
@@ -4583,20 +4583,23 @@ ORG &2B13
   INC &FE
 .l2C30
   STA &FD
-  STA &35
-  LDA &03DC
+  STA &35 ; lo pointer
+
+  ; Set up pointer (&35) to &5800 range
+  LDA &03DC ; &00 = &5C00, &58 = &0400
   BNE l2C41
 
   LDA &FE
-  SEC:SBC #&04
+  SEC:SBC #&04 ; Retract from &5C00 to &5800 ?
 
   JMP l2C46
 
 .l2C41
   LDA &FE
-  CLC:ADC #&54
+  CLC:ADC #&54 ; Advance from &0400 to &5800 ?
 .l2C46
-  STA &36
+  STA &36 ; hi pointer
+
   LDY #&00
   LDA (&B4),Y:STA &033D
   LSR &033D
@@ -4712,10 +4715,14 @@ ORG &2B13
   BEQ l2D0E
 
   STA (&FD),Y
+
+  ; Strip attribs to convert to hit-detection bitmap
+  ;   (&40=solid, &20=fire, &10=water, &00=empty)
 .l2D0E
   LDA (&35),Y:AND #&30:ORA &033F:STA (&35),Y
   JMP l2D23
 
+  ;   also retain (&80=reverse - h-flip)
 .l2D1A
   LDA (&35),Y:AND #&F0:ORA &033F:STA (&35),Y
 .l2D23
