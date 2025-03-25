@@ -1522,7 +1522,7 @@ numdeadlyobj = * - deadlyobj
   CMP #&06
   BCS l1B04
 
-  JSR l3154 ; ?? hit detection ??
+  JSR l3154 ; ?? hit detection (+22 Y, +1..5 X) ??
 
   BEQ l1AEB
 
@@ -1660,7 +1660,6 @@ numdeadlyobj = * - deadlyobj
 
 .l1BDA
 {
-  ; JRC - not actually used for frmx and frmy
   LDA #0:STA frmy
   LDA #1:STA frmx
 .loop
@@ -1672,7 +1671,7 @@ numdeadlyobj = * - deadlyobj
   CMP #6
   BCS l1BFD
 
-  JSR l3154 ; ?? hit detection ??
+  JSR l3154 ; ?? hit detection (+1..5 X, Y) ??
   BEQ loop
   BCC loop
   }
@@ -1721,7 +1720,7 @@ numdeadlyobj = * - deadlyobj
   CMP #6
   BCS l1C3E
 
-  JSR l3154 ; ?? hit detection ??
+  JSR l3154 ; ?? hit detection (+1..5 X, +22 Y) ??
   BEQ loop
   BCC loop
   }
@@ -1856,7 +1855,7 @@ numdeadlyobj = * - deadlyobj
 .^l1CCD
   STA frmx
   LDA #12:STA frmy
-  JSR l3154 ; ?? hit detection ??
+  JSR l3154 ; ?? hit detection (+0 or +7 X, +12 Y) ??
   BCC l1CFC
 
   LDA &03C1
@@ -1884,17 +1883,17 @@ numdeadlyobj = * - deadlyobj
 
 .l1CFC
   LDA #12:STA frmy
-  JSR l3154 ; ?? hit detection ??
+  JSR l3154 ; ?? hit detection (+?? X, +12 Y) ??
   BCS l1CB9
 
   LDA #12:STA frmy
-  JSR l3154 ; ?? hit detection ??
+  JSR l3154 ; ?? hit detection (+?? X, +12 Y) ??
 
   BCC l1D12
   BNE l1CB9
 .l1D12
   LDA #13:STA frmy
-  JSR l3154 ; ?? hit detection ??
+  JSR l3154 ; ?? hit detection (+?? X. +13 Y) ??
 
   BCC l1D1E
   BNE l1CB9
@@ -1947,7 +1946,7 @@ numdeadlyobj = * - deadlyobj
   CMP #6
   BCS l1D7C
 
-  JSR l3154 ; ?? hit detection ??
+  JSR l3154 ; ?? hit detection (+0..5 X, +22 Y) ??
 
   ; Is it <= ??
   BCC loop
@@ -1978,7 +1977,7 @@ numdeadlyobj = * - deadlyobj
   CMP #6
   BCS l1D9D
 
-  JSR l3154 ; ?? hit detection ??
+  JSR l3154 ; ?? hit detection (+1..5 X, +21..18 Y) ??
 
   BCC innerloop
   BEQ innerloop
@@ -3394,14 +3393,14 @@ numdeadlyobj = * - deadlyobj
 .l252C
   LDA #6:STA frmy
 
-  JSR l3154 ; ?? hit detection ??
+  JSR l3154 ; ?? hit detection (+2..5 X, +6 Y) ??
   LDA &033F
   AND #&30
   BNE l2554
 
   LDA #13:STA frmy
 
-  JSR l3154 ; ?? hit detection ??
+  JSR l3154 ; ?? hit detection (+2..5 X, +13 Y) ??
   LDA &033F
   AND #&30
   BNE l2554
@@ -5423,13 +5422,13 @@ ORG &2B13
 {
   ; Calculate X position
   LDA dizzyx
-  CLC:ADC frmx
+  CLC:ADC frmx ; Add X offset
   STA tmp3
   DEC tmp3
 
   ; Calculate Y position
   LDA dizzyy
-  CLC:ADC frmy
+  CLC:ADC frmy ; Add Y offset
   CLC:ADC #40
   STA &033D
   DEC &033D
