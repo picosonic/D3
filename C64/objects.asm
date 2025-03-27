@@ -167,9 +167,8 @@ objs_ylocs  = &C7AA
 objs_attrs  = &C830
 objs_frames = &C8B6
 
-; object flags
+; room for collected objects, used as a flag
 collected = 4
-maxcollectable = 62
 
 ; object offsets
 obj_bag            = 0
@@ -191,6 +190,10 @@ obj_brandy         = 19
 obj_jugofwater     = 20
 obj_bread          = 21
 obj_doorknocker    = 22
+
+; Range of objects which can be placed in the bag
+mincollectable = obj_bean
+maxcollectable = 62
 
 ; end of collectables
 

@@ -1167,10 +1167,10 @@ ORG &1897
 ORG &18D9
 .inventorylist ; Objects carried list []
 {
-  EQUB &FF, &FF, &FF, &FF, &FF
+  EQUB obj_null, obj_null, obj_null, obj_null, obj_null
 }
 
-pickupobj = &18DE ; object table offset / &FF / ????
+pickupobj = &18DE ; object table offset / obj_null / ????
 coins_tens = &18E5
 coins = &18E6
 .v18E7 ; not used ?? only ever set to 0 when coin counters reset
@@ -2630,7 +2630,7 @@ numdeadlyobj = * - deadlyobj
   ; This is the blackhole - so drop everything!
 
   ; Loop around the objects, skipping big bag
-  LDX #obj_bean
+  LDX #mincollectable
 .objloop
   {
   LDA objs_rooms,X
@@ -2704,7 +2704,7 @@ numdeadlyobj = * - deadlyobj
   LDX #BIGBAGSIZE
 .l2185
   LDA inventorylist,X ; X is either 2 or 4
-  CMP #&FF
+  CMP #obj_null
   BEQ l21A0
 
   CMP #&00
@@ -6408,7 +6408,7 @@ ORG &2B13
 
 .buildinventorylist
 {
-  LDA #&FF
+  LDA #obj_null
 
   ; Clear inventory list
   LDX #&00
@@ -6422,7 +6422,7 @@ ORG &2B13
   }
 
   ; Find items for inventory
-  LDX #obj_bean
+  LDX #mincollectable
   LDY #&00
 .buildloop
   {
