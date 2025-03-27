@@ -190,6 +190,9 @@ obj_brandy         = 19
 obj_jugofwater     = 20
 obj_bread          = 21
 obj_doorknocker    = 22
+obj_rock1          = 23
+obj_rock2          = 24
+obj_rock3          = 25
 
 ; Range of objects which can be placed in the bag
 mincollectable = obj_bean
@@ -207,7 +210,9 @@ obj_goldenegg2     = 70
 ;= 71 ; egg
 ;= 73 ; egg
 obj_dozy           = 74
-obj_water          = 75
+obj_bridgewater1   = 75
+obj_bridgewater2   = 76
+obj_bridgewater3   = 77
 obj_pontoon        = 78
 ;= 79 ; egg
 obj_hawk           = 80

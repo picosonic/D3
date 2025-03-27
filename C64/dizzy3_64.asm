@@ -2913,7 +2913,7 @@ numdeadlyobj = * - deadlyobj
 .checkrope
 {
   CMP #obj_rope
-  BNE l22B0
+  BNE checkrocks
 
   LDX #obj_croc
   JSR collidewithdizzy
@@ -2930,26 +2930,26 @@ numdeadlyobj = * - deadlyobj
   JMP checkliftcollide
 }
 
-.l22B0
+.checkrocks
 {
-  ; Is it < 23
-  CMP #&17
+  ; Check if the object is one of the 3 rock
+  CMP #obj_rock1
   BCC checkdoorknocker2
 
-  ; Is it >= 26
-  CMP #&1A
+  CMP #obj_rock3+1
   BCS checkdoorknocker2
 
+  ; Check if we are next to the broken bridge
   LDX #&4F ; egg, BROKENBRIDGEROOM, 74x104
   JSR collidewithdizzy
   BCC do_checkliftcollide
 
   ; Raise the water by 5 pixels
-  LDA objs_ylocs+obj_water
+  LDA objs_ylocs+obj_bridgewater1
   SEC:SBC #5
-  STA objs_ylocs+obj_water
-  STA objs_ylocs+obj_water+1
-  STA objs_ylocs+obj_water+2
+  STA objs_ylocs+obj_bridgewater1
+  STA objs_ylocs+obj_bridgewater2
+  STA objs_ylocs+obj_bridgewater3
 
   ; Raise the pontoon by 5 pixels
   LDA objs_ylocs+obj_pontoon
