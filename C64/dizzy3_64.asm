@@ -99,7 +99,8 @@ gamecounter = &03C4 ; pace of game actions
 olddizzyx = &03D6 ; position where Dizzy entered current room
 olddizzyy = &03D7 ;   used for where to reincarnate to
 .v03D8 ; input related
-.v03D9 ; ID of object being interacted with from inventory ?
+inventoryindex = &03D9
+usedobj = &03D9 ; id of objected being interacted with from inventory
 .v03DA
 .v03DB ; multi-purpose
 .v03DC ; location of screen attribs to use, &00 = &5C00, &58 = &0400
@@ -2271,8 +2272,8 @@ numdeadlyobj = * - deadlyobj
 .l1F33
 {
   LDA #obj_null
-  STA &03D9
-  STA pickupobj
+  STA usedobj   ; object being dropped
+  STA pickupobj ; object being picked up
 
   LDA &03C7
   BNE l1F48
@@ -2712,7 +2713,7 @@ numdeadlyobj = * - deadlyobj
   BEQ l21A0
 
   LDX inventorylist
-  STX &03D9
+  STX usedobj
   LDA #OFFMAP:STA objs_rooms,X
 
   LDA #str_carryingtoomuchmess:JSR prtmessage
@@ -2725,7 +2726,7 @@ numdeadlyobj = * - deadlyobj
   LDA inventorylist
   BEQ l21B4
 
-  LDA &03D9
+  LDA usedobj
   CMP #obj_null
   BEQ inventoryprompt
 
@@ -2734,6 +2735,7 @@ numdeadlyobj = * - deadlyobj
   LDA #&F0:JSR delay
 
   JSR resetgamestate
+
   JMP checkliftcollide
 
 .inventoryprompt
@@ -2746,15 +2748,15 @@ numdeadlyobj = * - deadlyobj
 .loop
   {
   LDA inventorylist,X
-  BEQ l21D4
+  BEQ setemptyslotindex
 
   INX
   JMP loop
   }
-}
 
-.l21D4
-  STX &03D9
+.setemptyslotindex
+  STX inventoryindex
+}
 
 ; Loop back here until FIRE pressed
 .inventoryloop
@@ -2771,6 +2773,7 @@ numdeadlyobj = * - deadlyobj
 
 .waitforinventoryinput
 {
+  ; Loop around until left/right/fire
   JSR getplayerinput
   LDA player_input
   AND #JOY_FIRE+JOY_RIGHT+JOY_LEFT
@@ -2781,15 +2784,17 @@ numdeadlyobj = * - deadlyobj
   BEQ checkdirection
 
   ; See if anything is selected, ( or just "exit and don't drop")
-  LDX &03D9
+  LDX inventoryindex
   LDA inventorylist,X
-  BNE l21F9
+  BNE setselectedobj
 
-  LDA #obj_null
-.l21F9
-  STA &03D9
+  LDA #obj_null ; Nothing selected
+.setselectedobj
+  STA usedobj
 
   JSR resetgamestate
+
+  ; Start checks against selected object
   JMP shopkeeperrou
 }
 
@@ -2812,10 +2817,10 @@ numdeadlyobj = * - deadlyobj
 .inventoryleft
 {
   ; (go UP inventory list)
-  DEC &03D9
+  DEC inventoryindex
 
   ; Is it >= 250 (i.e. now negative)
-  LDX &03D9
+  LDX inventoryindex
   CPX #&FA
   BCS l21C9
 
@@ -2825,31 +2830,36 @@ numdeadlyobj = * - deadlyobj
 .inventoryright
 {
   ; (go DOWN inventory list)
-  LDX &03D9
-  INC &03D9
+  LDX inventoryindex
+  INC inventoryindex
   LDA inventorylist,X
   BNE inventoryloop
 
   ; Move selection highlight back to top of list
-  LDA #&00:STA &03D9
+  LDA #&00:STA inventoryindex
   JMP inventoryloop
 }
 
 .shopkeeperrou
 {
+  ; Object drop/interaction, check first if it's with the shopkeeper?
   LDX #obj_shopkeeper
   JSR collidewithdizzy
-  BCC applerou
+  BCC checkapple
 
-  LDA &03D9
+  ; Is Dizzy giving the cow to the shopkeeper?
+  LDA usedobj
   CMP #obj_cow
   BEQ beanrou
 
+  ; Dizzy gave the shopkeeper something other than the cow
   LDA #str_givingjunkmess:JSR prtmessage
 
+  ; End object interaction checks
   JMP checkliftcollide
 }
 
+; In return for the cow, Dizzy gets the bean!
 .beanrou
 {
   ; Make bean appear
@@ -2865,15 +2875,18 @@ numdeadlyobj = * - deadlyobj
 
   LDA #str_thanksforthecowmess:JSR prtmessage
 
+  ; End object interaction checks
   JMP checkliftcollide
 }
 
-.applerou
+.checkapple
 {
-  LDA &03D9
+  ; Is the apple being used?
+  LDA usedobj
   CMP #obj_apple
   BNE checkjugofwater
 
+  ; Is apple being used with troll?
   LDX #obj_troll
   JSR collidewithdizzy
   BCC do_checkliftcollide
@@ -2888,14 +2901,17 @@ numdeadlyobj = * - deadlyobj
 
 .do_checkliftcollide
 {
+  ; End object interaction checks
   JMP checkliftcollide
 }
 
 .checkjugofwater
 {
+  ; Is the jug of water being used?
   CMP #obj_jugofwater
   BNE checkrope
 
+  ; Is the water being used by the dungeon fire?
   LDX #prox_jug ; CASTLEDUNGEONROOM, 40x160
   JSR collidewithdizzy
   BCC do_checkliftcollide
@@ -2909,14 +2925,17 @@ numdeadlyobj = * - deadlyobj
   LDA #CASTLESTAIRCASEROOM:STA objs_rooms+prox_jug
   LDA #36:STA objs_xlocs+prox_jug
 
+  ; End object interaction checks
   JMP checkliftcollide
 }
 
 .checkrope
 {
+  ; Is the rope being used?
   CMP #obj_rope
   BNE checkrocks
 
+  ; Is the croc being tied up?
   LDX #obj_croc
   JSR collidewithdizzy
   BCC do_checkliftcollide
@@ -2929,12 +2948,13 @@ numdeadlyobj = * - deadlyobj
 
   LDA #str_croctiedmess:JSR prtmessage
 
+  ; End object interaction checks
   JMP checkliftcollide
 }
 
 .checkrocks
 {
-  ; Check if the object is one of the 3 rock
+  ; Check if the object is one of the 3 rocks
   CMP #obj_rock1
   BCC checkdoorknocker2
 
@@ -2963,21 +2983,25 @@ numdeadlyobj = * - deadlyobj
 
   LDA #str_rockinwatermess:JSR prtmessage
 
+  ; End object interaction checks
   JMP checkliftcollide
 }
 
 .checkdoorknocker2
 {
+  ; Is the doorknocker being used?
   CMP #obj_doorknocker
   BNE checkbone
 
+  ; It's the doorknocker, but is Dizzy in the right room?
   LDX roomno
   CPX #CASTLESTAIRCASEROOM
   BNE checkbone
 
-  LDX #prox_knox ; CASTLEDUNGEONROOM, 40x160
+  ; It's the doorknocker in the right room, but are we by the closed door?
+  LDX #prox_knox ; CASTLESTAIRCASEROOM, 36x160 (shared with prox_jug)
   JSR collidewithdizzy
-  BCC l2304
+  BCC notprox
 
   ; Remove door knocker from game
   JSR hideobject
@@ -2992,61 +3016,74 @@ numdeadlyobj = * - deadlyobj
   ; Fall through
 }
 
-.l2304
+.notprox
 {
+  ; End object interaction checks
   JMP checkliftcollide
 }
 
 .checkbone
 {
+  ; Is the bone being used?
   CMP #obj_bone
   BNE checkcrowbar
 
+  ; It's the bone, but is Dizzy in Armorog's den?
   LDX #prox_armorogden ; ARMOROGROOM, 82x160
   JSR collidewithdizzy
-  BCC l2304
+  BCC notprox
 
   LDA #str_fedarmorog:JSR prtmessage
 
+  ; Flag bone as being used by flipping X, and removing den proximity
+  ;   .. so once bone placed in den, you can't remove and it put it back again
   LDA #ATTR_REVERSE+PAL_WHITE:STA objs_attrs+obj_bone
   LDA #OFFMAP:STA objs_rooms+prox_armorogden
 
+  ; End object interaction checks
   JMP checkliftcollide
 }
 
 .checkcrowbar
 {
+  ; Is the crowbar being used?
   CMP #obj_crowbar
   BNE checkbean
 
+  ; It's the crowbar, but is Dizzy at the top of the well?
   LDX #obj_wood
   JSR collidewithdizzy
-  BCC l2304
+  BCC notprox
 
-  ; Remove ??? from game
+  ; Remove crowbar from game
   JSR hideobject
 
+  ; Remove well lid
   LDA #OFFMAP:STA objs_rooms+obj_wood
 
   LDA #str_usecrowbarmess:JSR prtmessage
 
+  ; End object interaction checks
   JMP checkliftcollide
 }
 
 .checkbean
 {
+  ; Is the bean being used?
   CMP #obj_bean
   BNE checkbucket
 
+  ; It's the bean, but is Dizzy at the manure?
   LDX #obj_manure
   JSR collidewithdizzy
-  BCC l2304
+  BCC notprox
 
   ; Remove bean from game
   JSR hideobject
 
   LDA #str_plantbeanmess:JSR prtmessage
 
+  ; End object interaction checks
   JMP checkliftcollide
 }
 
@@ -3062,22 +3099,24 @@ numdeadlyobj = * - deadlyobj
 
 .checkbucket
 {
+  ; Is the bucket being used?
   CMP #obj_bucket
   BNE checkkeys
 
-  ; Check colour of bucket
+  ; Check colour of bucket (full of water is blue)
   LDA objs_attrs+obj_bucket
   CMP #PAL_BLUE
   BNE checkfillingbucket
 
-  ; Check bean
+  ; Bucket is full, so check if bean has been used
   LDA objs_rooms+obj_bean
   CMP #OFFMAP
-  BNE l23C5
+  BNE do_checkliftcollide2
 
+  ; Bucket is full and bean has been placed, check we are at manure in allotment 
   LDX #obj_manure
   JSR collidewithdizzy
-  BCC l23C5
+  BCC do_checkliftcollide2
 
   ; Remove bucket from game
   JSR hideobject
@@ -3092,35 +3131,38 @@ numdeadlyobj = * - deadlyobj
 
 .checkfillingbucket
 {
+  ; Empty bucket is being used, check if we're at the puddle
   LDX #prox_mtbucket ; BASEOFVOLCANOROOM, 47x144
   JSR collidewithdizzy
-  BCC l23C5
+  BCC do_checkliftcollide2
 
-  ; Set colour of bucket to blue
+  ; Set colour of bucket to blue to fill with water
   LDA #PAL_BLUE:STA objs_attrs+obj_bucket
-  LDA #&FF:STA &03D9
+
+  ; ?? don't drop bucket ??
+  LDA #obj_null:STA usedobj
 
   LDA #str_fillbucketmess:JSR prtmessage
 
+  ; End object interaction checks
   JMP checkliftcollide
 }
 
 .checkkeys
 {
-  ; Is it < 12
-  CMP #obj_keys
+  ; Check if one of the 4 keys is being used?
+  CMP #obj_key1
   BCC checkgoldenegg
 
-  ; Is it >= 16
-  CMP #obj_rope
+  CMP #obj_key4+1
   BCS checkgoldenegg
 
-  ; Determine which machine relates to this key
+  ; Determine if the right machine is being unocked?
   CLC:ADC #obj_machines-obj_keys:TAX
   JSR collidewithdizzy
-  BCC l23C5
+  BCC do_checkliftcollide2
 
-  ; If correct key used with corresponding machine, change machine white
+  ; Key is being used with corresponding machine, change machine white
   LDA #PAL_WHITE:STA objs_attrs,X
 
   ; Remove this key from game
@@ -3131,36 +3173,43 @@ numdeadlyobj = * - deadlyobj
   ; Fall through
 }
 
-.l23C5
+; Here for reachability in branches
+.do_checkliftcollide2
 {
+  ; End object interaction checks
   JMP checkliftcollide
 }
 
 .checkgoldenegg
 {
+  ; Is the golden egg being used?
   CMP #obj_goldenegg
   BNE checkpickaxe
 
+  ; Is the golden egg being placed in the dragon's nest?
   LDX #prox_egg ; DRAGONSLAIRROOM, 54x160
   JSR collidewithdizzy
-  BCC l23C5
+  BCC do_checkliftcollide2
 
   LDA #str_puteggbackmess:JSR prtmessage
 
-  ; Flip golden egg
+  ; Flip golden egg, to flag its return
   LDA #ATTR_REVERSE+PAL_YELLOW:STA objs_attrs+obj_goldenegg
 
+  ; End object interaction checks
   JMP checkliftcollide
 }
 
 .checkpickaxe
 {
+  ; Is the pickaxe being used?
   CMP #obj_pickaxe
   BNE checkrug
 
+  ; Is Dizzy by the large stone?
   LDX #prox_pickaxe ; MINESROOM, 42x101
   JSR collidewithdizzy
-  BCC l23C5
+  BCC do_checkliftcollide2
 
   ; Remove pickaxe from game
   JSR hideobject
@@ -3170,17 +3219,20 @@ numdeadlyobj = * - deadlyobj
 
   LDA #str_usepickaxemess:JSR prtmessage
 
+  ; End object interaction checks
   JMP checkliftcollide
 }
 
 .checkrug
 {
+  ; Is the rug being used?
   CMP #obj_rug
   BNE checksleepingpotion
 
+  ; Is Dizzy in Daisy's prison?
   LDA #DAISYSPRISONROOM
   CMP roomno
-  BNE l23C5
+  BNE do_checkliftcollide2
 
   ; Put "ground" sprites into prison to mimic rug
   STA objs_rooms+obj_prisonrug1
@@ -3191,14 +3243,17 @@ numdeadlyobj = * - deadlyobj
 
   LDA #str_userugmess:JSR prtmessage
 
+  ; End object interaction checks
   JMP checkliftcollide
 }
 
 .checksleepingpotion
 {
+  ; Is the sleeping potion being used?
   CMP #obj_sleepingpotion
   BNE checkliftcollide
 
+  ; Is Dizzy in the room with the dragon (just past the crocodile)
   LDA #WIDEEYEDDRAGONROOM
   CMP roomno
   BNE checkliftcollide
@@ -3208,9 +3263,11 @@ numdeadlyobj = * - deadlyobj
 
   LDA #str_dragonasleepmess:JSR prtmessage
 
+  ; End object interaction checks
   JMP checkliftcollide
 }
 
+; After checking object interaction, make sure we're not colliding with any lifts
 .checkliftcollide
 {
   LDX #obj_lifts:STX &03DB
@@ -3219,7 +3276,8 @@ numdeadlyobj = * - deadlyobj
   JSR collidewithdizzy
   BCC nocollision
 
-  LDX #&FF:STX &03D9
+  ; Dizzy is on/near a lift, so don't drop object on it
+  LDX #obj_null:STX usedobj
   JMP checkwhiskey
 
 .nocollision
@@ -3236,11 +3294,12 @@ numdeadlyobj = * - deadlyobj
 
 .checkwhiskey
 {
-  LDX &03D9
+  ; Is Dizzy using (drinking) Whiskey/Brandy
+  LDX usedobj
   CPX #obj_brandy
-  BNE l245B
+  BNE dropobject
 
-  ; Remove whiskey from game
+  ; Dizzy is now drunk - remove whiskey from game
   JSR hideobject
 
   LDA #str_dropwhiskeymess:JSR prtmessage
@@ -3248,11 +3307,13 @@ numdeadlyobj = * - deadlyobj
   JMP checkdeadlyobj
 }
 
-.l245B
+.dropobject
 {
-  CPX #&FF
+  ; Is used object valid?
+  CPX #obj_null
   BEQ checkdeadlyobj
 
+  ; TODO ?? work out what this is ??
   LDA #maxcollectable+1:STA &03DD
   LDA #&00:STA &03D5
 
@@ -3267,17 +3328,21 @@ numdeadlyobj = * - deadlyobj
 
   JSR drawobjects
 
-  LDX &03D9
+  ; Drop selected object into current room
+  LDX usedobj
   LDA roomno:STA objs_rooms,X
 
   LDA dizzyx:CLC:ADC #33:AND #&FE:STA objs_xlocs,X ; rounded down to even number
   LDA dizzyy:CLC:ADC #45:STA objs_ylocs,X
 
+  ; TODO ?? work out what this is ??
   LDA #maxcollectable+1:STA &03DD
   LDA #&FF:STA &03D5
 
   JSR drawobjects
   JSR convertpalette
+
+  ; Fall through
 }
 
 .checkdeadlyobj
@@ -4167,12 +4232,14 @@ numdeadlyobj = * - deadlyobj
 {
   STX &034E ; Cache X
 
-  LDX &03D9 ; Get object id
+  LDX usedobj ; Get object id
 
   ; Set objects[X] as hidden
   LDA #OFFMAP
   STA objs_rooms,X
-  STA &03D9
+
+  ; Clear object being interacted with
+  STA usedobj
 
   LDX &034E ; Restore X
 
@@ -6973,7 +7040,7 @@ ORG &2B13
   LDA #&0A ; Big bag (drawn higher up screen - top of play area)
 .l3A83
   ; Create pointer to colour attribs RAM for selected inventory line
-  CLC:ADC &03D9
+  CLC:ADC inventoryindex
   TAX
   LDA screenattrtable_lo,X:STA &FB
   LDA screenattrtable_hi,X:STA &FC
