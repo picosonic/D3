@@ -2194,7 +2194,8 @@ numdeadlyobj = * - deadlyobj
   CMP #&02
   BEQ checkshopkeeper
 
-  LDX #&43 ; egg, CASTLEDUNGEONROOM, 80x160
+  ; Check for collision with troll
+  LDX #prox_troll ; CASTLEDUNGEONROOM, 80x160
   JSR collidewithdizzy
   BCC checkshopkeeper
 
@@ -2212,7 +2213,7 @@ numdeadlyobj = * - deadlyobj
 
 .checkshopkeeper
 {
-  LDX #65 ; egg, MARKETSQUAREROOM, 64x152
+  LDX #prox_shopkeeper ; MARKETSQUAREROOM, 64x152
   JSR collidewithdizzy
   BCC checkminetroll
 
@@ -2221,7 +2222,7 @@ numdeadlyobj = * - deadlyobj
   STA objs_rooms+obj_shopkeeper
   STA objs_rooms+obj_shopkeeper+1
 
-  LDA #OFFMAP:STA objs_rooms+65
+  LDA #OFFMAP:STA objs_rooms+prox_shopkeeper
 
   LDA #str_shopkeeperappearsmess:JSR prtmessage
   JMP l1F33
@@ -2249,7 +2250,7 @@ numdeadlyobj = * - deadlyobj
   LDA #90:STA objs_xlocs+obj_troll
   LDA #120:STA objs_ylocs+obj_troll
   LDA #ATTR_NOTSOLID+PAL_GREEN:STA objs_attrs+obj_troll
-  LDA #OFFMAP:STA objs_rooms+67
+  LDA #OFFMAP:STA objs_rooms+prox_troll ; remove proximity from dungeon
 
   LDX #obj_troll
   JSR redrawobj
@@ -2262,7 +2263,7 @@ numdeadlyobj = * - deadlyobj
 
   LDA #JOY_LEFT+JOY_UP:STA player_input ; Set Dizzy jumping away from the troll
 
-  LDA #CASTLEDUNGEONROOM:STA objs_rooms+55 ; Put last coin in the dungeon (behind the troll)
+  LDA #CASTLEDUNGEONROOM:STA objs_rooms+obj_lastcoin ; Put last coin in the dungeon (behind the troll)
 
   JMP l1B68
 }
@@ -2388,7 +2389,7 @@ numdeadlyobj = * - deadlyobj
 
 .checkportrait
 {
-  LDX #&55 ; egg, ENTRANCEHALLROOM, 64x104
+  LDX #prox_picture ; ENTRANCEHALLROOM, 64x104
   JSR collidewithdizzy
   BCC checkportcullis
 
@@ -2460,7 +2461,7 @@ numdeadlyobj = * - deadlyobj
   CMP #collected
   BEQ checkgranddizzy
 
-  LDX #&44 ; egg, CASTLEDUNGEONROOM, 40x160
+  LDX #prox_knox ; CASTLEDUNGEONROOM, 40x160
   JSR collidewithdizzy
   BCC checkgranddizzy
 
@@ -2534,11 +2535,11 @@ numdeadlyobj = * - deadlyobj
 
 .loop
   {
-  LDX #obj_liftbottom
+  LDX #obj_prisonliftbottom
   JSR ruboutframe
 
   ; Move bottom of lift downwards
-  INC objs_ylocs+obj_liftbottom
+  INC objs_ylocs+obj_prisonliftbottom
   JSR redrawobj
 
   INX ; switch from liftbottom to daisy
@@ -2550,14 +2551,14 @@ numdeadlyobj = * - deadlyobj
   JSR redrawobj
 
   ; Move top of lift downwards
-  LDX #obj_lifttop
-  INC objs_ylocs+obj_lifttop
+  LDX #obj_prisonlifttop
+  INC objs_ylocs+obj_prisonlifttop
   JSR redrawobj
 
   LDA #&0A:JSR delay
 
   ; Check where the lift has got to, keep moving until it gets to the bottom
-  LDA objs_ylocs+obj_liftbottom
+  LDA objs_ylocs+obj_prisonliftbottom
   ; Is it < 139
   CMP #139
   BCC loop
@@ -2895,7 +2896,7 @@ numdeadlyobj = * - deadlyobj
   CMP #obj_jugofwater
   BNE checkrope
 
-  LDX #68 ; egg, CASTLEDUNGEONROOM, 40x160
+  LDX #prox_jug ; CASTLEDUNGEONROOM, 40x160
   JSR collidewithdizzy
   BCC do_checkliftcollide
 
@@ -2904,8 +2905,9 @@ numdeadlyobj = * - deadlyobj
 
   LDA #str_throwwateronfiremess:JSR prtmessage
 
-  LDA #CASTLESTAIRCASEROOM:STA objs_rooms+68
-  LDA #36:STA objs_xlocs+68
+  ; Move the proximity to be used by door knocker next
+  LDA #CASTLESTAIRCASEROOM:STA objs_rooms+prox_jug
+  LDA #36:STA objs_xlocs+prox_jug
 
   JMP checkliftcollide
 }
@@ -2940,7 +2942,7 @@ numdeadlyobj = * - deadlyobj
   BCS checkdoorknocker2
 
   ; Check if we are next to the broken bridge
-  LDX #&4F ; egg, BROKENBRIDGEROOM, 74x104
+  LDX #prox_rock ; BROKENBRIDGEROOM, 74x104
   JSR collidewithdizzy
   BCC do_checkliftcollide
 
@@ -2973,17 +2975,17 @@ numdeadlyobj = * - deadlyobj
   CPX #CASTLESTAIRCASEROOM
   BNE checkbone
 
-  LDX #68 ; egg, CASTLEDUNGEONROOM, 40x160
+  LDX #prox_knox ; CASTLEDUNGEONROOM, 40x160
   JSR collidewithdizzy
   BCC l2304
 
-  ; Remove ??? from game
+  ; Remove door knocker from game
   JSR hideobject
 
-  ; Remove plank and (egg?)
+  ; Remove plank (door) and knock proximity
   LDA #OFFMAP
   STA objs_rooms+obj_plank
-  STA objs_rooms+68
+  STA objs_rooms+prox_knox
 
   LDA #str_usedoorknockermess:JSR prtmessage
 
@@ -3000,14 +3002,14 @@ numdeadlyobj = * - deadlyobj
   CMP #obj_bone
   BNE checkcrowbar
 
-  LDX #82 ; egg, ARMOROGROOM, 82x160
+  LDX #prox_armorogden ; ARMOROGROOM, 82x160
   JSR collidewithdizzy
   BCC l2304
 
   LDA #str_fedarmorog:JSR prtmessage
 
   LDA #ATTR_REVERSE+PAL_WHITE:STA objs_attrs+obj_bone
-  LDA #OFFMAP:STA objs_rooms+82
+  LDA #OFFMAP:STA objs_rooms+prox_armorogden
 
   JMP checkliftcollide
 }
@@ -3080,8 +3082,8 @@ numdeadlyobj = * - deadlyobj
   ; Remove bucket from game
   JSR hideobject
 
-  ; ?? put beanstalk in allotment ??
-  LDA #ALLOTMENTROOM:STA objs_rooms+131
+  ; Add an extra leaf as part of beanstalk
+  LDA #ALLOTMENTROOM:STA objs_rooms+obj_leaf
 
   LDA #str_throwwateronbeanmess:JSR prtmessage
 
@@ -3090,7 +3092,7 @@ numdeadlyobj = * - deadlyobj
 
 .checkfillingbucket
 {
-  LDX #&5D ; egg, BASEOFVOLCANOROOM, 47x144
+  LDX #prox_mtbucket ; BASEOFVOLCANOROOM, 47x144
   JSR collidewithdizzy
   BCC l23C5
 
@@ -3139,7 +3141,7 @@ numdeadlyobj = * - deadlyobj
   CMP #obj_goldenegg
   BNE checkpickaxe
 
-  LDX #&47 ; egg, DRAGONSLAIRROOM, 54x160
+  LDX #prox_egg ; DRAGONSLAIRROOM, 54x160
   JSR collidewithdizzy
   BCC l23C5
 
@@ -3156,14 +3158,15 @@ numdeadlyobj = * - deadlyobj
   CMP #obj_pickaxe
   BNE checkrug
 
-  LDX #73 ; egg, MINESROOM, 42x101
+  LDX #prox_pickaxe ; MINESROOM, 42x101
   JSR collidewithdizzy
   BCC l23C5
 
   ; Remove pickaxe from game
   JSR hideobject
 
-  LDA #OFFMAP:STA objs_rooms+72
+  ; Remove large stone from game
+  LDA #OFFMAP:STA objs_rooms+obj_largestone
 
   LDA #str_usepickaxemess:JSR prtmessage
 
@@ -3180,8 +3183,8 @@ numdeadlyobj = * - deadlyobj
   BNE l23C5
 
   ; Put "ground" sprites into prison to mimic rug
-  STA objs_rooms+106
-  STA objs_rooms+107
+  STA objs_rooms+obj_prisonrug1
+  STA objs_rooms+obj_prisonrug2
 
   ; Remove rug from game
   JSR hideobject
@@ -3897,7 +3900,7 @@ numdeadlyobj = * - deadlyobj
   CMP #104
   BCS l283D
 
-  LDA objs_rooms+82 ; egg
+  LDA objs_rooms+prox_armorogden ; remove proximity
   CMP #OFFMAP
   BEQ l283D
 
@@ -4054,7 +4057,7 @@ numdeadlyobj = * - deadlyobj
   BEQ l290F
   BCS l2925
 .l290F
-  LDA objs_attrs+108 ; dragon neck
+  LDA objs_attrs+obj_dragonneck
   AND #&20
   BNE l291F
 
@@ -4077,7 +4080,7 @@ numdeadlyobj = * - deadlyobj
   CPX #&6C
   BCS l2901
 
-  LDA objs_attrs+108 ; dragon neck
+  LDA objs_attrs+obj_dragonneck
   AND #&20
   BNE l2949
 
@@ -4098,7 +4101,7 @@ numdeadlyobj = * - deadlyobj
 
   INC &03BB
 .l2956
-  LDA objs_attrs+108:EOR #&20:STA objs_attrs+108 ; dragon neck
+  LDA objs_attrs+obj_dragonneck:EOR #&20:STA objs_attrs+obj_dragonneck
 
 .l295E
   LDA roomno
@@ -4194,7 +4197,7 @@ numdeadlyobj = * - deadlyobj
   LDA #128:STA objs_ylocs+obj_sleepingpotion
   LDA #82:STA objs_xlocs+obj_sleepingpotion
 
-  LDA #OFFMAP:STA objs_rooms+7 ; happy dust
+  LDA #OFFMAP:STA objs_rooms+obj_happydust ; not used in the game
 
   LDA #ATTR_GRID+PAL_WHITE
   STA objs_attrs+obj_rat
@@ -5182,7 +5185,7 @@ ORG &2B13
   LDA #noofmoving:STA &03DD
 
   JSR drawobjects
-  JSR updatelifts
+  JSR drawlifts
   JSR convertpalette
 
   LDA #&FF:STA SPR_ENABLE ; Show sprites
@@ -5327,41 +5330,55 @@ ORG &2B13
   RTS
 }
 
-.updatelifts
+; If there is a lift in this room, draw it in the right place
+.drawlifts
 {
   LDX #&00 ; machine offset
   LDA #&58:STA &03DC
 .machineloop
   {
+  ; Check if this lift is in current room
   LDA liftrooms,X
   CMP roomno
   BNE nextmachine
 
-  ; Check if machine[x] is activated
+  ; Check if machine[x] (for this lift) is activated
   LDA objs_attrs+obj_machines,X
   CMP #PAL_WHITE
   BNE nextmachine
 
-  STX &03DB
+  ; We have an enabled lift in the room we are in
+  STX &03DB ; Cache lift id
+
+  ; Calculate offset for this lift into the objects
   TXA
-  ASL A
-  CLC:ADC #&73
+  ASL A ; *2
+  CLC:ADC #obj_lifts
   TAX
-  ; Reset Y position of this object and next
+
+  ; Reset Y position of top and bottom of this lift
   LDA orig_ylocs,X:STA objs_ylocs,X
   LDA orig_ylocs+1,X:STA objs_ylocs+1,X
-.l30F8
+
+  ; This draws a streak of white above the lift to act as the lift rope
+.redrawlift
+  {
+  ; Draw the top of the lift
   JSR drawobjframe
 
+  ; Check the Y position of the bottom of the lift
   LDA objs_ylocs+1,X
-  LDY &03DB
-  CMP v18F4,Y
-  BCS l3117
+  LDY &03DB ; Restore lift id
+  CMP v18F4,Y ; Compare Y position
+  BCS drawliftbottom ; if >= we're done
 
-  INC objs_ylocs,X
-  INC objs_ylocs+1,X
+  ; Move lift downwards
+  INC objs_ylocs,X   ; Top of lift
+  INC objs_ylocs+1,X ; Bottom of lift
 
-  JMP l30F8
+  ; Loop back to redraw top of lift at new position
+  JMP redrawlift
+  }
 
 .nextmachine
   INX
@@ -5369,13 +5386,18 @@ ORG &2B13
   BCC machineloop
   }
 
+  ; No lifts needed drawing at this point, so move on to check prison lift
   JMP checkprisonlift
 
-.l3117
+.drawliftbottom
   INX
   JSR drawobjframe
 
+  ; Fall through
+}
+
 .checkprisonlift
+{
   LDA roomno
   CMP #DAISYSPRISONROOM
   BNE done
@@ -5386,7 +5408,7 @@ ORG &2B13
   BEQ done
 
   ; Move Daisy's prison lift downwards (redrawing) until it reaches the bottom
-  LDX #obj_lifttop
+  LDX #obj_prisonlifttop
   LDA orig_ylocs,X:STA objs_ylocs,X
 .loop
   {
@@ -6989,7 +7011,7 @@ ORG &2B13
 
   STX frmx ; X position
 
-  LDA objs_ylocs+obj_dragonneck:STA frmy ; Y position
+  LDA objs_ylocs+obj_dragonneck2:STA frmy ; Y position
 
   ; Drawing yellow flames
   LDA #PAL_YELLOW

@@ -178,6 +178,7 @@ obj_crowbar        = 3
 obj_bucket         = 4
 obj_bone           = 5
 obj_cow            = 6
+obj_happydust      = 7 ; not used in the game
 obj_pickaxe        = 8
 obj_goldenegg      = 9
 obj_blackhole      = 10
@@ -193,6 +194,7 @@ obj_doorknocker    = 22
 obj_rock1          = 23
 obj_rock2          = 24
 obj_rock3          = 25
+obj_lastcoin       = 55 ; initially hidden behind dungeon troll
 
 ; Range of objects which can be placed in the bag
 mincollectable = obj_bean
@@ -201,47 +203,43 @@ maxcollectable = 62
 ; end of collectables
 
 obj_shopkeeper     = 63
-;= 65 ; egg
 obj_troll          = 66
-;= 67 ; egg
-;= 68 ; egg
 obj_rat            = 69
 obj_goldenegg2     = 70
-;= 71 ; egg
-;= 73 ; egg
+obj_largestone     = 72
 obj_dozy           = 74
 obj_bridgewater1   = 75
 obj_bridgewater2   = 76
 obj_bridgewater3   = 77
 obj_pontoon        = 78
-;= 79 ; egg
 obj_hawk           = 80
 obj_grunt          = 81
-;= 82 ; egg
 obj_switch         = 83
 obj_portcullis     = 84
-;= 85 ; egg
 obj_croc           = 86
 obj_wood           = 87
 obj_machines       = 88
 obj_dylan          = 92
-;= 93 ; egg
 obj_denzil         = 94
 obj_dagger1        = 95
 obj_plank          = 98
 obj_granddizzy     = 99
 obj_switch2        = 100
-obj_lifttop        = 101
-obj_liftbottom     = 102
+obj_prisonlifttop  = 101
+obj_prisonliftbottom = 102
 obj_daisy          = 103
 obj_dagger2        = 104
 obj_dagger3        = 105
-obj_dragonneck     = 113
+obj_prisonrug1     = 106
+obj_prisonrug2     = 107
+obj_dragonneck     = 108
+obj_dragonneck2    = 113
 obj_dragonhead     = 114
 obj_lifttop1       = 115
 obj_lifttop2       = 117
 obj_lifttop3       = 119
 obj_lifttop4       = 121
+obj_leaf           = 131
 obj_null           = 255
 
 obj_lifts          = obj_lifttop1 ; start of the 4 lifts
@@ -252,6 +250,18 @@ liftobjs = numlifts*liftparts
 endoflifts = obj_lifts+liftobjs
 nummachines = numlifts
 
+; Proximity objects
+prox_shopkeeper = 65
+prox_troll      = 67
+prox_jug        = 68
+prox_knox       = 68
+prox_egg        = 71
+prox_pickaxe    = 73
+prox_rock       = 79
+prox_armorogden = 82
+prox_picture    = 85
+prox_mtbucket   = 93
+
 ; Upper RAM area
 
 ; Live set of objects (copied from C400)
@@ -261,7 +271,7 @@ nummachines = numlifts
 ;.vC6A1 ; crowbar
 ;.vC6A2 ; bucket
 ;.vC6A3 ; bone
-.vC6A5 ; happydust
+;.vC6A5 ; happydust
 ;.vC6A8 ; blackhole
 ;.vC6A9 ; rug
 ;.vC6AE ; rope
@@ -270,30 +280,30 @@ nummachines = numlifts
 ;.vC6B2 ; jugofwater
 ;.vC6B3 ; bread
 ;.vC6B4 ; doorknocker
-.vC6D5 ; (last coin)
+;.vC6D5 ; (last coin)
 ;.vC6DD ; shopkeeper
 ;.vC6DE ; shopkeeper
-.vC6DF ; egg
+;.vC6DF ; prox_shopkeeper
 ;.vC6E0 ; troll
-.vC6E1 ; egg
-.vC6E2 ; egg
+;.vC6E1 ; prox_troll
+;.vC6E2 ; prox_jug / prox_knox
 ;.vC6E3 ; rat
 ;.vC6E4 ; goldenegg2
-.vC6E6 ; largestone
-.vC6F0 ; egg
+;.vC6E6 ; largestone
+;.vC6F0 ; prox_pickaxe
 ;.vC6F5 ; wood
 ;.vC700 ; plank
 ;.vC705 ; daisy
-.vC708 ; ground
-.vC709 ; ground
-.vC721 ; leaf
+;.vC708 ; obj_prisonrug1
+;.vC709 ; obj_prisonrug2
+;.vC721 ; leaf
 
 ; X[] array
 ;.vC724 ; bag
 ;.vC735 ; sleepingpotion
 ;.vC739 ; bread
 ;.vC766 ; troll
-.vC768 ; 68 ? egg
+;.vC768 ; prox_jug / prox_knox
 ;.vC769 ; rat
 ;.vC76E ; dozy
 ;.vC774 ; hawk
@@ -315,7 +325,7 @@ nummachines = numlifts
 ;.vC80F ; lifttop
 ;.vC810 ; liftbottom
 ;.vC811 ; daisy
-;.vC81B ; dragonneck
+;.vC81B ; dragonneck2
 
 ; attrib[] array
 ;.vC830 ; bag
@@ -334,7 +344,7 @@ nummachines = numlifts
 ;.vC88C ; dylan
 ;.vC894 ; switch2
 ;.vC897 ; daisy
-.vC89C ; 108 ? dragonneck
+;.vC89C ; dragonneck
 ;.vC8A2 ; dragonhead
 
 ; frame[] array
