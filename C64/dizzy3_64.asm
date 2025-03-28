@@ -2212,7 +2212,7 @@ numdeadlyobj = * - deadlyobj
 
 .checkshopkeeper
 {
-  LDX #&41 ; egg, MARKETSQUAREROOM, 64x152
+  LDX #65 ; egg, MARKETSQUAREROOM, 64x152
   JSR collidewithdizzy
   BCC checkminetroll
 
@@ -2221,7 +2221,7 @@ numdeadlyobj = * - deadlyobj
   STA objs_rooms+obj_shopkeeper
   STA objs_rooms+obj_shopkeeper+1
 
-  LDA #OFFMAP:STA &C6DF
+  LDA #OFFMAP:STA objs_rooms+65
 
   LDA #str_shopkeeperappearsmess:JSR prtmessage
   JMP l1F33
@@ -2249,7 +2249,7 @@ numdeadlyobj = * - deadlyobj
   LDA #90:STA objs_xlocs+obj_troll
   LDA #120:STA objs_ylocs+obj_troll
   LDA #ATTR_NOTSOLID+PAL_GREEN:STA objs_attrs+obj_troll
-  LDA #OFFMAP:STA &C6E1
+  LDA #OFFMAP:STA objs_rooms+67
 
   LDX #obj_troll
   JSR redrawobj
@@ -2262,7 +2262,7 @@ numdeadlyobj = * - deadlyobj
 
   LDA #JOY_LEFT+JOY_UP:STA player_input ; Set Dizzy jumping away from the troll
 
-  LDA #CASTLEDUNGEONROOM:STA &C6D5 ; Put last coin in the dungeon (behind the troll)
+  LDA #CASTLEDUNGEONROOM:STA objs_rooms+55 ; Put last coin in the dungeon (behind the troll)
 
   JMP l1B68
 }
@@ -2687,11 +2687,11 @@ numdeadlyobj = * - deadlyobj
   CPX #lastcoin+1
   BCC l2177
 
-  LDA &C696,X
-  CMP #&65
+  LDA vC696,X ; load from static objects
+  CMP #&65 ; ? sprites ?
   BNE l2177
 
-  LDA roomno:STA &C696,X
+  LDA roomno:STA vC696,X
 .l2177
   JSR buildinventorylist
 
@@ -2895,7 +2895,7 @@ numdeadlyobj = * - deadlyobj
   CMP #obj_jugofwater
   BNE checkrope
 
-  LDX #&44 ; egg, CASTLEDUNGEONROOM, 40x160
+  LDX #68 ; egg, CASTLEDUNGEONROOM, 40x160
   JSR collidewithdizzy
   BCC do_checkliftcollide
 
@@ -2904,8 +2904,8 @@ numdeadlyobj = * - deadlyobj
 
   LDA #str_throwwateronfiremess:JSR prtmessage
 
-  LDA #CASTLESTAIRCASEROOM:STA &C6E2
-  LDA #&24:STA &C768
+  LDA #CASTLESTAIRCASEROOM:STA objs_rooms+68
+  LDA #36:STA objs_xlocs+68
 
   JMP checkliftcollide
 }
@@ -2973,7 +2973,7 @@ numdeadlyobj = * - deadlyobj
   CPX #CASTLESTAIRCASEROOM
   BNE checkbone
 
-  LDX #&44 ; egg, CASTLEDUNGEONROOM, 40x160
+  LDX #68 ; egg, CASTLEDUNGEONROOM, 40x160
   JSR collidewithdizzy
   BCC l2304
 
@@ -2983,7 +2983,7 @@ numdeadlyobj = * - deadlyobj
   ; Remove plank and (egg?)
   LDA #OFFMAP
   STA objs_rooms+obj_plank
-  STA &C6E2
+  STA objs_rooms+68
 
   LDA #str_usedoorknockermess:JSR prtmessage
 
@@ -3000,14 +3000,14 @@ numdeadlyobj = * - deadlyobj
   CMP #obj_bone
   BNE checkcrowbar
 
-  LDX #&52 ; egg, ARMOROGROOM, 82x160
+  LDX #82 ; egg, ARMOROGROOM, 82x160
   JSR collidewithdizzy
   BCC l2304
 
   LDA #str_fedarmorog:JSR prtmessage
 
   LDA #ATTR_REVERSE+PAL_WHITE:STA objs_attrs+obj_bone
-  LDA #OFFMAP:STA &C6F0
+  LDA #OFFMAP:STA objs_rooms+82
 
   JMP checkliftcollide
 }
@@ -3081,7 +3081,7 @@ numdeadlyobj = * - deadlyobj
   JSR hideobject
 
   ; ?? put beanstalk in allotment ??
-  LDA #ALLOTMENTROOM:STA &C721
+  LDA #ALLOTMENTROOM:STA objs_rooms+131
 
   LDA #str_throwwateronbeanmess:JSR prtmessage
 
@@ -3156,14 +3156,14 @@ numdeadlyobj = * - deadlyobj
   CMP #obj_pickaxe
   BNE checkrug
 
-  LDX #&49 ; egg, MINESROOM, 42x101
+  LDX #73 ; egg, MINESROOM, 42x101
   JSR collidewithdizzy
   BCC l23C5
 
   ; Remove pickaxe from game
   JSR hideobject
 
-  LDA #OFFMAP:STA &C6E6
+  LDA #OFFMAP:STA objs_rooms+72
 
   LDA #str_usepickaxemess:JSR prtmessage
 
@@ -3179,8 +3179,9 @@ numdeadlyobj = * - deadlyobj
   CMP roomno
   BNE l23C5
 
-  STA &C708
-  STA &C709
+  ; Put "ground" sprites into prison to mimic rug
+  STA objs_rooms+106
+  STA objs_rooms+107
 
   ; Remove rug from game
   JSR hideobject
@@ -3896,7 +3897,7 @@ numdeadlyobj = * - deadlyobj
   CMP #104
   BCS l283D
 
-  LDA &C6F0
+  LDA objs_rooms+82 ; egg
   CMP #OFFMAP
   BEQ l283D
 
@@ -4053,7 +4054,7 @@ numdeadlyobj = * - deadlyobj
   BEQ l290F
   BCS l2925
 .l290F
-  LDA &C89C
+  LDA objs_attrs+108 ; dragon neck
   AND #&20
   BNE l291F
 
@@ -4076,7 +4077,7 @@ numdeadlyobj = * - deadlyobj
   CPX #&6C
   BCS l2901
 
-  LDA &C89C
+  LDA objs_attrs+108 ; dragon neck
   AND #&20
   BNE l2949
 
@@ -4097,7 +4098,7 @@ numdeadlyobj = * - deadlyobj
 
   INC &03BB
 .l2956
-  LDA &C89C:EOR #&20:STA &C89C
+  LDA objs_attrs+108:EOR #&20:STA objs_attrs+108 ; dragon neck
 
 .l295E
   LDA roomno
@@ -4193,7 +4194,7 @@ numdeadlyobj = * - deadlyobj
   LDA #128:STA objs_ylocs+obj_sleepingpotion
   LDA #82:STA objs_xlocs+obj_sleepingpotion
 
-  LDA #OFFMAP:STA &C6A5 ; happy dust?
+  LDA #OFFMAP:STA objs_rooms+7 ; happy dust
 
   LDA #ATTR_GRID+PAL_WHITE
   STA objs_attrs+obj_rat
