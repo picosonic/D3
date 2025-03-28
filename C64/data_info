@@ -26,6 +26,11 @@ $A700 .. $C387 = frmdefs
 
 $C400 .. $C69D = objects (static)
 $C69E .. $C93C = objects (ingame)
+  objs_rooms  = &C69E
+  objs_xlocs  = &C724
+  objs_ylocs  = &C7AA
+  objs_attrs  = &C830
+  objs_frames = &C8B6
 
 $CFF8
 

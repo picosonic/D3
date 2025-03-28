@@ -244,7 +244,7 @@ obj_lifttop3       = 119
 obj_lifttop4       = 121
 obj_null           = 255
 
-obj_lifts          = 115 ; start of the 4 lifts
+obj_lifts          = obj_lifttop1 ; start of the 4 lifts
 
 numlifts = 4
 liftparts = 2
