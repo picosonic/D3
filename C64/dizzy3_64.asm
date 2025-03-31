@@ -41,7 +41,7 @@ frmattr = &033C ; attrib
 tmp3 = &033C
 .v033D
 .v033E
-.v033F ; ?? flame ?? &00 = not solid or deadly, bit &40 = solid ??
+hitbitflags = &033F ; hit-detection bitmap flags
 .v0340 ; frame
 .v0342 ; ?? inc and dec, set to 01/03/06 ?? maybe jump/gravity related ??
 cursorindex = &0344
@@ -62,14 +62,14 @@ dizzyy = &035C
 .v035F
 .v0360
 .v0361
-.v0366 ; []
+.v0366 ; [2]
 .v0368
 .v0369
 .v036A
 .v036B
-.v0370 ; []
-.v037A ; [] related to dizzyy
-.v0384 ; [] related to dizzyx
+.v0370 ; [10]
+.v037A ; [10] related to dizzyy
+.v0384 ; [20?] related to dizzyx
 msgbox_width = &0398
 msgbox_height = &0399
 .v039A
@@ -962,11 +962,11 @@ ORG &0B00
   RTS
 }
 
-.v1085 ; []
-.v1086 ; []
+.v1085 ; [1]
+.v1086 ; [96]
 
-.v10E6 ; []
-.v10E7 ; []
+.v10E6 ; [1]
+.v10E7 ; [96]
 
 ORG &1147
 
@@ -983,65 +983,65 @@ ORG &1147
   RTS
 }
 
-.v1158 ; []
-.v115B ; []
-.v115E ; []
-.v1166 ; []
-.v1169 ; []
+.v1158 ; [3]
+.v115B ; [3]
+.v115E ; [8]
+.v1166 ; [3]
+.v1169 ; [3]
 .v116C
 .v116D
 .v116E
 .v116F
 
 ORG &1170
-.melody_chan_pos ; []
+.melody_chan_pos ; [3]
 {
   EQUB &14 ; Channel 1 melody data pos
   EQUB &11 ; Channel 2 melody data pos
   EQUB &11 ; Channel 3 melody data pos
 }
 
-.v1173 ; []
-.v1176 ; []
-.v1179 ; []
-.v117C ; []
+.v1173 ; [3]
+.v1176 ; [3]
+.v1179 ; [3]
+.v117C ; [3]
 
 ORG &117F
 ; These are *variable* pointers in the range &1399..&1431 (melody data)
-.v117F ; pointers lo []
+.v117F ; pointers lo [3]
 {
   EQUB &99
   EQUB &E2
   EQUB &31
 }
 
-.v1182 ; pointers hi []
+.v1182 ; pointers hi [3]
 {
   EQUB &13
   EQUB &13
   EQUB &14
 }
 
-.v1185 ; []
-.v1188 ; []
-.v118B ; []
-.v118E ; []
-.v1191 ; []
-.v1194 ; []
-.v1197 ; []
+.v1185 ; [3]
+.v1188 ; [3]
+.v118B ; [3]
+.v118E ; [3]
+.v1191 ; [3]
+.v1194 ; [3]
+.v1197 ; [3]
 .v119A
 .v119B
 .v119C
-.v119D ; []
-.v11A0 ; []
-.v11A3 ; []
-.v11A6 ; []
+.v119D ; [3]
+.v11A0 ; [3]
+.v11A3 ; [3]
+.v11A6 ; [3]
 .v11A9
 .v11AA
-.v11AB ; []
-.v11AE ; []
-.v11B1 ; []
-.v11B4 ; []
+.v11AB ; [3]
+.v11AE ; [3]
+.v11B1 ; [3]
+.v11B4 ; [3]
 .v11B7
 .v11B8
 .v11B9
@@ -1050,13 +1050,13 @@ ORG &117F
 
 ORG &11BC
   ; Current melody
-.melodychanptr_lo ; []
+.melodychanptr_lo ; [3]
 {
   EQUB &0F
   EQUB &3D
   EQUB &65
 }
-.melodychanptr_hi ; []
+.melodychanptr_hi ; [3]
 {
   EQUB &13
   EQUB &13
@@ -1064,22 +1064,22 @@ ORG &11BC
 }
 
 .v11C2
-.v11C3 ; []
-.v11C6 ; []
-.v11C9 ; []
+.v11C3 ; [3]
+.v11C6 ; [3]
+.v11C9 ; [1]
 .v11CA
 .v11CB
 .v11CC
-.v11CD ; []
-.v11ED ; []
-.v11EE ; []
-.v11EF ; []
-.v11F0 ; []
-.v1215 ; []
-.v1225 ; []
+.v11CD ; [16]
+.v11ED ; [1]
+.v11EE ; [1]
+.v11EF ; [1]
+.v11F0 ; [37]
+.v1215 ; [16]
+.v1225 ; [16]
 
 ORG &1235
-.melodyconfigs ; []
+.melodyconfigs ; [24]
 {
   ; Melody 1 - Title screen
   EQUW m1c1
@@ -1102,16 +1102,16 @@ ORG &1235
   EQUW m4c3
 }
 
-.v124D ; []
-.v124E ; []
-.v124F ; []
-.v1250 ; []
-.v1251 ; []
-.v1252 ; []
-.v1253 ; []
-.v1254 ; []
-.v12DD ; []
-.v12DE ; []
+.v124D ; [1]
+.v124E ; [1]
+.v124F ; [1]
+.v1250 ; [1]
+.v1251 ; [1]
+.v1252 ; [1]
+.v1253 ; [1]
+.v1254 ; [137]
+.v12DD ; [1]
+.v12DE ; [49]
 
 ORG &130F
 INCLUDE "melodydata.asm"
@@ -1119,7 +1119,7 @@ INCLUDE "melodydata.asm"
 ORG &180E
 ; These static pointers are to data in the range &5c00..&5fc0 (screen/border colour attribs)
 ;   at 40 characters per row
-.screenattrtable_lo ; [] pointers lo
+.screenattrtable_lo ; [25] pointers lo
 {
   FOR n, 0, CHAR_ROWS-1
     EQUB lo(screen_attribs+(n*CHAR_COLUMNS))
@@ -1129,17 +1129,17 @@ ORG &180E
 .u1827
   EQUB &5B ; ??? not sure what this is for ???
 
-.screenattrtable_hi ; [] pointers hi
+.screenattrtable_hi ; [25] pointers hi
 {
   FOR n, 0, CHAR_ROWS-1
     EQUB hi(screen_attribs+(n*CHAR_COLUMNS))
   NEXT
 }
 
-.v1877 ; []
+.v1877 ; [32]
 
 ORG &1897
-.c64palette ; spectrum to c64 palette lookup []
+.c64palette ; spectrum to c64 palette lookup [8]
 {
   EQUB &00 ; black
   EQUB &60 ; blue
@@ -1166,7 +1166,7 @@ ORG &1897
 }
 
 ORG &18D9
-.inventorylist ; Objects carried list []
+.inventorylist ; Objects carried list [5]
 {
   EQUB obj_null, obj_null, obj_null, obj_null, obj_null
 }
@@ -1177,7 +1177,7 @@ coins = &18E6
 .v18E7 ; not used ?? only ever set to 0 when coin counters reset
 
 ORG &18E8
-.liftrooms ; rooms with lifts in machine/key order []
+.liftrooms ; rooms with lifts in machine/key order [4]
 {
   EQUB DOZYSHUTROOM
   EQUB DRAGONSLAIRROOM
@@ -1185,7 +1185,7 @@ ORG &18E8
   EQUB LIFTCONTROLROOM
 }
 
-.highestliftpos ; lifts upper Y position in machine/key order []
+.highestliftpos ; lifts upper Y position in machine/key order [4]
 {
   EQUB 96  ; Keep out! Dozy's hut
   EQUB 88  ; The dragon's lair
@@ -1193,7 +1193,7 @@ ORG &18E8
   EQUB 136 ; The lift control hut
 }
 
-.lowestliftpos ; lifts lower Y position in machine/key order []
+.lowestliftpos ; lifts lower Y position in machine/key order [4]
 {
   EQUB 152 ; Keep out! Dozy's hut
   EQUB 174 ; The dragon's lair
@@ -1201,12 +1201,12 @@ ORG &18E8
   EQUB 176 ; The lift control hut
 }
 
-.v18F4 ; ?? copied from highestliftpos, related to lift Y position ?? []
+.v18F4 ; ?? copied from highestliftpos, related to lift Y position ?? [4]
 {
   EQUB 0, 0, 0, 0
 }
 
-.deadlyobj ; objects that can kill Dizzy on contact []
+.deadlyobj ; objects that can kill Dizzy on contact [11]
 {
   EQUB obj_grunt
   EQUB obj_portcullis
@@ -1225,7 +1225,7 @@ ORG &18E8
 }
 numdeadlyobj = * - deadlyobj
 
-.deathmessages ; death message string table offsets for deadly obj (above) []
+.deathmessages ; death message string table offsets for deadly obj (above) [11]
 {
   EQUB str_armorogkilledmess
   EQUB str_killedbyportcullis
@@ -1278,7 +1278,7 @@ numdeadlyobj = * - deadlyobj
   }
 
   LDA #TUNE_1:STA melody ; Title screen melody
-  LDA #&00:STA &033F
+  LDA #HIT_EMPTY:STA hitbitflags
 
   JSR l3B6D
   JSR cleargamescreen
@@ -1525,10 +1525,10 @@ numdeadlyobj = * - deadlyobj
 
   JSR l3154 ; ?? hit detection (+22 Y, +1..5 X) ??
 
-  BEQ l1AEB
+  BEQ l1AEB ; = 1
 
-  LDA &033F
-  AND #&40
+  LDA hitbitflags
+  AND #HIT_SOLID
   BEQ l1AEB
 
   JMP l1B0C
@@ -1557,8 +1557,8 @@ numdeadlyobj = * - deadlyobj
   LDA &033E
   BEQ l1B1D
 
-  LDA &033F
-  AND #&40
+  LDA hitbitflags
+  AND #HIT_SOLID
   BEQ l1B1D
 
   LDA player_input
@@ -1673,8 +1673,8 @@ numdeadlyobj = * - deadlyobj
   BCS l1BFD
 
   JSR l3154 ; ?? hit detection (+1..5 X, Y) ??
-  BEQ loop
-  BCC loop
+  BEQ loop ; = 1
+  BCC loop ; < 0
   }
 
   LDA #&02:STA &03C1
@@ -1722,8 +1722,8 @@ numdeadlyobj = * - deadlyobj
   BCS l1C3E
 
   JSR l3154 ; ?? hit detection (+1..5 X, +22 Y) ??
-  BEQ loop
-  BCC loop
+  BEQ loop ; = 1
+  BCC loop ; < 1
   }
 
   JMP l1C51
@@ -1857,7 +1857,7 @@ numdeadlyobj = * - deadlyobj
   STA frmx
   LDA #12:STA frmy
   JSR l3154 ; ?? hit detection (+0 or +7 X, +12 Y) ??
-  BCC l1CFC
+  BCC l1CFC ; < 1
 
   LDA &03C1
   CMP #&02
@@ -1885,19 +1885,19 @@ numdeadlyobj = * - deadlyobj
 .l1CFC
   LDA #12:STA frmy
   JSR l3154 ; ?? hit detection (+?? X, +12 Y) ??
-  BCS l1CB9
+  BCS l1CB9 ; >= 1
 
   LDA #12:STA frmy
   JSR l3154 ; ?? hit detection (+?? X, +12 Y) ??
+  BCC l1D12 ; < 1
+  BNE l1CB9 ; != 1
 
-  BCC l1D12
-  BNE l1CB9
 .l1D12
   LDA #13:STA frmy
   JSR l3154 ; ?? hit detection (+?? X. +13 Y) ??
+  BCC l1D1E ; < 1
+  BNE l1CB9 ; != 1
 
-  BCC l1D1E
-  BNE l1CB9
 .l1D1E
   LDA &03C9
   BEQ l1D2E
@@ -1906,8 +1906,8 @@ numdeadlyobj = * - deadlyobj
   CMP #&09
   BCS l1D2E
 
-  LDA &033F
-  AND #&40
+  LDA hitbitflags
+  AND #HIT_SOLID
   BNE l1CB9
 
 .l1D2E
@@ -1948,10 +1948,8 @@ numdeadlyobj = * - deadlyobj
   BCS l1D7C
 
   JSR l3154 ; ?? hit detection (+0..5 X, +22 Y) ??
-
-  ; Is it <= ??
-  BCC loop
-  BEQ loop
+  BCC loop ; < 1
+  BEQ loop ; = 1
   }
 
   LDA #&00
@@ -1979,9 +1977,8 @@ numdeadlyobj = * - deadlyobj
   BCS l1D9D
 
   JSR l3154 ; ?? hit detection (+1..5 X, +21..18 Y) ??
-
-  BCC innerloop
-  BEQ innerloop
+  BCC innerloop ; < 1
+  BEQ innerloop ; = 1
   }
 
   DEC dizzyy ; go up due to stairs
@@ -3459,42 +3456,45 @@ numdeadlyobj = * - deadlyobj
 .l2527
 {
   LDA #2:STA frmx
-.l252C
+.loop
+  {
   LDA #6:STA frmy
 
   JSR l3154 ; ?? hit detection (+2..5 X, +6 Y) ??
-  LDA &033F
-  AND #&30
-  BNE l2554
+  LDA hitbitflags
+  AND #HIT_FIRE+HIT_WATER
+  BNE checkforfire
 
   LDA #13:STA frmy
 
   JSR l3154 ; ?? hit detection (+2..5 X, +13 Y) ??
-  LDA &033F
-  AND #&30
-  BNE l2554
+  LDA hitbitflags
+  AND #HIT_FIRE+HIT_WATER
+  BNE checkforfire
 
   INC frmx
   LDA frmx
   ; Is it < 6
   CMP #&06
-  BCC l252C
+  BCC loop
+  }
 
-.l2554
-  LDA &033F
-  AND #&20
-  BEQ l2560
+.checkforfire
+  LDA hitbitflags
+  AND #HIT_FIRE
+  BEQ checkforliquid
 
   LDA #str_killedbyflame
   JMP storekillstr
 }
 
-.l2560
+.checkforliquid
 {
-  LDA &033F
-  AND #&10
+  LDA hitbitflags
+  AND #HIT_WATER
   BEQ ratrou
 
+  ; Collision with liquid, check if it was lava or water
   LDA #str_killedbyvolcano
   LDY roomno
   CPY #ACTIVEVOLCANOROOM
@@ -4428,12 +4428,12 @@ numdeadlyobj = * - deadlyobj
   LDA #&81:STA SID_CH1_CTRL ; Noise / Test
   CLI ; Enable interrupts
 
-.^v2AF2 ; []
+.^v2AF2 ; [] - to make following table 1-based
   RTS
 }
 
   ; No idea what this is, used by l2D95
-.v2AF3 ; []
+.v2AF3 ; [9]
 {
   EQUB &00, &00, &b8, &00, &00, &00, &81, &00, &80
 }
@@ -4570,7 +4570,7 @@ ORG &2B13
   LDA frmx:STA &03DA ; X position
 .l2B95
   STX &03E0
-  LDA &033F:ORA #&10:STA &033F
+  LDA hitbitflags:ORA #HIT_WATER:STA hitbitflags
   LDA frmy:AND #&F8:STA frmy ; Y position
   JMP skipflame
 
@@ -4775,7 +4775,7 @@ ORG &2B13
 
   TXA
   TAY
-  LDA &033F
+  LDA hitbitflags
   AND #&08
   BNE l2D1A
 
@@ -4787,12 +4787,12 @@ ORG &2B13
   ; Strip attribs to convert to hit-detection bitmap
   ;   (&40=solid, &20=fire, &10=water, &00=empty)
 .l2D0E
-  LDA (&35),Y:AND #&30:ORA &033F:STA (&35),Y
+  LDA (&35),Y:AND #HIT_FIRE+HIT_WATER:ORA hitbitflags:STA (&35),Y
   JMP l2D23
 
   ;   also retain (&80=reverse - h-flip)
 .l2D1A
-  LDA (&35),Y:AND #&F0:ORA &033F:STA (&35),Y
+  LDA (&35),Y:AND #&F0:ORA hitbitflags:STA (&35),Y
 .l2D23
   INX
   CPX &034B
@@ -4921,14 +4921,14 @@ ORG &2B13
   AND #ATTR_NOTSOLID
   BEQ l2DF9
 
-  ORA &033F
-  STA &033F
+  ORA hitbitflags
+  STA hitbitflags
 .l2DF9
   LDA frmattr
   AND #&20
   BEQ l2E08
 
-  LDA &033F:ORA #&80:STA &033F
+  LDA hitbitflags:ORA #&80:STA hitbitflags ;; TODO - what is &80 ??
 .l2E08
   LDA frmattr
   AND #&18
@@ -5078,7 +5078,7 @@ ORG &2B13
   LDA (&B0),Y:EOR #ATTR_NOTSOLID:STA cursorattr
 .l2EEE
   LDA cursorattr:STA frmattr ; attrib
-  LDA #&00:STA &033F
+  LDA #HIT_EMPTY:STA hitbitflags
 
   LDY #&02
   LDA (&B0),Y:STA frmy ; Y position
@@ -5550,7 +5550,7 @@ ORG &2B13
   CLC:ADC #4 ; + 4
   TAY
   LDA (&FD),Y ; Load from hit-detection bitmap
-  STA &033F   ; Store result
+  STA hitbitflags   ; Store result
 
   ; Check for even number of X position
   LDA tmp3
@@ -5577,8 +5577,8 @@ ORG &2B13
   STA &033E
 
   ; Check hit-detection bitmap value
-  LDA &033F
-  AND #ATTR_NOTSOLID
+  LDA hitbitflags
+  AND #HIT_SOLID
   CMP #&01 ; Always false due to AND mask above
 
   LDA &033E
@@ -5790,7 +5790,7 @@ ORG &2B13
 
   LDA #PLOT_AND+PAL_BLACK
   STA frmattr ; attrib
-  STA &033F ; =0
+  STA hitbitflags ; empty
 
   LDA objs_frames, X ; frame
   JSR frame
@@ -5804,7 +5804,7 @@ ORG &2B13
   LDA objs_ylocs,X:STA frmy ; Y position
 
   LDA objs_attrs,X:STA frmattr ; attrib
-  LDA #&00:STA &033F
+  LDA #HIT_EMPTY:STA hitbitflags
 
   LDA objs_frames,X ; frame
   JSR frame
@@ -5855,7 +5855,7 @@ ORG &2B13
   LDA frmattr:AND #&A7:ORA &FF:STA frmattr ; attrib
 
 .l3373
-  STY &033F
+  STY hitbitflags
   LDA #&58:STA &03DC
   LDA objs_frames,X ; frame
 
@@ -6287,7 +6287,7 @@ ORG &2B13
   LDX cursorattr:STX frmattr ; attrib
 
   LDX #&00
-  STX &033F
+  STX hitbitflags
   STX &03DC
 
   JSR frame
@@ -6422,7 +6422,7 @@ ORG &2B13
   LDX cursorattr:STX frmattr ; attrib
 
   LDX #&00
-  STX &033F
+  STX hitbitflags ; empty
   STX &03DC
 
   JSR frame
@@ -6709,7 +6709,7 @@ ORG &2B13
   LDA #PLOT_XOR+PAL_RED:STA frmattr ; attrib
 
   LDA #&00
-  STA &033F
+  STA hitbitflags ; empty
   STA &03DC
 
   JSR l326A
@@ -6814,7 +6814,7 @@ ORG &2B13
 .l3903
   STA frmattr ; attrib
 
-  LDA #&00:STA &033F
+  LDA #HIT_EMPTY:STA hitbitflags
 
   LDA gamecounter
   LSR A
@@ -6849,7 +6849,7 @@ ORG &2B13
 
   LDA #&00
   STA frmattr ; attrib
-  STA &033F
+  STA hitbitflags ; empty
   STA &03DC
 
   LDA #SPR_FLAME ; frame
@@ -6872,7 +6872,7 @@ ORG &2B13
 
   LDA flame_x,X:STA frmx ; X position
   LDA flame_y,X:STA frmy ; Y position
-  LDA #&20:STA &033F
+  LDA #HIT_FIRE:STA hitbitflags
   LDA #&00:STA &03DC
   LDA #SPR_FLAME ; frame
   JSR frame
@@ -7093,7 +7093,7 @@ ORG &2B13
   STA frmattr ; attrib
 
   LDA #&00
-  STA &033F
+  STA hitbitflags ; empty
   STA &03DC
 
   LDA #SPR_DRAGONFIRE ; frame
@@ -7267,15 +7267,17 @@ ORG &5C00
 .screen_attribs
 
 ORG &5FF8
-.sprite_pointer ; hw sprite "pointers" []
-EQUB &4E ; sprite 0
-EQUB &36 ; sprite 1
-EQUB &00 ; sprite 2
-EQUB &0A ; sprite 3
-EQUB &60 ; sprite 4
-EQUB &48 ; sprite 5
-EQUB &26 ; sprite 6
-EQUB &43 ; sprite 7
+.sprite_pointer ; hw sprite "pointers" [8]
+{
+  EQUB &4E ; sprite 0
+  EQUB &36 ; sprite 1
+  EQUB &00 ; sprite 2
+  EQUB &0A ; sprite 3
+  EQUB &60 ; sprite 4
+  EQUB &48 ; sprite 5
+  EQUB &26 ; sprite 6
+  EQUB &43 ; sprite 7
+}
 
 ORG &6000
 .screen_memory
