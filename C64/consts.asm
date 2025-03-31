@@ -38,6 +38,11 @@ ATTR_GRID = 8
 ATTR_NOTSOLID = &40 ; Set means not solid
 ATTR_REVERSE = &80 ; Set means h-flip
 
+HIT_SOLID = &40
+HIT_FIRE = &20
+HIT_WATER = &10
+HIT_EMPTY = &00
+
 ; Frame plotting modes
 PLOT_AND = &00
 PLOT_OR = &08
