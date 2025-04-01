@@ -3775,6 +3775,7 @@ numdeadlyobj = * - deadlyobj
   JMP done
 
 .checklift
+  {
   ; Check if this room has a lift
   LDA liftrooms,X
   CMP roomno
@@ -3785,6 +3786,7 @@ numdeadlyobj = * - deadlyobj
   CMP #PAL_WHITE
   BNE nextlift
 
+  ; Found a lift so start processing
   STX index
   TXA
   ASL A
@@ -3795,40 +3797,42 @@ numdeadlyobj = * - deadlyobj
   BNE goingup
 
 .goingdown
-  INC objs_ylocs,X
+  INC objs_ylocs,X ; Move top of lift downwards
   JSR redrawobj
 
-  INX
-  JSR ruboutframe
+  ; Remove bottom of lift
+  INX:JSR ruboutframe
 
-  INC objs_ylocs,X
+  INC objs_ylocs,X ; Move bottom of lift downwards an redraw
   JSR redrawobj
 
+  ; See if the lift has reached the lowest position (incase flipping direction)
   LDY index
   LDA objs_ylocs,X:STA v18F4,Y
   CMP lowestliftpos,Y
-  BCC done
+  BCC done ; <
 
-.l272F
+.flipliftdir
   LDA objs_attrs,X:EOR #ATTR_REVERSE:STA objs_attrs,X ; flip top bit (change direction)
-  LDA #&10:STA &03BE
+  LDA #&10:STA &03BE ; ??? TODO ???
   JMP done
 
 .goingup
-  DEC objs_ylocs,X
+  DEC objs_ylocs,X ; Move top of lift upwards
   JSR redrawobj
 
-  INX
-  JSR ruboutframe
+  ; Remove bottom of lift
+  INX:JSR ruboutframe
 
-  DEC objs_ylocs,X
+  DEC objs_ylocs,X ; Move bottom of lift upwards and redraw
   JSR redrawobj
 
+  ; See if the lift has reached the highest position (incase of flipping direction)
   LDY index
   LDA objs_ylocs,X:STA v18F4,Y
   CMP highestliftpos,Y
-  BEQ l272F
-  BCC l272F
+  BEQ flipliftdir ; =
+  BCC flipliftdir ; <
 
   JMP done
 
@@ -3837,6 +3841,7 @@ numdeadlyobj = * - deadlyobj
 
   CPX #numlifts
   BCC checklift
+  }
 
 .done
   LDA roomno
