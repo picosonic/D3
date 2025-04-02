@@ -237,7 +237,11 @@ obj_dagger3        = 105
 obj_prisonrug1     = 106
 obj_prisonrug2     = 107
 obj_dragonneck     = 108
-obj_dragonneck2    = 113
+obj_dragonneck2    = 109
+obj_dragonneck3    = 110
+obj_dragonneck4    = 111
+obj_dragonneck5    = 112
+obj_dragonneck6    = 113
 obj_dragonhead     = 114
 obj_lifttop1       = 115
 obj_lifttop2       = 117
@@ -329,7 +333,7 @@ prox_mtbucket   = 93
 ;.vC80F ; lifttop
 ;.vC810 ; liftbottom
 ;.vC811 ; daisy
-;.vC81B ; dragonneck2
+;.vC81B ; dragonneck6
 
 ; attrib[] array
 ;.vC830 ; bag

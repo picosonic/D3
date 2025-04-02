@@ -3981,7 +3981,7 @@ numdeadlyobj = * - deadlyobj
 
   LDA #&00:STA &03BD
 .l283A
-  JMP l28B0
+  JMP dragonsrou
 
 .l283D
   ; Is it >= 40
@@ -4058,18 +4058,22 @@ numdeadlyobj = * - deadlyobj
   JSR drawobjframe
 }
 
-.l28B0
+; Routine for handling dragons
+.dragonsrou
+{
+  ; Check if Dizzy is in the dragon's underground lair
   LDA roomno
   CMP #DRAGONSLAIRROOM
-  BEQ l28C3
+  BEQ goldeneggrou
 
+  ; Check if Dizzy is in the room with the dragon near the moat
   CMP #WIDEEYEDDRAGONROOM
-  BEQ l28D2
+  BEQ sleepingpotionrou
 
   LDA #&00:STA &03BA
   JMP l295E
 
-.l28C3
+.goldeneggrou
   ; Check goldenegg orientation
   LDA objs_attrs+obj_goldenegg
   CMP #ATTR_REVERSE
@@ -4080,8 +4084,8 @@ numdeadlyobj = * - deadlyobj
 
   JMP l295E
 
-.l28D2
-  ; Check sleeping potion
+.sleepingpotionrou
+  ; Check if sleeping potion has been used
   LDA objs_rooms+obj_sleepingpotion
   CMP #OFFMAP
   BNE l28E1
@@ -4113,13 +4117,14 @@ numdeadlyobj = * - deadlyobj
   JSR ruboutframe
 
   DEX
-  ; loop while >= 108
-  CPX #&6C
+  ; loop through each of the dragon head/neck objects
+  CPX #obj_dragonneck
   BCS l28F7
   }
 
-  LDX #&72
+  LDX #obj_dragonhead
 .l2901
+  {
   STX &FF
   LDA #&72
   SEC:SBC &FF
@@ -4141,14 +4146,16 @@ numdeadlyobj = * - deadlyobj
   ; Move object down
   INC objs_ylocs,X
   INC objs_ylocs,X
+
 .l2925
   LDA #&00:STA &03DC
 
   JSR drawobjframe
   DEX
   ; Loop while >=108
-  CPX #&6C
+  CPX #obj_dragonneck
   BCS l2901
+  }
 
   LDA objs_attrs+obj_dragonneck
   AND #&20
@@ -4232,6 +4239,7 @@ numdeadlyobj = * - deadlyobj
   NOP
   JSR l38B1
   JMP l1A25
+}
 
 .hideobject
 {
@@ -7083,7 +7091,7 @@ ORG &2B13
 
   STX frmx ; X position
 
-  LDA objs_ylocs+obj_dragonneck2:STA frmy ; Y position
+  LDA objs_ylocs+obj_dragonneck6:STA frmy ; Y position
 
   ; Drawing yellow flames
   LDA #PAL_YELLOW
