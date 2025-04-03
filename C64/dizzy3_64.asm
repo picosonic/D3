@@ -51,7 +51,7 @@ cursorindex = &0344
 .v0349
 .v034A
 .v034B
-.v034E
+.v034E ; cache for X reg, ??
 dizzyx = &0352
 .v0354
 .v0355
@@ -1266,6 +1266,7 @@ numdeadlyobj = * - deadlyobj
   STA GFX_BORDER_COLOUR ; 0 = Black
   STA lives
 
+  ; loop from 0..7
   LDX #&00
 .l1931
   {
@@ -1307,7 +1308,8 @@ numdeadlyobj = * - deadlyobj
   ; Clear &5800 to &5BE7 - spectrum palette screen attribs
   LDX #&00
   TXA
-.l1983
+.clearattrloop
+  {
   STA spec_screen_attribs+(&C8*0),X
   STA spec_screen_attribs+(&C8*1),X
   STA spec_screen_attribs+(&C8*2),X
@@ -1317,7 +1319,8 @@ numdeadlyobj = * - deadlyobj
   INX
   ; Is it < 200
   CPX #&C8
-  BCC l1983
+  BCC clearattrloop
+  }
 
   ; Reset coins collected count
   LDA #&00
@@ -4112,14 +4115,14 @@ numdeadlyobj = * - deadlyobj
 
 .l28F5
   LDX #obj_dragonhead
-.l28F7
+.erasedragonneck
   {
   JSR ruboutframe
 
   DEX
   ; loop through each of the dragon head/neck objects
   CPX #obj_dragonneck
-  BCS l28F7
+  BCS erasedragonneck
   }
 
   LDX #obj_dragonhead
@@ -4213,6 +4216,7 @@ numdeadlyobj = * - deadlyobj
 
   LDX #obj_dragonhead
   JSR drawobjframe
+
 .l2993
   LDA &03BA
   BEQ l29BA
@@ -4427,7 +4431,7 @@ numdeadlyobj = * - deadlyobj
   ; Is it >= 2
   LDA &03C8
   CMP #&02
-  BCS l2ABC
+  BCS l2ABC ; return
 
   ; SID audio code ?
   ; 2ACB
@@ -4445,7 +4449,7 @@ numdeadlyobj = * - deadlyobj
   RTS
 }
 
-  ; No idea what this is, used by l2D95
+; No idea what this is, used by l2D95
 .v2AF3 ; [9]
 {
   EQUB &00, &00, &b8, &00, &00, &00, &81, &00, &80
@@ -4752,10 +4756,12 @@ ORG &2B13
 .l2CC7
   LDY #&00
 .l2CC9
+  {
   LDA (&B4),Y:STA v2AF3,Y
   INY
   CPY &033D
   BCC l2CC9
+  }
 
   LDA frmattr ; attr
   AND #ATTR_REVERSE
@@ -4771,6 +4777,7 @@ ORG &2B13
 .l2CE8
   LDX &034A
 .l2CEB
+  {
   LDA &1877,X
   TAY
   LDA v2AF3,X
@@ -4810,6 +4817,7 @@ ORG &2B13
   INX
   CPX &034B
   BCC l2CEB
+  }
 
 .l2D29
   DEC &033E
@@ -5181,17 +5189,19 @@ ORG &2B13
 .l2F80
   STA &FF
 
-  LDX #&6C
-.l2F84
+  ; Loop through dragons neck/head objects to reset Y position
+  LDX #obj_dragonneck
+.neckresetloop
+  {
   LDA roomno:STA objs_rooms,X
 
   LDA &FF:STA objs_attrs,X
   LDA orig_ylocs,X:STA objs_ylocs,X ; Reset Y position
 
   INX
-  ; Is it < 115
-  CPX #&73
-  BCC l2F84
+  CPX #obj_dragonhead+1
+  BCC neckresetloop
+  }
 
   LDA #&0B:STA &03BC
   LDA objs_attrs+obj_dragonhead:AND #PAL_WHITE:STA objs_attrs+obj_dragonhead
@@ -6109,7 +6119,7 @@ ORG &2B13
   BNE spriteloop
   }
 
-  ; Loop from 0 up to 8
+  ; Loop from 0 up to 7
   LDX #&00
 .l352A
   {
@@ -6857,6 +6867,7 @@ ORG &2B13
   STA &03DB
   STX &034E
 .l393B
+  {
   LDA flame_x,X:STA frmx ; X position
   LDA flame_y,X:STA frmy ; Y position
 
@@ -6874,10 +6885,12 @@ ORG &2B13
 
   CPX flameindex
   BCC l393B
+  }
 
 .l3962
   LDX &034E
 .l3965
+  {
   LDA flame_attr,X
   EOR #ATTR_REVERSE
   STA flame_attr,X
@@ -6896,6 +6909,7 @@ ORG &2B13
 
   CPX flameindex
   BCC l3965
+  }
 
 .done
   RTS
