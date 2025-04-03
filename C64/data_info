@@ -25,6 +25,11 @@ $A500 .. $A6FF = frmtable
 $A700 .. $C387 = frmdefs
 
 $C400 .. $C69D = objects (static)
+  orig_rooms  = &C400
+  orig_xlocs  = &C486
+  orig_ylocs  = &C50C
+  orig_attrs  = &C592
+  orig_frames = &C618
 $C69E .. $C93C = objects (ingame)
   objs_rooms  = &C69E
   objs_xlocs  = &C724
