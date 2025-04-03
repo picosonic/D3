@@ -161,11 +161,16 @@ firstcoin = coinstart-orig_frames
 lastcoin = coinend-orig_frames-1
 
 ; object arrays
-objs_rooms  = &C69E
-objs_xlocs  = &C724
-objs_ylocs  = &C7AA
-objs_attrs  = &C830
-objs_frames = &C8B6
+.objs_rooms
+  SKIP noofmoving
+.objs_xlocs
+  SKIP noofmoving
+.objs_ylocs
+  SKIP noofmoving
+.objs_attrs
+  SKIP noofmoving
+.objs_frames
+  SKIP noofmoving
 
 ; room for collected objects, used as a flag
 collected = 4
