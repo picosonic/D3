@@ -3398,12 +3398,13 @@ numdeadlyobj = * - deadlyobj
   CMP #WIDEEYEDDRAGONROOM
   BEQ checkopenairdragon
 
-  JMP l2527
+  ; Not with either dragon, so move on
+  JMP checkforhazards
 }
 
 .checkdragoninmine
 {
-  ; Check golden egg
+  ; Check if golden egg has been returned
   LDA objs_attrs+obj_goldenegg
   AND #ATTR_REVERSE
   BEQ checkdragonbite
@@ -3419,6 +3420,7 @@ numdeadlyobj = * - deadlyobj
   BEQ checkdragonflames
 }
 
+; Has Dizzy collided with the dragon's head?
 .checkdragonbite
 {
   LDX #obj_dragonhead
@@ -3434,29 +3436,30 @@ numdeadlyobj = * - deadlyobj
   LDA dizzyy
   ; Is it < 88
   CMP #88
-  BCC l2527
+  BCC checkforhazards
 
   LDA &03BA
-  BEQ l2527
+  BEQ checkforhazards
 
   LDA dizzyx
   CLC:ADC #35
   ; Is it < 49
   CMP #49
-  BCC l2527
+  BCC checkforhazards
 
   CMP &03BA
-  BCC l2527
+  BCC checkforhazards
 
   SEC:SBC #&04
   CMP &03BA
-  BCS l2527
+  BCS checkforhazards
 
   LDA #str_dragonflameskilledmess
   JMP storekillstr
 }
 
-.l2527
+; Check for collision with water of flames
+.checkforhazards
 {
   LDA #2:STA frmx
 .loop
@@ -3482,7 +3485,11 @@ numdeadlyobj = * - deadlyobj
   BCC loop
   }
 
+  ; Fall through
+}
+
 .checkforfire
+{
   LDA hitbitflags
   AND #HIT_FIRE
   BEQ checkforliquid
@@ -4077,7 +4084,7 @@ numdeadlyobj = * - deadlyobj
   JMP l295E
 
 .goldeneggrou
-  ; Check goldenegg orientation
+  ; Check if golden egg has been returned
   LDA objs_attrs+obj_goldenegg
   CMP #ATTR_REVERSE
   BCC l28E1
@@ -7127,9 +7134,10 @@ ORG &2B13
   JSR frame
 
 .nextflame
+
   INX
   INX
-  CPX &03DB
+  CPX &03DB ; Is Xreg <= [&03DB]
   BEQ loop
   BCC loop
   }
@@ -7152,6 +7160,8 @@ ORG &2B13
   EQUB KEY_C
   EQUB KEY_E
 }
+
+cheatcodelen = * - eclipse
 
 ; Room number adjustments based on key pressed
 ;   These indexes map to JOYSTICK bitfield
@@ -7195,7 +7205,7 @@ ORG &2B13
 
   ; Move on to check next character of cheat code
   INX
-  CPX #7
+  CPX #cheatcodelen
   BCC nextchar
 
   ; ### Cheat mode activate ###
