@@ -79,7 +79,7 @@ index = &03B7
 deathid = &03B7
 olddizzyroom = &03B8 ; roomno to reincarnate into
 lives = &03B9
-.v03BA ; related to dragon flames
+dragonflamepos = &03BA ; 0=no flames. Active range is 66 down to 42
 .v03BB
 .v03BC
 .v03BD
@@ -765,9 +765,9 @@ ORG &0B00
   BPL continueplaying
 
   LDA &116E:STA &116F
-}
 
-; Fall through
+  ; Fall through
+}
 
 .continueplaying
 {
@@ -1704,6 +1704,8 @@ numdeadlyobj = * - deadlyobj
 .l1C15
 {
   JSR l1C62
+
+  ; Fall through
 }
 
 .l1C18
@@ -2103,6 +2105,8 @@ numdeadlyobj = * - deadlyobj
 {
   ; No overflow (Dizzy not at far rhs), so clear bottom bit
   LDA SPR_MSB_X:AND #&FE
+
+  ; Fall through
 }
 
 .l1E40
@@ -2362,6 +2366,8 @@ numdeadlyobj = * - deadlyobj
 
   ; Dizzy not overlapping a collectable
   LDX #obj_null:STX pickupobj
+
+  ; Fall through
 }
 
 .checkdenzil
@@ -2756,6 +2762,8 @@ numdeadlyobj = * - deadlyobj
 
 .setemptyslotindex
   STX inventoryindex
+
+  ; Fall through
 }
 
 ; Loop back here until FIRE pressed
@@ -3418,6 +3426,8 @@ numdeadlyobj = * - deadlyobj
   LDA objs_rooms+obj_sleepingpotion
   CMP #OFFMAP
   BEQ checkdragonflames
+
+  ; Fall through
 }
 
 ; Has Dizzy collided with the dragon's head?
@@ -3431,34 +3441,41 @@ numdeadlyobj = * - deadlyobj
   JMP storekillstr
 }
 
+; Has Dizzy collided with the dragon's flames?
 .checkdragonflames
 {
+  ; Check for Dizzy being near the ground - inline with the flames
   LDA dizzyy
   ; Is it < 88
   CMP #88
   BCC checkforhazards
 
-  LDA &03BA
+  ; Check for the flames being emitted by the dragon
+  LDA dragonflamepos
   BEQ checkforhazards
 
+  ; Check for Dizzy being past the tree (where the flames stop)
   LDA dizzyx
   CLC:ADC #35
   ; Is it < 49
   CMP #49
   BCC checkforhazards
 
-  CMP &03BA
+  ; Dizzy is past the tree, so compare him to "flames left position"
+  CMP dragonflamepos
   BCC checkforhazards
 
+  ; Dizzy is past the "flames left position", so reduce by 4 and compare again
   SEC:SBC #&04
-  CMP &03BA
+  CMP dragonflamepos
   BCS checkforhazards
 
+  ; Dizzy has been hit by dragon's flame
   LDA #str_dragonflameskilledmess
   JMP storekillstr
 }
 
-; Check for collision with water of flames
+; Check for collision with water, lava or torch flames
 .checkforhazards
 {
   LDA #2:STA frmx
@@ -3573,6 +3590,8 @@ numdeadlyobj = * - deadlyobj
   BNE ratrou
 
   LDA #TUNE_2:STA melody ; In-game melody
+
+  ; Fall through
 }
 
 .ratrou
@@ -3642,7 +3661,7 @@ numdeadlyobj = * - deadlyobj
   JMP gatorrou
 
 .dontcheckbread
-  ; Check rat X position < 79 (under hole in ceiling)
+  ; Check rat X position < 79 (under hole in ceiling), if it's >= 79 then flip rat left
   LDA objs_xlocs+obj_rat
   CMP #79
   BCC gatorrou
@@ -3661,10 +3680,12 @@ numdeadlyobj = * - deadlyobj
   DEC objs_xlocs+obj_rat
   JSR drawobjframe
 
-  ; Check rat X position < 47
+  ; Check rat X position < 47 to flip rat right, otherwise continue
   LDA objs_xlocs+obj_rat
   CMP #47
   BCC fliprat
+
+  ; Fall through
 }
 
 .gatorrou
@@ -3696,6 +3717,8 @@ numdeadlyobj = * - deadlyobj
 
   LDX #obj_croc
   JSR redrawobj
+
+  ; Fall through
 }
 
 .portcullisrou
@@ -3774,6 +3797,8 @@ numdeadlyobj = * - deadlyobj
 
   LDX #obj_dozy
   JSR redrawobj
+
+  ; Fall through
 }
 
 .liftsrou
@@ -4066,6 +4091,8 @@ numdeadlyobj = * - deadlyobj
   LDA #&00:STA &03DC
 
   JSR drawobjframe
+
+  ; Fall through
 }
 
 ; Routine for handling dragons
@@ -4080,7 +4107,7 @@ numdeadlyobj = * - deadlyobj
   CMP #WIDEEYEDDRAGONROOM
   BEQ sleepingpotionrou
 
-  LDA #&00:STA &03BA
+  LDA #&00:STA dragonflamepos ; Start with no flames
   JMP l295E
 
 .goldeneggrou
@@ -4214,41 +4241,54 @@ numdeadlyobj = * - deadlyobj
   BNE l2993
 
 .l297F
-  LDA &03BA
+  ; Make sure dragon flames don't already exist before breathing fire
+  LDA dragonflamepos
   BNE l2993
 
-  LDA #&42:STA &03BA
+  ; Set dragon flame initial (right) position
+  LDA #66:STA dragonflamepos
+
   ; Set dragon's head to mouth open
   LDA #SPR_DRAGONHEADOPEN:STA objs_frames+obj_dragonhead
 
+  ; Draw dragon's head
   LDX #obj_dragonhead
   JSR drawobjframe
 
 .l2993
-  LDA &03BA
-  BEQ l29BA
+  ; Check if dragon is breathing flames
+  LDA dragonflamepos
+  BEQ donedrawingflames
 
-  DEC &03BA
-  DEC &03BA
+  ; Dragon flames are being emitted, so move them left a bit
+  DEC dragonflamepos
+  DEC dragonflamepos
 
-  ; Is it >= 42
-  LDA &03BA
-  CMP #&2A
-  BCS l29B7
+  ; Is dragon flame position >= 42
+  LDA dragonflamepos
+  CMP #42
+  BCS dodrawflames
 
-  LDA #&00:STA &03BA
+  ; Stop dragon breathing flames
+  LDA #&00:STA dragonflamepos
+
   ; Set dragon's head to mouth closed
   LDA #SPR_DRAGONHEADCLOSED:STA objs_frames+obj_dragonhead
 
+  ; Draw dragon's head
   LDX #obj_dragonhead
   JSR drawobjframe
-  JMP l29BA
 
-.l29B7
+  ; Don't draw any flames
+  JMP donedrawingflames
+
+.dodrawflames
   JSR drawdragonflames
-.l29BA
+
+.donedrawingflames
   NOP
   JSR l38B1
+
   JMP l1A25
 }
 
@@ -5145,9 +5185,9 @@ ORG &2B13
   ; Position grunt
   LDA #54:STA objs_xlocs+obj_grunt
   LDA #ATTR_GRID+PAL_RED:STA objs_attrs+obj_grunt
-}
 
-; Fall through
+  ; Fall through
+}
 
 .resetgamestate
 {
@@ -7097,9 +7137,9 @@ ORG &2B13
 .drawdragonflames
 {
   ; Set start/end X positions for flames ??
-  LDA &03BA:CLC:ADC #8:STA &03DB
+  LDA dragonflamepos:CLC:ADC #8:STA &03DB
 
-  LDX &03BA
+  LDX dragonflamepos
 .loop
   {
   ; Is it < 50
