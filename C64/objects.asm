@@ -172,7 +172,7 @@ lastcoin = coinend-orig_frames-1
 .objs_frames
   SKIP noofmoving
 
-; room for collected objects, used as a flag
+; room number for collected objects, used as a flag
 collected = 4
 
 ; object offsets
@@ -188,7 +188,6 @@ obj_pickaxe        = 8
 obj_goldenegg      = 9
 obj_blackhole      = 10
 obj_rug            = 11
-obj_keys           = 12
 obj_key1           = 12
 obj_key2           = 13
 obj_key3           = 14
@@ -255,25 +254,27 @@ obj_lifttop4       = 121
 obj_leaf           = 131
 obj_null           = 255
 
+obj_keys           = obj_key1 ; start of the 4 keys
+
 obj_lifts          = obj_lifttop1 ; start of the 4 lifts
 
 numlifts = 4
-liftparts = 2
+liftparts = 2 ; top and bottom
 liftobjs = numlifts*liftparts
 endoflifts = obj_lifts+liftobjs
 nummachines = numlifts
 
 ; Proximity objects
-prox_shopkeeper = 65
-prox_troll      = 67
-prox_jug        = 68
-prox_knox       = 68
-prox_egg        = 71
-prox_pickaxe    = 73
-prox_rock       = 79
-prox_armorogden = 82
-prox_picture    = 85
-prox_mtbucket   = 93
+prox_shopkeeper = 65 ; Next to the shopkeeper in Australia where you can present him with trades
+prox_troll      = 67 ; Place where the apple can be given to the troll in the dungeon
+prox_jug        = 68 ; Where to stand to throw the jug of water on the fire in the dungeon
+prox_knox       = 68 ; Place to use the doorknocker in the castle
+prox_egg        = 71 ; Where the second egg can be placed to appease the dragon in the mines
+prox_pickaxe    = 73 ; Where the pickaxe can be used in the mines to break big rock
+prox_rock       = 79 ; Near broken bridge, place to throw rocks in
+prox_armorogden = 82 ; Armorog's den where bone is placed
+prox_picture    = 85 ; Place on staircase to look at picture of Treasure Island Dizzy
+prox_mtbucket   = 93 ; Where to fill bucket with water, based of volcano
 
 ; Upper RAM area
 
