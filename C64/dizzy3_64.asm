@@ -82,7 +82,7 @@ lives = &03B9
 dragonflamepos = &03BA ; 0=no flames. Active range is 66 down to 42
 .v03BB
 .v03BC
-.v03BD
+.v03BD ; armorog related
 .v03BE
 cursorattr = &03BF ; char attrib
 player_input = &03C0
@@ -103,7 +103,7 @@ inventoryindex = &03D9
 usedobj = &03D9 ; id of objected being interacted with from inventory
 .v03DA
 .v03DB ; multi-purpose
-.v03DC ; location of screen attribs to use, &00 = &5C00, &58 = &0400
+attrib_offset = &03DC ; location of screen attribs to use, &00 = &5C00, &58 = &0400
 .v03DD ; max object id to draw
 .v03DF
 .v03E0
@@ -114,6 +114,9 @@ roomno = &03E5
 
 ; This just seems to always be full of &20 ??
 otherattribs = &0400 ; Set of screen attributes
+
+attr_offs_screen = hi(&5C00 - &5C00)
+attr_offs_other = hi(&5C00 - otherattribs)
 
 ORG &0B00
 
@@ -1284,7 +1287,7 @@ numdeadlyobj = * - deadlyobj
   JSR l3B6D
   JSR cleargamescreen
 
-  LDA #&58:STA &03DC
+  LDA #attr_offs_other:STA attrib_offset
   LDA #TITLEROOM:STA roomno
 
   JSR l2E79
@@ -1294,7 +1297,7 @@ numdeadlyobj = * - deadlyobj
   LDA #58:STA frmx ; X position
   LDA #57:STA frmy ; Y position
   LDA #PAL_GREEN:STA frmattr ; attrib
-  LDA #&00:STA &03DC
+  LDA #attr_offs_screen:STA attrib_offset
 
   LDA #SPR_DIZZYLOGO ; frame
   JSR frame
@@ -1372,7 +1375,7 @@ numdeadlyobj = * - deadlyobj
   BNE movingloop
   }
 
-  JSR l29E4
+  JSR initobjs
 
   LDA #28
   STA olddizzyx
@@ -4026,7 +4029,7 @@ numdeadlyobj = * - deadlyobj
 
   INC &03BD
 .l2847
-  LDA #&00:STA &03DC
+  LDA #attr_offs_screen:STA attrib_offset
   JSR drawobjframe
 
   LDA gamecounter
@@ -4088,7 +4091,7 @@ numdeadlyobj = * - deadlyobj
   JSR ruboutframe
 
 .l28A8
-  LDA #&00:STA &03DC
+  LDA #attr_offs_screen:STA attrib_offset
 
   JSR drawobjframe
 
@@ -4185,7 +4188,7 @@ numdeadlyobj = * - deadlyobj
   INC objs_ylocs,X
 
 .l2925
-  LDA #&00:STA &03DC
+  LDA #attr_offs_screen:STA attrib_offset
 
   JSR drawobjframe
   DEX
@@ -4313,23 +4316,28 @@ numdeadlyobj = * - deadlyobj
 ; Draw object in X reg
 .redrawobj
 {
-  LDA #&58:STA &03DC
+  LDA #attr_offs_other:STA attrib_offset
   JSR drawobjframe
 
-  LDA #&00:STA &03DC
+  LDA #attr_offs_screen:STA attrib_offset
   JSR drawobjframe
 
   RTS
 }
 
-.l29E4
+; Initialise some objects slightly differently to default set
+.initobjs
 {
-  ; Move sleeping potion
+  ; Move sleeping potion to (82, 128) next to the barrel from on top of barrel (86, 104)
+  ;  original game had it at (80, 128)
   LDA #128:STA objs_ylocs+obj_sleepingpotion
   LDA #82:STA objs_xlocs+obj_sleepingpotion
 
+  ; Remove happy dust from game, was situated by the coin at top of the volcano
+  ;  original game had sprite but it wasn't an in-game object
   LDA #OFFMAP:STA objs_rooms+obj_happydust ; not used in the game
 
+  ; Add GRID flag to moving enemies
   LDA #ATTR_GRID+PAL_WHITE
   STA objs_attrs+obj_rat
   STA objs_attrs+obj_hawk
@@ -4643,7 +4651,7 @@ ORG &2B13
   BNE skipflame
 
   ; Flame processing
-  LDY &03DC
+  LDY attrib_offset
   BEQ skipflame
 
   LDY flameindex
@@ -4697,7 +4705,7 @@ ORG &2B13
   TAX
 
   ; Set pointer at &FD to screen attribute RAM
-  LDA screenattrtable_hi,X:SEC:SBC &03DC:STA &FE
+  LDA screenattrtable_hi,X:SEC:SBC attrib_offset:STA &FE
   LDA screenattrtable_lo,X
 
   SEC:SBC #&0C
@@ -4718,7 +4726,7 @@ ORG &2B13
   STA &35 ; lo pointer
 
   ; Set up pointer (&35) to &5800 range
-  LDA &03DC ; &00 = &5C00, &58 = &0400
+  LDA attrib_offset ; &00 = &5C00, &58 = &0400
   BNE l2C41
 
   LDA &FE
@@ -4873,7 +4881,7 @@ ORG &2B13
 .l2D2E
   LDX &0345 ; Restore X
   LDA #&FF:STA &03DF
-  LDA #&00:STA &03DC
+  LDA #attr_offs_screen:STA attrib_offset
   LDA #&30:STA &03E3
   LDA #&B8:STA &03E1
   RTS
@@ -5157,7 +5165,7 @@ ORG &2B13
   STA frmx ; X position
 
   DEY
-  LDA #&58:STA &03DC
+  LDA #attr_offs_other:STA attrib_offset
   LDA (&B0),Y ; frame
   JSR frame
 
@@ -5471,7 +5479,7 @@ ORG &2B13
 .drawlifts
 {
   LDX #&00 ; machine offset
-  LDA #&58:STA &03DC
+  LDA #attr_offs_other:STA attrib_offset
 .machineloop
   {
   ; Check if this lift is in current room
@@ -5879,7 +5887,7 @@ ORG &2B13
   LDA objs_frames,X ; frame
   JSR frame
 
-  LDA #&58:STA &03DC
+  LDA #attr_offs_other:STA attrib_offset
 
   RTS
 }
@@ -5926,7 +5934,7 @@ ORG &2B13
 
 .l3373
   STY hitbitflags
-  LDA #&58:STA &03DC
+  LDA #attr_offs_other:STA attrib_offset
   LDA objs_frames,X ; frame
 
   JSR frame
@@ -6358,7 +6366,7 @@ ORG &2B13
 
   LDX #&00
   STX hitbitflags
-  STX &03DC
+  STX attrib_offset ; attr_offs_screen
 
   JSR frame
 
@@ -6493,7 +6501,7 @@ ORG &2B13
 
   LDX #&00
   STX hitbitflags ; empty
-  STX &03DC
+  STX attrib_offset ; attr_offs_screen
 
   JSR frame
 
@@ -6706,7 +6714,7 @@ ORG &2B13
   STY &03E3
 
   LDY #PAL_CYAN:STY frmattr ; attrib
-  LDY #&00:STY &03DC
+  LDY #attr_offs_screen:STY attrib_offset
   JSR frame
 
   ; Advance cursor
@@ -6740,7 +6748,7 @@ ORG &2B13
 .keepattr
   STY frmattr ; attrib
 
-  LDA #&00:STA &03DC
+  LDA #attr_offs_screen:STA attrib_offset
 
   LDA #SPR_EGG ; frame
   JSR frame
@@ -6780,7 +6788,7 @@ ORG &2B13
 
   LDA #&00
   STA hitbitflags ; empty
-  STA &03DC
+  STA attrib_offset ; attr_offs_screen
 
   JSR l326A
 
@@ -6921,7 +6929,7 @@ ORG &2B13
   LDA #&00
   STA frmattr ; attrib
   STA hitbitflags ; empty
-  STA &03DC
+  STA attrib_offset ; attr_offs_screen
 
   LDA #SPR_FLAME ; frame
   JSR frame
@@ -6946,7 +6954,7 @@ ORG &2B13
   LDA flame_x,X:STA frmx ; X position
   LDA flame_y,X:STA frmy ; Y position
   LDA #HIT_FIRE:STA hitbitflags
-  LDA #&00:STA &03DC
+  LDA #attr_offs_screen:STA attrib_offset
   LDA #SPR_FLAME ; frame
   JSR frame
 
@@ -7067,7 +7075,7 @@ ORG &2B13
 .drawcoincount
 {
   LDA #78:STA frmx ; X position
-  LDA #&00:STA &03DC
+  LDA #attr_offs_screen:STA attrib_offset
 
   LDA #8
   STA frmy ; Y position
@@ -7082,7 +7090,7 @@ ORG &2B13
   JSR frame
 
   LDA #80:STA frmx ; X position
-  LDA #&00:STA &03DC
+  LDA #attr_offs_screen:STA attrib_offset
 
   LDA #8
   STA frmy ; Y position
@@ -7168,7 +7176,7 @@ ORG &2B13
 
   LDA #&00
   STA hitbitflags ; empty
-  STA &03DC
+  STA attrib_offset ; attr_offs_screen
 
   LDA #SPR_DRAGONFIRE ; frame
   JSR frame
@@ -7183,7 +7191,7 @@ ORG &2B13
   }
 
   LDX #obj_dragonhead
-  LDA #&00:STA &03DC
+  LDA #attr_offs_screen:STA attrib_offset
   JSR drawobjframe
 
   RTS
@@ -7325,7 +7333,7 @@ cheatcodelen = * - eclipse
   LDA #&FF:STA &03DF
   LDA #&B8:STA &03E1
   LDA #&30:STA &03E3
-  LDA #&58:STA &03DC
+  LDA #attr_offs_other:STA attrib_offset
 
   RTS
 }
