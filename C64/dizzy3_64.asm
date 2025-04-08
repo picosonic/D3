@@ -3150,7 +3150,7 @@ numdeadlyobj = * - deadlyobj
   ; Set colour of bucket to blue to fill with water
   LDA #PAL_BLUE:STA objs_attrs+obj_bucket
 
-  ; ?? don't drop bucket ??
+  ; ?? don't drop bucket ?? - TODO confirm this with a test
   LDA #obj_null:STA usedobj
 
   LDA #str_fillbucketmess:JSR prtmessage
@@ -3343,6 +3343,7 @@ numdeadlyobj = * - deadlyobj
   LDX usedobj
   LDA roomno:STA objs_rooms,X
 
+  ; Place object near Dizzy
   LDA dizzyx:CLC:ADC #33:AND #&FE:STA objs_xlocs,X ; rounded down to even number
   LDA dizzyy:CLC:ADC #45:STA objs_ylocs,X
 
@@ -3965,7 +3966,7 @@ numdeadlyobj = * - deadlyobj
   ; Update hawk animation frame
   STA objs_frames+obj_hawk
   JSR drawobjframe
-  JMP armorogrou
+  JMP armorogrou ; ?? no need to do armorog as he won't be in the hawk room ??
 
 .l27DF
   ; Hawk is diving, so move downwards
@@ -3989,18 +3990,20 @@ numdeadlyobj = * - deadlyobj
 
 .armorogrou
 {
+  ; Check we are in the same room as armorog
   LDA roomno
   CMP #ARMOROGROOM
-  BNE l283A
+  BNE go_dragonsrou
 
+  ; Only check on odd gamecounter values - to halve movement speed - TODO confirm this with a test
   LDA gamecounter
   AND #&01
-  BEQ l283A
+  BEQ go_dragonsrou
 
-  ; Check bone
+  ; Check if bone has been eaten
   LDA objs_rooms+obj_bone
   CMP #OFFMAP
-  BEQ l283A
+  BEQ go_dragonsrou
 
   ; Check Dizzy Y position >= 104 (on lower ground)
   LDX #obj_grunt
@@ -4008,7 +4011,8 @@ numdeadlyobj = * - deadlyobj
   CMP #104
   BCS l283D
 
-  LDA objs_rooms+prox_armorogden ; remove proximity
+  ; Check den proximity still active
+  LDA objs_rooms+prox_armorogden
   CMP #OFFMAP
   BEQ l283D
 
@@ -4018,7 +4022,9 @@ numdeadlyobj = * - deadlyobj
   BCS l2847
 
   LDA #&00:STA &03BD
-.l283A
+
+  ; We're done with Armorog, move on to dragons
+.go_dragonsrou
   JMP dragonsrou
 
 .l283D
@@ -4042,7 +4048,7 @@ numdeadlyobj = * - deadlyobj
   ; Is it < 32
   LDA &03BD
   CMP #&20
-  BCC l28A8
+  BCC done
 
   ; Check which way grunt is facing
   LDA objs_attrs+obj_grunt
@@ -4053,44 +4059,45 @@ numdeadlyobj = * - deadlyobj
   INC objs_xlocs+obj_grunt
   INC objs_xlocs+obj_grunt
 
-  JMP l2878
+  JMP checkgruntpos
 
 .gruntgoesleft
   ; Move grunt left
   DEC objs_xlocs+obj_grunt
   DEC objs_xlocs+obj_grunt
 
-.l2878
-  ; Check grunt X position < 55
+.checkgruntpos
+  ; Check grunt X position < 55 - to switch grunt direction
   LDA objs_xlocs+obj_grunt
   CMP #55
-  BCC l2883
+  BCC switchgruntdirection
 
-  ; Check grunt X position < 78
+  ; Check grunt X position < 78 - otherwise switch grunt direction
   CMP #78
-  BCC l28A8
+  BCC done
 
-.l2883
-  ; Switch grunt direction
+.switchgruntdirection
+  ; Switch direction grunt is facing/moving
   LDA objs_attrs+obj_grunt:EOR #ATTR_REVERSE:STA objs_attrs+obj_grunt
 
-  ; Check if grunt X position is 78
+  ; Check if grunt X position is 78 - den entrance
   LDA objs_xlocs+obj_grunt
   CMP #78
-  BNE l28A8
+  BNE done
 
-  ; Check bone orientation
+  ; Check if bone was placed in the den
   LDA objs_attrs+obj_bone
   AND #ATTR_REVERSE
-  BEQ l28A8
+  BEQ done
 
-  LDA #OFFMAP:STA objs_rooms+obj_bone ; Remove bone
-  LDA #&92:STA objs_attrs+obj_grunt
+  ; Bone was placed in the den - so make Armorog happy
+  LDA #OFFMAP:STA objs_rooms+obj_bone ; Remove bone - it's been eaten
+  LDA #ATTR_REVERSE+PLOT_XOR+PAL_RED:STA objs_attrs+obj_grunt
 
   LDX #obj_grunt
   JSR ruboutframe
 
-.l28A8
+.done
   LDA #attr_offs_screen:STA attrib_offset
 
   JSR drawobjframe
