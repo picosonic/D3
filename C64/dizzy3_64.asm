@@ -3150,7 +3150,7 @@ numdeadlyobj = * - deadlyobj
   ; Set colour of bucket to blue to fill with water
   LDA #PAL_BLUE:STA objs_attrs+obj_bucket
 
-  ; ?? don't drop bucket ?? - TODO confirm this with a test
+  ; Don't drop bucket
   LDA #obj_null:STA usedobj
 
   LDA #str_fillbucketmess:JSR prtmessage
@@ -3811,7 +3811,7 @@ numdeadlyobj = * - deadlyobj
   LDA &03BE
   BEQ checklift
 
-  JMP done
+  JMP hawkrou
 
 .checklift
   {
@@ -3849,12 +3849,12 @@ numdeadlyobj = * - deadlyobj
   LDY index
   LDA objs_ylocs,X:STA v18F4,Y
   CMP lowestliftpos,Y
-  BCC done ; <
+  BCC hawkrou ; <
 
 .flipliftdir
   LDA objs_attrs,X:EOR #ATTR_REVERSE:STA objs_attrs,X ; flip top bit (change direction)
   LDA #&10:STA &03BE ; ??? TODO ???
-  JMP done
+  JMP hawkrou
 
 .goingup
   DEC objs_ylocs,X ; Move top of lift upwards
@@ -3873,7 +3873,7 @@ numdeadlyobj = * - deadlyobj
   BEQ flipliftdir ; =
   BCC flipliftdir ; <
 
-  JMP done
+  JMP hawkrou
 
 .nextlift
   INX
@@ -3881,86 +3881,91 @@ numdeadlyobj = * - deadlyobj
   CPX #numlifts
   BCC checklift
   }
-
-.done
-  LDA roomno
-  CMP #GUARDHOUSEROOM
-  BEQ hawkrou
-
-  JMP armorogrou
 }
 
 .hawkrou
 {
+  ; Check we are in the same room as the hawk
+  LDA roomno
+  CMP #GUARDHOUSEROOM
+  BEQ inhawkroom
+
+  ; Not in the right room, so move onwards to check armorog
+  JMP armorogrou
+
+.inhawkroom
   LDX #obj_hawk
   JSR drawobjframe
 
   ; Check hawk Y position == 56
   LDA objs_ylocs+obj_hawk
   CMP #56
-  BNE l279B
+  BNE hawkdiving
 
   ; Check hawk X position > 61
   LDA objs_xlocs+obj_hawk
   CMP #61
-  BCS l279E
+  BCS hawkpatrolling
 
   ; Check hawk X position < 46
   CMP #46
-  BCC l279E
+  BCC hawkpatrolling
 
   ; See if Dizzy is directly below hawk
   LDA dizzyx
   CLC:ADC #28
   CMP objs_xlocs+obj_hawk
-  BEQ l279B
+  BEQ hawkdiving
 
   ; Update hawk X position
   CLC:ADC #1
   CMP objs_xlocs+obj_hawk
-  BNE l279E
+  BNE hawkpatrolling
 
-.l279B
-  JMP l27DF
+.hawkdiving
+  JMP dohawkdive
 
-.l279E
-  ; Check hawk X position < 35
+.hawkpatrolling
+  ; Check hawk X position < 35, at far left of range - so flip
   LDA objs_xlocs+obj_hawk
   CMP #35
-  BCC l27A9
+  BCC fliphawk
 
-  ; Check hawk X position < 80
+  ; Check hawk X position < 80, within range - so skip the flip
   CMP #80
-  BCC l27B1
+  BCC movehawk
 
-.l27A9
+.fliphawk
   ; Flip hawk direction
   LDA objs_attrs+obj_hawk:EOR #ATTR_REVERSE:STA objs_attrs+obj_hawk
-.l27B1
+
+.movehawk
   ; Check hawk direction
   LDA objs_attrs+obj_hawk
   AND #ATTR_REVERSE
-  BNE l27C1
+  BNE movehawkleft
 
   ; Move hawk right
   INC objs_xlocs+obj_hawk
   INC objs_xlocs+obj_hawk
 
-  JMP l27C7
+  JMP donemoving
 
-.l27C1
+.movehawkleft
   ; Move hawk left
   DEC objs_xlocs+obj_hawk
   DEC objs_xlocs+obj_hawk
-.l27C7
+
+.donemoving
+  ; Flapping animation based on gamecounter value
   LDA gamecounter
   LSR A
   AND #&03
   CMP #&03
-  BNE l27D3
+  BNE sethawkframe
 
   LDA #&01
-.l27D3
+.sethawkframe
   CLC:ADC #SPR_HAWK0
 
   ; Update hawk animation frame
@@ -3968,7 +3973,7 @@ numdeadlyobj = * - deadlyobj
   JSR drawobjframe
   JMP armorogrou ; ?? no need to do armorog as he won't be in the hawk room ??
 
-.l27DF
+.dohawkdive
   ; Hawk is diving, so move downwards
   LDA objs_ylocs+obj_hawk
   CLC:ADC #8
@@ -3978,14 +3983,15 @@ numdeadlyobj = * - deadlyobj
   LDA dizzyx
   CLC:ADC #28
   CMP objs_xlocs+obj_hawk
-  BCC l27FE
+  BCC diveleft
 
+.diveright
   LDA objs_attrs+obj_hawk:AND #%01111111:STA objs_attrs+obj_hawk ; Clear reverse (look right)
-  JMP l27B1
+  JMP movehawk
 
-.l27FE
+.diveleft
   LDA objs_attrs+obj_hawk:ORA #ATTR_REVERSE:STA objs_attrs+obj_hawk ; Set reverse (look left)
-  JMP l27B1
+  JMP movehawk
 }
 
 .armorogrou
@@ -3995,7 +4001,7 @@ numdeadlyobj = * - deadlyobj
   CMP #ARMOROGROOM
   BNE go_dragonsrou
 
-  ; Only check on odd gamecounter values - to halve movement speed - TODO confirm this with a test
+  ; Only check on odd gamecounter values - to halve movement speed
   LDA gamecounter
   AND #&01
   BEQ go_dragonsrou
