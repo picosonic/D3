@@ -92,8 +92,8 @@ player_direction = &03C2 ; sprite animation direction
 gamecounter = &03C4 ; pace of game actions
 .v03C5
 .v03C6
-.v03C7
-.v03C8
+.v03C7 ; ?? animation sequence related ??
+.v03C8 ; ?? movement or animation related 0/1/2/3 ??
 .v03C9 ; ?? sprite animation frame related ??
 .v03D5 ; set to &FF and &00
 olddizzyx = &03D6 ; position where Dizzy entered current room
@@ -3902,7 +3902,7 @@ numdeadlyobj = * - deadlyobj
   CMP #56
   BNE hawkdiving
 
-  ; Check hawk X position > 61
+  ; Check hawk X position >= 61
   LDA objs_xlocs+obj_hawk
   CMP #61
   BCS hawkpatrolling
@@ -4360,11 +4360,13 @@ numdeadlyobj = * - deadlyobj
   RTS
 }
 
+; Check for just entering/leaving Australia
 .check_oz
 {
+  ; Check for entering Australia
   LDA roomno
   CMP #STRANGENEWROOM
-  BEQ l2A11
+  BEQ oztumble
 
   ; Check for leaving Australia
   CMP #UNDERAUSROOM
@@ -4372,9 +4374,10 @@ numdeadlyobj = * - deadlyobj
 
   LDA #TOPWELLROOM:STA roomno
 
-.l2A11
+.oztumble
   LDA #114:STA dizzyy
 
+  ; Set Dizzy animation for jumping out of well
   LDA #ANIM_RIGHT
   STA &03C7
   STA player_direction
