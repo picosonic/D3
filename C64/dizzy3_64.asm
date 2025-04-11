@@ -90,8 +90,8 @@ player_input = &03C0
 player_direction = &03C2 ; sprite animation direction
 .v03C3 ; ?? sprite animation frame related ??
 gamecounter = &03C4 ; pace of game actions
-.v03C5
-.v03C6
+.v03C5 ; incremented index into ?? strings table ??
+.v03C6 ; byte read using index from &03C5
 .v03C7 ; ?? animation sequence related ??
 .v03C8 ; ?? movement or animation related 0/1/2/3 ??
 .v03C9 ; ?? sprite animation frame related ??
@@ -101,15 +101,15 @@ olddizzyy = &03D7 ;   used for where to reincarnate to
 .v03D8 ; input related
 inventoryindex = &03D9
 usedobj = &03D9 ; id of objected being interacted with from inventory
-.v03DA
+.v03DA ; related to X position of water frames, set to 0
 .v03DB ; multi-purpose
 attrib_offset = &03DC ; location of screen attribs to use, &00 = &5C00, &58 = &0400
 .v03DD ; max object id to draw
-.v03DF
-.v03E0
-.v03E1
-.v03E2
-.v03E3 ; related to Y position
+.v03DF ; mostly set to &FF, but can take the value of &03E2 when non-zero
+.v03E0 ; set to 0 when entering rooms, can be frmy/8
+.v03E1 ; always &B8 (184), compared against frmy
+.v03E2 ; related to c64 palette conversion and attributes
+.v03E3 ; Y related when printing text, set to 8 (lives/coins), 24 (room name), and 48 ??
 roomno = &03E5
 
 ; This just seems to always be full of &20 ??
@@ -5792,6 +5792,7 @@ ORG &2B13
   INC &03C5
   LDX &03C5
 
+  ; Load character from string table at "BACK YOU GO DIZZY" into &03C6
   LDA &E290,X:STA &03C6
 
   LDX &0345 ; Restore X
@@ -5806,6 +5807,7 @@ ORG &2B13
   INC &03C5
   LDX &03C5
 
+  ; Load character from string table at "INTO THE NEST" into &03C6
   LDA &EA60,X
   AND #&03
   CLC:ADC #&01
