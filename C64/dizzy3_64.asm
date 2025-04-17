@@ -53,21 +53,21 @@ cursorindex = &0344
 .v034B
 .v034E ; cache for X reg, ??
 dizzyx = &0352
-.v0354
-.v0355
-.v0356
-.v0357
+.v0354 ; .. same as 0355 ..
+.v0355 ; ?? set to dizzyx-frmx, but never used ??
+.v0356 ; .. same as 0357 ..
+.v0357 ; ?? set to dizzyx+frmx, but never used ??
 dizzyy = &035C
-.v035E
-.v035F
-.v0360
-.v0361
+.v035E ; .. same as 0360 ..
+.v035F ; .. same as 0361 ..
+.v0360 ; ?? set to dizzyy-frmx, but never used ??
+.v0361 ; ?? set to dizzyy+frmx, but never used ??
 .v0366 ; [2]
-.v0368
-.v0369
-.v036A
-.v036B
-.v0370 ; [10]
+.v0368 ; ?? set to 10 and 5, but never used ??
+.v0369 ; ?? set to 9 and 6, but never used ??
+.v036A ; ?? set to 6 and 9, but never used ??
+.v036B ; ?? set to 5 and 10, but never used ??
+.v0370 ; [10] ?? set to 0 but never used ??
 .v037A ; [10] related to dizzyy
 .v0384 ; [20?] related to dizzyx
 msgbox_width = &0398
