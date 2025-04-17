@@ -81,7 +81,7 @@ olddizzyroom = &03B8 ; roomno to reincarnate into
 lives = &03B9
 dragonflamepos = &03BA ; 0=no flames. Active range is 66 down to 42
 .v03BB
-.v03BC
+gameloopdelay = &03BC ; main loop delay, default 15, dragon mouth open 11, decrement each flame
 .v03BD ; armorog related
 liftwait = &03BE ; timeout to delay lift movement when lift changes direction
 cursorattr = &03BF ; char attrib
@@ -1455,7 +1455,7 @@ numdeadlyobj = * - deadlyobj
   JSR getplayerinput
 
   LDA #&00:STA &03C1
-  LDA &03BC:JSR delay
+  LDA gameloopdelay:JSR delay
   INC gamecounter
 
   ; Check brandy bottle
@@ -4678,7 +4678,7 @@ ORG &2B13
   LDA frmx:STA flame_x,Y ; X position
   LDA frmy:STA flame_y,Y ; Y position
   LDA frmattr:ORA #PLOT_XOR:STA flame_attr,Y ; attr
-  DEC &03BC
+  DEC gameloopdelay ; make game run faster to compensate for drawing each flame
   INC flameindex
 
 .skipflame
@@ -5226,7 +5226,8 @@ ORG &2B13
   ; Place the hawk in the clouds
   LDA #56:STA objs_ylocs+obj_hawk
 
-  LDA #&0F:STA &03BC
+  ; Set default delay for each iteration of main game loop
+  LDA #15:STA gameloopdelay
 
   ; Set flame counter to 0
   LDA #&00:STA flameindex
@@ -5274,7 +5275,7 @@ ORG &2B13
   BCC neckresetloop
   }
 
-  LDA #&0B:STA &03BC
+  LDA #11:STA gameloopdelay
   LDA objs_attrs+obj_dragonhead:AND #PAL_WHITE:STA objs_attrs+obj_dragonhead
   JMP l2FAF
 
