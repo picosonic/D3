@@ -83,10 +83,10 @@ dragonflamepos = &03BA ; 0=no flames. Active range is 66 down to 42
 .v03BB
 .v03BC
 .v03BD ; armorog related
-.v03BE
+liftwait = &03BE ; timeout to delay lift movement when lift changes direction
 cursorattr = &03BF ; char attrib
 player_input = &03C0
-.v03C1
+.v03C1 ; set to 0/1/2, related to movement/animation
 player_direction = &03C2 ; sprite animation direction
 .v03C3 ; ?? sprite animation frame related ??
 gamecounter = &03C4 ; pace of game actions
@@ -1473,10 +1473,10 @@ numdeadlyobj = * - deadlyobj
   STA player_input
 
 .sober
-  LDA &03BE
+  LDA liftwait
   BEQ l1A9E
 
-  DEC &03BE
+  DEC liftwait
 .l1A9E
   ; Is it >= 25 (therefore invalid)
   LDA roomno
@@ -3808,7 +3808,7 @@ numdeadlyobj = * - deadlyobj
 .liftsrou
 {
   LDX #&00
-  LDA &03BE
+  LDA liftwait
   BEQ checklift
 
   JMP hawkrou
@@ -3853,7 +3853,7 @@ numdeadlyobj = * - deadlyobj
 
 .flipliftdir
   LDA objs_attrs,X:EOR #ATTR_REVERSE:STA objs_attrs,X ; flip top bit (change direction)
-  LDA #&10:STA &03BE ; ??? TODO ???
+  LDA #16:STA liftwait ; Delay list movement following direction flip
   JMP hawkrou
 
 .goingup
