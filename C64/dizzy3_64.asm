@@ -4851,16 +4851,22 @@ ORG &2B13
   {
   LDA &1877,X
   TAY
+
   LDA v2AF3,X
   AND &03DF
 
-  ; Polymorphic code
-.v2CF5
+  ; Polymorphic code, this either :
+  ;   mixes with existing screen pixel (&FB),Y (with PLOT_OR or PLOT_XOR)
+  ;  or
+  ;   plots over the top (with PLOT_AND)
+.*poly_opcode
   NOP
-.v2CF6
+.*poly_operand
   NOP
 
+  ; Store resulting pixel to screen memory
   STA (&FB),Y
+
   LDA &0349
   BNE l2D23
 
@@ -4932,6 +4938,7 @@ ORG &2B13
 .l2D73
   INC &FC
   STA &0349
+
   LDA &FB
   CLC:ADC #&39
   BCC l2D81
@@ -5023,31 +5030,27 @@ ORG &2B13
   LDA hitbitflags:ORA #&80:STA hitbitflags ;; TODO - what is &80 ??
 .l2E08
   LDA frmattr
-  AND #&18
-  LSR A
-  LSR A
-  LSR A
-  BNE l2E1A
+  AND #&18 ; mask off to just flags
+  LSR A:LSR A:LSR A ; /8
+  BNE l2E1A ; plot AND
 
-  LDA #&EA:STA &2CF6 ; NOP
-
-  JMP l2E2A
+  LDA #&EA:STA poly_operand ; NOP
+  JMP set_poly_opcode ; NOP
 
 .l2E1A
-  LDX #&FB ; ?? ISC ?? - undocumented opcode
-  STX &2CF6
+  LDX #&FB:STX poly_operand ; ??? (&FB),Y
 
-  CMP #&01
-  BNE l2E28
+  CMP #&01 ; check for plot XOR
+  BNE set_plot_OR
 
-  LDA #&51 ; EOR
+  LDA #&51 ; EOR (indirect),Y
+  JMP set_poly_opcode
 
-  JMP l2E2A
+.set_plot_OR
+  LDA #&11 ; ORA (indirect),Y
 
-.l2E28
-  LDA #&11 ; ORA
-.l2E2A
-  STA &2CF5
+.set_poly_opcode
+  STA poly_opcode
 
   RTS
 }
