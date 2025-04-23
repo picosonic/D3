@@ -2168,6 +2168,7 @@ numdeadlyobj = * - deadlyobj
   LDA player_direction
   BEQ l1E9E ; No direction
 
+  ; ?? Warble volume ??
   JSR l2AB7
 
   ; Check for right animation direction
@@ -4489,23 +4490,29 @@ numdeadlyobj = * - deadlyobj
 .l2AB7
 {
   LDA muted
-  BNE l2ABD
+  BNE notmuted
 
-.l2ABC
+.done
   RTS
 
-.l2ABD
+.notmuted
+  ; If gamecounter is even - we're done
   LDA gamecounter
   AND #&01
-  BEQ l2ABC
+  BEQ done
 
   ; Is it >= 2
   LDA &03C8
   CMP #&02
-  BCS l2ABC ; return
+  BCS done ; return
 
   ; SID audio code ?
   ; 2ACB
+
+  ; Warble volume ??
+  ;
+  ; CH1 frequency high = ((gamecounter & 2) * 2) + 6
+  ;   so (1)=6, (3)=10 e.t.c.
 
   SEI ; Disable interrupts
   LDA #&00:STA SID_CH1_CTRL
@@ -4844,7 +4851,9 @@ ORG &2B13
   AND #&01
   BEQ l2CE8
 
+  ; Extra step if frmx is odd
   JSR l2D95
+
 .l2CE8
   LDX &034A
 .l2CEB
@@ -4959,6 +4968,8 @@ ORG &2B13
   JMP l2CBC
 }
 
+; Extra step when drawing frame if frmx is odd
+;   ?? could this be doing some kind of shifting ??
 .l2D95
 {
   LDX &033D
@@ -5038,7 +5049,7 @@ ORG &2B13
   JMP set_poly_opcode ; NOP
 
 .l2E1A
-  LDX #&FB:STX poly_operand ; ??? (&FB),Y
+  LDX #&FB:STX poly_operand ; set address, (&FB),Y - for the screen pointer
 
   CMP #&01 ; check for plot XOR
   BNE set_plot_OR
