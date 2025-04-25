@@ -40,7 +40,7 @@ frmy = &033B ; Y position
 frmattr = &033C ; attrib
 tmp3 = &033C
 .v033D
-.v033E
+.v033E ; ?? set to 8, compared to 0, decremented, set to &F0 (even X pos) or &0F (odd X pos) ??
 hitbitflags = &033F ; hit-detection bitmap flags
 .v0340 ; frame
 .v0342 ; ?? inc and dec, set to 01/03/06 ?? maybe jump/gravity related ??
@@ -48,9 +48,9 @@ cursorindex = &0344
 .v0345 ; cache for X reg
 .v0346 ; cache for X reg, and index
 .v0347 ; cache for Y reg, and index
-.v0349
-.v034A
-.v034B
+.v0349 ; ?? set to 0, incremented ??
+.v034A ; ?? set to 0, used as an index ??
+.v034B ; ?? linked to &033d, compared, incremented ??
 .v034E ; cache for X reg, ??
 dizzyx = &0352
 .v0354 ; .. same as 0355 ..
