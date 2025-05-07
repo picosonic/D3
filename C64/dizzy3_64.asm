@@ -34,6 +34,8 @@ melody_ptr = &00A9
 
 .v00FF
 
+startofgamevars = &033A ; start of game variables
+
 frmx = &033A ; X position
 tmp1 = &033A
 frmy = &033B ; Y position
@@ -112,6 +114,8 @@ attrib_offset = &03DC ; location of screen attribs to use, &00 = &5C00, &58 = &0
 .v03E3 ; Y related when printing text, set to 8 (lives/coins), 24 (room name), and 48 ??
 roomno = &03E5
 
+endofgamevars = &03FF ; end of game variables
+
 ; This just seems to always be full of &20 ??
 otherattribs = &0400 ; Set of screen attributes
 
@@ -134,7 +138,7 @@ ORG &0B00
 
   ; Melody is 0
   STA &116D
-  JSR l0F78
+  JSR reset_audio
 .l0B0C
   JMP continueplaying
 
@@ -201,6 +205,7 @@ ORG &0B00
 .^l0B63
   LDX &116C
   LDA &1158,X:STA &11CC
+
   LDA &116F
   BNE l0B84
 
@@ -779,15 +784,15 @@ ORG &0B00
   RTS
 }
 
-; Reset audio ??
-.l0F78
+; Reset SID chip
+.reset_audio
 {
-  LDY #&18
+  LDY #SID_VOL_FLT-SID_BASE
   LDA #&00
 
 .loop
   {
-  STA &D400,Y
+  STA SID_BASE,Y
   DEY
   BPL loop
   }
@@ -975,7 +980,7 @@ ORG &1147
 
 .l1147
 {
-  JSR l0F78
+  JSR reset_audio
 
   LDA #&0F:STA SID_VOL_FLT ; Set volume 100%
 
@@ -1251,12 +1256,12 @@ numdeadlyobj = * - deadlyobj
 .l190E
   JSR install_ISR
 
-  ; Zero-out &033A to &03FF
-  LDX #&C6
+  ; Zero-out main game vars &033A to &03FF
+  LDX #endofgamevars-startofgamevars+1
   LDA #&00
 .zerovar_loop
   {
-  STA &033A-1,X
+  STA startofgamevars-1,X
   DEX
   BNE zerovar_loop
   }
@@ -2690,6 +2695,7 @@ numdeadlyobj = * - deadlyobj
 }
 
 .notacoin
+{
   ; Is it a non-collectable
   CPX #maxcollectable+1
   BCS l21A0
@@ -2699,11 +2705,11 @@ numdeadlyobj = * - deadlyobj
   CPX #lastcoin+1
   BCC l2177
 
-  LDA vC696,X ; load from static objects
-  CMP #&65 ; ? sprites ?
+  LDA objs_rooms-8,X
+  CMP #ATTICROOM+1 ; Check if it's a valid room
   BNE l2177
 
-  LDA roomno:STA vC696,X
+  LDA roomno:STA objs_rooms-8,X
 .l2177
   JSR buildinventorylist
 
@@ -2750,6 +2756,7 @@ numdeadlyobj = * - deadlyobj
 
 .inventoryprompt
   LDA #str_selectitemmess:JSR prtmessage
+}
 
 ; Find empty inventory slot ??
 .l21C9
@@ -4523,7 +4530,6 @@ numdeadlyobj = * - deadlyobj
   LDA #&81:STA SID_CH1_CTRL ; Noise / Test
   CLI ; Enable interrupts
 
-.^v2AF2 ; [] - to make following table 1-based
   RTS
 }
 
@@ -4543,6 +4549,7 @@ ORG &2B13
   EQUB 0
 }
 
+; X position for each flame found
 .flame_x
 {
   FOR n, 1, MAXFLAMES
@@ -4550,6 +4557,7 @@ ORG &2B13
   NEXT
 }
 
+; Y position for each flame found
 .flame_y
 {
   FOR n, 1, MAXFLAMES
@@ -4557,6 +4565,7 @@ ORG &2B13
   NEXT
 }
 
+; Frame attributes for each flame found
 .flame_attr
 {
   FOR n, 1, MAXFLAMES
@@ -4566,6 +4575,7 @@ ORG &2B13
 
 .install_ISR
 {
+  ; Disable interrupts
   SEI
 
   ; Set up pointer to ISR routine
@@ -4577,6 +4587,7 @@ ORG &2B13
   STA muted
   STA melody
 
+  ; Enable interrupts
   CLI
 
   RTS
@@ -4977,7 +4988,7 @@ ORG &2B13
 
 .loop
   {
-  LDA v2AF2,X
+  LDA v2AF3-1,X
   ASL A ; * 16
   ASL A
   ASL A
@@ -4985,12 +4996,12 @@ ORG &2B13
   ORA v2AF3,X
   STA v2AF3,X
 
-  LDA v2AF2,X
+  LDA v2AF3-1,X
   LSR A ; / 16
   LSR A
   LSR A
   LSR A
-  STA v2AF2,X
+  STA v2AF3-1,X
 
   DEX
   BNE loop
