@@ -6414,8 +6414,10 @@ ORG &2B13
 
   JSR frame
 
-  INC cursorx
-  INC cursorx
+  ; Advance cursor
+  FOR n, 1, CURSOR_ADV_X
+    INC cursorx
+  NEXT
 
   JMP advance
 }
@@ -6431,7 +6433,7 @@ ORG &2B13
   STA msgbox_height
 
   LDA #0:STA SPR_ENABLE ; Hide sprites
-  LDA cursorx:CLC:ADC #2:STA cursorx_offs
+  LDA cursorx:CLC:ADC #CURSOR_ADV_X:STA cursorx_offs
 
   ; Draw left top-most part of frame
   LDA #SPR_FRAMETOP
@@ -6456,8 +6458,8 @@ ORG &2B13
   ; Draw lower horiztonal part of frame
   JSR drawmsgbox_horiz
 
-  LDA cursory:CLC:ADC #8:STA cursory
-  LDA cursorx:CLC:ADC #2:STA cursorx_offs
+  LDA cursory:CLC:ADC #CURSOR_ADV_Y:STA cursory
+  LDA cursorx:CLC:ADC #CURSOR_ADV_X:STA cursorx_offs
 
   ; Draw left bottom-most part of frame
   LDA #SPR_FRAMEBOTTOM
@@ -6475,7 +6477,7 @@ ORG &2B13
 ; Draw the horiztonal bar of a message box
 .drawmsgbox_horiz
 {
-  LDA cursory:CLC:ADC #8:STA cursory
+  LDA cursory:CLC:ADC #CURSOR_ADV_Y:STA cursory
   LDA cursorx:STA cursorx_offs
 
   ; Draw left-most point of horizontal
@@ -6512,8 +6514,8 @@ ORG &2B13
 ;   also leave cursor Y in place to draw bottom horizontal bar
 .drawmsgbox_vert
 {
-  LDA cursory:CLC:ADC #8:STA cursory
-  LDA cursorx:CLC:ADC #2:STA cursorx_offs
+  LDA cursory:CLC:ADC #CURSOR_ADV_Y:STA cursory
+  LDA cursorx:CLC:ADC #CURSOR_ADV_X:STA cursorx_offs
 
   ; Draw left side of frame
   LDA #SPR_FRAMEVERT
@@ -6550,8 +6552,9 @@ ORG &2B13
   JSR frame
 
   ; Advance cursor
-  INC cursorx_offs
-  INC cursorx_offs
+  FOR n, 1, CURSOR_ADV_X
+    INC cursorx
+  NEXT
 
   RTS
 }
@@ -6704,7 +6707,7 @@ ORG &2B13
   ; Advance down to next line
   INC cursorindex
 
-  LDA cursory:CLC:ADC #8:STA cursory
+  LDA cursory:CLC:ADC #CURSOR_ADV_Y:STA cursory
   JMP loop
   }
 

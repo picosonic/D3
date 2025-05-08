@@ -27,6 +27,10 @@ GAMEAREA_TOP = 6
 GAMEAREA_LEFT = 5
 GAMEAREA_BOTTOM = 22
 
+; Cursor advance amounts
+CURSOR_ADV_X = 2
+CURSOR_ADV_Y = 8
+
 ; Player direction
 ANIM_IDLE = 0
 ANIM_RIGHT = 1
