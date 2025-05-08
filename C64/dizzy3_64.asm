@@ -149,17 +149,17 @@ ORG &0B00
   BCS l0B50
 
   ; Calculate melody id * 6, place in Y
-  SBC #&00 ; Carry is clear so make melody id 0-based
+  SBC #0 ; Carry is clear so make melody id 0-based
   ASL A     ; * 2
   STA mult+1 ; store * 2 value
   ASL A
 .mult
-  ADC #&00 ; gets replaced
+  ADC #0 ; gets replaced
   TAY
 
   ; Copy 3 channel pointers for new melody to current melody
   {
-    LDX #&00
+    LDX #0
 .loop
     LDA melodyconfigs,Y:STA melodychanptr_lo,X ; lo
     INY
@@ -168,14 +168,14 @@ ORG &0B00
     INY
 
     INX
-    CPX #&03
+    CPX #3
     BNE loop
   }
 
   {
-    LDX #&02
+    LDX #2
 .loop
-    LDA #&00
+    LDA #0
     STA &1188,X
     STA &118B,X
     STA melody_chan_pos,X ; Set melody channel data pos to start
@@ -188,7 +188,7 @@ ORG &0B00
 
   JSR l1147
 
-  LDA #&01:STA &116D
+  LDA #1:STA &116D
   JMP continueplaying
 
   ; Invalid or continue playing
@@ -235,9 +235,9 @@ ORG &0B00
 
 .l0B98
 {
-  LDA #&00
+  LDA #0
   LDY &118B,X
-  CPY #&02
+  CPY #2
   BEQ l0BA7
 
   STA &118E,X
@@ -247,7 +247,7 @@ ORG &0B00
   STA &1194,X
   STA &119D,X
 
-  LDA #&03:STA &11C6,X
+  LDA #3:STA &11C6,X
   LDA &117F,X:STA &A7
   LDA &1182,X:STA &A8
 
@@ -261,7 +261,7 @@ ORG &0B00
 
   JSR l0FC3
 
-  LDA #&00:STA &11C2
+  LDA #0:STA &11C2
   JMP l0BBF
 
 .l0BD7
@@ -322,8 +322,8 @@ ORG &0B00
   CMP #&7B
   BNE l0C40
 
-  LDA #&00:STA &118E,X
-  LDA #&01:STA &118B,X
+  LDA #0:STA &118E,X
+  LDA #1:STA &118B,X
 
   LDA (&A7),Y
   INY
@@ -368,7 +368,7 @@ ORG &0B00
 .l0C76
   JSR l0F83
 
-  LDA #&07
+  LDA #7
   LDY &11CC
 
   PHA
@@ -388,7 +388,7 @@ ORG &0B00
   TAX
   LDA &124E,X:STA &D405,Y
   LDA &124F,X:STA &D406,Y
-  LDA #&00:STA &D404,Y
+  LDA #0:STA &D404,Y
   LDA &124D,X
   AND #&F0
   ORA #&05
@@ -469,7 +469,7 @@ ORG &0B00
   LDY &11CC
   CLC:ADC #&0D ; +13
   STA &D401,Y
-  LDA #&00:STA &D400,Y
+  LDA #0:STA &D400,Y
   JMP l0EEC
 
 .done
@@ -482,13 +482,13 @@ ORG &0B00
 
   ; Is it >=1
   LDA &11C9,X
-  CMP #&01
+  CMP #1
   BCS l0D8F
 
   LDA #&48
   LDY &11CC
   STA &D401,Y
-  LDA #&00:STA &D400,Y
+  LDA #0:STA &D400,Y
   LDA #&81
   JMP l0D98
 
@@ -497,13 +497,13 @@ ORG &0B00
 
   ; Is it >= 1
   LDA &11C9,X
-  CMP #&01
+  CMP #1
   BCS l0D8F
 
   LDA #&48
   LDY &11CC
   STA &D401,Y
-  LDA #&00:STA &D400,Y
+  LDA #0:STA &D400,Y
   LDA #&11
   JMP l0D98
 
@@ -673,7 +673,7 @@ ORG &0B00
   CMP &1185,X
   BCS l0EEC
 
-  ADC #&00
+  ADC #0
   CMP &1185,X
   BCC l0EEC
 
@@ -728,15 +728,15 @@ ORG &0B00
   PHA
   STA &1179,X
   LDA &117C,X
-  ADC #&00
+  ADC #0
   STA &117C,X
   PHA
 
   ; Is it < 15
-  CMP #&0F
+  CMP #15
   BCC l0F54
 
-  LDA #&01:STA &11A3,X
+  LDA #1:STA &11A3,X
   JMP l0F54
 
 .l0F37
@@ -746,15 +746,15 @@ ORG &0B00
   PHA
   STA &1179,X
   LDA &117C,X
-  SBC #&00
+  SBC #0
   STA &117C,X
   PHA
 
   ; Is it >= 8
-  CMP #&08
+  CMP #8
   BCS l0F54
 
-  LDA #&00:STA &11A3,X
+  LDA #0:STA &11A3,X
 .l0F54
   LDY &11CC
   PLA
@@ -788,7 +788,7 @@ ORG &0B00
 .reset_audio
 {
   LDY #SID_VOL_FLT-SID_BASE
-  LDA #&00
+  LDA #0
 
 .loop
   {
@@ -820,7 +820,7 @@ ORG &0B00
 {
   LDY &115B,X:INY
 
-  LDX #&00
+  LDX #0
 .loop
   {
   ROR &11BB
@@ -830,13 +830,13 @@ ORG &0B00
   INY
 .l0FB0
   INX
-  CPX #&08
+  CPX #8
   BNE loop
   }
 
   LDX &116C
   LDA #&FF:STA &11CD,Y
-  LDA #&00:STA &1194,X
+  LDA #0:STA &1194,X
 
   RTS
 }
@@ -859,7 +859,7 @@ ORG &0B00
   BNE keepgoing
 
   ; Loop back to start of data for this channel
-  LDA #&00:STA melody_chan_pos,X
+  LDA #0:STA melody_chan_pos,X
   BEQ loop
   }
 
@@ -884,7 +884,7 @@ ORG &0B00
 
 .l0FFE
 {
-  LDX #&00
+  LDX #0
   CPY &0FFF
   BCS l1028
 
@@ -925,10 +925,10 @@ ORG &0B00
 
 .l1048
   LDY &116E
-  LDA #&00
+  LDA #0
   CLC
 .l104E
-  ADC #&00
+  ADC #0
   DEY
   BPL l104E
 
@@ -936,7 +936,7 @@ ORG &0B00
   CLC
 
   LDX #&10
-  LDA #&00
+  LDA #0
 .loop
   {
   ROL &119A
@@ -982,9 +982,9 @@ ORG &1147
 {
   JSR reset_audio
 
-  LDA #&0F:STA SID_VOL_FLT ; Set volume 100%
+  LDA #15:STA SID_VOL_FLT ; Set volume 100%
 
-  LDA #&00
+  LDA #0
   STA &116F
   STA &116D
 
@@ -1258,7 +1258,7 @@ numdeadlyobj = * - deadlyobj
 
   ; Zero-out main game vars &033A to &03FF
   LDX #endofgamevars-startofgamevars+1
-  LDA #&00
+  LDA #0
 .zerovar_loop
   {
   STA startofgamevars-1,X
@@ -1270,19 +1270,19 @@ numdeadlyobj = * - deadlyobj
   LDA #CASSETTE_OFF+CASSETTE_SWITCH+CHAREN_IO+HIRAM_E000_ROM+LORAM_A000_RAM:STA CPU_CONFIG
   LDA #TUNE_10:STA melody ; There is no melody 10 ??
 .titlescreen
-  LDA #&00
+  LDA #0
   STA GFX_BORDER_COLOUR ; 0 = Black
   STA lives
 
   ; loop from 0..7
-  LDX #&00
+  LDX #0
 .l1931
   {
   JSR l313F
 
   INX
   ; Is it < 8
-  CPX #&08
+  CPX #8
   BCC l1931
   }
 
@@ -1314,7 +1314,7 @@ numdeadlyobj = * - deadlyobj
   JSR cleargamescreen
 
   ; Clear &5800 to &5BE7 - spectrum palette screen attribs
-  LDX #&00
+  LDX #0
   TXA
 .clearattrloop
   {
@@ -1331,7 +1331,7 @@ numdeadlyobj = * - deadlyobj
   }
 
   ; Reset coins collected count
-  LDA #&00
+  LDA #0
   STA coins_tens
   STA coins
   STA &18E7
@@ -1340,7 +1340,7 @@ numdeadlyobj = * - deadlyobj
   LDA #&02:STA lives
 
   ; Duplicate highestliftpos array
-  LDX #&00
+  LDX #0
 .liftloop
   {
   LDA highestliftpos,X:STA v18F4,X
@@ -1357,7 +1357,7 @@ numdeadlyobj = * - deadlyobj
 
   JSR drawcoincount
 
-  LDA #&00
+  LDA #0
   STA SPR_Y_EXP
   STA SPR_X_EXP
   STA SPR_MULTICOLOUR
@@ -1376,7 +1376,7 @@ numdeadlyobj = * - deadlyobj
   LDA orig_attrs,X:STA objs_attrs,X ; attrib
   LDA orig_frames,X:STA objs_frames, X ; frame
 
-  CPX #&00
+  CPX #0
   BNE movingloop
   }
 
@@ -1392,7 +1392,7 @@ numdeadlyobj = * - deadlyobj
 
   LDA #&FF:STA &03DF
 
-  LDA #&00:STA &03E0
+  LDA #0:STA &03E0
 
   JSR l2F22
   JSR l346B
@@ -1459,7 +1459,7 @@ numdeadlyobj = * - deadlyobj
   JSR checkcheatmode
   JSR getplayerinput
 
-  LDA #&00:STA &03C1
+  LDA #0:STA &03C1
   LDA gameloopdelay:JSR delay
   INC gamecounter
 
@@ -1517,7 +1517,7 @@ numdeadlyobj = * - deadlyobj
 .l1AD2
   NOP
   NOP
-  LDA #&06:STA &0342
+  LDA #6:STA &0342
 .l1AD9
   LDA &03C9
   BEQ l1AE1
@@ -1531,7 +1531,7 @@ numdeadlyobj = * - deadlyobj
 
   ; Is it >= 6
   LDA frmx
-  CMP #&06
+  CMP #6
   BCS l1B04
 
   JSR l3154 ; ?? hit detection (+22 Y, +1..5 X) ??
@@ -1545,12 +1545,12 @@ numdeadlyobj = * - deadlyobj
   JMP l1B0C
 
 .l1B04
-  LDA #&03:STA &03C8
+  LDA #3:STA &03C8
 
   INC dizzyy ; apply gravity whilst walking left and right
 .l1B0C
   LDA &03C8
-  CMP #&03
+  CMP #3
   BNE l1B68
 
   LDA #22:STA frmy
@@ -1560,7 +1560,7 @@ numdeadlyobj = * - deadlyobj
 
   ; Is it >= 6
   LDA frmx
-  CMP #&06
+  CMP #6
   BCS l1B58
 
   JSR l3154 ; ?? hit detection ??
@@ -1576,16 +1576,16 @@ numdeadlyobj = * - deadlyobj
   AND #JOY_RIGHT+JOY_LEFT+JOY_UP
   BNE l1B48
 
-  LDA #&00
+  LDA #0
   STA &03C8
   STA &03C7
 
   JMP l1B68
 
 .l1B48
-  LDA #&01:STA &03C8
+  LDA #1:STA &03C8
   LDA player_direction:STA &03C7
-  LDA #&00
+  LDA #0
 
   JMP l1B68
 
@@ -1601,7 +1601,7 @@ numdeadlyobj = * - deadlyobj
 .l1B68
   ; Is it >= 2
   LDA &03C8
-  CMP #&02
+  CMP #2
   BCS l1B95
 
   LDA player_input
@@ -1620,7 +1620,7 @@ numdeadlyobj = * - deadlyobj
   STA &03C7
   STA player_direction
 
-  LDA #&01:STA &03C8
+  LDA #1:STA &03C8
 
   JMP l1B95
 
@@ -1630,14 +1630,14 @@ numdeadlyobj = * - deadlyobj
 
 .l1B95
   LDA &03C8
-  CMP #&03
+  CMP #3
   BNE l1B9F
 
 .l1B9C
   JMP l1C85
 
 .l1B9F
-  CMP #&02
+  CMP #2
   BEQ l1BCD
 
   LDA player_input
@@ -1658,14 +1658,14 @@ numdeadlyobj = * - deadlyobj
 
 .l1BBE
   LDA #&02:STA &03C8
-  LDA #&00:STA &03C9
+  LDA #0:STA &03C9
   LDA #&11:STA &03C3
 .l1BCD
   INC &03C9
 
   ; Is it >= 9
   LDA &03C9
-  CMP #&09
+  CMP #9
   BCS l1C15
 
   JSR l1C62
@@ -1701,7 +1701,7 @@ numdeadlyobj = * - deadlyobj
 
   LDA &03C3
   ; Is it < 10
-  CMP #&0A
+  CMP #10
   BCC l1C85
 
   DEC &03C3
@@ -1749,7 +1749,7 @@ numdeadlyobj = * - deadlyobj
   LDA &0342
   BNE l1C18
 
-  LDA #&00:STA &03C3
+  LDA #0:STA &03C3
 
   JMP l1C85
 }
@@ -1761,9 +1761,9 @@ numdeadlyobj = * - deadlyobj
   CMP #&11
   BCS l1C5D
 
-  LDA #&01:STA &03C1
+  LDA #1:STA &03C1
 .l1C5D
-  LDA #&00
+  LDA #0
 
   JMP l1C85
 }
@@ -1774,11 +1774,11 @@ numdeadlyobj = * - deadlyobj
 {
   ; Is it < 7
   LDA &03C9
-  CMP #&07
+  CMP #7
   BCC l1C72
 
   ; Is it >= 11
-  CMP #&0B
+  CMP #11
   BCS l1C72
 
   LDA #&02 ;;;;;;
@@ -1786,7 +1786,7 @@ numdeadlyobj = * - deadlyobj
 
 .l1C72
   ; Is it < 2
-  CMP #&02
+  CMP #2
   BCC l1C7F
 
   ; Is it >= 16
@@ -1809,10 +1809,10 @@ numdeadlyobj = * - deadlyobj
 {
   ; Is it >= 2
   LDA &03C8
-  CMP #&02
+  CMP #2
   BCS l1CA8
 
-  CMP #&00
+  CMP #0
   BEQ l1C96
 
   DEC &03C8
@@ -1841,20 +1841,20 @@ numdeadlyobj = * - deadlyobj
 
 .l1CB0
 {
-  CMP #&01
+  CMP #1
   BEQ l1CCB
 
-  LDA #&00
+  LDA #0
   JMP l1CCD
 }
 
 .l1CB9
 {
   LDA &03C1
-  CMP #&01
+  CMP #1
   BNE l1CC8
 
-  LDA #&00:STA &03C1
+  LDA #0:STA &03C1
   JMP l1BDA
 }
 
@@ -1865,7 +1865,7 @@ numdeadlyobj = * - deadlyobj
 
 .l1CCB
 {
-  LDA #&07
+  LDA #7
 .^l1CCD
   STA frmx
   LDA #12:STA frmy
@@ -1873,22 +1873,22 @@ numdeadlyobj = * - deadlyobj
   BCC l1CFC ; < 1
 
   LDA &03C1
-  CMP #&02
+  CMP #2
   BNE l1CE9
 
-  LDA #&00:STA &03C1
+  LDA #0:STA &03C1
   JMP l1CF7
 }
 
 .l1CE9
   LDA &03C3
   ; Is it < 10
-  CMP #&0A
+  CMP #10
   BCC l1CB9
 
   LDA &03C9
   ; Is it < 9
-  CMP #&09
+  CMP #9
   BCC l1CB9
 
 .l1CF7
@@ -1916,7 +1916,7 @@ numdeadlyobj = * - deadlyobj
   BEQ l1D2E
 
   ; Is it >= 9
-  CMP #&09
+  CMP #9
   BCS l1D2E
 
   LDA hitbitflags
@@ -1925,7 +1925,7 @@ numdeadlyobj = * - deadlyobj
 
 .l1D2E
   LDA &03C7
-  CMP #&01
+  CMP #1
   BNE l1D3B
 
   INC dizzyx ; Move Dizzy right
@@ -1937,12 +1937,12 @@ numdeadlyobj = * - deadlyobj
 
 .l1D41
   LDA &03C8
-  CMP #&02
+  CMP #2
   BNE l1D7C
 
   LDA &03C9
   ; Is it < 9
-  CMP #&09
+  CMP #9
   BCC l1D7C
 
   AND #&07
@@ -1965,7 +1965,7 @@ numdeadlyobj = * - deadlyobj
   BEQ loop ; = 1
   }
 
-  LDA #&00
+  LDA #0
   STA &03C8
   STA &03C7
   STA &03C9
@@ -2084,7 +2084,7 @@ numdeadlyobj = * - deadlyobj
   LDA dizzyy:STA olddizzyy
 
 .donecacheentry
-  LDA #&00:STA &03E0
+  LDA #0:STA &03E0
 
   LDA roomno
   JSR l2F22
@@ -2104,7 +2104,7 @@ numdeadlyobj = * - deadlyobj
   BCC sprite_lhs
 
   ; Overflow happened (Dizzy at far rhs), so set bottom bit
-  LDA SPR_MSB_X:ORA #&01
+  LDA SPR_MSB_X:ORA #1
 
   JMP l1E40
 }
@@ -2135,7 +2135,7 @@ numdeadlyobj = * - deadlyobj
 
 .l1E55
 {
-  CMP #&02
+  CMP #2
   BNE l1E7E
 
   LDA &03C7
@@ -2147,7 +2147,7 @@ numdeadlyobj = * - deadlyobj
 
 .l1E63
 {
-  CMP #&01
+  CMP #1
   BNE l1E6C
 
   LDA #ANIM_JUMP_RIGHT ; Jump right animation
@@ -2161,7 +2161,7 @@ numdeadlyobj = * - deadlyobj
   STA &FF
 
   LDA &03C9
-  SEC:SBC #&01
+  SEC:SBC #1
   AND #&07
   CLC:ADC &FF
   JMP l1E9E
@@ -2205,7 +2205,7 @@ numdeadlyobj = * - deadlyobj
   STA sprite_pointer ; Update Dizzy hardware sprite
   LDA #&FF:STA SPR_ENABLE ; Show sprites
   LDA &03C7
-  CMP #&02
+  CMP #2
   BEQ checkshopkeeper
 
   ; Check for collision with troll
@@ -2216,7 +2216,7 @@ numdeadlyobj = * - deadlyobj
   ; Collide with troll
   LDA #str_getbackintheremess:JSR prtmessage
 
-  LDA #&00
+  LDA #0
   STA &03C7
   STA &03C8
 
@@ -2271,7 +2271,7 @@ numdeadlyobj = * - deadlyobj
 
   LDA #str_goawaymess:JSR prtmessage
 
-  LDA #&00
+  LDA #0
   STA &03C7
   STA &03C8
 
@@ -2571,7 +2571,7 @@ numdeadlyobj = * - deadlyobj
   INC objs_ylocs+obj_prisonlifttop
   JSR redrawobj
 
-  LDA #&0A:JSR delay
+  LDA #10:JSR delay
 
   ; Check where the lift has got to, keep moving until it gets to the bottom
   LDA objs_ylocs+obj_prisonliftbottom
@@ -2725,7 +2725,7 @@ numdeadlyobj = * - deadlyobj
   CMP #obj_null
   BEQ l21A0
 
-  CMP #&00
+  CMP #0
   BEQ l21A0
 
   LDX inventorylist
@@ -2735,7 +2735,7 @@ numdeadlyobj = * - deadlyobj
   LDA #str_carryingtoomuchmess:JSR prtmessage
 
 .l21A0
-  LDA #&00:STA SPR_ENABLE ; Hide sprites
+  LDA #0:STA SPR_ENABLE ; Hide sprites
 
   JSR drawinventory
 
@@ -2761,7 +2761,7 @@ numdeadlyobj = * - deadlyobj
 ; Find empty inventory slot ??
 .l21C9
 {
-  LDX #&00
+  LDX #0
 .loop
   {
   LDA inventorylist,X
@@ -2855,7 +2855,7 @@ numdeadlyobj = * - deadlyobj
   BNE inventoryloop
 
   ; Move selection highlight back to top of list
-  LDA #&00:STA inventoryindex
+  LDA #0:STA inventoryindex
   JMP inventoryloop
 }
 
@@ -3108,7 +3108,7 @@ numdeadlyobj = * - deadlyobj
 
 .l2355
 {
-  LDA #&00
+  LDA #0
   STA &03C7
   STA &03C8
 
@@ -3334,7 +3334,7 @@ numdeadlyobj = * - deadlyobj
 
   ; TODO ?? work out what this is ??
   LDA #maxcollectable+1:STA &03DD
-  LDA #&00:STA &03D5
+  LDA #0:STA &03D5
 
   ; Wait until raster line >= 250
 .rasterwaitloop
@@ -3368,7 +3368,7 @@ numdeadlyobj = * - deadlyobj
 .checkdeadlyobj
 {
   ; Check all the things that can kill Dizzy on contact
-  LDX #&00:STX index
+  LDX #0:STX index
 
 .loop
   {
@@ -3478,7 +3478,7 @@ numdeadlyobj = * - deadlyobj
   BCC checkforhazards
 
   ; Dizzy is past the "flames left position", so reduce by 4 and compare again
-  SEC:SBC #&04
+  SEC:SBC #4
   CMP dragonflamepos
   BCS checkforhazards
 
@@ -3510,7 +3510,7 @@ numdeadlyobj = * - deadlyobj
   INC frmx
   LDA frmx
   ; Is it < 6
-  CMP #&06
+  CMP #6
   BCC loop
   }
 
@@ -3577,7 +3577,7 @@ numdeadlyobj = * - deadlyobj
   JSR prtmessage
 
   ; Delay whilst death message is shown
-  LDA #&07:STA &03B7
+  LDA #7:STA &03B7
 .loop
   {
   LDA #&FA:JSR delay
@@ -3716,7 +3716,7 @@ numdeadlyobj = * - deadlyobj
   LSR A:LSR A ; divide by 4
   AND #&07
   ; Is it < 6
-  CMP #&06
+  CMP #6
   BCC animcroc
 
   LDA #&01 ; Mouth shut during longer period
@@ -3815,7 +3815,7 @@ numdeadlyobj = * - deadlyobj
 
 .liftsrou
 {
-  LDX #&00
+  LDX #0
   LDA liftwait
   BEQ checklift
 
@@ -3969,10 +3969,10 @@ numdeadlyobj = * - deadlyobj
   LDA gamecounter
   LSR A
   AND #&03
-  CMP #&03
+  CMP #3
   BNE sethawkframe
 
-  LDA #&01
+  LDA #1
 .sethawkframe
   CLC:ADC #SPR_HAWK0
 
@@ -4035,7 +4035,7 @@ numdeadlyobj = * - deadlyobj
   CMP #55
   BCS l2847
 
-  LDA #&00:STA &03BD
+  LDA #0:STA &03BD
 
   ; We're done with Armorog, move on to dragons
 .go_dragonsrou
@@ -4131,7 +4131,7 @@ numdeadlyobj = * - deadlyobj
   CMP #WIDEEYEDDRAGONROOM
   BEQ sleepingpotionrou
 
-  LDA #&00:STA dragonflamepos ; Start with no flames
+  LDA #0:STA dragonflamepos ; Start with no flames
   JMP l295E
 
 .goldeneggrou
@@ -4225,7 +4225,7 @@ numdeadlyobj = * - deadlyobj
   INC &03BB
   ; Is it < 7
   LDA &03BB
-  CMP #&07
+  CMP #7
   BCC l295E
 
   DEC &03BB
@@ -4261,7 +4261,7 @@ numdeadlyobj = * - deadlyobj
   BNE l2993
 
   JSR l326A
-  CMP #&01
+  CMP #1
   BNE l2993
 
 .l297F
@@ -4294,7 +4294,7 @@ numdeadlyobj = * - deadlyobj
   BCS dodrawflames
 
   ; Stop dragon breathing flames
-  LDA #&00:STA dragonflamepos
+  LDA #0:STA dragonflamepos
 
   ; Set dragon's head to mouth closed
   LDA #SPR_DRAGONHEADCLOSED:STA objs_frames+obj_dragonhead
@@ -4391,7 +4391,7 @@ numdeadlyobj = * - deadlyobj
   STA player_direction
 
   LDA #&02:STA &03C8
-  LDA #&01:STA &03C9
+  LDA #1:STA &03C9
   LDA #&11:STA &03C3
 
 .done
@@ -4421,7 +4421,7 @@ numdeadlyobj = * - deadlyobj
   LDA #50:STA objs_xlocs+obj_daisy
   LDA #77:STA objs_ylocs+obj_daisy
 
-  LDA #&00:STA SPR_ENABLE ; Hide sprites
+  LDA #0:STA SPR_ENABLE ; Hide sprites
   JSR heartdemo
 
   LDA #str_daisyrunsmess:JSR prtmessage
@@ -4454,9 +4454,9 @@ numdeadlyobj = * - deadlyobj
   RTS
 
 .downunder
-  LDY #&00:STY &FC
+  LDY #0:STY &FC
 
-  LDX #&06
+  LDX #6
 .loop
   {
   CLC
@@ -4470,7 +4470,7 @@ numdeadlyobj = * - deadlyobj
 
   LDA &FC:CLC:ADC #&40:STA &FC
 
-  LDY #&00
+  LDY #0
   LDX #&3E
 .fliploop
   {
@@ -4510,7 +4510,7 @@ numdeadlyobj = * - deadlyobj
 
   ; Is it >= 2
   LDA &03C8
-  CMP #&02
+  CMP #2
   BCS done ; return
 
   ; SID audio code ?
@@ -4522,10 +4522,10 @@ numdeadlyobj = * - deadlyobj
   ;   so (1)=6, (3)=10 e.t.c.
 
   SEI ; Disable interrupts
-  LDA #&00:STA SID_CH1_CTRL
-  LDA #&09:STA SID_VOL_FLT ; Volume at 60%
-  LDA gamecounter:AND #&02:ASL A:CLC:ADC #&06:STA SID_CH1_FREQ_H
-  LDA #&00:STA SID_CH1_SURL ; Sustain=0 / Release=0
+  LDA #0:STA SID_CH1_CTRL
+  LDA #9:STA SID_VOL_FLT ; Volume at 60%
+  LDA gamecounter:AND #&02:ASL A:CLC:ADC #6:STA SID_CH1_FREQ_H
+  LDA #0:STA SID_CH1_SURL ; Sustain=0 / Release=0
   LDA #&10:STA SID_CH1_ATDK ; Attack=1 / Decay=0
   LDA #&81:STA SID_CH1_CTRL ; Noise / Test
   CLI ; Enable interrupts
@@ -4609,7 +4609,7 @@ ORG &2B13
 
   LDA isr_counter
   AND #&07
-  CMP #&07
+  CMP #7
   BEQ done
 
   JSR musicplayer
@@ -4742,7 +4742,7 @@ ORG &2B13
   LDA screenattrtable_hi,X:SEC:SBC attrib_offset:STA &FE
   LDA screenattrtable_lo,X
 
-  SEC:SBC #&0C
+  SEC:SBC #12
   BCS l2C23
 
   DEC &FE
@@ -4774,7 +4774,7 @@ ORG &2B13
 .l2C46
   STA &36 ; hi pointer
 
-  LDY #&00
+  LDY #0
   LDA (&B4),Y:STA &033D
   LSR &033D
   INY
@@ -4790,12 +4790,12 @@ ORG &2B13
   BCS notfont
 
   ; Processing for font sprites
-  LDA #&01:STA &033D
-  LDA #&08:STA &033E
+  LDA #1:STA &033D
+  LDA #8:STA &033E
 
 .notfont
   LDA &B4
-  CLC:ADC #&02
+  CLC:ADC #2
   BCC l2C76
 
   INC &B5
@@ -4808,7 +4808,7 @@ ORG &2B13
 
   STA &03DF
 .l2C83
-  LDA #&00:STA &034A
+  LDA #0:STA &034A
   LDA &033D:STA &034B
 
   ; Is it >= 34
@@ -4833,7 +4833,7 @@ ORG &2B13
 
   STA &034B
 .l2CB7
-  LDA #&00:STA &0349
+  LDA #0:STA &0349
 
 .l2CBC
   LDA frmy ; Y position
@@ -4843,7 +4843,7 @@ ORG &2B13
   JMP l2D29
 
 .l2CC7
-  LDY #&00
+  LDY #0
 .l2CC9
   {
   LDA (&B4),Y:STA v2AF3,Y
@@ -4984,7 +4984,7 @@ ORG &2B13
 .l2D95
 {
   LDX &033D
-  LDA #&00:STA v2AF3,X
+  LDA #0:STA v2AF3,X
 
 .loop
   {
@@ -5081,7 +5081,7 @@ ORG &2B13
 {
   LDX &033D:DEX:STX &0346
 
-  LDX #&00:STX &0347
+  LDX #0:STX &0347
 .l2E3A
   LDX &0347
   CPX &0346
@@ -5143,7 +5143,7 @@ ORG &2B13
   STA &B1
   STA &B3
 
-  LDY #&01
+  LDY #1
   LDA (&FB),Y
   CLC:ADC &B1
   STA &B1
@@ -5157,7 +5157,7 @@ ORG &2B13
 .l2EB1
   STA &B0
 
-  LDY #&03
+  LDY #3
   LDA (&FB),Y
   CLC:ADC &B3
   STA &B3
@@ -5184,20 +5184,20 @@ ORG &2B13
   RTS
 
 .l2ED5
-  LDY #&01
-  LDA #&03:STA &0342
+  LDY #1
+  LDA #3:STA &0342
   LDA (&B0),Y
   AND #&80
   BNE l2EEE
 
-  LDY #&03
+  LDY #3
   INC &0342
   LDA (&B0),Y:EOR #ATTR_NOTSOLID:STA cursorattr
 .l2EEE
   LDA cursorattr:STA frmattr ; attrib
   LDA #HIT_EMPTY:STA hitbitflags
 
-  LDY #&02
+  LDY #2
   LDA (&B0),Y:STA frmy ; Y position
 
   DEY
@@ -5240,7 +5240,7 @@ ORG &2B13
 
 .resetgamestate
 {
-  LDA #&00
+  LDA #0
   STA &03BB
   STA SPR_ENABLE ; Hide sprites
   STA &03E0
@@ -5255,10 +5255,10 @@ ORG &2B13
   LDA #15:STA gameloopdelay
 
   ; Set flame counter to 0
-  LDA #&00:STA flameindex
+  LDA #0:STA flameindex
 
   ; Clear out flame array
-  LDX #&00
+  LDX #0
 .flameloop
   {
   STA flame_x,X
@@ -5275,14 +5275,14 @@ ORG &2B13
   CMP #DRAGONSLAIRROOM
   BNE l2F7A
 
-  LDA #&0C
+  LDA #12
   JMP l2F80
 
 .l2F7A
   CMP #WIDEEYEDDRAGONROOM
   BNE l2FAA
 
-  LDA #&0A
+  LDA #10
 .l2F80
   STA &FF
 
@@ -5410,18 +5410,18 @@ ORG &2B13
   STA &B0
   STA &B2
 
-  LDA &FE:SEC:SBC #&04:STA &B1
+  LDA &FE:SEC:SBC #4:STA &B1
 
   SEC:SBC #&54
   STA &B3
 
   LDY #&F0
-  LDA #&00
+  LDA #0
 .clearbitmaploop
   {
   DEY
   STA (&FB),Y ; Clear bitmap char
-  CPY #&00
+  CPY #0
   BNE clearbitmaploop
   }
 
@@ -5435,7 +5435,7 @@ ORG &2B13
   LDA #&10:STA (&B2),Y ; Set game area background colour (&10=black)
 
   LDA #&00 ; Reset char to clear attrib to
-  CPY #&00
+  CPY #0
   BNE clearattrloop
   }
 
@@ -5449,7 +5449,7 @@ ORG &2B13
   BCC clearrow
 
   ; Clear &5800..&59FF - some of the spectrum palette screen attribs
-  LDA #&00
+  LDA #0
   TAX
 .loop
   {
@@ -5616,7 +5616,7 @@ ORG &2B13
 {
   STX &034E
 
-  LDA #&00
+  LDA #0
   STA dizzyx,X
   STA dizzyy,X
   STA &0370,X
@@ -5656,7 +5656,7 @@ ORG &2B13
 
   ; Set pointer at &FD to screen attribute RAM
   LDA screenattrtable_lo,X:STA &FD
-  LDA screenattrtable_hi,X:SEC:SBC #&04:STA &FE
+  LDA screenattrtable_hi,X:SEC:SBC #4:STA &FE
 
   LDA &033D
   AND #&07
@@ -5677,7 +5677,7 @@ ORG &2B13
   AND #&01
   BEQ l31B5
 
-  LDA #&0F
+  LDA #15
 
   JMP l31B7
 
@@ -5746,11 +5746,11 @@ ORG &2B13
   STX &0345 ; Cache X
   STY &0347 ; Cache Y
 
-  LDY #&00
-  LDA #&01:STA &0342
+  LDY #0
+  LDA #1:STA &0342
   LDX &034E
 .l31FE
-  CPX #&00
+  CPX #0
   BEQ l320B
 
   INY
@@ -5774,7 +5774,7 @@ ORG &2B13
   JMP l321E
 
 .l321C
-  LDA #&00
+  LDA #0
 .l321E
   CLC
   ROL A
@@ -5801,7 +5801,7 @@ ORG &2B13
   JMP l324D
 
 .l324B
-  LDA #&00
+  LDA #0
 .l324D
   STA &D000,Y
 
@@ -5836,7 +5836,7 @@ ORG &2B13
   ; Load character from string table at "INTO THE NEST" into &03C6
   LDA &EA60,X
   AND #&03
-  CLC:ADC #&01
+  CLC:ADC #1
   STA &03C6
 
   LDX &0346 ; Restore X
@@ -5896,7 +5896,7 @@ ORG &2B13
 .l32E0
   ; Is it < 8
   LDA dizzyy,X
-  CMP #&08
+  CMP #8
   BCC l32DA
 
 .l32E7
@@ -5941,7 +5941,7 @@ ORG &2B13
 {
   LDX &03DD
 .loop
-  CPX #&00
+  CPX #0
   BNE keepgoing
 
   ; End of objects, reset
@@ -5962,7 +5962,7 @@ ORG &2B13
   LDA objs_attrs,X:STA frmattr ; attrib
 
   ; Check if this is a non-collectable
-  LDY #&00
+  LDY #0
   CPX #maxcollectable+1
   BCS l3373
 
@@ -6047,7 +6047,7 @@ ORG &2B13
 
   LDA dizzyy:CLC:ADC #90:STA dizzyy
 
-  LDX #&02
+  LDX #2
 .loop
   {
   STX &034E
@@ -6056,12 +6056,12 @@ ORG &2B13
   LDA #COLOUR_WHITE:STA SPR_0_COLOUR,X
 
   LDA #&33:STA sprite_pointer,X ; Dot sprite
-  LDA #&04:STA &0384,X
+  LDA #4:STA &0384,X
   LDA #&02:STA &037A,X
 
   INX
   ; Is it < 6
-  CPX #&06
+  CPX #6
   BCC loop
   }
 
@@ -6092,10 +6092,10 @@ ORG &2B13
 
 .l3440
 {
-  LDX #&05:STX &0346
+  LDX #5:STX &0346
 .loop
   {
-  LDX #&02
+  LDX #2
 .innerloop
   {
   STX &034E
@@ -6112,11 +6112,11 @@ ORG &2B13
 .l345B
   INX
   ; Is it < 6
-  CPX #&06
+  CPX #6
   BCC innerloop
   }
 
-  LDA #&08:JSR delay
+  LDA #8:JSR delay
 
   DEC &0346
   BNE loop
@@ -6134,15 +6134,15 @@ ORG &2B13
   JSR l33D1
 
   LDA #&37:STA sprite_pointer ; Reverse death animation "small face"
-  LDX #&00:STX &034E
+  LDX #0:STX &034E
   JSR l31EE
 
-  LDA #&0A:STA &0368
-  LDA #&09:STA &0369
-  LDA #&06:STA &036A
-  LDA #&05:STA &036B
+  LDA #10:STA &0368
+  LDA #9:STA &0369
+  LDA #6:STA &036A
+  LDA #5:STA &036B
 
-  LDY #&03
+  LDY #3
 .l349F
   JSR l3440
 
@@ -6150,7 +6150,7 @@ ORG &2B13
   DEY
   BNE l349F ; Loop until reverse death animation "large face", i.e. &34
 
-  LDA #&00
+  LDA #0
   STA &03C8
   STA &03C7
   STA &03C9
@@ -6158,7 +6158,7 @@ ORG &2B13
   STA sprite_pointer ; Default Dizzy sprite (arms up"
   STA &03C1
 
-  LDX #&01
+  LDX #1
 .loop
   {
   STX &034E
@@ -6166,7 +6166,7 @@ ORG &2B13
 
   INX
   ; Is it < 8
-  CPX #&08
+  CPX #8
   BCC loop
   }
 
@@ -6184,21 +6184,21 @@ ORG &2B13
 {
   NOP
 
-  LDA #&00
+  LDA #0
   JSR l33D1
 
   LDA #&34:STA sprite_pointer ; Dizzy death "big face"
-  LDX #&00:STX &034E
+  LDX #0:STX &034E
   JSR l31EE
 
   LDA #TUNE_4:STA melody ; Lose a life / hearts demo melody
-  LDA #&05:STA &0368
-  LDA #&06:STA &0369
-  LDA #&09:STA &036A
-  LDA #&0A:STA &036B
+  LDA #5:STA &0368
+  LDA #6:STA &0369
+  LDA #9:STA &036A
+  LDA #10:STA &036B
 
   ; Loop from 10 down to 1
-  LDY #&0A
+  LDY #10
 .spriteloop
   {
   JSR l3440
@@ -6219,7 +6219,7 @@ ORG &2B13
   }
 
   ; Loop from 0 up to 7
-  LDX #&00
+  LDX #0
 .l352A
   {
   STX &034E
@@ -6227,7 +6227,7 @@ ORG &2B13
 
   INX
   ; Is it < 8
-  CPX #&08
+  CPX #8
   BCC l352A
   }
 
@@ -6262,7 +6262,7 @@ ORG &2B13
   ORA #JOY_RIGHT
 
 .checkshift
-  CPX #&00
+  CPX #0
   BEQ checkreturn
 
   ; Simulate joystick up
@@ -6286,7 +6286,7 @@ ORG &2B13
 {
   SEI
   LDA #CASSETTE_OFF+CASSETTE_SWITCH+CHAREN_IO+HIRAM_E000_RAM+LORAM_A000_RAM:STA CPU_CONFIG
-  LDY #&00
+  LDY #0
   LDA (stringptr),Y
   INC stringptr
   BNE samepage
@@ -6408,7 +6408,7 @@ ORG &2B13
   LDX cursory:STX frmy ; Y position
   LDX cursorattr:STX frmattr ; attrib
 
-  LDX #&00
+  LDX #0
   STX hitbitflags
   STX attrib_offset ; attr_offs_screen
 
@@ -6430,7 +6430,7 @@ ORG &2B13
   JSR nextchar
   STA msgbox_height
 
-  LDA #&00:STA SPR_ENABLE ; Hide sprites
+  LDA #0:STA SPR_ENABLE ; Hide sprites
   LDA cursorx:CLC:ADC #2:STA cursorx_offs
 
   ; Draw left top-most part of frame
@@ -6543,7 +6543,7 @@ ORG &2B13
   LDX cursory:STX frmy ; Y position
   LDX cursorattr:STX frmattr ; attrib
 
-  LDX #&00
+  LDX #0
   STX hitbitflags ; empty
   STX attrib_offset ; attr_offs_screen
 
@@ -6623,7 +6623,7 @@ ORG &2B13
   LDA #obj_null
 
   ; Clear inventory list
-  LDX #&00
+  LDX #0
 .clearloop
   {
   STA inventorylist,X
@@ -6635,7 +6635,7 @@ ORG &2B13
 
   ; Find items for inventory
   LDX #mincollectable
-  LDY #&00
+  LDY #0
 .buildloop
   {
   ; Is this object in "collected" room
@@ -6656,7 +6656,7 @@ ORG &2B13
   }
 
   ; Add an end marker
-  LDA #&00:STA inventorylist,Y
+  LDA #0:STA inventorylist,Y
 
   RTS
 }
@@ -6687,7 +6687,7 @@ ORG &2B13
 .setcursory
   STY cursory
 
-  LDA #&00:STA cursorindex
+  LDA #0:STA cursorindex
   LDA #PAL_MAGENTA:STA cursorattr
 .loop
   {
@@ -6704,7 +6704,7 @@ ORG &2B13
   ; Advance down to next line
   INC cursorindex
 
-  LDA cursory:CLC:ADC #&08:STA cursory
+  LDA cursory:CLC:ADC #8:STA cursory
   JMP loop
   }
 
@@ -6771,7 +6771,7 @@ ORG &2B13
 
 .showlives
 {
-  LDA #&00:STA &03DB
+  LDA #0:STA &03DB
 
   LDX #46
 .loop
@@ -6813,7 +6813,7 @@ ORG &2B13
 {
   JSR cleargamescreen
 
-  LDA #&00:STA &03DB
+  LDA #0:STA &03DB
   LDA #TUNE_4:STA melody ; Lose a life / hearts demo melody
 
 .loop
@@ -6830,21 +6830,21 @@ ORG &2B13
 
   LDA #PLOT_XOR+PAL_RED:STA frmattr ; attrib
 
-  LDA #&00
+  LDA #0
   STA hitbitflags ; empty
   STA attrib_offset ; attr_offs_screen
 
   JSR l326A
 
-  CMP #&04
+  CMP #4
   BNE l3882
 
-  LDA #&01
+  LDA #1
 .l3882
   CLC:ADC #SPR_HEARTNULL ; frame
   JSR frame
 
-  LDA #&05:JSR delay
+  LDA #5:JSR delay
 
   INC &03DB
   BNE loop
@@ -6869,7 +6869,7 @@ ORG &2B13
   STA &FB ; Store result
 
   ; Fetch frame pointer low-byte
-  LDY #&00
+  LDY #0
   LDA (&FB),Y:STA &B4
 
   ; Fetch frame pointer high-byte
@@ -6895,7 +6895,7 @@ ORG &2B13
 
 .l38C3
   ; Set pointer &B2 to screen attribute RAM
-  LDA screenattrtable_hi,X:SEC:SBC #&04:STA &B3
+  LDA screenattrtable_hi,X:SEC:SBC #4:STA &B3
   LDA screenattrtable_lo,X:STA &B2
 
   LDA &03DA
@@ -6955,13 +6955,13 @@ ORG &2B13
   BCC l38DE
 
 .l392A
-  LDA #&0A
-  LDX #&02
+  LDA #10
+  LDX #2
   JMP l3935
 
 .l3931
-  LDX #&00
-  LDA #&02
+  LDX #0
+  LDA #2
 .l3935
   STA &03DB
   STX &034E
@@ -6970,7 +6970,7 @@ ORG &2B13
   LDA flame_x,X:STA frmx ; X position
   LDA flame_y,X:STA frmy ; Y position
 
-  LDA #&00
+  LDA #0
   STA frmattr ; attrib
   STA hitbitflags ; empty
   STA attrib_offset ; attr_offs_screen
@@ -7091,7 +7091,7 @@ ORG &2B13
   BCS objelsewhere
 
   ; Return if object.x+object.width <= dizzy.x (Dizzy to the right)
-  LDY #&00
+  LDY #0
   LDA (&B4),Y ; Get object width
   CLC:ADC objs_xlocs,X ; Add object.x
   CMP frmx
@@ -7218,7 +7218,7 @@ ORG &2B13
 .storeattrs
   STA frmattr ; attrib
 
-  LDA #&00
+  LDA #0
   STA hitbitflags ; empty
   STA attrib_offset ; attr_offs_screen
 
@@ -7279,7 +7279,7 @@ cheatcodelen = * - eclipse
 
 .checkcheatmode
 {
-  LDX #&00
+  LDX #0
 
 .nextchar
   ; check last key pressed
@@ -7304,7 +7304,7 @@ cheatcodelen = * - eclipse
 
 .l3B16 ; &3B16
 
-  LDA #&00:STA SPR_ENABLE ; Hide sprites
+  LDA #0:STA SPR_ENABLE ; Hide sprites
 
   LDA #2:STA lives ; Reset lives
   JSR showlives
@@ -7339,7 +7339,7 @@ cheatcodelen = * - eclipse
 
   JSR l2F22 ; ?? Redraw room ??
 
-  LDA #&00:STA SPR_ENABLE ; Hide sprites
+  LDA #0:STA SPR_ENABLE ; Hide sprites
   JMP cheatloop
   }
 
