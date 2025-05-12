@@ -6552,8 +6552,9 @@ ORG &2B13
   JSR frame
 
   ; Advance cursor
+print ~*
   FOR n, 1, CURSOR_ADV_X
-    INC cursorx
+    INC cursorx_offs
   NEXT
 
   RTS
