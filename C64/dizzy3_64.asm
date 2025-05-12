@@ -888,10 +888,10 @@ ORG &0B00
   CPY &0FFF
   BCS l1028
 
-  LDA #&18 ; CLC
+  LDA #opcode_CLC_imp ; CLC
   STA &0ED6
 
-  LDA #&6D ; ADC
+  LDA #opcode_ADC_abs ; ADC
   STA &0ED7
   STA &0EE3
 
@@ -907,10 +907,10 @@ ORG &0B00
   JMP l1048
 
 .l1028
-  LDA #&38 ; SEC
+  LDA #opcode_SEC_imp ; SEC
   STA &0ED6
 
-  LDA #&ED ; SBC
+  LDA #opcode_SBC_abs ; SBC
   STA &0ED7
   STA &0EE3
 
@@ -5056,7 +5056,7 @@ ORG &2B13
   LSR A:LSR A:LSR A ; /8
   BNE l2E1A ; plot AND
 
-  LDA #&EA:STA poly_operand ; NOP
+  LDA #opcode_NOP_imp:STA poly_operand ; NOP
   JMP set_poly_opcode ; NOP
 
 .l2E1A
@@ -5065,11 +5065,11 @@ ORG &2B13
   CMP #&01 ; check for plot XOR
   BNE set_plot_OR
 
-  LDA #&51 ; EOR (indirect),Y
+  LDA #opcode_EOR_indY ; EOR (indirect),Y
   JMP set_poly_opcode
 
 .set_plot_OR
-  LDA #&11 ; ORA (indirect),Y
+  LDA #opcode_ORA_indY ; ORA (indirect),Y
 
 .set_poly_opcode
   STA poly_opcode

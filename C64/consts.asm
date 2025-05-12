@@ -137,3 +137,12 @@ SMALLBAGSIZE = 2
 BIGBAGSIZE = 4
 
 NULLPTR = &0000
+
+; 6502 opcodes for polymorphic code
+opcode_NOP_imp = &EA
+opcode_CLC_imp = &18
+opcode_ADC_abs = &6D
+opcode_SEC_imp = &38
+opcode_SBC_abs = &ED
+opcode_EOR_indY = &51
+opcode_ORA_indY = &11
