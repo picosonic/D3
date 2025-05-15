@@ -2104,7 +2104,7 @@ numdeadlyobj = * - deadlyobj
   BCC sprite_lhs
 
   ; Overflow happened (Dizzy at far rhs), so set bottom bit
-  LDA SPR_MSB_X:ORA #1
+  LDA SPR_MSB_X:ORA #&01
 
   JMP l1E40
 }
@@ -3719,7 +3719,7 @@ numdeadlyobj = * - deadlyobj
   CMP #6
   BCC animcroc
 
-  LDA #&01 ; Mouth shut during longer period
+  LDA #1 ; Mouth shut during longer period
 .animcroc
   ; Change croc sprite
   AND #&01 ; restrict to 2 frames (0 and 1)
