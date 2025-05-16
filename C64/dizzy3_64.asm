@@ -2127,51 +2127,52 @@ numdeadlyobj = * - deadlyobj
   LDA &03C7
   BNE l1E7E
 
-  ; ?? Set sprite for "idle" animation ??
+  ; Set sprite for "idle" animation
   LDA gamecounter
-  AND #&01
-  JMP l1E9E
+  AND #HW_SPRITE_IDLE_2-HW_SPRITE_IDLE ; restrict to 0..1
+  JMP set_hardware_sprite
 }
 
 .l1E55
 {
-  CMP #2
+  CMP #2 ; vs &03C8
   BNE l1E7E
 
   LDA &03C7
   BNE l1E63
 
-  LDA #ANIM_JUMP_UP ; Jump straight up animation
-  JMP set_jump_animation
+  LDA #HW_SPRITE_JUMP_UP ; Jump straight up animation base
+  JMP set_jump_animation_base
 }
 
 .l1E63
 {
-  CMP #1
+  CMP #1 ; vs &03C7
   BNE l1E6C
 
-  LDA #ANIM_JUMP_RIGHT ; Jump right animation
-  JMP set_jump_animation
+  LDA #HW_SPRITE_JUMP_RIGHT ; Jump right animation base
+  JMP set_jump_animation_base
 }
 
 .l1E6C
 {
-  LDA #ANIM_JUMP_LEFT ; Jump left animation
-.^set_jump_animation
+  LDA #HW_SPRITE_JUMP_LEFT ; Jump left animation base
+.^set_jump_animation_base
   STA &FF
 
   LDA &03C9
   SEC:SBC #1
-  AND #&07
+  AND #HW_SPRITE_JUMP_LEFT-HW_SPRITE_JUMP_RIGHT-1 ; restrict to 0..7
   CLC:ADC &FF
-  JMP l1E9E
+
+  JMP set_hardware_sprite
 }
 
 .l1E7E
 {
   ; Check animation direction
   LDA player_direction
-  BEQ l1E9E ; No direction
+  BEQ set_hardware_sprite ; No direction - facing forward Dizzy sprite 0
 
   ; ?? Warble volume ??
   JSR l2AB7
@@ -2181,29 +2182,32 @@ numdeadlyobj = * - deadlyobj
   CMP #ANIM_RIGHT
   BNE goingleft
 
-  LDA #ANIM_WALK_RIGHT ; Walk right animation
-  JMP set_walk_animation
+  LDA #HW_SPRITE_WALK_RIGHT ; Walk right animation base
+  JMP set_walk_animation_base
 
 .goingleft
-  LDA #ANIM_WALK_LEFT ; Walk left animation
+  LDA #HW_SPRITE_WALK_LEFT ; Walk left animation base
 
-.set_walk_animation
+.set_walk_animation_base
   STA &FF
 
-  ; Set current animation frame
+  ; Set current animation frame based on time
   LDA gamecounter
-  AND #&07
-  CLC:ADC &FF ; add offset
+  AND #HW_SPRITE_WALK_LEFT-HW_SPRITE_WALK_RIGHT-1 ; restrict to 0..7
+  CLC:ADC &FF ; add animation base offset
 
   ; Fall through
 }
 
-.l1E9E
+; A reg = hardware sprite number
+.set_hardware_sprite
 {
   JSR checkfordownunder
 
   STA sprite_pointer ; Update Dizzy hardware sprite
+
   LDA #&FF:STA SPR_ENABLE ; Show sprites
+
   LDA &03C7
   CMP #2
   BEQ checkshopkeeper
@@ -2571,7 +2575,7 @@ numdeadlyobj = * - deadlyobj
   INC objs_ylocs+obj_prisonlifttop
   JSR redrawobj
 
-  LDA #10:JSR delay
+  LDA #PRISON_LIFT_DELAY:JSR delay
 
   ; Check where the lift has got to, keep moving until it gets to the bottom
   LDA objs_ylocs+obj_prisonliftbottom
@@ -2739,16 +2743,18 @@ numdeadlyobj = * - deadlyobj
 
   JSR drawinventory
 
+  ; Check for inventory being empty
   LDA inventorylist
-  BEQ l21B4
+  BEQ emptyinventory
 
   LDA usedobj
   CMP #obj_null
   BEQ inventoryprompt
 
-.l21B4
-  LDA #&F0:JSR delay
-  LDA #&F0:JSR delay
+.emptyinventory
+  ; Empty so just pause whilst the the "N O T H I N G" message is shown
+  LDA #NOTHING_CARRIED_DELAY:JSR delay
+  LDA #NOTHING_CARRIED_DELAY:JSR delay
 
   JSR resetgamestate
 
@@ -2785,7 +2791,7 @@ numdeadlyobj = * - deadlyobj
   JSR setinventorycolour
 
   ; Slow down inventory selection
-  LDA #&3C:JSR delay
+  LDA #INVENTORY_DELAY:JSR delay
 
   ; Fall through
 }
@@ -3580,7 +3586,7 @@ numdeadlyobj = * - deadlyobj
   LDA #7:STA &03B7
 .loop
   {
-  LDA #&FA:JSR delay
+  LDA #DEATHMSG_DELAY:JSR delay
 
   DEC index
   BNE loop
@@ -4450,6 +4456,7 @@ numdeadlyobj = * - deadlyobj
   JMP checkdeadlyobj
 }
 
+; A reg = hardware sprite id
 .checkfordownunder
 {
   ; Check if were down-under
@@ -4476,6 +4483,9 @@ numdeadlyobj = * - deadlyobj
 
   LDA &FC:CLC:ADC #&40:STA &FC
 
+  ; TODO - does this flip the pixels upside down for the current sprite,
+  ; and put it in slot &2A aka &4A80 aka HW_SPRITE_FLIP ?
+
   LDY #0
   LDX #&3E
 .fliploop
@@ -4494,8 +4504,8 @@ numdeadlyobj = * - deadlyobj
   BCC fliploop
   }
 
-  ; Set sprite
-  LDA #&2A
+  ; Set sprite to the one we just flipped
+  LDA #HW_SPRITE_FLIP
 
   RTS
 }
@@ -6061,7 +6071,7 @@ ORG &2B13
 
   LDA #COLOUR_WHITE:STA SPR_0_COLOUR,X
 
-  LDA #&33:STA sprite_pointer,X ; Dot sprite
+  LDA #HW_SPRITE_BALL:STA sprite_pointer,X ; Dot sprite
   LDA #&04:STA &0384,X
   LDA #&02:STA &037A,X
 
@@ -6122,7 +6132,8 @@ ORG &2B13
   BCC innerloop
   }
 
-  LDA #8:JSR delay
+  ; Delay between each death animation frame
+  LDA #DEATH_ANIM_DELAY:JSR delay
 
   DEC &0346
   BNE loop
@@ -6139,7 +6150,7 @@ ORG &2B13
   LDA #&3C
   JSR l33D1
 
-  LDA #&37:STA sprite_pointer ; Reverse death animation "small face"
+  LDA #HW_SPRITE_DEATH_4:STA sprite_pointer ; Reverse death animation "small face"
   LDX #0:STX &034E
   JSR l31EE
 
@@ -6161,7 +6172,7 @@ ORG &2B13
   STA &03C7
   STA &03C9
   STA player_direction ; = ANIM_IDLE
-  STA sprite_pointer ; Default Dizzy sprite (arms up"
+  STA sprite_pointer ; Default Dizzy sprite "arms up"
   STA &03C1
 
   LDX #1
@@ -6193,7 +6204,7 @@ ORG &2B13
   LDA #0
   JSR l33D1
 
-  LDA #&34:STA sprite_pointer ; Dizzy death "big face"
+  LDA #HW_SPRITE_DEATH:STA sprite_pointer ; Dizzy death "big face"
   LDX #0:STX &034E
   JSR l31EE
 
@@ -6211,10 +6222,10 @@ ORG &2B13
 
   LDA sprite_pointer
   ; Is it < 55
-  CMP #&37 ; Dizzy death "small face"
+  CMP #HW_SPRITE_DEATH_4 ; Dizzy death "small face"
   BCC l3522
 
-  LDA #&45:STA sprite_pointer ; Blank sprite
+  LDA #HW_SPRITE_BLANK:STA sprite_pointer ; Blank sprite
   JMP l3525
 
 .l3522
@@ -6237,7 +6248,7 @@ ORG &2B13
   BCC l352A
   }
 
-  LDA #&64:JSR delay
+  LDA #DEATH_DELAY:JSR delay
 
   LDA olddizzyroom:STA roomno
 
@@ -6853,7 +6864,7 @@ ORG &2B13
   CLC:ADC #SPR_HEARTNULL ; frame
   JSR frame
 
-  LDA #5:JSR delay
+  LDA #HEART_DELAY:JSR delay
 
   INC &03DB
   BNE loop
@@ -7320,7 +7331,7 @@ cheatcodelen = * - eclipse
 
 .cheatloop
   {
-  LDA #&32:JSR delay
+  LDA #CHEAT_DELAY:JSR delay
 
   JSR getplayerinput
   AND #JOY_FIRE+JOY_RIGHT+JOY_LEFT+JOY_DOWN+JOY_UP

@@ -1,6 +1,9 @@
+; C64 hardware sprites
+
 sprites_offset = *
 
 ; Dizzy sprite bitmaps are here, 3 bytes (24px) wide, 21 bytes high
+HW_SPRITE_IDLE = (* - sprites_offset) / 64
 .s4000 ; Forwards, hands up
   EQUB %00000000,%00000000,%00000000
   EQUB %00000000,%00000000,%00000000
@@ -25,6 +28,7 @@ sprites_offset = *
   EQUB %00000011,%11100111,%11000000
   EQUB &FF
 
+HW_SPRITE_IDLE_2 = (* - sprites_offset) / 64
 .s4040 ; Forwards, hands down
   EQUB %00000000,%00000000,%00000000
   EQUB %00000000,%00111100,%00000000
@@ -49,7 +53,7 @@ sprites_offset = *
   EQUB %00000011,%11100111,%11000000
   EQUB &00
 
-ANIM_JUMP_UP = (* - sprites_offset) / 64
+HW_SPRITE_JUMP_UP = (* - sprites_offset) / 64
 .s4080 ; Jump vert
   EQUB %00000000,%01111110,%00000000
   EQUB %00000001,%11111111,%10000000
@@ -242,7 +246,7 @@ ANIM_JUMP_UP = (* - sprites_offset) / 64
   EQUB %00000011,%11100111,%11000000
   EQUB &00
 
-ANIM_WALK_RIGHT = (* - sprites_offset) / 64
+HW_SPRITE_WALK_RIGHT = (* - sprites_offset) / 64
 .s4280 ; Walk right
   EQUB %00000000,%00000000,%00000000
   EQUB %00000000,%01111110,%00000000
@@ -435,7 +439,7 @@ ANIM_WALK_RIGHT = (* - sprites_offset) / 64
   EQUB %00000000,%01110111,%00000000
   EQUB &00
 
-ANIM_WALK_LEFT = (* - sprites_offset) / 64
+HW_SPRITE_WALK_LEFT = (* - sprites_offset) / 64
 .s4480 ; Walk left
   EQUB %00000000,%00000000,%00000000
   EQUB %00000000,%01111110,%00000000
@@ -628,7 +632,7 @@ ANIM_WALK_LEFT = (* - sprites_offset) / 64
   EQUB %00000000,%11101110,%00000000
   EQUB &00
 
-ANIM_JUMP_RIGHT = (* - sprites_offset) / 64
+HW_SPRITE_JUMP_RIGHT = (* - sprites_offset) / 64
 .s4680 ; Jump right
   EQUB %00000000,%00000000,%00000000
   EQUB %00000000,%00000000,%00000000
@@ -821,7 +825,7 @@ ANIM_JUMP_RIGHT = (* - sprites_offset) / 64
   EQUB %00000000,%11111100,%11000000
   EQUB &FF
 
-ANIM_JUMP_LEFT = (* - sprites_offset) / 64
+HW_SPRITE_JUMP_LEFT = (* - sprites_offset) / 64
 .s4880 ; Jump left
   EQUB %00000000,%00000000,%00000000
   EQUB %00000000,%00000000,%00000000
@@ -1016,6 +1020,7 @@ ANIM_JUMP_LEFT = (* - sprites_offset) / 64
 
 ; End of Dizzy sprites
 
+HW_SPRITE_FLIP = (* - sprites_offset) / 64
 .v4A80 ; Other sprites (from Dizzy2 - fish, jellyfish, crab, e.t.c.)
 .s4A80
   EQUB %00000000,%00000000,%00000000
@@ -1233,6 +1238,7 @@ ANIM_JUMP_LEFT = (* - sprites_offset) / 64
   EQUB %00000000,%00000000,%00000000
   EQUB &FF
 
+HW_SPRITE_BALL = (* - sprites_offset) / 64
 .s4CC0 ; Ball
   EQUB %00000000,%00000000,%00000000
   EQUB %00000000,%00000000,%00000000
@@ -1257,6 +1263,7 @@ ANIM_JUMP_LEFT = (* - sprites_offset) / 64
   EQUB %00000000,%00000000,%00000000
   EQUB &FF
 
+HW_SPRITE_DEATH = (* - sprites_offset) / 64
 .s4D00 ; Death anim
   EQUB %00000000,%00000000,%00000000
   EQUB %00000000,%00000000,%00000000
@@ -1329,6 +1336,7 @@ ANIM_JUMP_LEFT = (* - sprites_offset) / 64
   EQUB %00000000,%00000000,%00000000
   EQUB &FF
 
+HW_SPRITE_DEATH_4 = (* - sprites_offset) / 64
 .s4DC0 ; Death anim 4
   EQUB %00000000,%00000000,%00000000
   EQUB %00000000,%00000000,%00000000
@@ -1665,6 +1673,7 @@ ANIM_JUMP_LEFT = (* - sprites_offset) / 64
   EQUB %00000000,%00000000,%00000000
   EQUB &FF
 
+HW_SPRITE_BLANK = (* - sprites_offset) / 64
 .s5140 ; Blank
   EQUB %00000000,%00000000,%00000000
   EQUB %00000000,%00000000,%00000000
