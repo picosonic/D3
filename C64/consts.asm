@@ -53,6 +53,11 @@ PLOT_OR = &08
 PLOT_XOR = &10
 PLOT_NULL = &18 ; Invalid - don't plot
 
+; Movement, animation and speed related
+DRAGON_NECK_SPEED_Y = 2
+GRUNT_SPEED_X = 2
+HAWK_SPEED_X = 2
+
 ; Sound related
 SOUND_ON = 0
 SOUND_OFF = 1

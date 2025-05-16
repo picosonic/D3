@@ -3954,15 +3954,17 @@ numdeadlyobj = * - deadlyobj
   BNE movehawkleft
 
   ; Move hawk right
-  INC objs_xlocs+obj_hawk
-  INC objs_xlocs+obj_hawk
+  FOR n, 1, HAWK_SPEED_X
+    INC objs_xlocs+obj_hawk
+  NEXT
 
   JMP donemoving
 
 .movehawkleft
   ; Move hawk left
-  DEC objs_xlocs+obj_hawk
-  DEC objs_xlocs+obj_hawk
+  FOR n, 1, HAWK_SPEED_X
+    DEC objs_xlocs+obj_hawk
+  NEXT
 
 .donemoving
   ; Flapping animation based on gamecounter value
@@ -4070,15 +4072,17 @@ numdeadlyobj = * - deadlyobj
   BNE gruntgoesleft
 
   ; Move grunt right
-  INC objs_xlocs+obj_grunt
-  INC objs_xlocs+obj_grunt
+  FOR n, 1, GRUNT_SPEED_X
+    INC objs_xlocs+obj_grunt
+  NEXT
 
   JMP checkgruntpos
 
 .gruntgoesleft
   ; Move grunt left
-  DEC objs_xlocs+obj_grunt
-  DEC objs_xlocs+obj_grunt
+  FOR n, 1, GRUNT_SPEED_X
+    DEC objs_xlocs+obj_grunt
+  NEXT
 
 .checkgruntpos
   ; Check grunt X position < 55 - to switch grunt direction
@@ -4198,15 +4202,17 @@ numdeadlyobj = * - deadlyobj
   BNE l291F
 
   ; Move object up
-  DEC objs_ylocs,X
-  DEC objs_ylocs,X
+  FOR n, 1, DRAGON_NECK_SPEED_Y
+    DEC objs_ylocs,X
+  NEXT
 
   JMP l2925
 
 .l291F
   ; Move object down
-  INC objs_ylocs,X
-  INC objs_ylocs,X
+  FOR n, 1, DRAGON_NECK_SPEED_Y
+    INC objs_ylocs,X
+  NEXT
 
 .l2925
   LDA #attr_offs_screen:STA attrib_offset
