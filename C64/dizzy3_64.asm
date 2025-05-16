@@ -4431,7 +4431,7 @@ numdeadlyobj = * - deadlyobj
 
 .checkcoins
   LDA coins_tens
-  CMP #&03 ; Check for 30 coins being collected
+  CMP #3 ; Check for 30 coins being collected
   BNE notenough
 
   LDA #str_gotallcoins:JSR prtmessage
@@ -4609,7 +4609,7 @@ ORG &2B13
 
   LDA isr_counter
   AND #&07
-  CMP #7
+  CMP #&07
   BEQ done
 
   JSR musicplayer
@@ -5520,7 +5520,7 @@ ORG &2B13
 ; If there is a lift in this room, draw it in the right place
 .drawlifts
 {
-  LDX #&00 ; machine offset
+  LDX #0 ; machine offset
   LDA #attr_offs_other:STA attrib_offset
 .machineloop
   {
@@ -6056,7 +6056,7 @@ ORG &2B13
   LDA #COLOUR_WHITE:STA SPR_0_COLOUR,X
 
   LDA #&33:STA sprite_pointer,X ; Dot sprite
-  LDA #4:STA &0384,X
+  LDA #&04:STA &0384,X
   LDA #&02:STA &037A,X
 
   INX
@@ -6552,7 +6552,6 @@ ORG &2B13
   JSR frame
 
   ; Advance cursor
-print ~*
   FOR n, 1, CURSOR_ADV_X
     INC cursorx_offs
   NEXT
