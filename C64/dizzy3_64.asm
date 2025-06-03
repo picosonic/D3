@@ -152,7 +152,7 @@ ORG &0B00
   SBC #0 ; Carry is clear so make melody id 0-based
   ASL A     ; * 2
   STA mult+1 ; store * 2 value
-  ASL A
+  ASL A     ; * 2
 .mult
   ADC #0 ; gets replaced
   TAY
@@ -1173,18 +1173,25 @@ ORG &1897
   NEXT
 }
 
-ORG &18D9
+.v18D1 ; ?? unknown ??
+  EQUB 1, 2, 4, 8, 16, 32, 64, 128
+
 .inventorylist ; Objects carried list [5]
 {
   EQUB obj_null, obj_null, obj_null, obj_null, obj_null
 }
 
-pickupobj = &18DE ; object table offset / obj_null / ????
-coins_tens = &18E5
-coins = &18E6
+.pickupobj ; object table offset / obj_null / ????
+  EQUB obj_null
+.v18DF ; ?? unknown ??
+  EQUB 0, 0, 0, 0, 0, 0
+.coins_tens
+  EQUB 0
+.coins
+  EQUB 0
 .v18E7 ; not used ?? only ever set to 0 when coin counters reset
+  EQUB 0
 
-ORG &18E8
 .liftrooms ; rooms with lifts in machine/key order [4]
 {
   EQUB DOZYSHUTROOM
