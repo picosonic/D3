@@ -1216,9 +1216,12 @@ ORG &1897
   EQUB 176 ; The lift control hut
 }
 
-.v18F4 ; ?? copied from highestliftpos, related to lift Y position ?? [4]
+.currentliftpos ; lifts current Y position, starts at highestliftpos [4]
 {
-  EQUB 0, 0, 0, 0
+  EQUB 0 ; Keep out! Dozy's hut
+  EQUB 0 ; The dragon's lair
+  EQUB 0 ; Lift to the elders
+  EQUB 0 ; The lift control hut
 }
 
 .deadlyobj ; objects that can kill Dizzy on contact [11]
@@ -1346,11 +1349,12 @@ numdeadlyobj = * - deadlyobj
   ; Reset lives
   LDA #&02:STA lives
 
-  ; Duplicate highestliftpos array
+  ; Duplicate highestliftpos array to currentliftpos
+  ;  so that all lifts start at the top of their range
   LDX #0
 .liftloop
   {
-  LDA highestliftpos,X:STA v18F4,X
+  LDA highestliftpos,X:STA currentliftpos,X
 
   INX:CPX #numlifts
   BCC liftloop
@@ -3868,13 +3872,13 @@ numdeadlyobj = * - deadlyobj
 
   ; See if the lift has reached the lowest position (incase flipping direction)
   LDY index
-  LDA objs_ylocs,X:STA v18F4,Y
+  LDA objs_ylocs,X:STA currentliftpos,Y
   CMP lowestliftpos,Y
   BCC hawkrou ; <
 
 .flipliftdir
   LDA objs_attrs,X:EOR #ATTR_REVERSE:STA objs_attrs,X ; flip top bit (change direction)
-  LDA #16:STA liftwait ; Delay list movement following direction flip
+  LDA #16:STA liftwait ; Delay lift movement following direction flip
   JMP hawkrou
 
 .goingup
@@ -3889,7 +3893,7 @@ numdeadlyobj = * - deadlyobj
 
   ; See if the lift has reached the highest position (incase of flipping direction)
   LDY index
-  LDA objs_ylocs,X:STA v18F4,Y
+  LDA objs_ylocs,X:STA currentliftpos,Y
   CMP highestliftpos,Y
   BEQ flipliftdir ; =
   BCC flipliftdir ; <
@@ -5579,7 +5583,7 @@ ORG &2B13
   ; Check the Y position of the bottom of the lift
   LDA objs_ylocs+1,X
   LDY &03DB ; Restore lift id
-  CMP v18F4,Y ; Compare Y position
+  CMP currentliftpos,Y ; Compare objects[id] Y position to currentliftpos[id]
   BCS drawliftbottom ; if >= we're done
 
   ; Move lift downwards
