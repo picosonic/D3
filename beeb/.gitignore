@@ -18,6 +18,7 @@ loadertok.bin
 # Utils
 img2beeb
 exomizer
+rantest
 *.o
 
 # Other
