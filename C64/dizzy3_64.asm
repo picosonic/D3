@@ -1282,7 +1282,7 @@ numdeadlyobj = * - deadlyobj
 .titlescreen
   LDA #0
   STA GFX_BORDER_COLOUR ; 0 = Black
-  STA lives
+  STA lives ; Start with no lives showing
 
   ; loop from 0..7
   LDX #0
@@ -1309,11 +1309,11 @@ numdeadlyobj = * - deadlyobj
   JSR convertpalette
   JSR drawcoincount
 
-  LDA #58:STA frmx ; X position
-  LDA #57:STA frmy ; Y position
+  ; Draw Dizzy logo
+  LDA #POS_DIZZYLOGO_X:STA frmx ; X position
+  LDA #POS_DIZZYLOGO_Y:STA frmy ; Y position
   LDA #PAL_GREEN:STA frmattr ; attrib
   LDA #attr_offs_screen:STA attrib_offset
-
   LDA #SPR_DIZZYLOGO ; frame
   JSR frame
 
@@ -1347,7 +1347,7 @@ numdeadlyobj = * - deadlyobj
   STA &18E7
 
   ; Reset lives
-  LDA #&02:STA lives
+  LDA #FULLHEALTH:STA lives
 
   ; Duplicate highestliftpos array to currentliftpos
   ;  so that all lifts start at the top of their range
@@ -1393,11 +1393,11 @@ numdeadlyobj = * - deadlyobj
 
   JSR initobjs
 
-  LDA #28
+  LDA #POS_DIZZYSTART_X
   STA olddizzyx
   STA dizzyx ; Dizzy starting X position
 
-  LDA #100
+  LDA #POS_DIZZYSTART_Y
   STA olddizzyy
   STA dizzyy ; Dizzy starting Y position
 
@@ -2276,8 +2276,8 @@ numdeadlyobj = * - deadlyobj
   ; Put troll in mine
   STA objs_rooms+obj_troll
 
-  LDA #90:STA objs_xlocs+obj_troll
-  LDA #120:STA objs_ylocs+obj_troll
+  LDA #POS_TROLLMINE_X:STA objs_xlocs+obj_troll
+  LDA #POS_TROLLMINE_Y:STA objs_ylocs+obj_troll
   LDA #ATTR_NOTSOLID+PAL_GREEN:STA objs_attrs+obj_troll
   LDA #OFFMAP:STA objs_rooms+prox_troll ; remove proximity from dungeon
 
@@ -3002,16 +3002,16 @@ numdeadlyobj = * - deadlyobj
   JSR collidewithdizzy
   BCC do_checkliftcollide
 
-  ; Raise the water by 5 pixels
+  ; Raise the water due to rock
   LDA objs_ylocs+obj_bridgewater1
-  SEC:SBC #5
+  SEC:SBC #WATERDISPLACEMENT
   STA objs_ylocs+obj_bridgewater1
   STA objs_ylocs+obj_bridgewater2
   STA objs_ylocs+obj_bridgewater3
 
-  ; Raise the pontoon by 5 pixels
+  ; Raise the pontoon due to rock
   LDA objs_ylocs+obj_pontoon
-  SEC:SBC #5
+  SEC:SBC #WATERDISPLACEMENT
   STA objs_ylocs+obj_pontoon
 
   ; Remove rock from game
@@ -4441,8 +4441,8 @@ numdeadlyobj = * - deadlyobj
 
   ; Put Daisy in her hut
   LDA #DAISYSHUTROOM:STA objs_rooms+obj_daisy
-  LDA #50:STA objs_xlocs+obj_daisy
-  LDA #77:STA objs_ylocs+obj_daisy
+  LDA #POS_DAISYINHUT_X:STA objs_xlocs+obj_daisy
+  LDA #POS_DAISYINHUT_Y:STA objs_ylocs+obj_daisy
 
   LDA #0:STA SPR_ENABLE ; Hide sprites
   JSR heartdemo
@@ -6768,7 +6768,7 @@ ORG &2B13
   CLI
 
   ; Set starting X position
-  LDX #44
+  LDX #POS_ROOMNAME_X
 .loop
   {
   ; Get next character to print
@@ -6784,7 +6784,7 @@ ORG &2B13
 .keepgoing
   STX frmx ; X position
 
-  LDY #24
+  LDY #POS_ROOMNAME_Y
   STY frmy ; Y position
   STY &03E3
 
@@ -6793,7 +6793,9 @@ ORG &2B13
   JSR frame
 
   ; Advance cursor
-  INX:INX
+  FOR n, 1, CURSOR_ADV_X
+    INX
+  NEXT
 
   ; Next character
   JMP loop
@@ -6804,12 +6806,12 @@ ORG &2B13
 {
   LDA #0:STA &03DB
 
-  LDX #46
+  LDX #POS_LIVES_X
 .loop
   {
   STX frmx ; X position
 
-  LDA #8
+  LDA #POS_LIVES_Y
   STA frmy ; Y position
   STA &03E3
 
@@ -6830,8 +6832,12 @@ ORG &2B13
 
   ; Check next life indicator
   INC &03DB
-  INX
-  INX
+
+  ; Advance cursor
+  FOR n, 1, CURSOR_ADV_X
+    INX
+  NEXT
+
   ; Loop round again if X position < 50
   CPX #50
   BCC loop
@@ -7149,10 +7155,10 @@ ORG &2B13
 ; Print coins collected counter to screen
 .drawcoincount
 {
-  LDA #78:STA frmx ; X position
+  LDA #POS_COINCOUNT_X:STA frmx ; X position
   LDA #attr_offs_screen:STA attrib_offset
 
-  LDA #8
+  LDA #POS_COINCOUNT_Y
   STA frmy ; Y position
   STA &03E3
 
@@ -7164,10 +7170,10 @@ ORG &2B13
 
   JSR frame
 
-  LDA #80:STA frmx ; X position
+  LDA #POS_COINCOUNT_X+CURSOR_ADV_X:STA frmx ; X position
   LDA #attr_offs_screen:STA attrib_offset
 
-  LDA #8
+  LDA #POS_COINCOUNT_Y
   STA frmy ; Y position
   STA &03E3
 
@@ -7337,7 +7343,7 @@ cheatcodelen = * - eclipse
 
   LDA #0:STA SPR_ENABLE ; Hide sprites
 
-  LDA #2:STA lives ; Reset lives
+  LDA #FULLHEALTH:STA lives ; Reset lives
   JSR showlives
 
 .cheatloop
