@@ -114,6 +114,15 @@ SID_VOL_FLT     = &D418 ; MHBLVVVV Mute / Highpass / Bandpass / Lowpass / Volume
 SID_CH3_WAV     = &D41B ; DDDDDDDD Waveform output (RO)
 SID_CH3_ADSR    = &D41C ; DDDDDDDD ADSR output (RO)
 
+; SID memory offsets from base for Y-indexing using channel base offset
+SID_FREQ_L      = &D400
+SID_FREQ_H      = &D401
+SID_PULSE_L     = &D402
+SID_PULSE_H     = &D403
+SID_CTRL        = &D404
+SID_ATDK        = &D405
+SID_SURL        = &D406
+
 CIA1_PRA = &DC00
 CIA2_PRA = &DD00
 

@@ -203,8 +203,8 @@ ORG &0B00
   LDX #&02:STX &116C
 
 .^l0B63
-  LDX &116C
-  LDA &1158,X:STA &11CC
+  LDX &116C ; Load SID channel number
+  LDA sid_channel_offsets,X:STA sid_channel_offset ; SID channel offset list
 
   LDA &116F
   BNE l0B84
@@ -369,30 +369,30 @@ ORG &0B00
   JSR l0F83
 
   LDA #7
-  LDY &11CC
+  LDY sid_channel_offset
 
   PHA
   AND #&F0
   STA &1179,X
-  STA &D402,Y
+  STA SID_PULSE_L,Y
   PLA
 
   AND #&0F
   STA &117C,X
-  STA &D403,Y
+  STA SID_PULSE_H,Y
 
   LDA &1166,X
   BEQ l0CB4
 
   LDA &11C3,X
   TAX
-  LDA &124E,X:STA &D405,Y
-  LDA &124F,X:STA &D406,Y
-  LDA #0:STA &D404,Y
+  LDA &124E,X:STA SID_ATDK,Y
+  LDA &124F,X:STA SID_SURL,Y
+  LDA #0:STA SID_CTRL,Y
   LDA &124D,X
   AND #&F0
   ORA #&05
-  STA &D404,Y
+  STA SID_CTRL,Y
 .l0CB4
   LDX &116C
   LDA &117F,X
@@ -437,7 +437,7 @@ ORG &0B00
 .l0CFC
   LDY &11C3,X
   LDA &1254,Y
-  LDY &11CC
+  LDY sid_channel_offset
   AND #&01
   BEQ done
 
@@ -460,16 +460,16 @@ ORG &0B00
   PHA
   TAY
   LDA &1225,Y
-  LDY &11CC
-  STA &D404,Y
+  LDY sid_channel_offset
+  STA SID_CTRL,Y
   PLA
 
   TAY
   LDA &1215,Y
-  LDY &11CC
+  LDY sid_channel_offset
   CLC:ADC #&0D ; +13
-  STA &D401,Y
-  LDA #0:STA &D400,Y
+  STA SID_FREQ_H,Y
+  LDA #0:STA SID_FREQ_L,Y
   JMP l0EEC
 
 .done
@@ -486,9 +486,9 @@ ORG &0B00
   BCS l0D8F
 
   LDA #&48
-  LDY &11CC
-  STA &D401,Y
-  LDA #0:STA &D400,Y
+  LDY sid_channel_offset
+  STA SID_FREQ_H,Y
+  LDA #0:STA SID_FREQ_L,Y
   LDA #&81
   JMP l0D98
 
@@ -501,9 +501,9 @@ ORG &0B00
   BCS l0D8F
 
   LDA #&48
-  LDY &11CC
-  STA &D401,Y
-  LDA #0:STA &D400,Y
+  LDY sid_channel_offset
+  STA SID_FREQ_H,Y
+  LDA #0:STA SID_FREQ_L,Y
   LDA #&11
   JMP l0D98
 
@@ -512,8 +512,8 @@ ORG &0B00
   LDY &11C3,X
   LDA &124D,Y
 .l0D98
-  LDY &11CC
-  STA &D404,Y
+  LDY sid_channel_offset
+  STA SID_CTRL,Y
   JMP l0EEC
 }
 
@@ -617,9 +617,9 @@ ORG &0B00
   JMP l0E38
 
 .l0E51
-  LDY &11CC
-  LDA &11B7:STA &D400,Y
-  LDA &11B8:STA &D401,Y
+  LDY sid_channel_offset
+  LDA &11B7:STA SID_FREQ_L,Y
+  LDA &11B8:STA SID_FREQ_H,Y
 
   JMP l0EEC
 }
@@ -643,10 +643,10 @@ ORG &0B00
 
 .l0E81
   CLC:ADC &1169,X
-  LDY &11CC
+  LDY sid_channel_offset
   TAX
-  LDA &10E6,X:STA &D400,Y
-  LDA &1085,X:STA &D401,Y
+  LDA &10E6,X:STA SID_FREQ_L,Y
+  LDA &1085,X:STA SID_FREQ_H,Y
   LDX &116C
   INC &11A6,X
 
@@ -680,7 +680,7 @@ ORG &0B00
   LDY &1169,X
   JSR l0FFE
   LDX &116C
-  LDY &11CC
+  LDY sid_channel_offset
   LDA &1173,X
 
   ; Polymorphic code
@@ -689,12 +689,12 @@ ORG &0B00
 .v0ED7
   ADC &119A
   STA &1173,X
-  STA &D400,Y
+  STA SID_FREQ_L,Y
   LDA &1176,X
 .v0EE3
   ADC &119B
   STA &1176,X
-  STA &D401,Y
+  STA SID_FREQ_H,Y
 
 .^l0EEC
   LDA &1185,X
@@ -712,8 +712,8 @@ ORG &0B00
   ROL A
   ROL A
   ROL A
-  LDY &11CC
-  STA &D404,Y
+  LDY sid_channel_offset
+  STA SID_CTRL,Y
 .l0F0A
   LDY &11C3,X
   LDA &1252,Y
@@ -756,12 +756,12 @@ ORG &0B00
 
   LDA #0:STA &11A3,X
 .l0F54
-  LDY &11CC
+  LDY sid_channel_offset
   PLA
-  STA &D403,Y
+  STA SID_PULSE_H,Y
   PLA
 
-  STA &D402,Y
+  STA SID_PULSE_L,Y
 .l0F5F
   DEC &116C
   BMI l0F67
@@ -807,11 +807,11 @@ ORG &0B00
 
   PHA
   LDA &1085,Y:STA &1176,X
-  LDY &11CC
-  STA &D401,Y
+  LDY sid_channel_offset
+  STA SID_FREQ_H,Y
   PLA
 
-  STA &D400,Y
+  STA SID_FREQ_L,Y
 
   RTS
 }
@@ -991,7 +991,11 @@ ORG &1147
   RTS
 }
 
-.v1158 ; [3]
+.sid_channel_offsets ; [3] SID base channel offsets for memory-mapped IO
+  EQUB lo(SID_CH1_FREQ_L-SID_BASE) ; Channel 1 - base
+  EQUB lo(SID_CH2_FREQ_L-SID_BASE) ; Channel 2 - melody
+  EQUB lo(SID_CH3_FREQ_L-SID_BASE) ; Channel 3 - background
+
 .v115B ; [3]
 .v115E ; [8]
 .v1166 ; [3]
@@ -1077,7 +1081,11 @@ ORG &11BC
 .v11C9 ; [1]
 .v11CA
 .v11CB
-.v11CC
+
+ORG &11CC
+.sid_channel_offset ; SID channel offset used as Y index
+  EQUB &00
+
 .v11CD ; [16]
 .v11ED ; [1]
 .v11EE ; [1]
