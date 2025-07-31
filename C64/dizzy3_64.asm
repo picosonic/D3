@@ -168,12 +168,12 @@ ORG &0B00
     INY
 
     INX
-    CPX #3
+    CPX #TUNE_CHANNELS
     BNE loop
   }
 
   {
-    LDX #2
+    LDX #TUNE_CHANNELS-1
 .loop
     LDA #0
     STA &1188,X
@@ -2067,7 +2067,7 @@ numdeadlyobj = * - deadlyobj
   BCS l1DE7
 
   LDA #0:STA dizzyy ; Set Dizzy position to top
-  LDA roomno:SEC:SBC #16:STA roomno ; Go down
+  LDA roomno:SEC:SBC #MAP_WIDTH:STA roomno ; Go down
 
   ; Check for entering/leaving Australia
   JSR check_oz
@@ -2084,7 +2084,7 @@ numdeadlyobj = * - deadlyobj
 
   ; Dizzy is going up a screen
   LDA #114:STA dizzyy ; Set Dizzy position to bottom
-  LDA roomno:CLC:ADC #16:STA roomno
+  LDA roomno:CLC:ADC #MAP_WIDTH:STA roomno
 
   ; Fall through
 }

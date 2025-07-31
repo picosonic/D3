@@ -77,6 +77,8 @@ TUNE_4 = 4 ; lose a life / heart demo
 TUNE_10 = 10 ; ? no idea ?
 TUNE_CONT = 255 ; continue playing, tune already set up
 
+TUNE_CHANNELS = 3 ; melody channel for each SID channel
+
 ; Room related
 OFFMAP = 255
 
@@ -141,6 +143,8 @@ DAISYSPRISONROOM = 94
 ATTICROOM = 100
 
 GAMESTARTROOM = CASTLEDUNGEONROOM
+
+MAP_WIDTH = 16
 
 ; Screen positions
 POS_ROOMNAME_X = 44
