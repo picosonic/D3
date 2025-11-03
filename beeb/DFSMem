@@ -1,0 +1,212 @@
+                           Acorn DFS memory use
+                           ====================
+
+&0E00-&0FFF Last disk catalogue used
+====================================
+&0E00-&0EFF Catalogue filenames - disk sector 0
+&0F00-&0FFF Calaogue addresses - disk sector 1
+
+&1000-&10FF General disc workspace
+==================================
+Information at &1000-&10BF is transient workspace, not saved in private workspace
+&1000-&103F Object name, padded with spaces
+&1060-&1067 Object name, OSGBPB control block
+&1072-&1075 Data address of last disk operation
+&1076
+&1077
+&1078-&107B
+&107C-&107F
+
+&1080       Gets set to &01 by disk operations
+&1081    
+&1082       Gets set to &FF by disk operations
+&1083       Gets set to &00 by disk operations
+&1084    
+&1085       Gets b7 set by disk operations
+
+Information at &10C0-&10FF is saved in private workspace
+&10C0       Open channel flags: b7=channel 17 open
+                                b6=channel 18 open
+                                b5=channel 19 open
+                                b4=channel 20 open
+                                b3=channel 21 open
+                                b2=channel 22 open ** see notes
+                                b1=channel 23 open ** see notes
+                                b0
+&10C1       (used by DFS)
+&10C2       Offset to channel information
+&10C3       (used by DFS)
+&10C4       (used by DFS)
+&10C5       (used by DFS)
+&10C6       X register store
+&10C7       (used by DFS)
+&10C8       Enable flag
+&10C9       (used by DFS)
+&10CA       Current directory
+&10CB       Current drive
+&10CC       Current library directory
+&10CD       Current library drive
+&10CE       (used by DFS)
+&10CF       (used by DFS)
+
+&10D0       *COMPACT/*COPY/*BACKUP - lowest page of memory to use
+&10D1       *COMPACT/*COPY/*BACKUP - number of pages to use
+&10D2       (used by DFS)
+&10D3       Gets set to &00 by disk operations
+&10D4       Gets set to &00 on Break when private workspace claimed
+&10D5       Private workspace value is checked:
+            b7=1 if DFS owns shared workspace
+            b7=0 if DFS doesn't own shared workspace
+&10D6       Gets set to &00 by disk operations
+&10D7       Tube present flag
+&10D8-D9    Used to hold subroutine dispatch address
+&10DA       (used by DFS)
+&10DB       (used by DFS)
+&10DC       (used by DFS)
+&10DD       (used by DFS)
+&10DE       (used by DFS)
+&10DF       unused?
+
+&10E0-&10FF unused?
+
+
+&1100-&11FF Open files information
+==================================
+Information at &1100-&10BF is saved in private workspace
+ &1100-&111F Possibly unused
+ &1120-&113F Channel 17 information
+ &1140-&115F Channel 18 information
+ &1160-&117F Channel 19 information
+ &1180-&119F Channel 20 information
+ &11A0-&11BF Channel 21 information
+
+Information at &11C0-&11FF is not saved in private workspace
+ &11C0-&11DF Channel 22 information ** see channel notes
+ &11E0-&11FF Channel 23 information ** see channel notes
+
+As channel 22 and 23 do not exist, &11C0-&11FF is unused while DFS is the
+current filing system.
+
+
+Channel information
+~~~~~~~~~~~~~~~~~~~
+&00-&0F Filename intermixed with file information
+        Even bytes are filename from sector 0
+        Odd bytes are file information from sector 1
+  &00 Filename character 1
+  &01 Load address b0-b7
+  &02 Filename character 2
+  &03 Load address b8-b15
+  &04 Filename character 3
+  &05 Exec address b0-b7
+  &06 Filename character 4
+  &07 Exec address b8-b15
+  &08 Filename character 5
+  &09 Length b0-b7
+  &0A Filename character 6
+  &0B Length b8-b15
+  &0C Filename character 7
+  &0D Load/Exec/Length b16-b17/Sector b8-9
+  &0E Directory character
+  &0F Start sector b0-b7
+
+&10-&12 PTR, &10 also buffer address low byte
+&13     Buffer address high byte
+&14-&16 EXT
+&17     Buffer flags, b0-b3=drive
+                      b4=EOF warning given
+                      b5=?
+                      b6=output channel?
+                      b7=data in buffer
+&18-&1A
+&1B Channel bitmap?
+&1C
+&1D Offset to this channel information, eg &11AD holds &A0
+&1E
+&1F
+
+
+&1200-&16FF Open file buffers
+=============================
+&1200-&12FF Channel 17 buffer
+&1300-&13FF Channel 18 buffer
+&1400-&14FF Channel 19 buffer
+&1500-&15FF Channel 20 buffer
+&1600-&16FF Channel 21 buffer
+&1700-&17FF Channel 22 buffer **see channel notes
+&1800-&18FF Channel 23 buffer **see channel notes
+
+
+Private Workspace
+=================
+ws+&000-&0FF Private workspace, address high byte in (&DF0+romnum)AND&3F
+            DFS workspace at &1000-&11FF copied to here when DFS does not
+            own the workspace at &0E00. Lowest possible value is &1700-&18FF.
+ws+&000-&0BF copy of &1100-&11BF open files information
+ws+&0C0-&0FF copy of &10C0-&10FF DFS misc information
+
+ws+&100 Buffer for non-DFS filing system commands
+ws+&100-&107 Buffer for *DUMP
+ws+&100-&1FF Buffer for *BUILD
+
+&AB=channel
+&AC=&00
+&AD=workspace+1
+&AE=&FF
+&AF=&00
+&B0=&FF
+
+
+
+Channel Notes
+=============
+DFS is written to be able to use 7 channels, numbered &11 to &17, possibly
+even 8 channels, numbered &10 to &17. All the code and memory use is laid
+out to access 8 channels and 8 blocks of channel information. It is only
+the OPEN code that restricts the number of openable channels to &11 to &15
+and the private workspace service call that claims enough memory for only
+five buffers. The number of channels available is easily changable by
+changing the amount of space that service call 1 claims and the range of
+handles OPEN returns.
+
+
+Dropping PAGE
+=============
+With no other sideways ROMs claiming workspace, PAGE will be &1900. With care,
+PAGE can be dropped to allow more memory to be used. The lowest realistic
+value is &1400. This allows DFS to be used, any allows two channels to be
+open. Care must be taken to ensure that nothing else tries to claim the
+absolute workspace as this will cause DFS to copy it's data to its private
+workspace.
+
+PAGE can be dropped all the way down to &E00 if no filing system access is
+needed at all. You should ensure that DFS is deselected and NMIs are
+disabled with the following:
+
+        *TAPE                   deselects DFS
+        *FX143,12,255           disable NMIs
+
+
+Unused workspace
+================
+It appears that the following workspace is not used in DFS 0.xx:
+ &1090-&10BF general workspace
+ &10E0-&10FF general workspace
+ &1100-&111F channel workspace for nonexistant channel 16
+ &11C0-&11DF channel workspace for nonexistant channel 22
+ &11E0-&11FF channel workspace for nonexistant channel 23
+
+Of this workspace, &10E0-&111F is saved in DFS's private workspace and could
+be used for saving persistant data, and &1090-&10BF and &11C0-&11FF is not
+saved, so could only be used for transient data.
+
+
+References
+==========
+The Advanced Disk User Guide for the BBC Micro, Colin Pharo
+
+
+Updates
+=======
+Initial version by JJR
+Updated by JGH with reference to ADUG and investigation
