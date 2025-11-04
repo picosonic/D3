@@ -1,0 +1,82 @@
+Sound chip Texas Instruments SN76489
+Frequency dervived from external clock (4MHz on Beeb) and 10-bit value
+
+Octave 2
+A      (110 Hz)
+Bb
+B  <0>
+
+Octave 3
+C  <4>
+C# <8>
+D  <12>
+D# <16>
+E  <20>
+F  <24>
+F# <28>
+G  <32>
+G# <36>
+A  <40> (220 Hz)
+Bb <44>
+B  <48>
+
+Octave 4
+C  <52> [ * Middle C * ]
+C# <56>
+D  <60>
+D# <64>
+E  <68>
+F  <72>
+F# <76>
+G  <80>
+G# <84>
+A  <88> (440 Hz)
+Bb <92>
+B  <96>
+
+Octave 5
+C  <100>
+C# <104>
+D  <108>
+D# <112>
+E  <116>
+F  <120>
+F# <124>
+G  <128>
+G# <132>
+A  <136> (880 Hz)
+Bb <140>
+B  <144>
+
+Octave 6
+C  <148>
+C# <152>
+D  <156>
+D# <160>
+E  <164>
+F  <168>
+F# <172>
+G  <176>
+G# <180>
+A  <184> (1760 Hz)
+Bb <188>
+B  <192>
+
+Octave 7
+C  <196>
+C# <200>
+D  <204>
+D# <208>
+F  <212>
+F  <216>
+F# <220>
+G  <224>
+G# <228>
+A  <232> (3520 Hz)
+Bb <236>
+B  <240>
+
+Octave 8
+C  <244>
+C# <248>
+D  <252>
