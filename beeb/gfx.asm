@@ -228,6 +228,15 @@ ALIGN &100
 }
 
 ; Draw a frame to play area
+;
+; Original source
+;   store_sprite_vars()
+;   a -> frmno
+;   b & 0x03 -> frmplot
+;   b rlca & 0x01 -> frmreverse
+;   c -> frmattri
+;   e -> frmx
+;   l -> frmy
 .frame
 {
   ; zptr1 = source pointer

@@ -1406,19 +1406,8 @@ endif
 .dragonfirelp
   STA dragonflame
 
-  LDA #7+64:STA z80creg ; c_reg = 7+64
+  LDA #PAL_WHITE+PLOT_XOR:STA frmattri
   LDA breathingfire
-  JSR printdragonflame
-
-  LDA breathingfire ;;flips between yellow and red
-  AND #&01:STA three+2
-  ASL A
-.three
-  CLC:ADC #&00:ADC #2+64
-  STA z80creg
-
-  LDA breathingfire
-  CLC:ADC #&01
   JSR printdragonflame
 
   LDA dragonflame
