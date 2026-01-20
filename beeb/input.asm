@@ -112,7 +112,7 @@
 
   ; Get fire button - PB4 (logic 0 when pressed)
   LDA SYSVIA_REGB
-  AND #%00010000:EOR #%11101111:LSR A
+  AND #%00010000:EOR #%00010000:LSR A
   ORA keys:STA keys
 
   LDX #&FF:STX SYSVIA_DDRA
