@@ -78,3 +78,8 @@ ALIGN &100
 }
 
 .basicend
+
+PRINT ~basicstart," SWR BASICSTART ADDR"
+PRINT ~swrtest," SWRTEST ADDR"
+PRINT ~swrcopy," SWRCOPY ADDR"
+PRINT ~basicend," SWR BASICEND ADDR"
