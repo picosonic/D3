@@ -208,7 +208,7 @@ then
 fi
 
 # Build main disk image if required
-if refreshrequired dizzy3.ssd os.asm inkey.asm internal.asm consts.asm vars.asm varcode.asm rooms.asm frametable.bin framedefs.bin dizzyfrm.asm input.asm rand.asm gfx.asm objects.asm extra.asm hearts.asm loadertok.bin dizzy3.asm XDATA RMDATA
+if refreshrequired dizzy3.ssd os.asm inkey.asm internal.asm consts.asm vars.asm varcode.asm rooms.asm frametable.bin framedefs.bin dizzyfrm.asm input.asm rand.asm gfx.asm objects.asm extra.asm hearts.asm loadertok.bin loader2.asm dizzy3.asm XDATA RMDATA
 then
   ${beebasm} ${verbose} -i dizzy3.asm -do dizzy3.ssd -opt 3 -title 'DIZZY3'
 fi
