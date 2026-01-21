@@ -8,8 +8,8 @@ swrcheck=ROMSBASE+8
 ; Include preceding tokenised BASIC loader program
 INCBIN "loadertok.bin"
 
-; Align to next page boundary to allow space for BASIC
-ALIGN &100
+; Reserve some space for BASIC heap
+SKIP 100
 
 ; Test slots to find first available SWRAM
 .swrtest

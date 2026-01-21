@@ -77,7 +77,15 @@ INCLUDE "gfx.asm"
 .keeptesting
   ; Wait until "START" pressed
   LDA #INKEY_SPACE:JSR scankey
+  BNE donetitle
+
+  ; Check for Joystick
+  JSR scanjoy
   BEQ keeptesting
+
+  STA padfound
+
+.donetitle
 
   ; Don't reset moving data on first load (as it's already loaded)
 .checkmoving

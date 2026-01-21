@@ -11,6 +11,9 @@ ORG &50
 .keys
  EQUB &00
 
+.padfound
+  EQUB 0 ; Non-zero to scan joystick inputs
+
 ; Number of frames, wraps around
 .framecounter
   EQUB &00

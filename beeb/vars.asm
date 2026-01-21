@@ -167,6 +167,8 @@ nooftalkbefore = ((endoftalkbefore-talkbefore) AND &FF)
 
 .palettefoo EQUB 0 ; Palette manipulation flag
 
+.padfound EQUB 0 ; Non-zero to scan joystick inputs
+
 .zpend
 
 ; ---------------------------------------------------------

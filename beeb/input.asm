@@ -86,6 +86,26 @@
   ;LDX #&49 : STX SYSVIA_REGA : LDA SYSVIA_REGA : eor #&80 : STA fire_up ; [RETURN]
   ;LDX #&70 : STX SYSVIA_REGA : ASL SYSVIA_REGA : bcs reset              ; [ESCAPE]
 
+  ; See if joystick is enabled
+  LDA padfound:BEQ nojoy
+
+  ; Read channel 0 - Master Joystick Left/Right
+  LDX #&00:JSR adc_joystick
+  ; Process horizontal axis (low=right)
+  ASL A:STA joykey
+
+  ; Read channel 1 - Master Joystick Up/Down
+  LDX #&01:JSR adc_joystick
+  ; Process vertical axis (low=down)
+  ASL A:ASL A:ASL A:ASL A:ORA joykey:STA joykey
+
+  ; Get fire button - PB4 (logic 0 when pressed)
+  LDA SYSVIA_REGB
+  AND #%00010000:EOR #%00010000:LSR A
+  ORA keys:ORA joykey:STA keys
+
+.nojoy
+
   LDX #3+8 : STX SYSVIA_REGB \\ "disable" keyboard
   LDX #&FF : STX SYSVIA_DDRA \\ put back ready for sound (all 8 bits write only)
 
@@ -93,31 +113,9 @@
   CLI
 
   RTS
-}
 
-.read_joystick
-{
-  ; Set to read
-  LDX #&00:STX SYSVIA_DDRA
-
-  ; Read channel 0 - Master Joystick Left/Right
-  JSR adc_joystick
-  ; Process horizontal axis (low=right)
-  ASL A:STA keys
-
-  ; Read channel 1 - Master Joystick Up/Down
-  LDX #&01:JSR adc_joystick
-  ; Process vertical axis (low=down)
-  ASL A:ASL A:ASL A:ASL A:ORA keys:STA keys
-
-  ; Get fire button - PB4 (logic 0 when pressed)
-  LDA SYSVIA_REGB
-  AND #%00010000:EOR #%00010000:LSR A
-  ORA keys:STA keys
-
-  LDX #&FF:STX SYSVIA_DDRA
-
-  RTS
+.joykey
+  EQUB &00
 }
 
 .adc_joystick
@@ -144,4 +142,14 @@
   ; Left / Up
 .joy_adc_high
   LDA #&02:RTS
+}
+
+; Check for joystick presence by looking for FIRE button press
+.scanjoy
+{
+  LDA #&80:LDX #&00:LDY #&00
+  JSR OSBYTE
+  TXA
+
+  RTS
 }

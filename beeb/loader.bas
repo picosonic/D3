@@ -22,8 +22,8 @@ VDU23,1,0;0;0;0;:REM Hide cursor
 VDU19,1,0;0;19,2,0;0;19,3,0;0;:REM Blank palette
 :
 swrpage=&11FF
-swrtest=&1D00
-swrcopy=&1D34
+swrtest=&1D50
+swrcopy=&1D84
 CALL swrtest
 IF ?swrpage=255 MODE7:PRINT"No sideways RAM detected":END
 *L.RMDATA
@@ -91,8 +91,9 @@ PRINT'CHR$(129)"CONTROL FUNCTIONS:"
 PRINT'CHR$(131)"     Z"CHR$(135)"moves DIZZY"CHR$(129)"left"
 PRINT'CHR$(131)"     X"CHR$(135)"moves DIZZY"CHR$(129)"right"
 PRINT'CHR$(131)" SPACE"CHR$(135)"to make DIZZY"CHR$(129)"jump"
-PRINT'CHR$(131)"RETURN"CHR$(135)"to"CHR$(129)"pick up"CHR$(135)"items or coins, or to open your inventory. When using the"
-PRINT" inventory use"CHR$(131)"*"CHR$(135)"and"CHR$(131)"?"CHR$(135)"to go"CHR$(129)"up"CHR$(135)"and"CHR$(129)"down"CHR$(135)"to select something to use or drop"
+PRINT'CHR$(131)"RETURN"CHR$(135)"to"CHR$(129)"pick up"CHR$(135)"items or coins, or to   open your inventory."
+PRINT"   When using the inventory use"CHR$(131)"*"CHR$(135)"and"CHR$(131)"?"CHR$(135)"   to go"CHR$(129)"up"CHR$(135)"and"CHR$(129)"down"CHR$(135)"to select something   to use or drop"
+PRINT'CHR$(131)"JOYSTICK"CHR$(135)"supported after pressing"CHR$(131)"FIRE"
 PRINT'CHR$(131)"ESCAPE"CHR$(135)"quits the game"
 PROCSPACE
 ENDPROC
