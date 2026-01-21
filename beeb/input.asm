@@ -129,8 +129,8 @@
 
   ; 8-bit ADC value read
   LDA ADC_HIGH
-  CMP #255-32:BCS joy_adc_high
-  CMP #32:BCC joy_adc_low
+  CMP #&C0:BCS joy_adc_high
+  CMP #&40:BCC joy_adc_low
 
   ; Within dead-zone (centred)
   LDA #&00:RTS
