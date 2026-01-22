@@ -135,6 +135,7 @@ ORG EXO_LOAD_ADDR
 }
 
 ; Original 8-bit PCM sampled sound data for Spectrum
+;   - Coded by L.Sharp
 ;   - Digitized on a C64 by G.Raeburn
 .speechdata
 INCBIN "speech.bin"
