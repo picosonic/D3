@@ -90,12 +90,12 @@
   LDA padfound:BEQ nojoy
 
   ; Read channel 0 - Master Joystick Left/Right
-  LDX #&00:JSR adc_joystick
+  LDX #&01:JSR adc_joystick
   ; Process horizontal axis (low=right)
   ASL A:STA joykey
 
   ; Read channel 1 - Master Joystick Up/Down
-  LDX #&01:JSR adc_joystick
+  LDX #&02:JSR adc_joystick
   ; Process vertical axis (low=down)
   ASL A:ASL A:ASL A:ASL A:ORA joykey:STA joykey
 
@@ -118,17 +118,16 @@
   EQUB &00
 }
 
+; Parameter X-reg is the ADC channel (1-4)
 .adc_joystick
 {
-  ; Set input channel and start conversion
-  STX ADC_LATCH
+  LDA #&80:LDY #&00
+  JSR OSBYTE
 
-.wait_for_adc
-  ; Wait for data to be "ready"
-  LDA ADC_STATUS:AND #&80:BNE wait_for_adc
+  ; Use LSB of ADC read
+  TYA
 
-  ; 8-bit ADC value read
-  LDA ADC_HIGH
+  ; Calculate position
   CMP #&C0:BCS joy_adc_high
   CMP #&40:BCC joy_adc_low
 
