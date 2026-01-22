@@ -94,6 +94,7 @@ ORG EXO_LOAD_ADDR
   ; Wait until music finished
 .sound_waittune
   LDA #INKEY_SPACE:JSR scankey:BNE done ; If space pressed, end tune
+  JSR scanjoy:BNE done ; If joystick FIRE pressed, end tune
   LDA sound_music:BNE sound_waittune ; Keep going until tune finished
 
 .done
