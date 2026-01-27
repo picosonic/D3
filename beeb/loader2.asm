@@ -9,7 +9,7 @@ swrcheck=ROMSBASE+8
 INCBIN "loadertok.bin"
 
 ; Reserve some space for BASIC heap
-SKIP 100
+SKIP 200
 
 ; Test slots to find first available SWRAM
 .swrtest

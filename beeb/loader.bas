@@ -22,8 +22,8 @@ VDU23,1,0;0;0;0;:REM Hide cursor
 VDU19,1,0;0;19,2,0;0;19,3,0;0;:REM Blank palette
 :
 swrpage=&11FF
-swrtest=&1D50
-swrcopy=&1D84
+swrtest=&1DDD
+swrcopy=&1E11
 CALL swrtest
 IF ?swrpage=255 MODE7:PRINT"No sideways RAM detected":END
 *L.RMDATA
@@ -55,8 +55,8 @@ ENDPROC
 :
 DEFPROCSPACE
 *FX15,0
-PRINTTAB(5,23)CHR$(129)"Press"CHR$(131)"SPACE BAR"CHR$(129)"to continue"
-REPEATUNTILGET=32:CLS
+PRINTTAB(3,23)CHR$(129)"Press"CHR$(131)"SPACE"CHR$(129)"or"CHR$(131)"FIRE"CHR$(129)"to continue"
+REPEAT:A=INKEY(10):B=ADVAL(0)AND3:UNTILA=32ORB<>0:CLS
 ENDPROC
 :
 DEFPROCPAGE1
