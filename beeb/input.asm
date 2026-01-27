@@ -86,6 +86,12 @@
   ;LDX #&49 : STX SYSVIA_REGA : LDA SYSVIA_REGA : eor #&80 : STA fire_up ; [RETURN]
   ;LDX #&70 : STX SYSVIA_REGA : ASL SYSVIA_REGA : bcs reset              ; [ESCAPE]
 
+  LDX #3+8 : STX SYSVIA_REGB \\ "disable" keyboard
+  LDX #&FF : STX SYSVIA_DDRA \\ put back ready for sound (all 8 bits write only)
+
+.reset
+  CLI
+
   ; See if joystick is enabled
   LDA padfound:BEQ nojoy
 
@@ -105,12 +111,6 @@
   ORA keys:ORA joykey:STA keys
 
 .nojoy
-
-  LDX #3+8 : STX SYSVIA_REGB \\ "disable" keyboard
-  LDX #&FF : STX SYSVIA_DDRA \\ put back ready for sound (all 8 bits write only)
-
-.reset
-  CLI
 
   RTS
 
