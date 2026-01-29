@@ -1,0 +1,27 @@
+; Dizzy animation frames
+.seq0 EQUB 0,1,0,1,0,1,0,1 ; Looking forward idle
+.seq1 EQUB 9,10,11,12,13,14,15,16 ; Walking left
+.seq2 EQUB 17,18,19,20,21,22,23,24 ; Walking right
+.seq3 EQUB 2,3,4,5,6,7,8,1 ; Jumping/tumbling straight up/down
+.seq4 EQUB 25,26,27,28,29,30,31,9 ; Jump/tumble left
+.seq5 EQUB 32,33,34,35,36,37,38,17 ; Jump/tumble right
+.seq6 EQUB 4,5,5,6,6,5,5,4; bob upside down
+.seq7 EQUB 0,1,8,8,7,6,7,7; fall over backwards
+.seq8 EQUB 8,7,6,5,4,3,2,1; upside down tumble
+
+
+maybe
+.v1085 ; []
+.v1086 ; []
+
+03c0 and 03d8 = seq id ?
+  0 = idle
+  1 = jump straight up
+  4 = walk left
+  5 = jump left
+  8 = walk right
+  9 = jump right
+
+03c9 and 03c3 = current frame of animation ?
+
+03ea = related to being upside down ?
