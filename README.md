@@ -48,7 +48,7 @@ On my childhood BBC Micro model B, I've installed a [solderless 32k RAM+ROM upgr
 
 Then I've used a Gotek device powered by the BBC Micro auxillary power port to load the software via the floppy disc interface. This is the quickest way to test it on real hardware by putting built SSD files onto a USB stick.
 
-I have also tried [SD2BBC](https://www.thefuturewas8bit.com/shop/bbc/sd2bbc.html), but it's a bit slower due to having to add the SSD to an MMB file using [MMBExplorer](https://github.com/robcfg/retrotools/releases).
+I have also tried [SD2BBC](https://www.tfw8b.com/product/sd2bbc-bbc-micro-spi-sd-card-interface/), but it's a bit slower due to having to add the SSD to an MMB file using [MMBExplorer](https://github.com/robcfg/retrotools/releases).
 
 Currently I'm detecting the SWRAM by cycling through the slots with ROMSEL to test writeability, although I'm aware that not all legacy SWRAM solutions supported this method. So at some point in the future I'll extend the SWRAM code to support more hardware.
 
