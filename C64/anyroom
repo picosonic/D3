@@ -1,0 +1,6 @@
+To get into any room when in cheat mode..
+
+Using Vice, enter monitor
+F 3B3D 3B44 EA
+
+this fills 8 bytes with EA (NOP) to skip boundary checks
