@@ -1099,6 +1099,7 @@ ALIGN &100
   EQUW e_za
   EQUW e_zb
   EQUW e_zc
+  EQUW e_zd
 
 .e_a EQUB "THE", PRT_END
 .e_b EQUB "YOU", PRT_END
@@ -1127,8 +1128,9 @@ ALIGN &100
 .e_y EQUB "AN", PRT_END
 
 .e_za EQUB "DRAGON", PRT_END
-.e_zb EQUB "CASTLE", PRT_END
+.e_zb EQUB ":CASTLE", PRT_END
 .e_zc EQUB "WATER", PRT_END
+.e_zd EQUB ":BOTTLE", PRT_END
 }
 
 ; Dizzy animation frames

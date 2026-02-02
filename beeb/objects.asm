@@ -952,31 +952,31 @@ dylantalking = duffmem
 ; Names of objects which can be picked up and shown in inventory
 
 .nothingheremess EQUB PRT_END ; Used to print nothing (e.g. empty inventory slot)
-.bagmess EQUB "EXIT:AND:DON;T:DROP",PRT_END
-.greenbeanmess EQUB "A:SINGLE:GREEN:BEAN",PRT_END
-.bonemess EQUB "A:FRESH:MEATY:BONE",PRT_END
-.goldeneggmess EQUB "A:HEAVY:DRAGON:EGG",PRT_END
-.blackholemess EQUB "A:LARGE:ROUND:HOLE",PRT_END
-.sleeppotionmess EQUB "SOME:SLEEPING:POTION",PRT_END
-.applemess EQUB "A:FRESH:GREEN:APPLE",PRT_END
-.jugmess EQUB "A:JUG:OF:COLD:WATER",PRT_END
-.loafmess EQUB "STALE:LOAF:OF:BREAD",PRT_END
-.fullwhiskeymess EQUB "A:BOTTLE:OF:WHISKEY",PRT_END
-.ropemess EQUB "A:PIECE:OF:ROPE",PRT_END
-.rockmess EQUB "A:HEAVY:BOULDER",PRT_END
-.fullwinemess EQUB "A:BOTTLE:OF:WINE",PRT_END ; Never used by original code
-.emptybottlemess EQUB "AN:EMPTY:BOTTLE",PRT_END
-.keymess EQUB "A:SHINY:GOLD:KEY",PRT_END
-.mtbucketmess EQUB "AN:EMPTY:BUCKET",PRT_END
-.fullbucketmess EQUB "A:BUCKET:OF:WATER",PRT_END
+.bagmess EQUB "EXv:c:Dq;T:DmP",PRT_END
+.greenbeanmess EQUB "A:SdLE:GwEN:BEy",PRT_END
+.bonemess EQUB "A:FwSH:MEATY:BqE",PRT_END
+.goldeneggmess EQUB "A:jAVY:za:EGG",PRT_END
+.blackholemess EQUB "A:LARGE:mUND:HOLE",PRT_END
+.sleeppotionmess EQUB "SOME:SLEEPd:POTIq",PRT_END
+.applemess EQUB "A:FwSH:Gwr:APPLE",PRT_END
+.jugmess EQUB "A:JUG:OF:COLD:zc",PRT_END
+.loafmess EQUB "oALE:LOAF:OF:BwAD",PRT_END
+.fullwhiskeymess EQUB "Azd:OF:WHISKEY",PRT_END
+.ropemess EQUB "A:PIECE:OF:mPE",PRT_END
+.rockmess EQUB "A:jAVY:BxLDt",PRT_END
+.fullwinemess EQUB "Azd:OF:WiE",PRT_END ; Never used by original code
+.emptybottlemess EQUB "y:EMPTYzd",PRT_END
+.keymess EQUB "A:SHiY:GOLD:KEY",PRT_END
+.mtbucketmess EQUB "y:EMPTY:BUCKET",PRT_END
+.fullbucketmess EQUB "A:BUCKET:OF:zc",PRT_END
 .leavesmess EQUB "A:CLUMP:OF:LEAVES",PRT_END
 .pigmycowmess EQUB "A:CUTE:PIGMY:COW",PRT_END
-.railingmess EQUB "A:PIECE:OF:RAILING",PRT_END
-.doorknockermess EQUB "BRASS:DOOR:KNOCKER",PRT_END
-.crowbarmess EQUB "A:STRONG:CROWBAR",PRT_END
-.pickaxemess EQUB "A:RUSTY:OLD:PICKAXE",PRT_END
-.rugmess EQUB "AN:OLD:THICK:RUG",PRT_END
-.windowmess EQUB "A:WINDOW:FRAME",PRT_END
+.railingmess EQUB "A:PIECE:OF:RAILd",PRT_END
+.doorknockermess EQUB "BRASS:DOOR:KNOCKt",PRT_END
+.crowbarmess EQUB "A:omNG:CmWBAR",PRT_END
+.pickaxemess EQUB "A:RUoY:OLD:PICKAXE",PRT_END
+.rugmess EQUB "y:OLD:kICK:RUG",PRT_END
+.windowmess EQUB "A:WiDOW:FRAME",PRT_END
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TALKING TO YOLKFOLK
 .talkingtopeople
