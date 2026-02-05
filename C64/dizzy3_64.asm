@@ -1446,11 +1446,11 @@ numdeadlyobj = * - deadlyobj
   CPY #KEY_NONE
   BEQ waitforkeypress
 
-  JMP l1A6C
+  JMP after_mute_check
 
 .checkmute
   CPY #KEY_M
-  BNE l1A6C
+  BNE after_mute_check
 
   ; M has been pressed, so toggle sound
 
@@ -1474,7 +1474,7 @@ numdeadlyobj = * - deadlyobj
   CPY #KEY_M
   BEQ waitfor_m_release
 
-.l1A6C
+.after_mute_check
   JSR checkcheatmode
   JSR getplayerinput
 
@@ -1498,10 +1498,11 @@ numdeadlyobj = * - deadlyobj
 
 .sober
   LDA liftwait
-  BEQ l1A9E
+  BEQ after_lift_timer
 
   DEC liftwait
-.l1A9E
+
+.after_lift_timer
   ; Is it >= 25 (therefore invalid)
   LDA roomno
   CMP #&19
@@ -1509,12 +1510,13 @@ numdeadlyobj = * - deadlyobj
 
   LDA player_input
   AND #JOY_RIGHT+JOY_LEFT
-  BEQ l1AB4
+  BEQ no_joy_x_movement
 
   LDA player_input
   EOR #JOY_RIGHT+JOY_LEFT
   STA player_input
-.l1AB4
+
+.no_joy_x_movement
   JSR l3257
 
   ; Is it < 250
@@ -1533,10 +1535,12 @@ numdeadlyobj = * - deadlyobj
   AND #JOY_RIGHT+JOY_LEFT
   ORA player_input
   STA player_input
+
 .l1AD2
   NOP
   NOP
   LDA #6:STA &0342
+
 .l1AD9
   LDA &03C9
   BEQ l1AE1
