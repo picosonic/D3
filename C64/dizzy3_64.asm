@@ -29,7 +29,7 @@ melody_ptr = &00A9
 .v00FB ; pointer (73BE / 726E / 60E4 / 7787 / 72ED) - SCREEN RAM
 .v00FC
 
-.v00FD ; pointer (5E77 / 5E4D / 5C1C / 5EF0 / 5E5D)
+.v00FD ; pointer (5E77 / 5E4D / 5C1C / 5EF0 / 5E5D) - SCREEN ATTRIBS
 .v00FE
 
 .v00FF
@@ -137,7 +137,7 @@ ORG &0B00
   BNE l0B0F
 
   ; Melody is 0
-  STA &116D
+  STA v116D
   JSR reset_audio
 .l0B0C
   JMP continueplaying
@@ -188,25 +188,25 @@ ORG &0B00
 
   JSR l1147
 
-  LDA #1:STA &116D
+  LDA #1:STA v116D
   JMP continueplaying
 
   ; Invalid or continue playing
 .l0B50
-  LDA &116D
+  LDA v116D
   BEQ l0B0C
 
   INC &11C9
   INC &11CA
   INC &11CB
 
-  LDX #&02:STX &116C
+  LDX #&02:STX v116C
 
 .^l0B63
-  LDX &116C ; Load SID channel number
+  LDX v116C ; Load SID channel number
   LDA sid_channel_offsets,X:STA sid_channel_offset ; SID channel offset list
 
-  LDA &116F
+  LDA v116F
   BNE l0B84
 
   DEC &1188,X
@@ -215,7 +215,7 @@ ORG &0B00
   LDA &119D,X
   BEQ done
 
-  INC &1169,X
+  INC v1169,X
   JSR l0F83
   JMP l0EEC
 
@@ -224,7 +224,7 @@ ORG &0B00
   BEQ done
 
   DEC &11A0,X
-  DEC &1169,X
+  DEC v1169,X
 
   JSR l0F83
   JMP l0EEC
@@ -347,7 +347,7 @@ ORG &0B00
 .l0C4D
   STY &11C2
   CLC:ADC &1191,X
-  STA &1169,X
+  STA v1169,X
 
   PHA
   LDY &11C3,X
@@ -381,7 +381,7 @@ ORG &0B00
   STA &117C,X
   STA SID_PULSE_H,Y
 
-  LDA &1166,X
+  LDA v1166,X
   BEQ l0CB4
 
   LDA &11C3,X
@@ -394,7 +394,7 @@ ORG &0B00
   ORA #&05
   STA SID_CTRL,Y
 .l0CB4
-  LDX &116C
+  LDX v116C
   LDA &117F,X
   CLC:ADC &11C2
   STA &117F,X
@@ -404,7 +404,7 @@ ORG &0B00
 .l0CC6
   LDA &1185,X:STA &1188,X
   LDA &11B1,X:STA &11B4,X
-  LDY &115B,X
+  LDY v115B,X
   INY
   TYA
   STA &11A6,X
@@ -414,7 +414,7 @@ ORG &0B00
 
 .l0CDD
 {
-  LDA &1169,X
+  LDA v1169,X
   BEQ l0CEF
 
   LDY &11C3,X
@@ -541,13 +541,13 @@ ORG &0B00
   LSR A
   STA &11A9
 
-  LDY &1169,X
+  LDY v1169,X
   LDA &10E7,Y
-  SEC:SBC &10E6,Y
+  SEC:SBC v10E6,Y
   STA &11B9
 
-  LDA &1086,Y
-  SBC &1085,Y
+  LDA v1086,Y
+  SBC v1085,Y
   STA &11BA
 .l0DD5
   DEC &11AA
@@ -637,17 +637,17 @@ ORG &0B00
   CMP #&FF
   BNE l0E81
 
-  LDA &115B,X:STA &11A6,X
+  LDA v115B,X:STA &11A6,X
 
   JMP l0E6E
 
 .l0E81
-  CLC:ADC &1169,X
+  CLC:ADC v1169,X
   LDY sid_channel_offset
   TAX
-  LDA &10E6,X:STA SID_FREQ_L,Y
-  LDA &1085,X:STA SID_FREQ_H,Y
-  LDX &116C
+  LDA v10E6,X:STA SID_FREQ_L,Y
+  LDA v1085,X:STA SID_FREQ_H,Y
+  LDX v116C
   INC &11A6,X
 
   JMP l0EEC
@@ -677,21 +677,21 @@ ORG &0B00
   CMP &1185,X
   BCC l0EEC
 
-  LDY &1169,X
+  LDY v1169,X
   JSR l0FFE
-  LDX &116C
+  LDX v116C
   LDY sid_channel_offset
   LDA &1173,X
 
   ; Polymorphic code
-.v0ED6
+.^sid_poly_carry
   CLC
-.v0ED7
+.^sid_poly_opcode1
   ADC &119A
   STA &1173,X
   STA SID_FREQ_L,Y
   LDA &1176,X
-.v0EE3
+.^sid_poly_opcode2
   ADC &119B
   STA &1176,X
   STA SID_FREQ_H,Y
@@ -763,16 +763,16 @@ ORG &0B00
 
   STA SID_PULSE_L,Y
 .l0F5F
-  DEC &116C
+  DEC v116C
   BMI l0F67
 
   JMP l0B63
 
 .l0F67
-  DEC &116F
+  DEC v116F
   BPL continueplaying
 
-  LDA &116E:STA &116F
+  LDA &116E:STA v116F
 
   ; Fall through
 }
@@ -802,11 +802,11 @@ ORG &0B00
 
 .l0F83
 {
-  LDY &1169,X
-  LDA &10E6,Y:STA &1173,X
+  LDY v1169,X
+  LDA v10E6,Y:STA &1173,X
 
   PHA
-  LDA &1085,Y:STA &1176,X
+  LDA v1085,Y:STA &1176,X
   LDY sid_channel_offset
   STA SID_FREQ_H,Y
   PLA
@@ -818,7 +818,7 @@ ORG &0B00
 
 .l0F9E
 {
-  LDY &115B,X:INY
+  LDY v115B,X:INY
 
   LDX #0
 .loop
@@ -826,7 +826,7 @@ ORG &0B00
   ROR &11BB
   BCC l0FB0
 
-  LDA &115E,X:STA &11CD,Y
+  LDA v115E,X:STA &11CD,Y
   INY
 .l0FB0
   INX
@@ -834,7 +834,7 @@ ORG &0B00
   BNE loop
   }
 
-  LDX &116C
+  LDX v116C
   LDA #&FF:STA &11CD,Y
   LDA #0:STA &1194,X
 
@@ -889,38 +889,38 @@ ORG &0B00
   BCS l1028
 
   LDA #opcode_CLC_imp ; CLC
-  STA &0ED6
+  STA sid_poly_carry
 
   LDA #opcode_ADC_abs ; ADC
-  STA &0ED7
-  STA &0EE3
+  STA sid_poly_opcode1
+  STA sid_poly_opcode2
 
   SEC
-  LDA &10E6,X
-  SBC &10E6,Y
+  LDA v10E6,X
+  SBC v10E6,Y
   STA &119A
 
-  LDA &1085,X
-  SBC &1085,Y
+  LDA v1085,X
+  SBC v1085,Y
   STA &119B
 
   JMP l1048
 
 .l1028
   LDA #opcode_SEC_imp ; SEC
-  STA &0ED6
+  STA sid_poly_carry
 
   LDA #opcode_SBC_abs ; SBC
-  STA &0ED7
-  STA &0EE3
+  STA sid_poly_opcode1
+  STA sid_poly_opcode2
 
   SEC
-  LDA &10E6,Y
-  SBC &10E6,X
+  LDA v10E6,Y
+  SBC v10E6,X
   STA &119A
 
-  LDA &1085,Y
-  SBC &1085,X
+  LDA v1085,Y
+  SBC v1085,X
   STA &119B
 
 .l1048
@@ -971,12 +971,16 @@ ORG &0B00
 }
 
 .v1085 ; [1]
+  SKIP 1
+
 .v1086 ; [96]
+  SKIP 96
 
 .v10E6 ; [1]
-.v10E7 ; [96]
+  SKIP 1
 
-ORG &1147
+.v10E7 ; [96]
+  SKIP 96
 
 .l1147
 {
@@ -985,8 +989,8 @@ ORG &1147
   LDA #15:STA SID_VOL_FLT ; Set volume 100%
 
   LDA #0
-  STA &116F
-  STA &116D
+  STA v116F
+  STA v116D
 
   RTS
 }
@@ -997,15 +1001,22 @@ ORG &1147
   EQUB lo(SID_CH3_FREQ_L-SID_BASE) ; Channel 3 - background
 
 .v115B ; [3]
+  SKIP 3
 .v115E ; [8]
+  SKIP 8
 .v1166 ; [3]
+  SKIP 3
 .v1169 ; [3]
+  SKIP 3
 .v116C
+  SKIP 1
 .v116D
+  SKIP 1
 .v116E
+  SKIP 1
 .v116F
+  SKIP 1
 
-ORG &1170
 .melody_chan_pos ; [3]
 {
   EQUB &14 ; Channel 1 melody data pos
@@ -1014,11 +1025,14 @@ ORG &1170
 }
 
 .v1173 ; [3]
+  SKIP 3
 .v1176 ; [3]
+  SKIP 3
 .v1179 ; [3]
+  SKIP 3
 .v117C ; [3]
+  SKIP 3
 
-ORG &117F
 ; These are *variable* pointers in the range &1399..&1431 (melody data)
 .v117F ; pointers lo [3]
 {
@@ -1035,33 +1049,57 @@ ORG &117F
 }
 
 .v1185 ; [3]
+  SKIP 3
 .v1188 ; [3]
+  SKIP 3
 .v118B ; [3]
+  SKIP 3
 .v118E ; [3]
+  SKIP 3
 .v1191 ; [3]
+  SKIP 3
 .v1194 ; [3]
+  SKIP 3
 .v1197 ; [3]
+  SKIP 3
 .v119A
+  SKIP 1
 .v119B
+  SKIP 1
 .v119C
+  SKIP 1
 .v119D ; [3]
+  SKIP 3
 .v11A0 ; [3]
+  SKIP 3
 .v11A3 ; [3]
+  SKIP 3
 .v11A6 ; [3]
+  SKIP 3
 .v11A9
+  SKIP 1
 .v11AA
+  SKIP 1
 .v11AB ; [3]
+  SKIP 3
 .v11AE ; [3]
+  SKIP 3
 .v11B1 ; [3]
+  SKIP 3
 .v11B4 ; [3]
+  SKIP 3
 .v11B7
+  SKIP 1
 .v11B8
+  SKIP 1
 .v11B9
+  SKIP 1
 .v11BA
+  SKIP 1
 .v11BB
+  SKIP 1
 
-ORG &11BC
-  ; Current melody
+; Current melody
 .melodychanptr_lo ; [3]
 {
   EQUB &0F
@@ -1076,25 +1114,39 @@ ORG &11BC
 }
 
 .v11C2
+  SKIP 1
 .v11C3 ; [3]
+  SKIP 3
 .v11C6 ; [3]
+  SKIP 3
 .v11C9 ; [1]
+  SKIP 1
 .v11CA
+  SKIP 1
 .v11CB
+  SKIP 1
 
-ORG &11CC
 .sid_channel_offset ; SID channel offset used as Y index
   EQUB &00
 
 .v11CD ; [16]
+  SKIP 16
 .v11ED ; [1]
+  SKIP 1
 .v11EE ; [1]
+  SKIP 1
 .v11EF ; [1]
+  SKIP 1
 .v11F0 ; [37]
+  SKIP 37
 .v1215 ; [16]
+  SKIP 16
 .v1225 ; [16]
+  SKIP 16
 
-ORG &1235
+; Not sure what this is
+SKIP 16
+
 .melodyconfigs ; [24]
 {
   ; Melody 1 - Title screen
@@ -1119,18 +1171,29 @@ ORG &1235
 }
 
 .v124D ; [1]
+  SKIP 1
 .v124E ; [1]
+  SKIP 1
 .v124F ; [1]
+  SKIP 1
 .v1250 ; [1]
+  SKIP 1
 .v1251 ; [1]
+  SKIP 1
 .v1252 ; [1]
+  SKIP 1
 .v1253 ; [1]
+  SKIP 1
 .v1254 ; [137]
+  SKIP 137
 .v12DD ; [1]
+  SKIP 1
 .v12DE ; [49]
+  SKIP 49
 
-ORG &130F
 INCLUDE "melodydata.asm"
+
+; &16B7 .. &180D UNKNOWN
 
 ORG &180E
 ; These static pointers are to data in the range &5c00..&5fc0 (screen/border colour attribs)
@@ -1153,6 +1216,9 @@ ORG &180E
 }
 
 .v1877 ; [32]
+  SKIP 32
+
+; &1861 .. 1896 UNKNOWN
 
 ORG &1897
 .c64palette ; spectrum to c64 palette lookup [8]
@@ -4578,7 +4644,7 @@ numdeadlyobj = * - deadlyobj
   EQUB &00, &00, &b8, &00, &00, &00, &81, &00, &80
 }
 
-; Some further unknown bytes here
+; &2AFC .. &2B12 UNKNOWN
 
 ORG &2B13
 
@@ -6003,7 +6069,7 @@ ORG &2B13
   ; Check if this is a non-collectable
   LDY #0
   CPX #maxcollectable+1
-  BCS l3373
+  BCS non_collectable
 
   ; This is a collectable object
   AND #PAL_WHITE ; Mask off colour
@@ -6015,7 +6081,7 @@ ORG &2B13
   JSR calcplotstyle
   LDA frmattr:AND #&A7:ORA &FF:STA frmattr ; attrib
 
-.l3373
+.non_collectable
   STY hitbitflags
   LDA #attr_offs_other:STA attrib_offset
   LDA objs_frames,X ; frame
@@ -7433,9 +7499,13 @@ cheatcodelen = * - eclipse
   RTS
 }
 
+; &3B96 .. &3FFF UNKNOWN
+
 ORG &4000
 INCLUDE "dizzy_sprites.asm"
 ; &5180 - end of sprite bitmaps
+
+; &5180 .. &57FF UNKNOWN
 
 ORG &5800
 .spec_screen_attribs ; []
@@ -7459,7 +7529,6 @@ ORG &5FF8
   EQUB &43 ; sprite 7
 }
 
-ORG &6000
 .screen_memory
 ; &6000..&7F3F = screen RAM (320x200 hires bitmap mode, $d011=$3b, $d016=8)
 INCBIN "screendump.bin"
@@ -7479,6 +7548,8 @@ INCBIN "screendump.bin"
 
   RTS
 }
+
+; &7F55 .. &7FFF UNKNOWN
 
 ORG &8000
 .roomdata
@@ -7514,14 +7585,18 @@ INCBIN "roomdata.bin"
 INCBIN "frametable.bin"
 .framedefs
 INCBIN "framedefs.bin"
-; to &C388
+
+; &C388 .. &C3FF UNKNOWN
 
 ORG &C400
 INCLUDE "objects.asm"
 
+; &C93C .. &CFFF UNKNOWN
+
 ORG &D000
 INCLUDE "strings.asm"
-; to &F007
+
+; &F007 .. &FFFF UNKNOWN
 
 ORG &FFFF
 .c64end
