@@ -100,7 +100,7 @@ gamecounter = &03C4 ; pace of game actions
 .v03D5 ; set to &FF and &00
 olddizzyx = &03D6 ; position where Dizzy entered current room
 olddizzyy = &03D7 ;   used for where to reincarnate to
-.v03D8 ; input related
+prev_player_input = &03D8 ; cache for input from player when fire button/return was last pressed
 inventoryindex = &03D9
 usedobj = &03D9 ; id of objected being interacted with from inventory
 .v03DA ; related to X position of water frames, set to 0
@@ -6059,21 +6059,23 @@ ORG &2B13
 {
   LDA CIA1_PRA ; Read Joystick 2 state
   EOR #&FF ; Make bitfield active high
-  AND #%00011111 ; Mask to just Joystick 2
+  AND #JOY_MASK ; Mask to just joystick input bits
   STA player_input
 
+  ; Merge in keypresses from keyboard to bitfield (Z, X, Shift, Return)
   JSR mergekeypress
 
-  LDA &03D8
-  AND #&10 ; Joystick button pressed ?
+  ; Check if button was pressed before and now
+  LDA prev_player_input
+  AND #JOY_FIRE ; Mask off to just button
   AND player_input
-  BEQ l33CA
+  BEQ cache_input
 
-  LDA player_input:AND #&0F:STA player_input ; Clear FIRE button state
+  LDA player_input:AND #JOY_MASK:STA player_input ; Mask to just joystick input bits
   RTS
 
-.l33CA
-  LDA player_input:STA &03D8
+.cache_input
+  LDA player_input:STA prev_player_input
 
   RTS
 }
@@ -6284,7 +6286,7 @@ ORG &2B13
   LDY KEY_PRESSED
   LDX KEY_SHIFT
 
-  ; Load bitfield
+  ; Load current bitfield
   LDA player_input
 
   CPY #KEY_Z
