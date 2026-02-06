@@ -104,7 +104,7 @@ prev_player_input = &03D8 ; cache for input from player when fire button/return 
 inventoryindex = &03D9
 usedobj = &03D9 ; id of objected being interacted with from inventory
 .v03DA ; related to X position of water frames, set to 0
-.v03DB ; multi-purpose
+multi_tmp = &03DB ; multi-purpose temporary variable
 attrib_offset = &03DC ; location of screen attribs to use, &00 = &5C00, &58 = &0400
 .v03DD ; max object id to draw
 .v03DF ; mostly set to &FF, but can take the value of &03E2 when non-zero
@@ -3384,7 +3384,9 @@ numdeadlyobj = * - deadlyobj
 ; After checking object interaction, make sure we're not colliding with any lifts
 .checkliftcollide
 {
-  LDX #obj_lifts:STX &03DB
+  liftid = multi_tmp
+
+  LDX #obj_lifts:STX liftid
 .liftloop
   {
   JSR collidewithdizzy
@@ -3395,8 +3397,8 @@ numdeadlyobj = * - deadlyobj
   JMP checkwhiskey
 
 .nocollision
-  INC &03DB
-  LDX &03DB
+  INC liftid
+  LDX liftid
 
   ; Is it within range of the lift objects
   CPX #endoflifts
@@ -5625,6 +5627,8 @@ ORG &2B13
 ; If there is a lift in this room, draw it in the right place
 .drawlifts
 {
+  liftid = multi_tmp
+
   LDX #0 ; machine offset
   LDA #attr_offs_other:STA attrib_offset
 .machineloop
@@ -5640,7 +5644,7 @@ ORG &2B13
   BNE nextmachine
 
   ; We have an enabled lift in the room we are in
-  STX &03DB ; Cache lift id
+  STX liftid ; Cache lift id
 
   ; Calculate offset for this lift into the objects
   TXA
@@ -5660,7 +5664,7 @@ ORG &2B13
 
   ; Check the Y position of the bottom of the lift
   LDA objs_ylocs+1,X
-  LDY &03DB ; Restore lift id
+  LDY liftid ; Restore lift id
   CMP currentliftpos,Y ; Compare objects[id] Y position to currentliftpos[id]
   BCS drawliftbottom ; if >= we're done
 
@@ -6410,8 +6414,10 @@ ORG &2B13
 
 .prtmessage
 {
+  stringid = multi_tmp
+
   ; Cache string id
-  STA &03DB
+  STA stringid
 
   ; Fetch pointer to string[id]
   ASL A
@@ -6490,7 +6496,7 @@ ORG &2B13
   BNE startmessage
 
   ; Check which message it was
-  LDA &03DB
+  LDA stringid
   BEQ nottitle
 
   ; Title screen - so reset everything
@@ -6884,7 +6890,9 @@ ORG &2B13
 
 .showlives
 {
-  LDA #0:STA &03DB
+  eggid = multi_tmp
+
+  LDA #0:STA eggid
 
   LDX #POS_LIVES_X
 .loop
@@ -6897,7 +6905,7 @@ ORG &2B13
 
   LDY #PAL_BLACK ; Default to rubbing out life indicator eggs
 
-  LDA &03DB
+  LDA eggid
   CMP lives
   BCS keepattr
 
@@ -6911,7 +6919,7 @@ ORG &2B13
   JSR frame
 
   ; Check next life indicator
-  INC &03DB
+  INC eggid
 
   ; Advance cursor
   FOR n, 1, CURSOR_ADV_X
@@ -6928,9 +6936,11 @@ ORG &2B13
 
 .heartdemo
 {
+  heart_timer = multi_tmp
+
   JSR cleargamescreen
 
-  LDA #0:STA &03DB
+  LDA #0:STA heart_timer
   LDA #TUNE_4:STA melody ; Lose a life / hearts demo melody
 
 .loop
@@ -6963,7 +6973,7 @@ ORG &2B13
 
   LDA #HEART_DELAY:JSR delay
 
-  INC &03DB
+  INC heart_timer
   BNE loop
   }
 
@@ -6998,6 +7008,8 @@ ORG &2B13
 
 .l38B1
 {
+  localvar = multi_tmp
+
   LDA gamecounter
   AND #&01
   BNE l38BB
@@ -7019,7 +7031,7 @@ ORG &2B13
   SEC:SBC #&18 ; -24
   LSR A        ; /2
   TAY
-  STY &03DB
+  STY localvar
 
   JMP l38E4
 
@@ -7061,13 +7073,13 @@ ORG &2B13
   CLC:ADC #SPR_WATER0 ; frame
   JSR frame
 
-  INC &03DB
-  INC &03DB
-  INC &03DB
+  INC localvar
+  INC localvar
+  INC localvar
 .l3920
-  INC &03DB
+  INC localvar
   ; Is it < 35
-  LDY &03DB
+  LDY localvar
   CPY #&23
   BCC l38DE
 
@@ -7080,7 +7092,7 @@ ORG &2B13
   LDX #0
   LDA #2
 .l3935
-  STA &03DB
+  STA localvar
   STX &034E
 .l393B
   {
@@ -7096,7 +7108,7 @@ ORG &2B13
   JSR frame
 
   INX
-  CPX &03DB
+  CPX localvar
   BCS l3962
 
   CPX flameindex
@@ -7120,7 +7132,7 @@ ORG &2B13
   JSR frame
 
   INX
-  CPX &03DB
+  CPX localvar
   BCS done
 
   CPX flameindex
@@ -7305,8 +7317,10 @@ ORG &2B13
 
 .drawdragonflames
 {
+  flame_end = multi_tmp
+
   ; Set start/end X positions for flames ??
-  LDA dragonflamepos:CLC:ADC #8:STA &03DB
+  LDA dragonflamepos:CLC:ADC #8:STA flame_end
 
   LDX dragonflamepos
 .loop
@@ -7326,8 +7340,8 @@ ORG &2B13
   ; Drawing yellow flames
   LDA #PAL_YELLOW
 
-  ; Is Xreg < [&03DB]
-  CPX &03DB
+  ; Is Xreg < flame_end
+  CPX flame_end
   BCC storeattrs
 
   ; Erase flames by drawing black ones
@@ -7346,7 +7360,9 @@ ORG &2B13
 
   INX
   INX
-  CPX &03DB ; Is Xreg <= [&03DB]
+  CPX flame_end ; Is Xreg <= flame_end
+
+  ; Loop while <=
   BEQ loop
   BCC loop
   }
