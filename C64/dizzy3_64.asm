@@ -176,8 +176,8 @@ ORG &0B00
     LDX #TUNE_CHANNELS-1
 .loop
     LDA #0
-    STA &1188,X
-    STA &118B,X
+    STA v1188,X
+    STA v118B,X
     STA melody_chan_pos,X ; Set melody channel data pos to start
 
     JSR l0FC3
@@ -196,9 +196,9 @@ ORG &0B00
   LDA v116D
   BEQ l0B0C
 
-  INC &11C9
-  INC &11CA
-  INC &11CB
+  INC v11C9
+  INC v11CA
+  INC v11CB
 
   LDX #&02:STX v116C
 
@@ -209,10 +209,10 @@ ORG &0B00
   LDA v116F
   BNE l0B84
 
-  DEC &1188,X
+  DEC v1188,X
   BMI l0B98
 
-  LDA &119D,X
+  LDA v119D,X
   BEQ done
 
   INC v1169,X
@@ -220,10 +220,10 @@ ORG &0B00
   JMP l0EEC
 
 .l0B84
-  LDA &11A0,X
+  LDA v11A0,X
   BEQ done
 
-  DEC &11A0,X
+  DEC v11A0,X
   DEC v1169,X
 
   JSR l0F83
@@ -236,24 +236,24 @@ ORG &0B00
 .l0B98
 {
   LDA #0
-  LDY &118B,X
+  LDY v118B,X
   CPY #2
   BEQ l0BA7
 
-  STA &118E,X
-  STA &118B,X
+  STA v118E,X
+  STA v118B,X
 .l0BA7
-  STA &11C2
-  STA &1194,X
-  STA &119D,X
+  STA v11C2
+  STA v1194,X
+  STA v119D,X
 
-  LDA #3:STA &11C6,X
-  LDA &117F,X:STA &A7
-  LDA &1182,X:STA &A8
+  LDA #3:STA v11C6,X
+  LDA v117F,X:STA &A7
+  LDA v1182,X:STA &A8
 
 .l0BBF
-  LDY &11C2
-  INC &11C2
+  LDY v11C2
+  INC v11C2
   LDA (&A7),Y
   INY
   CMP #&FF
@@ -261,7 +261,7 @@ ORG &0B00
 
   JSR l0FC3
 
-  LDA #0:STA &11C2
+  LDA #0:STA v11C2
   JMP l0BBF
 
 .l0BD7
@@ -290,7 +290,7 @@ ORG &0B00
   BCC l0C00
 
   AND #&0F
-  STA &116E
+  STA v116E
   LDA (&A7),Y
   INY
 .l0C00
@@ -302,7 +302,7 @@ ORG &0B00
   ASL A
   ASL A
   ASL A
-  STA &11C3,X
+  STA v11C3,X
   LDA (&A7),Y
   INY
 .l0C0F
@@ -311,7 +311,7 @@ ORG &0B00
   BCC l0C1B
 
   AND #&3F
-  STA &1185,X
+  STA v1185,X
   LDA (&A7),Y
   INY
 .l0C1B
@@ -322,16 +322,16 @@ ORG &0B00
   CMP #&7B
   BNE l0C40
 
-  LDA #0:STA &118E,X
-  LDA #1:STA &118B,X
+  LDA #0:STA v118E,X
+  LDA #1:STA v118B,X
 
   LDA (&A7),Y
   INY
-  CLC:ADC &1191,X
-  STA &1194,X
+  CLC:ADC v1191,X
+  STA v1194,X
   LDA (&A7),Y
   INY
-  STA &1197,X
+  STA v1197,X
   JMP l0C4A
 
 .l0C40
@@ -340,30 +340,30 @@ ORG &0B00
 
   LDA (&A7),Y
   INY
-  STA &11B1,X
+  STA v11B1,X
 .l0C4A
   LDA (&A7),Y
   INY
 .l0C4D
-  STY &11C2
-  CLC:ADC &1191,X
+  STY v11C2
+  CLC:ADC v1191,X
   STA v1169,X
 
   PHA
-  LDY &11C3,X
-  LDA #&FF:STA &11C9,X
-  LDA &1250,Y:STA &0C7A
+  LDY v11C3,X
+  LDA #&FF:STA v11C9,X
+  LDA v1250,Y:STA &0C7A
   PLA
 
   BEQ l0C76
 
-  LDA &118E,X
+  LDA v118E,X
   BNE l0C76
 
-  LDA &1253,Y
+  LDA v1253,Y
   BEQ l0C76
 
-  STA &118E,X
+  STA v118E,X
 
 .l0C76
   JSR l0F83
@@ -373,41 +373,41 @@ ORG &0B00
 
   PHA
   AND #&F0
-  STA &1179,X
+  STA v1179,X
   STA SID_PULSE_L,Y
   PLA
 
   AND #&0F
-  STA &117C,X
+  STA v117C,X
   STA SID_PULSE_H,Y
 
   LDA v1166,X
   BEQ l0CB4
 
-  LDA &11C3,X
+  LDA v11C3,X
   TAX
-  LDA &124E,X:STA SID_ATDK,Y
-  LDA &124F,X:STA SID_SURL,Y
+  LDA v124E,X:STA SID_ATDK,Y
+  LDA v124F,X:STA SID_SURL,Y
   LDA #0:STA SID_CTRL,Y
-  LDA &124D,X
+  LDA v124D,X
   AND #&F0
   ORA #&05
   STA SID_CTRL,Y
 .l0CB4
   LDX v116C
-  LDA &117F,X
-  CLC:ADC &11C2
-  STA &117F,X
+  LDA v117F,X
+  CLC:ADC v11C2
+  STA v117F,X
   BCC l0CC6
 
-  INC &1182,X
+  INC v1182,X
 .l0CC6
-  LDA &1185,X:STA &1188,X
-  LDA &11B1,X:STA &11B4,X
+  LDA v1185,X:STA v1188,X
+  LDA v11B1,X:STA v11B4,X
   LDY v115B,X
   INY
   TYA
-  STA &11A6,X
+  STA v11A6,X
 
   JMP l0EEC
 }
@@ -417,8 +417,8 @@ ORG &0B00
   LDA v1169,X
   BEQ l0CEF
 
-  LDY &11C3,X
-  LDA &1254,Y
+  LDY v11C3,X
+  LDA v1254,Y
   AND #&08
   BEQ l0CF2
 
@@ -428,44 +428,44 @@ ORG &0B00
   JMP l0EEC
 
 .l0CF2
-  LDA &1254,Y
+  LDA v1254,Y
   AND #&04
   BEQ l0CFC
 
   JMP l0D73
 
 .l0CFC
-  LDY &11C3,X
-  LDA &1254,Y
+  LDY v11C3,X
+  LDA v1254,Y
   LDY sid_channel_offset
   AND #&01
   BEQ done
 
-  LDY &11C3,X
-  LDA &1251,Y
+  LDY v11C3,X
+  LDA v1251,Y
   AND #&0F
   ASL A
   ASL A
   TAY
-  LDA &11ED,Y:STA &0D36
-  LDA &11EE,Y:STA &0D37
-  LDA &11EF,Y:STA &0D41
-  LDA &11F0,Y:STA &0D42
+  LDA v11ED,Y:STA &0D36
+  LDA v11EE,Y:STA &0D37
+  LDA v11EF,Y:STA &0D41
+  LDA v11F0,Y:STA &0D42
 
   ; Is it >= 31
-  LDA &11C9,X
+  LDA v11C9,X
   CMP #&1F
   BCS done
 
   PHA
   TAY
-  LDA &1225,Y
+  LDA v1225,Y
   LDY sid_channel_offset
   STA SID_CTRL,Y
   PLA
 
   TAY
-  LDA &1215,Y
+  LDA v1215,Y
   LDY sid_channel_offset
   CLC:ADC #&0D ; +13
   STA SID_FREQ_H,Y
@@ -478,10 +478,10 @@ ORG &0B00
 
 .l0D57
 {
-  LDY &11C3,X
+  LDY v11C3,X
 
   ; Is it >=1
-  LDA &11C9,X
+  LDA v11C9,X
   CMP #1
   BCS l0D8F
 
@@ -493,10 +493,10 @@ ORG &0B00
   JMP l0D98
 
 .^l0D73
-  LDY &11C3,X
+  LDY v11C3,X
 
   ; Is it >= 1
-  LDA &11C9,X
+  LDA v11C9,X
   CMP #1
   BCS l0D8F
 
@@ -509,8 +509,8 @@ ORG &0B00
 
 .l0D8F
   JSR l0F83
-  LDY &11C3,X
-  LDA &124D,Y
+  LDY v11C3,X
+  LDA v124D,Y
 .l0D98
   LDY sid_channel_offset
   STA SID_CTRL,Y
@@ -519,11 +519,11 @@ ORG &0B00
 
 .l0DA1
 {
-  LDA &118B,X
+  LDA v118B,X
   BNE l0DAE
 
-  LDY &11C3,X
-  LDA &1251,Y
+  LDY v11C3,X
+  LDA v1251,Y
   BNE l0DB1
 
 .l0DAE
@@ -532,112 +532,112 @@ ORG &0B00
 .l0DB1
   PHA
   AND #&0F
-  STA &11AA
+  STA v11AA
   PLA
 
   LSR A
   LSR A
   LSR A
   LSR A
-  STA &11A9
+  STA v11A9
 
   LDY v1169,X
-  LDA &10E7,Y
+  LDA v10E7,Y
   SEC:SBC v10E6,Y
-  STA &11B9
+  STA v11B9
 
   LDA v1086,Y
   SBC v1085,Y
-  STA &11BA
+  STA v11BA
 .l0DD5
-  DEC &11AA
+  DEC v11AA
   BMI l0DE3
 
-  LSR &11BA
-  ROR &11B9
+  LSR v11BA
+  ROR v11B9
   JMP l0DD5
 
 .l0DE3
-  LDA &11AB,X
+  LDA v11AB,X
   BPL l0DF2
 
-  DEC &11AE,X
+  DEC v11AE,X
   BNE l0E00
 
-  INC &11AB,X
+  INC v11AB,X
   BPL l0E00
 
 .l0DF2
-  INC &11AE,X
-  LDA &11AE,X
-  CMP &11A9
+  INC v11AE,X
+  LDA v11AE,X
+  CMP v11A9
   BCC l0E00
 
-  DEC &11AB,X
+  DEC v11AB,X
 .l0E00
-  LDA &11B4,X
+  LDA v11B4,X
   BEQ l0E0B
 
-  DEC &11B4,X
+  DEC v11B4,X
   JMP l0EEC
 
 .l0E0B
-  LDA &1173,X:STA &11B7
-  LDA &1176,X:STA &11B8
-  LDA &11A9
+  LDA v1173,X:STA v11B7
+  LDA v1176,X:STA v11B8
+  LDA v11A9
   LSR A
   TAY
 .l0E1C
   DEY
   BMI l0E35
 
-  LDA &11B7
-  SEC:SBC &11B9
-  STA &11B7
-  LDA &11B8
-  SBC &11BA
-  STA &11B8
+  LDA v11B7
+  SEC:SBC v11B9
+  STA v11B7
+  LDA v11B8
+  SBC v11BA
+  STA v11B8
 
   JMP l0E1C
 
 .l0E35
-  LDY &11AE,X
+  LDY v11AE,X
 .l0E38
   DEY
   BMI l0E51
 
-  LDA &11B7
-  CLC:ADC &11B9
-  STA &11B7
+  LDA v11B7
+  CLC:ADC v11B9
+  STA v11B7
 
-  LDA &11B8
-  ADC &11BA
-  STA &11B8
+  LDA v11B8
+  ADC v11BA
+  STA v11B8
 
   JMP l0E38
 
 .l0E51
   LDY sid_channel_offset
-  LDA &11B7:STA SID_FREQ_L,Y
-  LDA &11B8:STA SID_FREQ_H,Y
+  LDA v11B7:STA SID_FREQ_L,Y
+  LDA v11B8:STA SID_FREQ_H,Y
 
   JMP l0EEC
 }
 
 .l0E63
 {
-  LDA &118E,X
+  LDA v118E,X
   BEQ l0E9E
 
-  STA &11BB
+  STA v11BB
   JSR l0F9E
 .l0E6E
-  LDY &11A6,X
-  LDA &11CD,Y
+  LDY v11A6,X
+  LDA v11CD,Y
   CMP #&FF
   BNE l0E81
 
-  LDA v115B,X:STA &11A6,X
+  LDA v115B,X:STA v11A6,X
 
   JMP l0E6E
 
@@ -648,16 +648,16 @@ ORG &0B00
   LDA v10E6,X:STA SID_FREQ_L,Y
   LDA v1085,X:STA SID_FREQ_H,Y
   LDX v116C
-  INC &11A6,X
+  INC v11A6,X
 
   JMP l0EEC
 
 .l0E9E
-  LDA &1194,X
+  LDA v1194,X
   BEQ l0EEC
 
   STA &0FFF
-  LDA &1197,X
+  LDA v1197,X
 
   PHA
   AND #&0F
@@ -669,43 +669,43 @@ ORG &0B00
   LSR A
   LSR A
   LSR A
-  CLC:ADC &1188,X
-  CMP &1185,X
+  CLC:ADC v1188,X
+  CMP v1185,X
   BCS l0EEC
 
   ADC #0
-  CMP &1185,X
+  CMP v1185,X
   BCC l0EEC
 
   LDY v1169,X
   JSR l0FFE
   LDX v116C
   LDY sid_channel_offset
-  LDA &1173,X
+  LDA v1173,X
 
   ; Polymorphic code
 .^sid_poly_carry
   CLC
 .^sid_poly_opcode1
-  ADC &119A
-  STA &1173,X
+  ADC v119A
+  STA v1173,X
   STA SID_FREQ_L,Y
-  LDA &1176,X
+  LDA v1176,X
 .^sid_poly_opcode2
-  ADC &119B
-  STA &1176,X
+  ADC v119B
+  STA v1176,X
   STA SID_FREQ_H,Y
 
 .^l0EEC
-  LDA &1185,X
+  LDA v1185,X
   BEQ l0F0A
 
   LSR A
-  CMP &1188,X
+  CMP v1188,X
   BNE l0F0A
 
-  LDY &11C3,X
-  LDA &124D,Y
+  LDY v11C3,X
+  LDA v124D,Y
   AND #&0F
   CLC
   ROL A
@@ -715,46 +715,46 @@ ORG &0B00
   LDY sid_channel_offset
   STA SID_CTRL,Y
 .l0F0A
-  LDY &11C3,X
-  LDA &1252,Y
+  LDY v11C3,X
+  LDA v1252,Y
   BEQ l0F5F
 
-  LDA &11A3,X
+  LDA v11A3,X
   BNE l0F37
 
-  LDA &1179,X
-  CLC:ADC &1252,Y
+  LDA v1179,X
+  CLC:ADC v1252,Y
 
   PHA
-  STA &1179,X
-  LDA &117C,X
+  STA v1179,X
+  LDA v117C,X
   ADC #0
-  STA &117C,X
+  STA v117C,X
   PHA
 
   ; Is it < 15
   CMP #15
   BCC l0F54
 
-  LDA #1:STA &11A3,X
+  LDA #1:STA v11A3,X
   JMP l0F54
 
 .l0F37
-  LDA &1179,X
-  SEC:SBC &1252,Y
+  LDA v1179,X
+  SEC:SBC v1252,Y
 
   PHA
-  STA &1179,X
-  LDA &117C,X
+  STA v1179,X
+  LDA v117C,X
   SBC #0
-  STA &117C,X
+  STA v117C,X
   PHA
 
   ; Is it >= 8
   CMP #8
   BCS l0F54
 
-  LDA #0:STA &11A3,X
+  LDA #0:STA v11A3,X
 .l0F54
   LDY sid_channel_offset
   PLA
@@ -772,7 +772,7 @@ ORG &0B00
   DEC v116F
   BPL continueplaying
 
-  LDA &116E:STA v116F
+  LDA v116E:STA v116F
 
   ; Fall through
 }
@@ -803,10 +803,10 @@ ORG &0B00
 .l0F83
 {
   LDY v1169,X
-  LDA v10E6,Y:STA &1173,X
+  LDA v10E6,Y:STA v1173,X
 
   PHA
-  LDA v1085,Y:STA &1176,X
+  LDA v1085,Y:STA v1176,X
   LDY sid_channel_offset
   STA SID_FREQ_H,Y
   PLA
@@ -823,10 +823,10 @@ ORG &0B00
   LDX #0
 .loop
   {
-  ROR &11BB
+  ROR v11BB
   BCC l0FB0
 
-  LDA v115E,X:STA &11CD,Y
+  LDA v115E,X:STA v11CD,Y
   INY
 .l0FB0
   INX
@@ -835,8 +835,8 @@ ORG &0B00
   }
 
   LDX v116C
-  LDA #&FF:STA &11CD,Y
-  LDA #0:STA &1194,X
+  LDA #&FF:STA v11CD,Y
+  LDA #0:STA v1194,X
 
   RTS
 }
@@ -865,18 +865,18 @@ ORG &0B00
 
 .keepgoing
   CLC:ADC #&40 ; +64
-  STA &1191,X
+  STA v1191,X
   JMP loop
 
 .l0FEB
   ASL A ; * 2
   TAY
-  LDA &12DD,Y
-  STA &117F,X
+  LDA v12DD,Y
+  STA v117F,X
   STA &A7
 
-  LDA &12DE,Y
-  STA &1182,X
+  LDA v12DE,Y
+  STA v1182,X
   STA &A8
 
   RTS
@@ -898,11 +898,11 @@ ORG &0B00
   SEC
   LDA v10E6,X
   SBC v10E6,Y
-  STA &119A
+  STA v119A
 
   LDA v1085,X
   SBC v1085,Y
-  STA &119B
+  STA v119B
 
   JMP l1048
 
@@ -917,14 +917,14 @@ ORG &0B00
   SEC
   LDA v10E6,Y
   SBC v10E6,X
-  STA &119A
+  STA v119A
 
   LDA v1085,Y
   SBC v1085,X
-  STA &119B
+  STA v119B
 
 .l1048
-  LDY &116E
+  LDY v116E
   LDA #0
   CLC
 .l104E
@@ -932,39 +932,39 @@ ORG &0B00
   DEY
   BPL l104E
 
-  STA &119C
+  STA v119C
   CLC
 
   LDX #&10
   LDA #0
 .loop
   {
-  ROL &119A
-  ROL &119B
+  ROL v119A
+  ROL v119B
   ROL A
   BCS l1069
 
-  CMP &119C
+  CMP v119C
   BCC l106D
 
 .l1069
-  SBC &119C
+  SBC v119C
   SEC
 .l106D
   DEX
   BNE loop
   }
 
-  ROL &119A
-  ROL &119B
+  ROL v119A
+  ROL v119B
   ASL A
-  CMP &119C
+  CMP v119C
   BCC done
 
-  INC &119A
+  INC v119A
   BNE done
 
-  INC &119B
+  INC v119B
 
 .done
   RTS
@@ -1215,6 +1215,7 @@ ORG &180E
   NEXT
 }
 
+ORG &1877
 .v1877 ; [32]
   SKIP 32
 
@@ -1418,7 +1419,7 @@ numdeadlyobj = * - deadlyobj
   LDA #0
   STA coins_tens
   STA coins
-  STA &18E7
+  STA v18E7
 
   ; Reset lives
   LDA #FULLHEALTH:STA lives
@@ -4976,7 +4977,7 @@ ORG &2B13
   LDX &034A
 .l2CEB
   {
-  LDA &1877,X
+  LDA v1877,X
   TAY
 
   LDA v2AF3,X
@@ -5799,7 +5800,7 @@ ORG &2B13
   LDA tmp3
   LSR A ; / 2
   TAX
-  LDA &1877,X
+  LDA v1877,X
   TAY
   LDA (&FB),Y ; Load from screen RAM
   AND &033E
