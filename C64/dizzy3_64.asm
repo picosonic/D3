@@ -6059,7 +6059,7 @@ ORG &2B13
 {
   LDA CIA1_PRA ; Read Joystick 2 state
   EOR #&FF ; Make bitfield active high
-  AND #JOY_MASK ; Mask to just joystick input bits
+  AND #JOY_FULL_MASK ; Mask to just joystick input bits
   STA player_input
 
   ; Merge in keypresses from keyboard to bitfield (Z, X, Shift, Return)
@@ -6071,7 +6071,7 @@ ORG &2B13
   AND player_input
   BEQ cache_input
 
-  LDA player_input:AND #JOY_MASK:STA player_input ; Mask to just joystick input bits
+  LDA player_input:AND #JOY_DIR_MASK:STA player_input ; Mask to just joystick input direction bits
   RTS
 
 .cache_input
