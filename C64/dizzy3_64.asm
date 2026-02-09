@@ -935,6 +935,7 @@ ORG &0B00
   LDA #0
   CLC
 .l104E
+.^v104E
   ADC #0 ; Value altered in l0E63
   DEY
   BPL l104E
@@ -1218,21 +1219,34 @@ ORG &0B00
   EQUB lo(SID_CH3_FREQ_L-SID_BASE) ; Channel 3 - background
 
 .v115B ; [3]
-  SKIP 3
+  EQUB &00
+  EQUB &0A
+  EQUB &14
 .v115E ; [8]
-  SKIP 8
+  EQUB &03
+  EQUB &04
+  EQUB &05
+  EQUB &07
+  EQUB &08
+  EQUB &09
+  EQUB &0C
+  EQUB &0A
 .v1166 ; [3]
-  SKIP 3
+  EQUB &01
+  EQUB &01
+  EQUB &01
 .v1169 ; [3]
-  SKIP 3
+  EQUB &19
+  EQUB &39
+  EQUB &02
 .v116C
-  SKIP 1
+  EQUB &FF
 .v116D
-  SKIP 1
+  EQUB &01
 .v116E
-  SKIP 1
+  EQUB &02
 .v116F
-  SKIP 1
+  EQUB &00
 
 .melody_chan_pos ; [3]
 {
@@ -1242,13 +1256,21 @@ ORG &0B00
 }
 
 .v1173 ; [3]
-  SKIP 3
+  EQUB &30  
+  EQUB &9C
+  EQUB &1C
 .v1176 ; [3]
-  SKIP 3
+  EQUB &04
+  EQUB &1A
+  EQUB &01
 .v1179 ; [3]
-  SKIP 3
+  EQUB &F3
+  EQUB &8C
+  EQUB &00
 .v117C ; [3]
-  SKIP 3
+  EQUB &07
+  EQUB &07
+  EQUB &00
 
 ; These are *variable* pointers in the range &1399..&1431 (melody data)
 .v117F ; pointers lo [3]
@@ -1266,55 +1288,85 @@ ORG &0B00
 }
 
 .v1185 ; [3]
-  SKIP 3
+  EQUB &03
+  EQUB &03
+  EQUB &01
 .v1188 ; [3]
-  SKIP 3
+  EQUB &03
+  EQUB &03
+  EQUB &01
 .v118B ; [3]
-  SKIP 3
+  EQUB &00
+  EQUB &00
+  EQUB &00
 .v118E ; [3]
-  SKIP 3
+  EQUB &00
+  EQUB &00
+  EQUB &00
 .v1191 ; [3] Per-channel control characters (+&40) ?
-  SKIP 3
+  EQUB &FF
+  EQUB &0E
+  EQUB &02
 .v1194 ; [3]
-  SKIP 3
+  EQUB &00
+  EQUB &00
+  EQUB &00
 .v1197 ; [3]
-  SKIP 3
+  EQUB &00
+  EQUB &00
+  EQUB &00
 .v119A
-  SKIP 1
+  EQUB &00
 .v119B
-  SKIP 1
+  EQUB &00
 .v119C
-  SKIP 1
+  EQUB &00
 .v119D ; [3]
-  SKIP 3
+  EQUB &00
+  EQUB &00
+  EQUB &00
 .v11A0 ; [3]
-  SKIP 3
+  EQUB &00
+  EQUB &00
+  EQUB &00
 .v11A3 ; [3]
-  SKIP 3
+  EQUB &00
+  EQUB &00
+  EQUB &00
 .v11A6 ; [3]
-  SKIP 3
+  EQUB &01
+  EQUB &0B
+  EQUB &15
 .v11A9
-  SKIP 1
+  EQUB &00
 .v11AA
-  SKIP 1
+  EQUB &00
 .v11AB ; [3]
-  SKIP 3
+  EQUB &0
+  EQUB &00
+  EQUB &00
 .v11AE ; [3]
-  SKIP 3
+  EQUB &00
+  EQUB &00
+  EQUB &00
 .v11B1 ; [3]
-  SKIP 3
+  EQUB &00
+  EQUB &06
+  EQUB &00
 .v11B4 ; [3]
-  SKIP 3
+  EQUB &00
+  EQUB &06
+  EQUB &00
 .v11B7
-  SKIP 1
+  EQUB &00
 .v11B8
-  SKIP 1
+  EQUB &00
 .v11B9
-  SKIP 1
+  EQUB &00
 .v11BA
-  SKIP 1
+  EQUB &00
 .v11BB
-  SKIP 1
+  EQUB &01
 
 ; Current melody
 .melodychanptr_lo ; [3]
@@ -1331,38 +1383,139 @@ ORG &0B00
 }
 
 .v11C2
-  SKIP 1
+  EQUB &02
 .v11C3 ; [3]
-  SKIP 3
+  EQUB &08
+  EQUB &18
+  EQUB &00
 .v11C6 ; [3]
-  SKIP 3
+  EQUB &03
+  EQUB &03
+  EQUB &03
 .v11C9 ; [1]
-  SKIP 1
+  EQUB &01
 .v11CA
-  SKIP 1
+  EQUB &01
 .v11CB
-  SKIP 1
+  EQUB &01
 
 .sid_channel_offset ; SID channel offset used as Y index
   EQUB &00
 
 .v11CD ; [16]
-  SKIP 16
+  EQUB &00
+  EQUB &00
+  EQUB &00
+  EQUB &00
+  EQUB &00
+  EQUB &00
+  EQUB &00
+  EQUB &00
+  EQUB &00
+  EQUB &00
+  EQUB &00
+  EQUB &00
+  EQUB &00
+  EQUB &00
+  EQUB &00
+  EQUB &00
 
-  SKIP 16 ; ** UNKNOWN **
+; 11DD ; ** UNKNOWN **
+  EQUB &00
+  EQUB &00
+  EQUB &00
+  EQUB &00
+  EQUB &00
+  EQUB &05
+  EQUB &08
+  EQUB &0C
+  EQUB &FF
+  EQUB &00
+  EQUB &00
+  EQUB &00
+  EQUB &00
+  EQUB &00
+  EQUB &00
+  EQUB &00
 
 .v11ED ; [1]
-  SKIP 1
+  EQUB &05
 .v11EE ; [1]
-  SKIP 1
+  EQUB &12
 .v11EF ; [1]
-  SKIP 1
+  EQUB &F5
 .v11F0 ; [37]
-  SKIP 37
+  EQUB &11
+  EQUB &25
+  EQUB &12
+  EQUB &15
+  EQUB &12
+  EQUB &1a
+  EQUB &01
+  EQUB &ff
+  EQUB &20
+  EQUB &0a
+  EQUB &12
+  EQUB &04
+  EQUB &16
+  EQUB &00
+  EQUB &00
+  EQUB &00
+  EQUB &00
+  EQUB &00
+  EQUB &00
+  EQUB &00
+  EQUB &00
+  EQUB &81
+  EQUB &41
+  EQUB &40
+  EQUB &80
+  EQUB &80
+  EQUB &80
+  EQUB &80
+  EQUB &80
+  EQUB &10
+  EQUB &10
+  EQUB &10
+  EQUB &10
+  EQUB &10
+  EQUB &10
+  EQUB &10
+  EQUB &10
 .v1215 ; [16]
-  SKIP 16
+  EQUB &1f
+  EQUB &ff
+  EQUB &1f
+  EQUB &51
+  EQUB &53
+  EQUB &f9
+  EQUB &24
+  EQUB &33
+  EQUB &f0
+  EQUB &e0
+  EQUB &00
+  EQUB &00
+  EQUB &00
+  EQUB &00
+  EQUB &00
+  EQUB &00
 .v1225 ; [16]
-  SKIP 16
+  EQUB &81
+  EQUB &40
+  EQUB &81
+  EQUB &81
+  EQUB &81
+  EQUB &40
+  EQUB &81
+  EQUB &81
+  EQUB &40
+  EQUB &80
+  EQUB &10
+  EQUB &10
+  EQUB &10
+  EQUB &10
+  EQUB &10
+  EQUB &10
 
 .melodyconfigs ; [24]
 {
@@ -1388,23 +1541,23 @@ ORG &0B00
 }
 
 .v124D ; [1]
-  SKIP 1
+  EQUB &00
 .v124E ; [1]
-  SKIP 1
+  EQUB &00
 .v124F ; [1]
-  SKIP 1
+  EQUB &00
 .v1250 ; [1]
-  SKIP 1
+  EQUB &00
 .v1251 ; [1]
-  SKIP 1
+  EQUB &00
 .v1252 ; [1]
-  SKIP 1
+  EQUB &00
 .v1253 ; [1]
-  SKIP 1
+  EQUB &00
 .v1254 ; [137]
   SKIP 137
 .v12DD ; [1]
-  SKIP 1
+  EQUB &8D
 .v12DE ; [49]
   SKIP 49
 
