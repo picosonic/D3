@@ -4959,7 +4959,7 @@ numdeadlyobj = * - deadlyobj
   LDA flip_lut,X
   LDX &FF ; Restore X
 
-  STA &4A80,X
+  STA v4A80,X
   DEX
   INY
   CPY #&3F ; < 63
