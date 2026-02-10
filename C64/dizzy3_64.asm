@@ -8147,12 +8147,12 @@ INCBIN "screendump.bin"
   RTS
 }
 
-; &7F5F..&7F80 UNKNOWN
+; &7F5F - UNKNOWN
+  EQUB &31, &ea, &66, &fe, &47, &fe, &4a, &f3, &91, &f2, &0e, &f2, &50, &f2, &33, &f3, &57, &f1, &ca, &f1, &ed, &f6, &3e, &f1, &2f, &f3, &66, &fe, &a5, &f4, &ed, &f5
 
-ORG &7F81
-
-.l7f81
+.l7F7F
 {
+  LDA #&00
   TAY
 .l7F82     
   STA &0002,Y
@@ -8201,9 +8201,8 @@ ORG &7F81
   RTS
 }
 
-; &7FCA..&7FD3 UNKNOWN
+  EQUB &6A, &FC, &CD, &FB, &31, &EA, &2C, &F9 ; UNKNOWN
 
-ORG &7FD2
 .l7FD2
 {
   LDA #&7F
@@ -8236,7 +8235,17 @@ INCBIN "roomdata.bin"
 
   EQUB &00, &00, &00, &00, &00, &00, &00, &00, &00
   EQUB &00, &00, &00, &00, &00, &00, &00, &00, &00, &00, &00, &00, &00, &00, &00, &00
-  EQUB &00, &00, &dd, &8e, &18, &d4, &ca, &8e, &02, &dc, &a9, &07, &8d, &00, &dd, &a9
+  EQUB &00, &00, &dd, &8e, &18, &d4, &ca
+
+.lA3F7 ; UNKNOWN snippet 
+{
+  STX &DC02
+
+  LDA #&07
+  STA &DD00
+
+  EQUB &A9 ; LDA ...
+}
 
 ; &A400
 ; Horizontal flip look up table
