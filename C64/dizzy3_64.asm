@@ -1555,11 +1555,195 @@ ORG &0B00
 .v1253 ; [1]
   EQUB &00
 .v1254 ; [137]
-  SKIP 137
+  EQUB &00
+  EQUB &42
+  EQUB &00
+  EQUB &E9
+  EQUB &07
+  EQUB &00
+  EQUB &51
+  EQUB &00
+  EQUB &00
+  EQUB &42
+  EQUB &08
+  EQUB &9C
+  EQUB &28
+  EQUB &43
+  EQUB &00
+  EQUB &00
+  EQUB &00
+  EQUB &44
+  EQUB &03
+  EQUB &E9
+  EQUB &87
+  EQUB &42
+  EQUB &04
+  EQUB &00
+  EQUB &04
+  EQUB &44
+  EQUB &02
+  EQUB &A8
+  EQUB &03
+  EQUB &00
+  EQUB &46
+  EQUB &4A
+  EQUB &00
+  EQUB &42
+  EQUB &04
+  EQUB &58
+  EQUB &08
+  EQUB &00
+  EQUB &46
+  EQUB &54
+  EQUB &00
+  EQUB &44
+  EQUB &07
+  EQUB &66
+  EQUB &08
+  EQUB &00
+  EQUB &00
+  EQUB &00
+  EQUB &00
+  EQUB &44
+  EQUB &07
+  EQUB &59
+  EQUB &08
+  EQUB &42
+  EQUB &00
+  EQUB &00
+  EQUB &00
+  EQUB &44
+  EQUB &07
+  EQUB &9C
+  EQUB &08
+  EQUB &42
+  EQUB &0A
+  EQUB &00
+  EQUB &00
+  EQUB &44
+  EQUB &04
+  EQUB &7E
+  EQUB &03
+  EQUB &42
+  EQUB &D0
+  EQUB &00
+  EQUB &00
+  EQUB &42
+  EQUB &03
+  EQUB &59
+  EQUB &02
+  EQUB &00
+  EQUB &DA
+  EQUB &40
+  EQUB &00
+  EQUB &22
+  EQUB &03
+  EQUB &79
+  EQUB &02
+  EQUB &42
+  EQUB &9A
+  EQUB &00
+  EQUB &00
+  EQUB &44
+  EQUB &02
+  EQUB &AC
+  EQUB &02
+  EQUB &42
+  EQUB &23
+  EQUB &00
+  EQUB &02
+  EQUB &42
+  EQUB &02
+  EQUB &96
+  EQUB &08
+  EQUB &00
+  EQUB &46
+  EQUB &4A
+  EQUB &00
+  EQUB &44
+  EQUB &07
+  EQUB &9E
+  EQUB &08
+  EQUB &42
+  EQUB &0A
+  EQUB &00
+  EQUB &00
+  EQUB &44
+  EQUB &03
+  EQUB &69
+  EQUB &07
+  EQUB &00
+  EQUB &10
+  EQUB &00
+  EQUB &00
+  EQUB &88
+  EQUB &07
+  EQUB &A7
+  EQUB &08
+  EQUB &01
+  EQUB &46
+  EQUB &08
+  EQUB &01
+  EQUB &81
+  EQUB &07
+  EQUB &00
+  EQUB &08
+  EQUB &11
+  EQUB &46
+  EQUB &08
+  EQUB &01
 .v12DD ; [1]
   EQUB &8D
 .v12DE ; [49]
-  SKIP 49
+  EQUB &13
+  EQUB &91
+  EQUB &13
+  EQUB &B1
+  EQUB &13
+  EQUB &D9
+  EQUB &13
+  EQUB &FF
+  EQUB &13
+  EQUB &28
+  EQUB &14
+  EQUB &85
+  EQUB &14
+  EQUB &51
+  EQUB &14
+  EQUB &72
+  EQUB &14
+  EQUB &EB
+  EQUB &14
+  EQUB &05
+  EQUB &15
+  EQUB &23
+  EQUB &15
+  EQUB &7E
+  EQUB &15
+  EQUB &B3
+  EQUB &15
+  EQUB &EB
+  EQUB &15
+  EQUB &1F
+  EQUB &16
+  EQUB &43
+  EQUB &16
+  EQUB &86
+  EQUB &16
+  EQUB &8B
+  EQUB &16
+  EQUB &97
+  EQUB &14
+  EQUB &08
+  EQUB &16
+  EQUB &14
+  EQUB &16
+  EQUB &B7
+  EQUB &16
+  EQUB &EE
+  EQUB &16
+  EQUB &31
+  EQUB &17
 
 INCLUDE "melodydata.asm"
 
@@ -7855,7 +8039,7 @@ cheatcodelen = * - eclipse
 
 ; ?? Unreachable code ??
 {
-  ; $DD00 = %xxxxxx11 -> Bank0: $0000-$3FFF
+  ; &DD00 = %xxxxxx11 -> Bank0: &0000-&3FFF
   LDA #&C7:STA CIA2_PRA
 
   LDA #&1B:STA GFX_VICII_REG1 ; rst8|ecm|bmm|DEN|RSEL|YSCROLL - Bitmap
@@ -7867,13 +8051,13 @@ cheatcodelen = * - eclipse
 
 .l3B6D
 {
-  ; $DD00 = %xxxxxx10 -> Bank1: $4000-$7FFF
+  ; &DD00 = %xxxxxx10 -> Bank1: &4000-&7FFF
   LDA #&C6:STA CIA2_PRA
 
   LDA #&3B:STA GFX_VICII_REG1 ; rst8|ecm|BMM|DEN|RSEL|YSCROLL - Character
 
-  ; $D018 = %xxxx100x -> CharMem is at $2000 (#8192)
-  ; $D018 = %0111xxxx -> ScreenMem is at $1c00 (#7168)
+  ; &D018 = %xxxx100x -> CharMem is at &2000 (#8192)
+  ; &D018 = %0111xxxx -> ScreenMem is at &1c00 (#7168)
   LDA #&78:STA GFX_MEM_PTR
 
   LDA #COLOUR_BLACK:STA GFX_BORDER_COLOUR
@@ -7899,11 +8083,28 @@ ORG &5800
 INCBIN "attribs.bin"
 ;&58F5 to &5B92 = solidity bitmap (&40=solid, &20=fire, &10=water, &00=empty)
 
-ORG &5C00
+screen_attribs = &5C00
 ; to 5FE7 = 8x8 screen/border colour attribs
-.screen_attribs
 
-ORG &5FF8
+.u5FE8 ; UNKNOWN
+  EQUB &5f
+  EQUB &44
+  EQUB &26
+  EQUB &53
+  EQUB &45
+  EQUB &43
+  EQUB &00
+  EQUB &fb
+  EQUB &5f
+  EQUB &46
+  EQUB &26
+  EQUB &53
+  EQUB &42
+  EQUB &43
+  EQUB &20
+  EQUB &57
+
+; &5FF8
 .sprite_pointer ; hw sprite "pointers" [8]
 {
   EQUB &4E ; sprite 0
@@ -7917,26 +8118,117 @@ ORG &5FF8
 }
 
 .screen_memory
-; &6000..&7F3F = screen RAM (320x200 hires bitmap mode, $d011=$3b, $d016=8)
+; &6000..&7F3F = screen RAM (320x200 hires bitmap mode, &d011=&3b, &d016=8)
 INCBIN "screendump.bin"
 
 .l7F40
 {
-  ; $DD00 = %xxxxxx10 -> Bank1: $4000-$7FFF
+  ; &DD00 = %xxxxxx10 -> Bank1: &4000-&7FFF
   LDA #&C6:STA CIA2_PRA
 
   LDA #&3B:STA GFX_VICII_REG1 ; rst8|ecm|BMM|DEN|RSEL|YSCROLL - Character
 
-  ; $D018 = %xxxx100x -> CharMem is at $2000 (#8192)
-  ; $D018 = %0111xxxx -> ScreenMem is at $1c00 (#7168)
+  ; &D018 = %xxxx100x -> CharMem is at &2000 (#8192)
+  ; &D018 = %0111xxxx -> ScreenMem is at &1c00 (#7168)
   LDA #&78:STA GFX_MEM_PTR
 
+.l7F4F
   LDA #COLOUR_BLACK:STA GFX_BORDER_COLOUR
+
+  RTS
+
+  EQUB &00, &00, &C3 ; UNKNOWN
+
+.l7F58
+  STA &0314,Y
+  DEY
+  BPL l7F4F
 
   RTS
 }
 
-; &7F55 .. &7FFF UNKNOWN
+; &7F5F..&7F80 UNKNOWN
+
+ORG &7F81
+
+.l7f81
+{
+  TAY
+.l7F82     
+  STA &0002,Y
+  STA &0200,Y
+  CPY #&18
+  BCC l7F90
+
+  CPY #&1A
+  BCC l7F93
+
+.l7F90     
+  STA &0300,Y
+
+.l7F93     
+  INY
+  BNE l7F82
+
+  LDX #&3C
+  LDY #&03
+  STX &B2
+  STY &B3
+
+  LDA #&08
+  STA &BE
+
+  LDY #&80
+  LDA &8000
+  TAX
+  EOR #&FF
+  STA &8000
+  CMP &8000
+  STX &8000
+  BNE l7FB7
+
+  LDY #&A0
+.l7FB7
+  LDX #&00
+  STY &C2
+  CLC
+
+  JSR &FE2D ; READST
+
+  LDA #&08:STA &0282 ; Bottom of memory for OS (hi)
+  LDA #&04:STA &0288 ; Text screen memory addr (hi)
+
+  RTS
+}
+
+; &7FCA..&7FD3 UNKNOWN
+
+ORG &7FD2
+.l7FD2
+{
+  LDA #&7F
+  STA &DC0D ; CIA1 ICR
+  STA &DD0D ; CIA2 ICR
+  STA CIA1_PRA
+
+  LDA #&08
+  STA &DC0E ; CIA1 Timer A control
+  STA &DD0E ; CIA2 Timer A control
+  STA &DC0F ; CIA1 Timer B control
+  STA &DD0F ; CIA2 Timer B control
+
+  LDX #&00
+  STX &DC03 ; CIA1 Port B DDR
+  STX &DD03 ; CIA2 Port B DDR
+  STX SID_VOL_FLT
+  DEX
+  STX &DC02 ; CIA Port A DDR
+
+  LDA #&07
+  STA CIA2_PRA
+
+  EQUB &A9 ; LDA #..
+}
 
 ORG &8000
 .roomdata
