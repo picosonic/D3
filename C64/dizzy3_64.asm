@@ -34,87 +34,7 @@ melody_ptr = &00A9
 
 .v00FF
 
-startofgamevars = &033A ; start of game variables
-
-frmx = &033A ; X position
-tmp1 = &033A
-frmy = &033B ; Y position
-frmattr = &033C ; attrib
-tmp3 = &033C
-.v033D
-.v033E ; ?? set to 8, compared to 0, decremented, set to &F0 (even X pos) or &0F (odd X pos) ??
-hitbitflags = &033F ; hit-detection bitmap flags
-.v0340 ; frame
-.v0342 ; ?? inc and dec, set to 01/03/06 ?? maybe jump/gravity related ??
-cursorindex = &0344
-.v0345 ; cache for X reg
-.v0346 ; cache for X reg, and index
-.v0347 ; cache for Y reg, and index
-.v0349 ; ?? set to 0, incremented ??
-.v034A ; ?? set to 0, used as an index ??
-.v034B ; ?? linked to &033d, compared, incremented ??
-.v034E ; cache for X reg, ??
-dizzyx = &0352
-.v0354 ; .. same as 0355 ..
-.v0355 ; ?? set to dizzyx-frmx, but never used ??
-.v0356 ; .. same as 0357 ..
-.v0357 ; ?? set to dizzyx+frmx, but never used ??
-dizzyy = &035C
-.v035E ; .. same as 0360 ..
-.v035F ; .. same as 0361 ..
-.v0360 ; ?? set to dizzyy-frmx, but never used ??
-.v0361 ; ?? set to dizzyy+frmx, but never used ??
-.v0366 ; [2]
-.v0368 ; ?? set to 10 and 5, but never used ??
-.v0369 ; ?? set to 9 and 6, but never used ??
-.v036A ; ?? set to 6 and 9, but never used ??
-.v036B ; ?? set to 5 and 10, but never used ??
-.v0370 ; [10] ?? set to 0 but never used ??
-.v037A ; [10] related to dizzyy
-.v0384 ; [20?] related to dizzyx
-msgbox_width = &0398
-msgbox_height = &0399
-cursorx_offs = &039A ; adjusted char cursor X
-cursorx = &039B ; char cursor X
-cursory = &039C ; char cursor Y
-index = &03B7
-deathid = &03B7
-olddizzyroom = &03B8 ; roomno to reincarnate into
-lives = &03B9
-dragonflamepos = &03BA ; 0=no flames. Active range is 66 down to 42
-.v03BB ; set to 0, incremented, decremented, compared to !=0, <7, !=255, dragon related
-gameloopdelay = &03BC ; main loop delay, default 15, dragon mouth open 11, decrement each flame
-.v03BD ; armorog related
-liftwait = &03BE ; timeout to delay lift movement when lift changes direction
-cursorattr = &03BF ; char attrib
-player_input = &03C0
-.v03C1 ; set to 0/1/2, related to movement/animation
-player_direction = &03C2 ; sprite animation direction
-.v03C3 ; ?? sprite animation frame related ??
-gamecounter = &03C4 ; pace of game actions
-.v03C5 ; incremented index into ?? strings table ??
-.v03C6 ; byte read using index from &03C5
-.v03C7 ; ?? animation sequence related ??
-.v03C8 ; ?? movement or animation related 0/1/2/3 ??
-.v03C9 ; ?? sprite animation frame related ??
-.v03D5 ; set to &FF and &00
-olddizzyx = &03D6 ; position where Dizzy entered current room
-olddizzyy = &03D7 ;   used for where to reincarnate to
-prev_player_input = &03D8 ; cache for input from player when fire button/return was last pressed
-inventoryindex = &03D9
-usedobj = &03D9 ; id of objected being interacted with from inventory
-.v03DA ; related to X position of water frames, set to 0
-multi_tmp = &03DB ; multi-purpose temporary variable
-attrib_offset = &03DC ; location of screen attribs to use, &00 = &5C00, &58 = &0400
-.v03DD ; max object id to draw
-.v03DF ; mostly set to &FF, but can take the value of &03E2 when non-zero
-.v03E0 ; set to 0 when entering rooms, can be frmy/8
-.v03E1 ; always &B8 (184), compared against frmy
-.v03E2 ; related to c64 palette conversion and attributes
-.v03E3 ; Y related when printing text, set to 8 (lives/coins), 24 (room name), and 48 ??
-roomno = &03E5
-
-endofgamevars = &03FF ; end of game variables
+INCLUDE "gamevars.asm"
 
 ; This just seems to always be full of &20 ??
 otherattribs = &0400 ; Set of screen attributes
@@ -4689,7 +4609,7 @@ numdeadlyobj = * - deadlyobj
   CMP #55
   BCS l2847
 
-  LDA #0:STA &03BD
+  LDA #0:STA v03BD
 
   ; We're done with Armorog, move on to dragons
 .go_dragonsrou
@@ -4697,11 +4617,11 @@ numdeadlyobj = * - deadlyobj
 
 .l283D
   ; Is it >= 40
-  LDA &03BD
-  CMP #&28
+  LDA v03BD
+  CMP #40
   BCS l2847
 
-  INC &03BD
+  INC v03BD
 .l2847
   LDA #attr_offs_screen:STA attrib_offset
   JSR drawobjframe
@@ -4714,8 +4634,8 @@ numdeadlyobj = * - deadlyobj
   STA objs_frames+obj_grunt
 
   ; Is it < 32
-  LDA &03BD
-  CMP #&20
+  LDA v03BD
+  CMP #32
   BCC done
 
   ; Check which way grunt is facing
