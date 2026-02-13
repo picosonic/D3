@@ -253,7 +253,7 @@ ORG &033A
 .roomno
   EQUB &00
 
-  SKIP 25
+  SKIP 26
 
 .endofgamevars ; end of game variables
 

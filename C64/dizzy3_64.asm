@@ -37,7 +37,7 @@ melody_ptr = &00A9
 INCLUDE "gamevars.asm"
 
 ; This just seems to always be full of &20 ??
-otherattribs = &0400 ; Set of screen attributes
+.otherattribs ; &0400 Set of screen attributes
 
 attr_offs_screen = hi(&5C00 - &5C00)
 attr_offs_other = hi(&5C00 - otherattribs)
