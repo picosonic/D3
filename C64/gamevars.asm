@@ -170,6 +170,7 @@ ORG &033A
   EQUB &00
 .index
 .deathid
+.v03B7
   EQUB &00
 .olddizzyroom ; &03B8 ; roomno to reincarnate into
   EQUB &00
