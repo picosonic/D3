@@ -579,6 +579,7 @@ drawbox = 250 ; YES
 
   EQUS mpen+5,mxy+6,64,drawbox,21,4,mpen+6
   EQUS mxy+12,88,"&YOU:DISAPPOINT:ME<"
+  uE290 = * + 19
   EQUS mxy+14,96, "OF:COURSE:WE:DO@'",mend
 
   EQUS mpen+7,mxy+8,80,drawbox,21,5,mpen+3
@@ -745,6 +746,7 @@ drawbox = 250 ; YES
 .puteggbackmess
   EQUS mpen+7,mxy+2,48,drawbox,20,6,mpen+3
   EQUS mxy+11,72,"YOU:PUT:THE:EGG"
+uEA60 = * + 8
   EQUS mxy+8,80, "BACK:INTO:THE:NEST"
   EQUS mxy+12,88,"AND:THE:DRAGON"
   EQUS mxy+8,96, "ALLOWS:YOU:TO:PASS",mend,mend
