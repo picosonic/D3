@@ -8,7 +8,7 @@ ORG &033A
 .frmy ; Y position
   EQUB &97
 .frmattr ; attrib
-.tmp3
+.tmp2
   EQUB &06
 .v033D
   EQUB &01
@@ -17,6 +17,7 @@ ORG &033A
 .hitbitflags ; hit-detection bitmap flags
   EQUB &00
 .v0340 ; frame
+.tmp3
   EQUB &3A
   EQUB &00
 .v0342 ; ?? inc and dec, set to 01/03/06 ?? maybe jump/gravity related ??

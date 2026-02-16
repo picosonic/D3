@@ -1614,7 +1614,7 @@ numdeadlyobj = * - deadlyobj
   JSR install_ISR
 
   ; Zero-out main game vars &033A to &03FF
-  LDX #endofgamevars-startofgamevars+1
+  LDX #endofgamevars-startofgamevars
   LDA #0
 .zerovar_loop
   {
@@ -1650,9 +1650,10 @@ numdeadlyobj = * - deadlyobj
   JSR cleargamescreen
 
   LDA #attr_offs_other:STA attrib_offset
-  LDA #TITLEROOM:STA roomno
 
-  JSR l2E79
+  LDA #TITLEROOM:STA roomno
+  JSR drawroom
+
   JSR convertpalette
   JSR drawcoincount
 
@@ -2356,7 +2357,7 @@ numdeadlyobj = * - deadlyobj
   BEQ innerloop ; = 1
   }
 
-  DEC dizzyy ; go up due to stairs
+  DEC dizzyy ; go up due to stairs or slope
   JMP l1D41
 
 .l1D9D
@@ -2389,7 +2390,7 @@ numdeadlyobj = * - deadlyobj
 {
   ; Check Dizzy X position >= 2 (not gone off screen to left)
   CMP #2
-  BCS checkvertical
+  BCS checkvertup
 
   ; Dizzy has gone off screen to the left
   LDA #56:STA dizzyx ; Set Dizzy position to far right
@@ -2398,7 +2399,7 @@ numdeadlyobj = * - deadlyobj
   JMP enternewroom
 }
 
-.checkvertical
+.checkvertup
 {
   ; Check Dizzy Y position < 128
   LDA dizzyy
@@ -2407,8 +2408,9 @@ numdeadlyobj = * - deadlyobj
 
   ; Check Dizzy Y position >= 192
   CMP #192
-  BCS l1DE7
+  BCS checkvertdown
 
+  ; Dizzy has gone off the bottom of the screen
   LDA #0:STA dizzyy ; Set Dizzy position to top
   LDA roomno:SEC:SBC #MAP_WIDTH:STA roomno ; Go down
 
@@ -2418,14 +2420,14 @@ numdeadlyobj = * - deadlyobj
   JMP enternewroom
 }
 
-.l1DE7
+.checkvertdown
 {
   ; Check Dizzy Y position < 192 - this will _never_ be the case
   LDA dizzyy
   CMP #192
   BCC setdizzyspritepos
 
-  ; Dizzy is going up a screen
+  ; Dizzy has gone off the top of the screen
   LDA #114:STA dizzyy ; Set Dizzy position to bottom
   LDA roomno:CLC:ADC #MAP_WIDTH:STA roomno
 
@@ -4902,11 +4904,11 @@ numdeadlyobj = * - deadlyobj
   ;   so (1)=6, (3)=10 e.t.c.
 
   SEI ; Disable interrupts
-  LDA #0:STA SID_CH1_CTRL
+  LDA #0:STA SID_CH1_CTRL ; Voice off, release cycle
   LDA #9:STA SID_VOL_FLT ; Volume at 60%
   LDA gamecounter:AND #&02:ASL A:CLC:ADC #6:STA SID_CH1_FREQ_H
-  LDA #0:STA SID_CH1_SURL ; Sustain=0 / Release=0
-  LDA #&10:STA SID_CH1_ATDK ; Attack=1 / Decay=0
+  LDA #0:STA SID_CH1_SURL ; Sustain=0 (vol) / Release=0 (6ms)
+  LDA #&10:STA SID_CH1_ATDK ; Attack=1 (8ms) / Decay=0 (6ms)
   LDA #&81:STA SID_CH1_CTRL ; Noise / Test
   CLI ; Enable interrupts
 
@@ -5006,8 +5008,10 @@ ORG &2B13
 ; frmattr
 .frame
 {
+  tmpframe = tmp3
+
   STA &FB
-  STA v0340 ; frame
+  STA tmpframe ; frame
   STX v0345 ; Cache X
 
   LDA frmx
@@ -5037,7 +5041,7 @@ ORG &2B13
   ; Check for frame being a water sprite
 
   ; Is frame < 91
-  LDA v0340
+  LDA tmpframe
   CMP #SPR_WATER
   BCC notwater
 
@@ -5161,7 +5165,7 @@ ORG &2B13
   LDA (&B4),Y:STA v033E
 
   ; Is it < 48
-  LDA v0340 ; frame
+  LDA tmpframe ; frame
   CMP #'0'
   BCC notfont
 
@@ -5495,9 +5499,12 @@ ORG &2B13
   RTS
 }
 
-.l2E79
+; Draw room in A-reg
+.drawroom
 {
-  STA v0340 ; Store roomno
+  roomoffs = tmp3
+
+  STA roomoffs ; Store roomno
   ; Check it is a valid room
   CMP #ATTICROOM+1
   BCC validroom
@@ -5507,7 +5514,7 @@ ORG &2B13
 .validroom
   ; Set up pointer (FB) to roomtable[roomno]
   LDA #hi(roomdata):STA &FC
-  LDA v0340:CLC:ADC v0340 ; * 2
+  LDA roomoffs:CLC:ADC roomoffs ; * 2
   BCC samepage
 
   INC &FC
@@ -5651,19 +5658,20 @@ ORG &2B13
   BCC flameloop
   }
 
+  ; See if we're in a room with a dragon in
   LDA roomno
   CMP #DRAGONSLAIRROOM
-  BNE l2F7A
+  BNE checkwideeyeddragon
 
   LDA #12
-  JMP l2F80
+  JMP setdragonattr
 
-.l2F7A
+.checkwideeyeddragon
   CMP #WIDEEYEDDRAGONROOM
-  BNE l2FAA
+  BNE closedragonmouth
 
   LDA #10
-.l2F80
+.setdragonattr
   STA &FF
 
   ; Loop through dragons neck/head objects to reset Y position
@@ -5672,7 +5680,7 @@ ORG &2B13
   {
   LDA roomno:STA objs_rooms,X
 
-  LDA &FF:STA objs_attrs,X
+  LDA &FF:STA objs_attrs,X ; set attributes on all neck parts 
   LDA orig_ylocs,X:STA objs_ylocs,X ; Reset Y position
 
   INX
@@ -5680,34 +5688,37 @@ ORG &2B13
   BCC neckresetloop
   }
 
-  LDA #11:STA gameloopdelay
+  LDA #11:STA gameloopdelay ; Make game run faster due to drawing dragon neck
   LDA objs_attrs+obj_dragonhead:AND #PAL_WHITE:STA objs_attrs+obj_dragonhead
-  JMP l2FAF
+  JMP dragonmouthdone
 
-.l2FAA
-  ; Set dragon's head to mouth closed
+.closedragonmouth
+  ; Set dragon's head to mouth closed (when not in room with a dragon)
   LDA #SPR_DRAGONHEADCLOSED:STA objs_frames+obj_dragonhead
-.l2FAF
+
+.dragonmouthdone
   LDA SPR_COLLISION2
   LDA SPR_COLLISION2
-  LDA #&FF:STA v03DF
+  LDA #&FF:STA v03DF ; Save dragon attributes
   JSR cleargamescreen
 
   LDA roomno
-  JSR l2E79
+  JSR drawroom
 
+  ; Are we in castle dungeon
   LDA roomno
   CMP #CASTLEDUNGEONROOM
   BNE checkallotment
 
-  ; Check if jug of water has been used
+  ; Castle dungeon
+  ;   Check if jug of water has been used
   LDA objs_rooms+obj_jugofwater
   CMP #OFFMAP
   BEQ checkportcullis
 
   ; Dungeon fire has not been put out, so draw it too
   LDA #FIREROOM
-  JSR l2E79
+  JSR drawroom
 
   JMP checkportcullis
 
@@ -5715,14 +5726,15 @@ ORG &2B13
   CMP #ALLOTMENTROOM
   BNE checkportcullis
 
-  ; Check if bucket has been used on bean
+  ; Allotment
+  ;   Check if bucket has been used on bean
   LDA objs_rooms+obj_bucket
   CMP #OFFMAP
   BNE checkportcullis
 
   ; Bean has been watered, so draw beanstalk too
   LDA #BEANSTALKROOM
-  JSR l2E79
+  JSR drawroom
 
 .checkportcullis
   ; See if Dizzy is in the moat room
@@ -6015,8 +6027,8 @@ ORG &2B13
   ; Calculate X position
   LDA dizzyx
   CLC:ADC frmx ; Add X offset
-  STA tmp3
-  DEC tmp3
+  STA tmp2
+  DEC tmp2
 
   ; Calculate Y position
   LDA dizzyy
@@ -6047,7 +6059,7 @@ ORG &2B13
   STA &FB ; update screen RAM lo
 
   ; Calculate hit-detection offset from X
-  LDA tmp3
+  LDA tmp2
   LSR A      ; / 2
   CLC:ADC #4 ; + 4
   TAY
@@ -6055,7 +6067,7 @@ ORG &2B13
   STA hitbitflags   ; Store result
 
   ; Check for even number of X position
-  LDA tmp3
+  LDA tmp2
   AND #&01
   BEQ l31B5
 
@@ -6069,7 +6081,7 @@ ORG &2B13
 .l31B7
   STA v033E ; either &F0 (even X pos) or &0F (odd X pos)
 
-  LDA tmp3
+  LDA tmp2
   LSR A ; / 2
   TAX
   LDA v1877,X
@@ -6096,7 +6108,9 @@ ORG &2B13
 ; A reg of &00 = 3,344 cycles / &FF = 848,148 cycles
 .delay
 {
-  STA v0340 ; (4) Delay amount
+  tmpdelay = tmp3
+
+  STA tmpdelay ; (4) Delay amount
   STX v0345 ; (4) Preserve X
 
 .loop
@@ -6114,7 +6128,7 @@ ORG &2B13
   BNE innerloop ; (3 or 2 when not taken)
   }
 
-  DEC v0340 ; (6)
+  DEC tmpdelay ; (6)
   BNE loop ; (3 or 2 when not taken)
   }
 
@@ -6528,12 +6542,14 @@ ORG &2B13
   LDA #5:STA v036B
 
   LDY #3
-.l349F
+  {
+.loop
   JSR l3440
 
   DEC sprite_pointer
   DEY
-  BNE l349F ; Loop until reverse death animation "large face", i.e. &34
+  BNE loop ; Loop until reverse death animation "large face", i.e. &34
+  }
 
   LDA #0
   STA v03C8
@@ -6544,8 +6560,8 @@ ORG &2B13
   STA v03C1
 
   LDX #1
-.loop
   {
+.loop
   STX v034E
   JSR l313F
 
