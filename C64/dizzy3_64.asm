@@ -2820,7 +2820,7 @@ numdeadlyobj = * - deadlyobj
 
 .gotpotion
   LDX #obj_dozy
-  JSR ruboutframe
+  JSR ruboutobjframe
 
   ; Position Dozy
   LDA #60:STA objs_xlocs+obj_dozy
@@ -2920,14 +2920,14 @@ numdeadlyobj = * - deadlyobj
 .loop
   {
   LDX #obj_prisonliftbottom
-  JSR ruboutframe
+  JSR ruboutobjframe
 
   ; Move bottom of lift downwards
   INC objs_ylocs+obj_prisonliftbottom
   JSR redrawobj
 
   INX ; switch from liftbottom to daisy
-  JSR ruboutframe
+  JSR ruboutobjframe
 
   ; Also move Daisy downwards (she's on the lift)
   INC objs_ylocs+obj_daisy
@@ -2959,7 +2959,7 @@ numdeadlyobj = * - deadlyobj
   BCC dodaisyrou
 
   LDX #obj_goldenegg2
-  JSR ruboutframe
+  JSR ruboutobjframe
 
   ; Remove golden egg
   LDA #OFFMAP:STA objs_rooms+obj_goldenegg2
@@ -4021,7 +4021,7 @@ numdeadlyobj = * - deadlyobj
   BEQ moveleft
 
   ; Move rat right
-  JSR ruboutframe
+  JSR ruboutobjframe
 
   INC objs_xlocs+obj_rat
   JSR drawobjframe
@@ -4036,7 +4036,7 @@ numdeadlyobj = * - deadlyobj
   CMP #96
   BCC gatorrou
 
-  JSR ruboutframe
+  JSR ruboutobjframe
 
   ; Remove rat
   LDA #OFFMAP:STA objs_rooms+obj_rat
@@ -4059,7 +4059,7 @@ numdeadlyobj = * - deadlyobj
 .moveleft
   ; Move rat left
   LDX #obj_rat
-  JSR ruboutframe
+  JSR ruboutobjframe
 
   DEC objs_xlocs+obj_rat
   JSR drawobjframe
@@ -4124,7 +4124,7 @@ numdeadlyobj = * - deadlyobj
 .moveup
   ; Move portcullis up
   LDX #obj_portcullis
-  JSR ruboutframe
+  JSR ruboutobjframe
 
   ; Move portcullis up
   DEC objs_ylocs+obj_portcullis
@@ -4172,7 +4172,7 @@ numdeadlyobj = * - deadlyobj
 
   ; Update Dozy Y position
   LDX #obj_dozy
-  JSR ruboutframe
+  JSR ruboutobjframe
 
   LDA gamecounter
   AND #&04
@@ -4220,7 +4220,7 @@ numdeadlyobj = * - deadlyobj
   JSR redrawobj
 
   ; Remove bottom of lift
-  INX:JSR ruboutframe
+  INX:JSR ruboutobjframe
 
   INC objs_ylocs,X ; Move bottom of lift downwards an redraw
   JSR redrawobj
@@ -4241,7 +4241,7 @@ numdeadlyobj = * - deadlyobj
   JSR redrawobj
 
   ; Remove bottom of lift
-  INX:JSR ruboutframe
+  INX:JSR ruboutobjframe
 
   DEC objs_ylocs,X ; Move bottom of lift upwards and redraw
   JSR redrawobj
@@ -4485,7 +4485,7 @@ numdeadlyobj = * - deadlyobj
   LDA #ATTR_REVERSE+PLOT_XOR+PAL_RED:STA objs_attrs+obj_grunt
 
   LDX #obj_grunt
-  JSR ruboutframe
+  JSR ruboutobjframe
 
 .done
   LDA #attr_offs_screen:STA attrib_offset
@@ -4551,7 +4551,7 @@ numdeadlyobj = * - deadlyobj
   LDX #obj_dragonhead
 .erasedragonneck
   {
-  JSR ruboutframe
+  JSR ruboutobjframe
 
   DEX
   ; loop through each of the dragon head/neck objects
@@ -5742,28 +5742,32 @@ ORG &2B13
   CMP #MOATROOM
   BNE skipportcullis
 
-  ; Set portcullis height
+  ; Moat and portcullis
+  ;   Set portcullis height
   LDA #96:STA objs_ylocs+obj_portcullis
-.l2FF5
+.portcullisloop
+  {
   LDX #obj_portcullis
   JSR drawobjframe
 
-  ; Check portcullis height > 136
+  ; Check portcullis height >= 136, i.e. is it fully drawn
   LDA objs_ylocs+obj_portcullis
   CMP #136
   BCS skipportcullis
 
-  ; Move portcullis down
+  ; Move portcullis draw position down
   CLC:ADC #4
   STA objs_ylocs+obj_portcullis
 
-  JMP l2FF5
+  JMP portcullisloop ; Draw next piece of portcullis
+  }
 
 .skipportcullis
   LDA #&FF:STA v03D5
-  LDA #noofmoving:STA v03DD
 
+  LDA #noofmoving:STA v03DD
   JSR drawobjects
+
   JSR drawlifts
   JSR convertpalette
 
@@ -6301,7 +6305,7 @@ ORG &2B13
   RTS
 }
 
-.ruboutframe
+.ruboutobjframe
 {
   LDA objs_xlocs,X:STA frmx ; X position
   LDA objs_ylocs,X:STA frmy ; Y position
@@ -6686,16 +6690,19 @@ ORG &2B13
 .nextchar
 {
   SEI
+
   LDA #CASSETTE_OFF+CASSETTE_SWITCH+CHAREN_IO+HIRAM_E000_RAM+LORAM_A000_RAM:STA CPU_CONFIG
   LDY #0
   LDA (stringptr),Y
-  INC stringptr
+
+  INC stringptr ; Advance pointer
   BNE samepage
 
-  INC stringptr+1
+  INC stringptr+1 ; Increase page if requried
 
 .samepage
   LDY #CASSETTE_OFF+CASSETTE_SWITCH+CHAREN_IO+HIRAM_E000_ROM+LORAM_A000_RAM:STY CPU_CONFIG
+
   CLI
 
   RTS
