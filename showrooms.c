@@ -42,7 +42,7 @@ int main()
       {
         int i;
 
-        printf("%d : 0x%.4x to 0x%.4x (len %d)\n", room, start, end, end-start);
+        printf("%d : 0x%.4x to 0x%.4x (len %d)\n", room, start, end-1, end-start);
 
         printf("  ");
 
@@ -61,6 +61,8 @@ int main()
 
         printf("\n");
       }
+      else
+        printf("%d : 0x%.4x (Empty room)\n", room, start);
     }
 
     free(roomdata);
