@@ -64,10 +64,8 @@ GUARD ZP_ECONET_WORKSPACE
 .clock EQUB &00
 
 if allowsndfx = 1
-
-; Sound effect to play
-.sndfx EQUB 0
-
+  ; Sound effect to play
+  .sndfx EQUB 0
 endif
 
 ; Frame (sprite) attribute data
@@ -119,13 +117,16 @@ endif
 .watercolour EQUB 0 ; If "water" is actually water / lava
 
 .flamelist ; 4 * (X, Y, Frame)
+{
   EQUB 0, 0, 0
   EQUB 0, 0, 0
   EQUB 0, 0, 0
   EQUB 0, 0, 0
   EQUB 0
+}
 
 .waterlist ; 8 * (X, Y, Frame)
+{
   EQUB 0, 0, 0
   EQUB 0, 0, 0
   EQUB 0, 0, 0
@@ -135,14 +136,17 @@ endif
   EQUB 0, 0, 0
   EQUB 0, 0, 0
   EQUB 0
+}
 
 ; Flags for how many times we've spoken to each of the yolkfolk
 .talkbefore
+{
   EQUB 0 ; Dozy
   EQUB 0 ; Denzil
   EQUB 0 ; Dylan
   EQUB 0 ; Daisy
   EQUB 0 ; Doug (Grand Dizzy)
+}
 .endoftalkbefore
   ; EQUB 0 ; TODO - this was in original - but not needed?
 
@@ -150,7 +154,9 @@ nooftalkbefore = ((endoftalkbefore-talkbefore) AND &FF)
 
 ; Contents of the bag
 .objectscarried
+{
   EQUB 0, 0, 0, 0
+}
 .bag EQUB 0 ; Flag if we've picked up the bigger bag
 
 ; Dragon
@@ -185,8 +191,9 @@ attrisize = ((MAXX/ATTR_GRID)/BITSPERBYTE) * ((MAXY-((5+1+1)*ATTR_GRID))/ATTR_GR
 ; 256x136 = 32x17 blocks = 4x17 bytes
 .attritable
 .hearttable ; 32 x (X, Y)
-SKIP attrisize
-
+{
+  SKIP attrisize
+}
 .end_of_stack
 
 ; ---------------------------------------------------------
@@ -198,7 +205,10 @@ GUARD SOUND_WORKSPACE
 .start_of_vars
 
 ; When drawing flipped frame, it's built here
-.flippedframe SKIP 190 ; Biggest frame (&b6) - a branch, is 190 bytes
+.flippedframe
+{
+  SKIP 190 ; Biggest frame (&b6) - a branch, is 190 bytes
+}
 
 .end_of_vars
 
