@@ -1,6 +1,7 @@
 ; The heart demo
 
 numhearts = 16
+heartptr = zptr4
 
 .theheartdemo
 {
@@ -15,12 +16,14 @@ numhearts = 16
 
   LDA #0
 .allhearts
+  {
   CLC:ADC #&01
   PHA
   JSR updatehearts
   PLA
 
   BNE allhearts
+  }
 
   RTS
 }
@@ -34,22 +37,24 @@ numhearts = 16
   LDY #PAL_RED+PLOT_XOR:STY frmattri ; Red / XOR
 
   ; Point to heart table
-  LDA #lo(hearttable):STA zptr4
-  LDA #hi(hearttable):STA zptr4+1
+  LDA #lo(hearttable):STA heartptr
+  LDA #hi(hearttable):STA heartptr+1
 
   LDX #0:TXA
 .resetheartslp
-  LDY #&00:STA (zptr4), Y
+  {
+  LDY #&00:STA (heartptr), Y
   JSR random
-  INY:STA (zptr4), Y
+  INY:STA (heartptr), Y
 
   JSR printheart
 
   ; Move on to next heart
-  INC zptr4:INC zptr4
+  INC heartptr:INC heartptr
 
   CLC:ADC #&08
   INX:CPX #numhearts:BNE resetheartslp
+  }
 
   RTS
 }
@@ -57,36 +62,38 @@ numhearts = 16
 .updatehearts
 {
   ; Point to heart table
-  LDA #lo(hearttable):STA zptr4
-  LDA #hi(hearttable):STA zptr4+1
+  LDA #lo(hearttable):STA heartptr
+  LDA #hi(hearttable):STA heartptr+1
 
   LDX #0:TXA
 .updateheartslp
+  {
   JSR printheart ; rub out
 
   LDY #&00
-  LDA (zptr4), Y
+  LDA (heartptr), Y
   CLC:ADC #&04 ; affects speed of rotation
-  STA (zptr4), Y
+  STA (heartptr), Y
 
   JSR printheart ; draw in new position
 
   ; Move on to next heart
-  INC zptr4:INC zptr4
+  INC heartptr:INC heartptr
 
-  INX:CPX #numhearts:BNE  updateheartslp
+  INX:CPX #numhearts:BNE updateheartslp
+  }
 
   RTS
 }
 
-; zptr4 = pointer to position in hearttable
+; heartptr = pointer to position in hearttable
 .printheart
 {
   PHA:TXA:PHA:TYA:PHA
 
   ; print single heart (if large)
 
-  LDY #&00:LDA (zptr4), Y
+  LDY #&00:LDA (heartptr), Y
 
   ; determine heart size
   ROR A:ROR A:ROR A:ROR A:ROR A:AND #&03 ; Top 3 bits only (A/32)
@@ -95,11 +102,11 @@ numhearts = 16
   CLC:ADC #SPR_HEARTNULL
   STA frmno ; 1..3 + HEART offset
 
-  LDY #&01:LDA (zptr4), Y ; path 0-255
+  LDY #&01:LDA (heartptr), Y ; path 0-255
 
   DEY
 .^addpatch
-  SEC:SBC (zptr4), Y ; count 0-255
+  SEC:SBC (heartptr), Y ; count 0-255
   AND #&7F ; limit to <128
   PHA
   JSR getvalue
@@ -128,7 +135,7 @@ numhearts = 16
 }
 
 ; A=index into sincos table
-; zptr4 = pointer to position in hearttable
+; heartptr = pointer to position in hearttable
 .getvalue
 {
   JSR getsincos:TAX
@@ -140,7 +147,7 @@ numhearts = 16
   INC b+1
 
 .waspos
-  LDY #&00:LDA (zptr4), Y
+  LDY #&00:LDA (heartptr), Y
 
   JSR multiply ; max value 127*64 / a=-63 to +63
 
@@ -154,7 +161,7 @@ numhearts = 16
 }
 
 ; A=0..127
-; return A=-64 to 64
+; return A=-64 to 64 (in 2s compliment)
 .getsincos
 {
   LSR A ; max=63
@@ -167,10 +174,12 @@ numhearts = 16
 ; Cos is 90' out of phase [+16]
 ; -Sin is 180' out of phase [+32]
 .sincostable
-  EQUB 0, 6,12,18,24,30,35,40,45,49,53,56,59,61,62,63  ; quad 0 (0' to 90')
-  EQUB 64,63,62,61,59,56,53,49,45,40,35,30,24,18,12, 6  ; quad 1 (90' to 180')
-  EQUB -0,-6,-12,-18,-24,-30,-35,-40,-45,-49,-53,-56,-59,-61,-62,-63  ; quad 2 (180' to 270')
+  {
+  EQUB 0,6,12,18,24,30,35,40,45,49,53,56,59,61,62,63   ; quad 0 (0' to 90')
+  EQUB 64,63,62,61,59,56,53,49,45,40,35,30,24,18,12,6  ; quad 1 (90' to 180')
+  EQUB -0,-6,-12,-18,-24,-30,-35,-40,-45,-49,-53,-56,-59,-61,-62,-63   ; quad 2 (180' to 270')
   EQUB -64,-63,-62,-61,-59,-56,-53,-49,-45,-40,-35,-30,-24,-18,-12,-6  ; quad 3 (270' to 360')
+  }
 }
 
 ; A=no to multiply
@@ -182,6 +191,7 @@ numhearts = 16
 
   LDA #&00:STA ztmp4
 .multlp
+  {
   CLC:ADC #&00
 
   BCC nooverflow ; Check for overflow
@@ -191,6 +201,7 @@ numhearts = 16
 
   DEX
   BNE multlp
+  }
 
   LDA ztmp4
 
