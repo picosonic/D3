@@ -54,7 +54,7 @@ ORG &0B00
 {
   ; Check if any music is playing
   LDA melody
-  BNE l0B0F
+  BNE melodyplaying
 
   ; Melody is 0
   STA v116D
@@ -63,7 +63,7 @@ ORG &0B00
   JMP continueplaying
 
   ; Something is playing
-.l0B0F
+.melodyplaying
   ; Is it > last tune id (i.e. is it invalid)
   CMP #TUNE_4+1
   BCS l0B50
@@ -1764,7 +1764,7 @@ numdeadlyobj = * - deadlyobj
   CPY #KEY_Q
   BNE checkpause
 
-  ; Quit to title screen ?
+  ; Quit to title screen
   JMP titlescreen
 
 .checkpause
@@ -7756,11 +7756,11 @@ cheatcodelen = * - eclipse
 
   CLC:ADC roomno ; Calculate new room number
 
-  ; Is it < 21
+  ; Is it < 21 (lowest visitable room - Dizzy 2)
   CMP #MARKETSQUAREROOM-1
   BCC cheatloop
 
-  ; Is it >= 168 - odd because highest used room number is 100 (attic)
+  ; Is it >= 168 (highest visitable room - Dizzy 2)
   CMP #168
   BCS cheatloop
 
