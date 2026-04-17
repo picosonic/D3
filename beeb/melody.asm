@@ -86,7 +86,9 @@ ORG EXO_LOAD_ADDR
   CLI
 
   ; Enable vsync event handler
-  LDA #&0E:LDX #&04:JSR OSBYTE
+  LDX #EV_VSYNC
+  LDA #OSB_ENABLE_EVENTS
+  JSR OSBYTE
 
   ; Start playing music
   LDA #&01:STA sound_music
@@ -99,7 +101,9 @@ ORG EXO_LOAD_ADDR
 
 .done
   ; Disable vsync event handler
-  LDA #&0D:LDX #&04:JSR OSBYTE
+  LDX #EV_VSYNC
+  LDA #OSB_DISABLE_EVENTS
+  JSR OSBYTE
 
   RTS
 }

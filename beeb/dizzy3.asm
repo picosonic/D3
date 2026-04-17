@@ -309,7 +309,8 @@ INCLUDE "gfx.asm"
 .quitted
 {
   ; acknowledge ESC
-  LDA #&7E:JSR OSBYTE
+  LDA #OSB_ACK_ESCAPE
+  JSR OSBYTE
 
   JMP titlescreen
 }
@@ -670,6 +671,12 @@ endif
 .emptybl
 
   LDA dizzyfrm:AND #&1F:STA dizzyfrm:STA frmno
+
+  BNE stuck
+  LDA dizzyy:CLC:ADC #&04:STA dizzyy
+.stuck
+  AND #&00:STA dizzyfrm:STA frmno
+
   LDA dizzyx:STA frmx:STA oldx
   LDA dizzyy:STA frmy:STA oldy
   JSR drawdizzy

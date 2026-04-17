@@ -3,9 +3,11 @@
 {
   TAX ; Negative INKEY value to check for
   LDY #&FF ; Keyboard scan
-  LDA #&81
+  LDA #OSB_READKEY_TIMED
   JSR OSBYTE
+
   TYA
+
   RTS
 }
 
@@ -13,31 +15,36 @@
 .unpressed
 {
   PHA
+
   JSR scankey
   BEQ cleared
+
   PLA
   JMP unpressed
 
 .cleared
   PLA
+
   RTS
 }
 
 ; Flush all input buffers
 .flushallbuffers
 {
-  LDA #&0F
   LDX #&00
+  LDA #OSB_FLUSH_BUFFERS
   JSR OSBYTE
+
   RTS
 }
 
 ; Select only keyboard as input stream
 .selectkeyboard
 {
-  LDA #&02
   LDX #&00
+  LDA #OSB_SELECT_INPUT
   JSR OSBYTE
+
   RTS
 }
 
@@ -121,7 +128,8 @@
 ; Parameter X-reg is the ADC channel (1-4)
 .adc_joystick
 {
-  LDA #&80:LDY #&00
+  LDY #&00
+  LDA #OSB_READ_ADC_CHAN
   JSR OSBYTE
 
   ; Use LSB of ADC read
@@ -146,7 +154,8 @@
 ; Check for joystick presence by looking for FIRE button press
 .scanjoy
 {
-  LDA #&80:LDX #&00:LDY #&00
+  LDX #&00:LDY #&00
+  LDA #OSB_READ_ADC_CHAN
   JSR OSBYTE
   TXA
 

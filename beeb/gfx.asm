@@ -3,7 +3,7 @@
 {
   TXA:PHA
 
-  LDA #&13
+  LDA #OSB_WAIT_VSYNC
   JSR OSBYTE
 
   PLA:TAX
