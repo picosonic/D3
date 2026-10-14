@@ -26,30 +26,49 @@ INCLUDE "hearts.asm"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;ODD MESSAGES
 
 .inventory
-  EQUB PRT_PEN+4,PRT_XY+6,56,PRT_DRAWBOX,22,6,PRT_XY+16,76
+  EQUB PRT_PEN+4
+  EQUB PRT_XY+6,56
+  EQUB PRT_DRAWBOX,22,6
+  EQUB PRT_XY+16,76
 
 .carrymess
-  EQUB PRT_PEN+5,"b:Aw:CARRYd",PRT_PEN+2,PRT_END
+  EQUB PRT_PEN+5,"b:Aw:CARRYd"
+  EQUB PRT_PEN+2
+  EQUB PRT_END
 
 .inventorywithbag
-  EQUB PRT_PEN+4,PRT_XY+6,48,PRT_DRAWBOX,22,8,PRT_XY+16,68,PRT_GOSUB
+  EQUB PRT_PEN+4,PRT_XY+6,48
+  EQUB PRT_DRAWBOX,22,8
+  EQUB PRT_XY+16,68
+  EQUB PRT_GOSUB
   EQUW carrymess
   EQUB PRT_END
 
 .selectitemmess
-  EQUB PRT_PEN+7,PRT_XY+14,136,PRT_DRAWBOX,14,2,PRT_PEN+5
+  EQUB PRT_PEN+7,PRT_XY+14,136
+  EQUB PRT_DRAWBOX,14,2
+  EQUB PRT_PEN+5
   EQUB PRT_XY+18,152,"CHOOSE:vEM:s"
-  EQUB PRT_XY+21,160,"USE:OR:DmP",PRT_END
+  EQUB PRT_XY+21,160,"USE:OR:DmP"
+  EQUB PRT_END
 
 .carryingtoomuchmess
-  EQUB PRT_PEN+7,PRT_XY+12,136,PRT_DRAWBOX,16,2,PRT_PEN+5
+  EQUB PRT_PEN+7,PRT_XY+12,136
+  EQUB PRT_DRAWBOX,16,2
+  EQUB PRT_PEN+5
   EQUB PRT_XY+16,152,"b:Aw:CARRYd"
-  EQUB PRT_XY+16,160,"sO:MUCH:s:HOLD",PRT_END
+  EQUB PRT_XY+16,160,"sO:MUCH:s:HOLD"
+  EQUB PRT_END
 
 .nothingatallmess
-  EQUB PRT_XY+22,96,PRT_PEN+7
-  EQUB "N",PRT_XY+25,96,"O",PRT_XY+28,96,"T",PRT_XY+31,96
-  EQUB "H",PRT_XY+34,96,"I",PRT_XY+37,96,"N",PRT_XY+40,96,"G",PRT_END
+  EQUB PRT_XY+22,96,PRT_PEN+7,"N"
+  EQUB PRT_XY+25,96,"O"
+  EQUB PRT_XY+28,96,"T"
+  EQUB PRT_XY+31,96,"H"
+  EQUB PRT_XY+34,96,"I"
+  EQUB PRT_XY+37,96,"N"
+  EQUB PRT_XY+40,96,"G"
+  EQUB PRT_END
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -69,18 +88,11 @@ INCLUDE "hearts.asm"
 
   LDY #&00
 .scrubtalkbefore
-  STA talkbefore, Y
-  INY
-  CPY #nooftalkbefore:BNE scrubtalkbefore
-
-  RTS
-
-.^resetmoving1
-  LDA #&FF
-  STA shopkeepercount
-
-  LDA #&01
-  STA ratcoll+1
+  {
+    STA talkbefore, Y
+    INY
+    CPY #nooftalkbefore:BNE scrubtalkbefore
+  }
 
   RTS
 
@@ -88,35 +100,53 @@ INCLUDE "hearts.asm"
   EQUS "L.OBJDATA", &0D
 }
 
+.resetmoving1
+{
+  LDA #&FF
+  STA shopkeepercount
+
+  LDA #&01
+  STA ratcoll+1
+
+  RTS
+}
+
 .resetroommoving
 {
   LDA patch_BEQ:STA patchpick
   JSR resetroommoving1
+
   LDA patch_BNE:STA patchpick
+
 .resetroommoving1
   LDA #lo(movingdata):STA zptr4
   LDA #hi(movingdata):STA zptr4+1
 
   LDX #&00
 .resetroommovinglp
-  LDY #rou:LDA (zptr4), Y ; Get routine id for this object
-  CMP #pickupable
-.patchpick
-  BEQ notprintyet
+  {
+    LDY #rou:LDA (zptr4), Y ; Get routine id for this object
+    CMP #pickupable
 
-  LDY #room:LDA (zptr4), Y:CMP roomno:BNE notprintyet
-  LDA #lo(resetrous):STA zptr5
-  LDA #hi(resetrous):STA zptr5+1
-  JSR jumptoroutine
+.^patchpick
+    BEQ notprintyet
+
+    LDY #room:LDA (zptr4), Y:CMP roomno:BNE notprintyet
+
+    LDA #lo(resetrous):STA zptr5
+    LDA #hi(resetrous):STA zptr5+1
+    JSR jumptoroutine
+
 .notprintyet
 
-  ; Advance to next object
-  LDA zptr4:CLC:ADC #movingsize:STA zptr4
-  BCC samepage
-  INC zptr4+1
+    ; Advance to next object
+    LDA zptr4:CLC:ADC #movingsize:STA zptr4
+    BCC samepage
+    INC zptr4+1
 .samepage
 
-  INX:CPX #noofmoving:BNE resetroommovinglp ; Loop until done
+    INX:CPX #noofmoving:BNE resetroommovinglp ; Loop until done
+  }
 
 .done
   RTS
@@ -124,6 +154,7 @@ INCLUDE "hearts.asm"
   ; Just to get branch opcodes for patching above
 .patch_BEQ
   BEQ done
+
 .patch_BNE
   BNE done
 }
@@ -139,6 +170,7 @@ INCLUDE "hearts.asm"
   ASL A:TAY
   LDA (zptr5), Y:STA jump+1:INY
   LDA (zptr5), Y:STA jump+2
+
 .jump
   JMP duffmem
 
@@ -154,9 +186,11 @@ INCLUDE "hearts.asm"
   ; Clear the top bit of the room number to indicate coin not collected
   LDX #totalcoins:LDY #0
 .resetcoinslp
-  LDA cointable+2, Y:AND #&7F:STA cointable+2, Y
-  INY:INY:INY
-  DEX:BNE resetcoinslp
+  {
+    LDA cointable+2, Y:AND #&7F:STA cointable+2, Y
+    INY:INY:INY
+    DEX:BNE resetcoinslp
+  }
 
   ; Fall through ...
 }
@@ -181,10 +215,14 @@ INCLUDE "hearts.asm"
   ; Draw the full coins message
   LDA #hi(coinsmess):STA zptr5+1
   LDA #lo(coinsmess):STA zptr5
+
   JMP prtmessage
 
-.coinsmess EQUB PRT_PEN+4, PRT_XY+46,8
-.noofcoinsmess EQUB 0, 0, PRT_END
+.coinsmess
+  EQUB PRT_PEN+4, PRT_XY+46,8
+
+.noofcoinsmess
+  EQUB 0, 0, PRT_END
 }
 
 .subfromlives
@@ -203,8 +241,13 @@ INCLUDE "hearts.asm"
 
   JMP prtmessage
 
-.livesmess EQUB PRT_PEN+4, PRT_XY+14,8, ":::", PRT_XY+14,8 ; Clear lives display
-.nooflivesmess EQUB PRT_REP, 1, "/", PRT_ENDREP, PRT_END   ; Print lives count
+.livesmess
+  EQUB PRT_PEN+4
+  EQUB PRT_XY+14,8, ":::"
+  EQUB PRT_XY+14,8 ; Clear lives display
+
+.nooflivesmess
+  EQUB PRT_REP, 1, "/", PRT_ENDREP, PRT_END ; Print lives count
 }
 
 .resetcarrying
