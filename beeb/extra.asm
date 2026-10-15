@@ -26,18 +26,21 @@ INCLUDE "hearts.asm"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;ODD MESSAGES
 
 .inventory
-  EQUB PRT_PEN+4
+  EQUB PRT_PEN+PAL_GREEN
   EQUB PRT_XY+6,56
   EQUB PRT_DRAWBOX,22,6
   EQUB PRT_XY+16,76
 
 .carrymess
-  EQUB PRT_PEN+5,"b:Aw:CARRYd"
-  EQUB PRT_PEN+2
+  EQUB PRT_PEN+PAL_CYAN
+  EQUB "b:Aw:CARRYd"
+
+  EQUB PRT_PEN+PAL_RED
   EQUB PRT_END
 
 .inventorywithbag
-  EQUB PRT_PEN+4,PRT_XY+6,48
+  EQUB PRT_PEN+PAL_GREEN
+  EQUB PRT_XY+6,48
   EQUB PRT_DRAWBOX,22,8
   EQUB PRT_XY+16,68
   EQUB PRT_GOSUB
@@ -45,23 +48,28 @@ INCLUDE "hearts.asm"
   EQUB PRT_END
 
 .selectitemmess
-  EQUB PRT_PEN+7,PRT_XY+14,136
+  EQUB PRT_PEN+PAL_WHITE
+  EQUB PRT_XY+14,136
   EQUB PRT_DRAWBOX,14,2
-  EQUB PRT_PEN+5
+
+  EQUB PRT_PEN+PAL_CYAN
   EQUB PRT_XY+18,152,"CHOOSE:vEM:s"
   EQUB PRT_XY+21,160,"USE:OR:DmP"
   EQUB PRT_END
 
 .carryingtoomuchmess
-  EQUB PRT_PEN+7,PRT_XY+12,136
+  EQUB PRT_PEN+PAL_WHITE
+  EQUB PRT_XY+12,136
   EQUB PRT_DRAWBOX,16,2
-  EQUB PRT_PEN+5
+
+  EQUB PRT_PEN+PAL_CYAN
   EQUB PRT_XY+16,152,"b:Aw:CARRYd"
   EQUB PRT_XY+16,160,"sO:MUCH:s:HOLD"
   EQUB PRT_END
 
 .nothingatallmess
-  EQUB PRT_XY+22,96,PRT_PEN+7,"N"
+  EQUB PRT_PEN+PAL_WHITE
+  EQUB PRT_XY+22,96,"N"
   EQUB PRT_XY+25,96,"O"
   EQUB PRT_XY+28,96,"T"
   EQUB PRT_XY+31,96,"H"
@@ -219,7 +227,8 @@ INCLUDE "hearts.asm"
   JMP prtmessage
 
 .coinsmess
-  EQUB PRT_PEN+4, PRT_XY+46,8
+  EQUB PRT_PEN+PAL_GREEN
+  EQUB PRT_XY+46,8
 
 .noofcoinsmess
   EQUB 0, 0, PRT_END
@@ -242,7 +251,7 @@ INCLUDE "hearts.asm"
   JMP prtmessage
 
 .livesmess
-  EQUB PRT_PEN+4
+  EQUB PRT_PEN+PAL_GREEN
   EQUB PRT_XY+14,8, ":::"
   EQUB PRT_XY+14,8 ; Clear lives display
 
