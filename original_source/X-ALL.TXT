@@ -6546,12 +6546,15 @@ interentry
 	push hl
 	push ix
 	push iy
+
 	ld a,(clock)
 	inc a
 	ld (clock),a
+
 	ld a,(dontupdatedizzy)
 	and a
 	call z,updatedizzy
+
 	call updatemusicingame
 
 	ld a,(sndfx)
