@@ -1,16 +1,29 @@
-# D3
+# D3 – Fantasy World Dizzy for the BBC Micro
 
-This project is a source port of [Fantasy World Dizzy](https://en.wikipedia.org/wiki/Fantasy_World_Dizzy) from the [ZX Spectrum](https://en.wikipedia.org/wiki/ZX_Spectrum) / [Amstrad CPC](https://en.wikipedia.org/wiki/Amstrad_CPC) computers [z80](https://en.wikipedia.org/wiki/Zilog_Z80) codebase to the [BBC Micro](https://en.wikipedia.org/wiki/BBC_Micro) in [6502](https://en.wikipedia.org/wiki/MOS_Technology_6502) assembler.
+This project is a source port of [Fantasy World Dizzy](https://en.wikipedia.org/wiki/Fantasy_World_Dizzy) (1989) from the [ZX Spectrum](https://en.wikipedia.org/wiki/ZX_Spectrum) / [Amstrad CPC](https://en.wikipedia.org/wiki/Amstrad_CPC) computers [z80](https://en.wikipedia.org/wiki/Zilog_Z80) codebase to the [BBC Micro](https://en.wikipedia.org/wiki/BBC_Micro) in [6502](https://en.wikipedia.org/wiki/MOS_Technology_6502) assembler.
 
 The game was the third in the [Dizzy series](https://en.wikipedia.org/wiki/Dizzy_(series)) and was released on many platforms back in 1989, but never the BBC Micro. The only release for the 6502 CPU was on the [Commodore 64](https://en.wikipedia.org/wiki/Commodore_64). Unfortunately the stock BBC Micro lacked the required RAM to fit all the levels, sprites, music, text and game logic.
 
-I've included playback of the original speech sample (Digitized on a C64 by G.Raeburn) and the [Dizzy 2](https://en.wikipedia.org/wiki/Treasure_Island_Dizzy) painting closeup. The PCM playback used ideas and portions of code from [here](https://scarybeastsecurity.blogspot.com/2020/06/sampled-sound-1980s-style-from-sn76489.html) and [here](https://github.com/scarybeasts/misc).
+It also includes:
 
-NOTE : This project requires at least 2 x 16k banks of [sideways RAM](https://en.wikipedia.org/wiki/Sideways_address_space) to be available. So it will work on a [BBC Master](https://en.wikipedia.org/wiki/BBC_Master) or a standard BBC Micro with added sideways RAM.
+* Original speech playback (Digitized on a C64 by G.Raeburn)
+* The [Dizzy 2](https://en.wikipedia.org/wiki/Treasure_Island_Dizzy) painting closeup
+* Loader music based on the Atari ST version
 
-# Folder structure
+# Hardware requirements
 
-[root folder](https://github.com/picosonic/D3) - Javascript test code
+The game requires at least 32 KB of [sideways RAM](https://en.wikipedia.org/wiki/Sideways_address_space) (SWRAM), using two 16 KB banks.
+
+Supported systems include:
+
+* [BBC Master](https://en.wikipedia.org/wiki/BBC_Master)
+* [BBC Micro](https://en.wikipedia.org/wiki/BBC_Micro) with additional sideways RAM
+
+A standard BBC Micro without additional sideways RAM is not sufficient.
+
+# Repository structure
+
+[root folder](https://github.com/picosonic/D3) - Javascript development tools and test code
 
 [beeb](https://github.com/picosonic/D3/tree/main/beeb) - contains all the BBC micro source code and assets required to build the project
 
@@ -56,15 +69,15 @@ The way I'm using the extra RAM also works on the [BBC Master](https://en.wikipe
 
 # Running in an emulator
 
-I have tested the code on several emulators...
+I have tested the project on several emulators...
 
-Using [b2](https://github.com/tom-seddon/b2) - single SWRAM (13) by default, either enable another or use BBC B + 128k / BBC Master config.
+[b2](https://github.com/tom-seddon/b2) - single SWRAM (13) by default, either enable another or use BBC B + 128k / BBC Master config.
 
-Using [beebjit](https://github.com/scarybeasts/beebjit) - default BBC Micro config has no SWRAM by default. Specify with e.g. -swram 0 and -swram 1 or use Master 128 config.
+[beebjit](https://github.com/scarybeasts/beebjit) - default BBC Micro config has no SWRAM enabled. Specify with e.g. -swram 0 and -swram 1 or use Master 128 config.
 
-Using [BeebEm](https://en.wikipedia.org/wiki/BeebEm) - default BBC Micro config has 4 x SWRAM slots 4-7 enabled. BBC B + has 3 x SWRAM slots 0-1 and 12, and both BBC B + Integra-B and BBC Master 128 have 4 x SWRAM slots 4-7.
+[BeebEm](https://en.wikipedia.org/wiki/BeebEm) - default BBC Micro config has 4 x SWRAM slots 4-7 enabled. BBC B + has 3 x SWRAM slots 0-1 and 12, and both BBC B + Integra-B and BBC Master 128 have 4 x SWRAM slots 4-7.
 
-Using [jsbeeb](https://bbc.xania.org/) - default BBC Micro config has 8 x SWRAM slots 0-7 enabled.
+[jsbeeb](https://bbc.xania.org/) - default BBC Micro config has 8 x SWRAM slots 0-7 enabled.
 
 # Test
 
@@ -74,6 +87,7 @@ As part of the development, I made use of Javascript to rapidly prototype some o
 
 # Credits
 
-Original source/assets copyright to respective owner(s).
-
-I found the original source code via [Wireframe Magazine issue 19](https://github.com/Wireframe-Magazine/Wireframe19).
+* Original game source code and assets remain the property of their respective copyright holders
+* Original source code via [Wireframe Magazine issue 19](https://github.com/Wireframe-Magazine/Wireframe19)
+* Digitsed speech playback incorporates [ideas and code](https://scarybeastsecurity.blogspot.com/2020/06/sampled-sound-1980s-style-from-sn76489.html) from ScaryBeasts and their [GitHub repository](https://github.com/scarybeasts/misc)
+* Thanks to the developers of beebasm and the BBC Micro emulators used during development
